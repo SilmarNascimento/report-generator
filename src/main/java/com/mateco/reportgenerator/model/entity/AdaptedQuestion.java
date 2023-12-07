@@ -22,6 +22,6 @@ public class AdaptedQuestion {
   private UUID id;
   private String title;
   private String image;
-  private List<> alternatives;
-  private String answer;
+  private List<Alternative> alternatives;
+  private Alternative answer;
 }
