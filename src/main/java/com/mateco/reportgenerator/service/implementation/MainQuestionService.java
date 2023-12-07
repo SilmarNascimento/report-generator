@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Service -
+ * Service - implementação dos métodos da camada service
+ *           da entidade MainQuestion.
  */
 @Service
 public class MainQuestionService implements MainQuestionServiceInterface {
