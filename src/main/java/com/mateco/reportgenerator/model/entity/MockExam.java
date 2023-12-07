@@ -30,9 +30,9 @@ public class MockExam {
 
   @ManyToMany
   @JoinTable(
-      name = "exams_question",
+      name = "exams_questions",
       joinColumns = @JoinColumn(name = "main_question_id"),
-      inverseJoinColumns = @JoinColumn(name = "mock_exams_id")
+      inverseJoinColumns = @JoinColumn(name = "mock_exam_id")
   )
-  private List<MainQuestion> questions;
+  private List<MainQuestion> mockExamQuestions;
 }
