@@ -8,6 +8,10 @@ import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service Interface - assinatura dos métodos para a camada service
+ *                     da entidade MainQuestion.
+ */
 public interface MainQuestionServiceInterface {
   List<MainQuestion> findAllQuestions();
   MainQuestion findQuestionById(UUID questionId);
