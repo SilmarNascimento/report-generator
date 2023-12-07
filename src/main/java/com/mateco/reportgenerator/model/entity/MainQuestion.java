@@ -22,12 +22,12 @@ public class MainQuestion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private UUID id;
   private String title;
-  private List<> contents;
+  private List<Subject> contents;
   private String image;
   private List<> alternatives;
   private String answer;
   @Column(name = "adapted_question")
-  private List<> adaptedQuestions;
+  private List<AdaptedQuestion> adaptedQuestions;
   private List<> mockExams;
   private List<> handout;
 }
