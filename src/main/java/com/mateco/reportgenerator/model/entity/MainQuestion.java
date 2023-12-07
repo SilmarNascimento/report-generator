@@ -1,10 +1,13 @@
 package com.mateco.reportgenerator.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -27,7 +30,12 @@ public class MainQuestion {
   private String title;
 
   @ManyToMany
-  private List<Subject> contents;
+  @JoinTable(
+      name = "question_content",
+      joinColumns = @JoinColumn(name = "subject_id"),
+      inverseJoinColumns = @JoinColumn(name = "main_question_id")
+  )
+  private List<Subject> subjects;
 
   private String image;
 
@@ -39,7 +47,11 @@ public class MainQuestion {
   @OneToMany(mappedBy = "mainQuestion")
   private List<AdaptedQuestion> adaptedQuestions;
 
+  @ManyToMany
+  @JsonIgnore
   private List<MockExam> mockExams;
 
+  @ManyToMany
+  @JsonIgnore
   private List<Handout> handout;
 }
