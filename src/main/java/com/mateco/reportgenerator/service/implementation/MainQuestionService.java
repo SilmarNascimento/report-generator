@@ -4,6 +4,7 @@ import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
+import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service -
+ */
 @Service
 public class MainQuestionService implements MainQuestionServiceInterface {
   private final MainQuestionRepository mainQuestionRepository;
@@ -42,6 +46,16 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public void deleteQuestion(UUID questionId) {
+
+  }
+
+  @Override
+  public Subject addSubject(UUID questionId, UUID subjectId, Subject subject) {
+    return null;
+  }
+
+  @Override
+  public void removeSubject(UUID questionId, UUID subjectId) {
 
   }
 
