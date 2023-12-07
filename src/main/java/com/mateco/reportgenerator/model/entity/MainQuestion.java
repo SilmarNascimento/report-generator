@@ -47,11 +47,11 @@ public class MainQuestion {
   @OneToMany(mappedBy = "mainQuestion")
   private List<AdaptedQuestion> adaptedQuestions;
 
-  @ManyToMany
+  @ManyToMany(mappedBy = "")
   @JsonIgnore
   private List<MockExam> mockExams;
 
-  @ManyToMany
+  @ManyToMany(mappedBy = "")
   @JsonIgnore
   private List<Handout> handout;
 }
