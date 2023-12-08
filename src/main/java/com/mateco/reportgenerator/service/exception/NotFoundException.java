@@ -1,4 +1,4 @@
-package com.mateco.reportgenerator.service;
+package com.mateco.reportgenerator.service.exception;
 
 public class NotFoundException extends RuntimeException {
   public NotFoundException(String message) {

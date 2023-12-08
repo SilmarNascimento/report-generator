@@ -22,7 +22,8 @@ public class UpdateEntity {
   }
 
   /**
-   * Static Method - Map an array with the name of all null properties from the object.
+   * Static Method - Mapeia um array com o nome de totas as propriedades nulas
+   *                 do objeto recebido.
    *
    * @param source - objeto recebido com a possibilidade de atributos
    *                 nulos.

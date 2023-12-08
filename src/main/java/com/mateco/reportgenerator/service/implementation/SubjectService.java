@@ -2,7 +2,7 @@ package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
-import com.mateco.reportgenerator.service.NotFoundException;
+import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
 import java.util.List;
 import java.util.UUID;
