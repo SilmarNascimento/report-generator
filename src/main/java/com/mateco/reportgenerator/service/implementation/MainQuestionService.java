@@ -9,10 +9,12 @@ import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
+import com.mateco.reportgenerator.service.exception.ConflictException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,17 +121,27 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   @Override
   public AdaptedQuestion addAdaptedQuestion(
       UUID questionId,
-      UUID adaptedQuestionId,
-      AdaptedQuestion question
+      UUID adaptedQuestionId
   ) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    return null;
+    AdaptedQuestion adaptedQuestionFound = adaptedQuestionRepository.findById(adaptedQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
+    adaptedQuestionFound.setMainQuestion(mainQuestionFound);
+    adaptedQuestionRepository.save(adaptedQuestionFound);
+    return adaptedQuestionFound;
   }
 
   @Override
   public void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId) {
-
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    AdaptedQuestion adaptedQuestionFound = adaptedQuestionRepository.findById(adaptedQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
+    if (!adaptedQuestionFound.getMainQuestion().equals(mainQuestionFound)) {
+      throw new ConflictException("Questão adaptada não pertence à questão principal!");
+    }
+    adaptedQuestionFound.setMainQuestion(null);
   }
 
   @Override

@@ -25,7 +25,7 @@ public interface MainQuestionServiceInterface {
   void removeSubject(UUID questionId, List<UUID> subjectsId);
 
 
-  AdaptedQuestion addAdaptedQuestion(UUID questionId, UUID adaptedQuestionId, AdaptedQuestion question);
+  AdaptedQuestion addAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
   void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
 
   MockExam addMockExam(UUID questionId, UUID mockExamId, MockExam mockExam);
