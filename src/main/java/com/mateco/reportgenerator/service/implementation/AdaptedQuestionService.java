@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
  *           da entidade AdaptedQuestion.
  */
 @Service
-public class AdaptedQuestionsService implements AdaptedQuestionServiceInterface {
+public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   private final AdaptedQuestionRepository adaptedQuestionRepository;
 
   @Autowired
-  public AdaptedQuestionsService(AdaptedQuestionRepository adaptedQuestionRepository) {
+  public AdaptedQuestionService(AdaptedQuestionRepository adaptedQuestionRepository) {
     this.adaptedQuestionRepository = adaptedQuestionRepository;
   }
 
@@ -32,6 +32,11 @@ public class AdaptedQuestionsService implements AdaptedQuestionServiceInterface 
   public AdaptedQuestion findAdaptedQuestionById(UUID adaptedQuestionId) {
     return adaptedQuestionRepository.findById(adaptedQuestionId)
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
+  }
+
+  @Override
+  public List<AdaptedQuestion> findAllAdaptedQuestionsByMainQuestionId(UUID mainQuestionId) {
+    return adaptedQuestionRepository.findAllByMainQuestionId(mainQuestionId);
   }
 
   @Override

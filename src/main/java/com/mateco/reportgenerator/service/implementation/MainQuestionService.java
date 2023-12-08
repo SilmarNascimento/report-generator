@@ -5,7 +5,9 @@ import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
+import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
+import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.util.List;
 import java.util.UUID;
@@ -19,15 +21,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class MainQuestionService implements MainQuestionServiceInterface {
   private final MainQuestionRepository mainQuestionRepository;
+  private final AdaptedQuestionRepository adaptedQuestionRepository;
+  private  final SubjectRepository subjectRepository;
 
   @Autowired
-  public MainQuestionService(MainQuestionRepository mainQuestionRepository) {
+  public MainQuestionService(
+      MainQuestionRepository mainQuestionRepository,
+      AdaptedQuestionRepository adaptedQuestionRepository,
+      SubjectRepository subjectRepository
+  ) {
     this.mainQuestionRepository = mainQuestionRepository;
+    this.adaptedQuestionRepository = adaptedQuestionRepository;
+    this.subjectRepository = subjectRepository;
   }
+
+
 
   @Override
   public List<MainQuestion> findAllQuestions() {
-    return null;
+    return mainQuestionRepository.findAll();
   }
 
   @Override
