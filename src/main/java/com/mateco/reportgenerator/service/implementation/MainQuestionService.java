@@ -11,6 +11,7 @@ import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     Subject subjectFound = subjectRepository.findById(subjectId)
         .orElseThrow(() -> new NotFoundException("Conteúdo não encontrado!"));
     mainQuestionFound.setSubjects(subjectFound);
+    mainQuestionRepository.save(mainQuestionFound);
     return subjectFound;
   }
 
@@ -88,12 +90,30 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         .toList();
     mainQuestionSubjectList
         .forEach((Subject subject) -> mainQuestionFound.setSubjects(subject));
-    return mainQuestionSubjectList;
+    mainQuestionRepository.save(mainQuestionFound);
+    return mainQuestionFound.getSubjects();
   }
 
   @Override
   public void removeSubject(UUID questionId, UUID subjectId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
+    List<Subject> subjectList = mainQuestionFound.getSubjects();
+
+    subjectList.removeIf(subject -> subjectId.equals(subject.getId()));
+    mainQuestionRepository.save(mainQuestionFound);
+  }
+
+  @Override
+  public void removeSubject(UUID questionId, List<UUID> subjectsId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+
+    List<Subject> mainQuestionSubjectList = mainQuestionFound.getSubjects();
+
+    mainQuestionSubjectList.removeIf(subject -> subjectsId.contains(subject.getId()));
+    mainQuestionRepository.save(mainQuestionFound);
   }
 
   @Override
