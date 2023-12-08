@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller.advice;
 
+import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,21 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
     return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
+        .body(exception.getMessage());
+  }
+
+  /**
+   * Method - Método para tratar a exceção ConflictData lançada
+   *          pela aplicação.
+   *
+   * @param exception - exceção capturada pela aplicação.
+   * @return - retorna um status HTTP baseado no tipo de
+   *           exceção lançada.
+   */
+  @ExceptionHandler(ConflictDataException.class)
+  public ResponseEntity<String> handleConflictDataException(ConflictDataException exception) {
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
         .body(exception.getMessage());
   }
 }
