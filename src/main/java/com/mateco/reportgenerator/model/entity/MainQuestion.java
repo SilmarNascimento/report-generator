@@ -54,4 +54,8 @@ public class MainQuestion {
   @ManyToMany(mappedBy = "handoutQuestions")
   @JsonIgnore
   private List<Handout> handout;
+
+  public void setSubjects(Subject subject) {
+    this.subjects.add(subject);
+  }
 }
