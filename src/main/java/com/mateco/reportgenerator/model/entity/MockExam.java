@@ -30,7 +30,7 @@ public class MockExam {
 
   @ManyToMany
   @JoinTable(
-      name = "exams_questions",
+      name = "exam_questions",
       joinColumns = @JoinColumn(name = "main_question_id"),
       inverseJoinColumns = @JoinColumn(name = "mock_exam_id")
   )

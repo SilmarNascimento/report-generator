@@ -31,7 +31,7 @@ public class MainQuestion {
 
   @ManyToMany
   @JoinTable(
-      name = "question_content",
+      name = "questions_content",
       joinColumns = @JoinColumn(name = "subject_id"),
       inverseJoinColumns = @JoinColumn(name = "main_question_id")
   )
@@ -43,7 +43,7 @@ public class MainQuestion {
 
   private Alternative answer;
 
-  @Column(name = "adapted_question")
+  @Column(name = "adapted_questions")
   @OneToMany(mappedBy = "mainQuestion")
   private List<AdaptedQuestion> adaptedQuestions;
 
