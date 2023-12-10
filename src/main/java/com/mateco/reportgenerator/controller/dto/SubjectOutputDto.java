@@ -13,4 +13,16 @@ public record SubjectOutputDto(UUID id, String name, List<UUID> mainQuestionsId)
         .toList();
     return new SubjectOutputDto(subject.getId(), subject.getName(), questionsId);
   }
+
+  public static List<SubjectOutputDto> parseDto(List<Subject> subjects) {
+    return subjects.stream()
+        .map((Subject subject) -> {
+          List<MainQuestion> questionsList = subject.getMainQuestions();
+          List<UUID> questionsId = questionsList.stream()
+              .map((MainQuestion question) -> question.getId())
+              .toList();
+          return new SubjectOutputDto(subject.getId(), subject.getName(), questionsId);
+        })
+        .toList();
+  }
 }
