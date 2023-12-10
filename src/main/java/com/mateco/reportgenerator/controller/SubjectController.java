@@ -1,6 +1,8 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.SubjectInputDto;
 import com.mateco.reportgenerator.controller.dto.SubjectOutputDto;
+import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +27,7 @@ public class SubjectController {
   }
 
   @GetMapping
-  public ResponseEntity<List<SubjectOutputDto>> findAllSubject(@PathVariable UUID subjectId) {
+  public ResponseEntity<List<SubjectOutputDto>> findAllSubject() {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(SubjectOutputDto.parseDto(subjectService.findAllSubjects()));
@@ -34,5 +38,13 @@ public class SubjectController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(SubjectOutputDto.parseDto(subjectService.findSubjectById(subjectId)));
+  }
+
+  @PostMapping
+  public ResponseEntity<SubjectOutputDto> createSubject(@RequestBody SubjectInputDto subjectInputDto) {
+    Subject subjectCreated = subjectService.createSubject(Subject.parseSubject(subjectInputDto));
+    return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body((SubjectOutputDto.parseDto(subjectCreated)));
   }
 }
