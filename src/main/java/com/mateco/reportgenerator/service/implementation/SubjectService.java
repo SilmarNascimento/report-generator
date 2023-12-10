@@ -2,9 +2,11 @@ package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
+import com.mateco.reportgenerator.service.exception.AlreadyExistsException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,10 @@ public class SubjectService implements SubjectServiceInterface {
 
   @Override
   public Subject createSubject(Subject subject) {
+    subjectRepository.findSubjectByName(subject.getName())
+        .ifPresent(subjectFound -> {
+          throw new AlreadyExistsException("Conteúdo já cadastrado!");
+        });
     return subjectRepository.save(subject);
   }
 

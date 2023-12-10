@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.repository;
 
 import com.mateco.reportgenerator.model.entity.Subject;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,5 +12,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
-
+  Optional<Subject> findSubjectByName(String name);
 }
