@@ -62,7 +62,10 @@ public class SubjectController {
   }
 
   @DeleteMapping("/{subjectId}")
-  public void deleteSubjectById(@PathVariable UUID subjectId) {
-
+  public ResponseEntity<Void> deleteSubjectById(@PathVariable UUID subjectId) {
+    subjectService.deleteSubject(subjectId);
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
   }
 }
