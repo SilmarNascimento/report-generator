@@ -42,4 +42,34 @@ public class GlobalExceptionHandler {
         .status(HttpStatus.CONFLICT)
         .body(exception.getMessage());
   }
+
+  /**
+   * Method - Método para tratar a exceção lançada
+   *          pela aplicação.
+   *
+   * @param exception - exceção capturada pela aplicação.
+   * @return - retorna um status HTTP baseado no tipo de
+   *           exceção lançada.
+   */
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<String> handleException(Exception exception) {
+    return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(exception.getMessage());
+  }
+
+  /**
+   * Method - Método para tratar a exceção genérica lançada
+   *          pela aplicação.
+   *
+   * @param exception - exceção capturada pela aplicação.
+   * @return - retorna um status HTTP baseado no tipo de
+   *           exceção lançada.
+   */
+  @ExceptionHandler(Throwable.class)
+  public ResponseEntity<String> handleThrowable(Throwable exception) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_GATEWAY)
+        .body(exception.getMessage());
+  }
 }
