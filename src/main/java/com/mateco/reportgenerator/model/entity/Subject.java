@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mateco.reportgenerator.controller.dto.SubjectInputDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -27,4 +28,12 @@ public class Subject {
   @ManyToMany(mappedBy = "subjects")
   @JsonIgnore
   private List<MainQuestion> mainQuestions;
+
+  public Subject(String name) {
+    this.name = name;
+  }
+
+  public static Subject parseSubject(SubjectInputDto inputDto) {
+    return new Subject(inputDto.name());
+  }
 }
