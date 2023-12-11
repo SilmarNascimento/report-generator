@@ -26,6 +26,8 @@ public class AdaptedQuestion {
 
   private String title;
 
+  private String level;
+
   private String image;
 
   private List<Alternative> alternatives;

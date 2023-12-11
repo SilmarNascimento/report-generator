@@ -37,6 +37,8 @@ public class MainQuestion {
   )
   private List<Subject> subjects;
 
+  private String level;
+
   private String image;
 
   private List<Alternative> alternatives;
