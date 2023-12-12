@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
-  Optional<Subject> findSubjectByName(String name);
+  Optional<Subject> findByName(String name);
 }
