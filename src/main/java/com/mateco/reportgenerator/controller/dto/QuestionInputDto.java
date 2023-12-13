@@ -2,9 +2,8 @@ package com.mateco.reportgenerator.controller.dto;
 
 import com.mateco.reportgenerator.model.entity.Alternative;
 import java.util.List;
-import java.util.UUID;
 
-public record AdaptedQuestionInputDto(
+public record QuestionInputDto(
     String title,
     String level,
     String image,

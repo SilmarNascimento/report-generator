@@ -1,11 +1,8 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.AdaptedQuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectInputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import java.util.List;
 import java.util.UUID;
@@ -49,10 +46,10 @@ public class AdaptedQuestionController {
 
   @PostMapping
   public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
-      @RequestBody AdaptedQuestionInputDto adaptedQuestionInputDto
+      @RequestBody QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
@@ -61,10 +58,11 @@ public class AdaptedQuestionController {
   @PutMapping("/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionById(
       @PathVariable UUID adaptedQuestionID,
-      AdaptedQuestionInputDto adaptedQuestionInputDto
+      QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(
+            questionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));

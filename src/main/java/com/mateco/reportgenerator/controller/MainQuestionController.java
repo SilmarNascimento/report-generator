@@ -1,6 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.AdaptedQuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
@@ -55,22 +55,22 @@ public class MainQuestionController {
 
   @PostMapping
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @RequestBody MainQuestionInputDto mainQuestionInputDto
+      @RequestBody QuestionInputDto mainQuestionInputDto
   ) {
     MainQuestion mainQuestionCreated = mainQuestionService
-        .createMainQuestion(MainQuestion.);
+        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
   }
 
   @PutMapping("/{adaptedQuestionId}")
-  public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionById(
-      @PathVariable UUID adaptedQuestionID,
-      AdaptedQuestionInputDto adaptedQuestionInputDto
+  public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
+      @PathVariable UUID mainQuestionID,
+      MainQuestionInputDto mainQuestionInputDto
   ) {
-    AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+    MainQuestion updatedMainQuestion = mainQuestionService
+        .updateMainQuestionById(mainQuestionID, MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
@@ -102,10 +102,10 @@ public class MainQuestionController {
 
   @PostMapping
   public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
-      @RequestBody AdaptedQuestionInputDto adaptedQuestionInputDto
+      @RequestBody QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
@@ -114,10 +114,11 @@ public class MainQuestionController {
   @PutMapping("/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionById(
       @PathVariable UUID adaptedQuestionID,
-      AdaptedQuestionInputDto adaptedQuestionInputDto
+      QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(
+            questionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
