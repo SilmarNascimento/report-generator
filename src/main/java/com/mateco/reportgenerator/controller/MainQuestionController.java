@@ -70,7 +70,7 @@ public class MainQuestionController {
       AdaptedQuestionInputDto adaptedQuestionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestion(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));

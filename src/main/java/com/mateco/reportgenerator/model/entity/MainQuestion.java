@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -59,5 +60,33 @@ public class MainQuestion {
 
   public void setSubjects(Subject subject) {
     this.subjects.add(subject);
+  }
+
+  public MainQuestion(String title, List<Subject> subjects, String level, String image,
+      List<Alternative> alternatives, Alternative answer, List<AdaptedQuestion> adaptedQuestions,
+      List<MockExam> mockExams, List<Handout> handout) {
+    this.title = title;
+    this.subjects = subjects;
+    this.level = level;
+    this.image = image;
+    this.alternatives = alternatives;
+    this.answer = answer;
+    this.adaptedQuestions = adaptedQuestions;
+    this.mockExams = mockExams;
+    this.handout = handout;
+  }
+
+  public static MainQuestion parseMainQuestion(MainQuestionInputDto mainQuestionInputDto) {
+    return new MainQuestion(
+        mainQuestionInputDto.title(),
+        mainQuestionInputDto.subjects(),
+        mainQuestionInputDto.level(),
+        mainQuestionInputDto.image(),
+        mainQuestionInputDto.alternatives(),
+        mainQuestionInputDto.answer(),
+        mainQuestionInputDto.adaptedQuestions(),
+        mainQuestionInputDto.mockExams(),
+        mainQuestionInputDto.handout()
+    );
   }
 }
