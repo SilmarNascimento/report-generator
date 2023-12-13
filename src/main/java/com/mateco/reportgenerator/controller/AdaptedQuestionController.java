@@ -35,22 +35,27 @@ public class AdaptedQuestionController {
   public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestions() {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionService.findAllAdaptedQuestion()));
+        .body(AdaptedQuestionOutputDto
+            .parseDto(adaptedQuestionService.findAllAdaptedQuestion()));
   }
 
   @GetMapping("/{adaptedQuestiontId}")
   public ResponseEntity<AdaptedQuestionOutputDto> findAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
+        .body(AdaptedQuestionOutputDto
+            .parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
   }
 
   @PostMapping
-  public ResponseEntity<SubjectOutputDto> createAdaptedQuestion(@RequestBody SubjectInputDto subjectInputDto) {
-    Subject subjectCreated = subjectService.createSubject(Subject.parseSubject(subjectInputDto));
+  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
+      @RequestBody AdaptedQuestionInputDto adaptedQuestionInputDto
+  ) {
+    AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
+        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body((SubjectOutputDto.parseDto(subjectCreated)));
+        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
   }
 
   @PutMapping("/{adaptedQuestionId}")

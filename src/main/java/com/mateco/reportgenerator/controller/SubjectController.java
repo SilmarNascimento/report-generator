@@ -47,7 +47,7 @@ public class SubjectController {
     Subject subjectCreated = subjectService.createSubject(Subject.parseSubject(subjectInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body((SubjectOutputDto.parseDto(subjectCreated)));
+        .body(SubjectOutputDto.parseDto(subjectCreated));
   }
 
   @PutMapping("/{subjectId}")
