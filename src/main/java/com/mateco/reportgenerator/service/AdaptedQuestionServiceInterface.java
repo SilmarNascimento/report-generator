@@ -10,8 +10,8 @@ import java.util.UUID;
  */
 public interface AdaptedQuestionServiceInterface {
   List<AdaptedQuestion> findAllAdaptedQuestionFromMainQuestion(UUID mainQuestionId);
-  AdaptedQuestion findAdaptedQuestionsByMainQuestionId(UUID mainQuestionId, UUID adaptedQuestionId);
-  AdaptedQuestion createAdaptedQuestion(UUID mainQuestionId, AdaptedQuestion   adaptedQuestion);
-  AdaptedQuestion updateAdaptedQuestionById(UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
+  AdaptedQuestion findAdaptedQuestionsFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId);
+  AdaptedQuestion createAdaptedQuestionForMainQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion);
+  AdaptedQuestion updateAdaptedQuestionOfMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
   void deleteAdaptedQuestionById(UUID adaptedQuestionId);
 }

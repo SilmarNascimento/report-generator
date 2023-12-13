@@ -38,7 +38,7 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public AdaptedQuestion findAdaptedQuestionsByMainQuestionId(UUID mainQuestionId, UUID adaptedQuestionId) {
+  public AdaptedQuestion findAdaptedQuestionsFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
     return mainQuestionFound.getAdaptedQuestions().stream()
@@ -48,23 +48,30 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public AdaptedQuestion createAdaptedQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion) {
+  public AdaptedQuestion createAdaptedQuestionForMainQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion) {
     MainQuestion questionFound = mainQuestionRepository.findById(mainQuestionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
     adaptedQuestion.setMainQuestion(questionFound);
-
     return adaptedQuestionRepository.save(adaptedQuestion);
   }
 
   @Override
-  public AdaptedQuestion updateAdaptedQuestionById(
+  public AdaptedQuestion updateAdaptedQuestionOfMainQuestionById(
+      UUID mainQuestionId,
       UUID adaptedQuestionId,
       AdaptedQuestion adaptedQuestion
   ) {
-    AdaptedQuestion questionFound = adaptedQuestionRepository.findById(adaptedQuestionId)
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    AdaptedQuestion adaptedQuestionFound = mainQuestionFound.getAdaptedQuestions().stream()
+        .filter((AdaptedQuestion question) -> adaptedQuestionId.equals(question.getId()))
+        .findFirst()
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
-    UpdateEntity.copyNonNullProperties(adaptedQuestion, questionFound);
-    return questionFound;
+
+    UpdateEntity.copyNonNullProperties(adaptedQuestion, adaptedQuestionFound);
+    adaptedQuestionRepository.save(adaptedQuestionFound);
+
+    return adaptedQuestionFound;
   }
 
   @Override
