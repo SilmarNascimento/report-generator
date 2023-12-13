@@ -64,7 +64,7 @@ public class AdaptedQuestionController {
       AdaptedQuestionInputDto adaptedQuestionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestion(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
@@ -72,7 +72,7 @@ public class AdaptedQuestionController {
 
   @DeleteMapping("/{adaptedQuestionId}")
   public ResponseEntity<Void> deleteAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
-    adaptedQuestionService.deleteAdaptedQuestion(adaptedQuestionId);
+    adaptedQuestionService.deleteAdaptedQuestionById(adaptedQuestionId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

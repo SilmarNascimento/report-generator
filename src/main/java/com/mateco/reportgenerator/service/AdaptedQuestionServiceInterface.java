@@ -13,6 +13,6 @@ public interface AdaptedQuestionServiceInterface {
   AdaptedQuestion findAdaptedQuestionById(UUID adaptedQuestionId);
   List<AdaptedQuestion> findAllAdaptedQuestionsByMainQuestionId(UUID mainQuestionId);
   AdaptedQuestion createAdaptedQuestion(AdaptedQuestion adaptedQuestion);
-  AdaptedQuestion updateAdaptedQuestion(UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
-  void deleteAdaptedQuestion(UUID adaptedQuestionId);
+  AdaptedQuestion updateAdaptedQuestionById(UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
+  void deleteAdaptedQuestionById(UUID adaptedQuestionId);
 }

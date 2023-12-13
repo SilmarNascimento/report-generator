@@ -45,7 +45,7 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public AdaptedQuestion updateAdaptedQuestion(
+  public AdaptedQuestion updateAdaptedQuestionById(
       UUID adaptedQuestionId,
       AdaptedQuestion adaptedQuestion
   ) {
@@ -56,7 +56,7 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public void deleteAdaptedQuestion(UUID adaptedQuestionId) {
+  public void deleteAdaptedQuestionById(UUID adaptedQuestionId) {
     adaptedQuestionRepository.deleteById(adaptedQuestionId);
   }
 }

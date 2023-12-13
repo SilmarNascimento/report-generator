@@ -13,11 +13,11 @@ import java.util.UUID;
  *                     da entidade MainQuestion.
  */
 public interface MainQuestionServiceInterface {
-  List<MainQuestion> findAllQuestions();
-  MainQuestion findQuestionById(UUID questionId);
-  MainQuestion createQuestion(MainQuestion question);
-  MainQuestion updateQuestion(UUID questionId, MainQuestion question);
-  void deleteQuestion(UUID questionId);
+  List<MainQuestion> findAllMainQuestions();
+  MainQuestion findMainQuestionById(UUID questionId);
+  MainQuestion createMainQuestion(MainQuestion question);
+  MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question);
+  void deleteMainQuestionById(UUID questionId);
 
   Subject addSubject(UUID questionId, UUID subjectId);
   List<Subject> addSubject(UUID questionId, List<UUID> subjecstId);

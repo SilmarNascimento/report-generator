@@ -2,7 +2,10 @@ package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
+import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.util.List;
@@ -35,30 +38,30 @@ public class MainQuestionController {
   }
 
   @GetMapping
-  public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestions() {
+  public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(AdaptedQuestionOutputDto
-            .parseDto(adaptedQuestionService.findAllAdaptedQuestion()));
+        .body(MainQuestionOutputDto
+            .parseDto(mainQuestionService.findAllMainQuestions()));
   }
 
-  @GetMapping("/{adaptedQuestiontId}")
-  public ResponseEntity<AdaptedQuestionOutputDto> findAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
+  @GetMapping("/{mainQuestiontId}")
+  public ResponseEntity<MainQuestionOutputDto> findMainQuestionById(@PathVariable UUID mainQuestionId) {
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(AdaptedQuestionOutputDto
-            .parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
+        .body(MainQuestionOutputDto
+            .parseDto(mainQuestionService.findMainQuestionById(mainQuestionId)));
   }
 
   @PostMapping
-  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
-      @RequestBody AdaptedQuestionInputDto adaptedQuestionInputDto
+  public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
+      @RequestBody MainQuestionInputDto mainQuestionInputDto
   ) {
-    AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+    MainQuestion mainQuestionCreated = mainQuestionService
+        .createMainQuestion(MainQuestion.);
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
+        .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
   }
 
   @PutMapping("/{adaptedQuestionId}")
@@ -114,7 +117,7 @@ public class MainQuestionController {
       AdaptedQuestionInputDto adaptedQuestionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
-        .updateAdaptedQuestion(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
+        .updateAdaptedQuestionById(adaptedQuestionID, AdaptedQuestion.parseAdaptedQuestion(adaptedQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
@@ -122,7 +125,7 @@ public class MainQuestionController {
 
   @DeleteMapping("/{adaptedQuestionId}")
   public ResponseEntity<Void> deleteAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
-    adaptedQuestionService.deleteAdaptedQuestion(adaptedQuestionId);
+    adaptedQuestionService.deleteAdaptedQuestionById(adaptedQuestionId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
