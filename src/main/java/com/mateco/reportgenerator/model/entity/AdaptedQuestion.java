@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mateco.reportgenerator.controller.dto.AdaptedQuestionInputDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,4 +39,23 @@ public class AdaptedQuestion {
   @JoinColumn(name = "main_question_id")
   @JsonIgnore
   private MainQuestion mainQuestion;
+
+  public AdaptedQuestion(String title, String level, String image, List<Alternative> alternatives,
+      Alternative answer) {
+    this.title = title;
+    this.level = level;
+    this.image = image;
+    this.alternatives = alternatives;
+    this.answer = answer;
+  }
+
+  public static AdaptedQuestion parseAdaptedQuestion(AdaptedQuestionInputDto adaptedQuestionInputDto) {
+    return new AdaptedQuestion(
+        adaptedQuestionInputDto.title(),
+        adaptedQuestionInputDto.level(),
+        adaptedQuestionInputDto.image(),
+        adaptedQuestionInputDto.alternatives(),
+        adaptedQuestionInputDto.answer()
+    );
+  }
 }
