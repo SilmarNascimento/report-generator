@@ -89,25 +89,28 @@ public class MainQuestionController {
   //verificar todas as rotas abaixo com o vinculo das adaptedQuestions
 
   @GetMapping("/{mainQuestionId}/adapted-questions")
-  public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestionsFromMainQuestionById(
+  public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestionsFromMainQuestion(
       @PathVariable UUID mainQuestionId
   ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto
-            .parseDto(adaptedQuestionService.findAllAdaptedQuestion()));
+            .parseDto(adaptedQuestionService.findAllAdaptedQuestionFromMainQuestion(mainQuestionId)));
   }
 
-  @GetMapping("/{adaptedQuestiontId}")
-  public ResponseEntity<AdaptedQuestionOutputDto> findAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
+  @GetMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
+  public ResponseEntity<AdaptedQuestionOutputDto> findAdaptedQuestionFromMainQuestionById(
+      @PathVariable UUID mainQuestionId,
+      @PathVariable UUID adaptedQuestionId
+  ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto
-            .parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
+            .parseDto(adaptedQuestionService.findAdaptedQuestionsByMainQuestionId(mainQuestionId, adaptedQuestionId)));
   }
 
-  @PostMapping("/{mainQuestionId}/adapted-question")
-  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
+  @PostMapping("/{mainQuestionId}/adapted-questions")
+  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestionForMainQuestion(
       @PathVariable UUID mainQuestionId,
       @RequestBody QuestionInputDto questionInputDto
   ) {
@@ -118,8 +121,8 @@ public class MainQuestionController {
         .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
   }
 
-  @PutMapping("/{adaptedQuestionId}")
-  public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionById(
+  @PutMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
+  public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionOfMainQuestionById(
       @PathVariable UUID adaptedQuestionID,
       QuestionInputDto questionInputDto
   ) {
@@ -131,8 +134,8 @@ public class MainQuestionController {
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
   }
 
-  @DeleteMapping("/{adaptedQuestionId}")
-  public ResponseEntity<Void> deleteAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
+  @DeleteMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
+  public ResponseEntity<Void> deleteAdaptedQuestionFromMainQuestionById(@PathVariable UUID adaptedQuestionId) {
     adaptedQuestionService.deleteAdaptedQuestionById(adaptedQuestionId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)

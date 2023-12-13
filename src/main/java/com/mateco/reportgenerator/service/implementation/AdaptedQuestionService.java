@@ -31,19 +31,20 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public List<AdaptedQuestion> findAllAdaptedQuestion() {
-    return adaptedQuestionRepository.findAll();
+  public List<AdaptedQuestion> findAllAdaptedQuestionFromMainQuestion(UUID mainQuestionId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    return mainQuestionFound.getAdaptedQuestions();
   }
 
   @Override
-  public AdaptedQuestion findAdaptedQuestionById(UUID adaptedQuestionId) {
-    return adaptedQuestionRepository.findById(adaptedQuestionId)
+  public AdaptedQuestion findAdaptedQuestionsByMainQuestionId(UUID mainQuestionId, UUID adaptedQuestionId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    return mainQuestionFound.getAdaptedQuestions().stream()
+        .filter((AdaptedQuestion adaptedQuestion) -> adaptedQuestionId.equals(adaptedQuestion.getId()))
+        .findFirst()
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
-  }
-
-  @Override
-  public List<AdaptedQuestion> findAllAdaptedQuestionsByMainQuestionId(UUID mainQuestionId) {
-    return adaptedQuestionRepository.findAllByMainQuestionId(mainQuestionId);
   }
 
   @Override

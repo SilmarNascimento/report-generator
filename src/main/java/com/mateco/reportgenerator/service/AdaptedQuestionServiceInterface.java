@@ -9,9 +9,8 @@ import java.util.UUID;
  *                     da entidade AdaptedQuestion.
  */
 public interface AdaptedQuestionServiceInterface {
-  List<AdaptedQuestion> findAllAdaptedQuestion();
-  AdaptedQuestion findAdaptedQuestionById(UUID adaptedQuestionId);
-  List<AdaptedQuestion> findAllAdaptedQuestionsByMainQuestionId(UUID mainQuestionId);
+  List<AdaptedQuestion> findAllAdaptedQuestionFromMainQuestion(UUID mainQuestionId);
+  AdaptedQuestion findAdaptedQuestionsByMainQuestionId(UUID mainQuestionId, UUID adaptedQuestionId);
   AdaptedQuestion createAdaptedQuestion(UUID mainQuestionId, AdaptedQuestion   adaptedQuestion);
   AdaptedQuestion updateAdaptedQuestionById(UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
   void deleteAdaptedQuestionById(UUID adaptedQuestionId);
