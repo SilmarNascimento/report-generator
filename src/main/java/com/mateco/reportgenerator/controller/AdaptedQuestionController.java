@@ -44,17 +44,6 @@ public class AdaptedQuestionController {
             .parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
   }
 
-  @PostMapping
-  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
-      @RequestBody QuestionInputDto questionInputDto
-  ) {
-    AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
-  }
-
   @PutMapping("/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionById(
       @PathVariable UUID adaptedQuestionID,

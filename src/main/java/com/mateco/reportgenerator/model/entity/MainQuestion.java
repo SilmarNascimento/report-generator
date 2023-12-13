@@ -63,9 +63,17 @@ public class MainQuestion {
     this.subjects.add(subject);
   }
 
-  public MainQuestion(String title, List<Subject> subjects, String level, String image,
-      List<Alternative> alternatives, Alternative answer, List<AdaptedQuestion> adaptedQuestions,
-      List<MockExam> mockExams, List<Handout> handout) {
+  public MainQuestion(
+      String title,
+      List<Subject> subjects,
+      String level,
+      String image,
+      List<Alternative> alternatives,
+      Alternative answer,
+      List<AdaptedQuestion> adaptedQuestions,
+      List<MockExam> mockExams,
+      List<Handout> handout
+  ) {
     this.title = title;
     this.subjects = subjects;
     this.level = level;
@@ -77,8 +85,13 @@ public class MainQuestion {
     this.handout = handout;
   }
 
-  public MainQuestion(String title, String level, String image, List<Alternative> alternatives,
-      Alternative answer) {
+  public MainQuestion(
+      String title,
+      String level,
+      String image,
+      List<Alternative> alternatives,
+      Alternative answer
+  ) {
     this.title = title;
     this.level = level;
     this.image = image;

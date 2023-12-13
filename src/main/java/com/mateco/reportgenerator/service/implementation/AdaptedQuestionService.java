@@ -1,7 +1,9 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
+import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
@@ -17,10 +19,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   private final AdaptedQuestionRepository adaptedQuestionRepository;
+  private final MainQuestionRepository mainQuestionRepository;
 
   @Autowired
-  public AdaptedQuestionService(AdaptedQuestionRepository adaptedQuestionRepository) {
+  public AdaptedQuestionService(
+      AdaptedQuestionRepository adaptedQuestionRepository,
+      MainQuestionRepository mainQuestionRepository
+  ) {
     this.adaptedQuestionRepository = adaptedQuestionRepository;
+    this.mainQuestionRepository = mainQuestionRepository;
   }
 
   @Override
@@ -40,7 +47,11 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public AdaptedQuestion createAdaptedQuestion(AdaptedQuestion adaptedQuestion) {
+  public AdaptedQuestion createAdaptedQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion) {
+    MainQuestion questionFound = mainQuestionRepository.findById(mainQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    adaptedQuestion.setMainQuestion(questionFound);
+
     return adaptedQuestionRepository.save(adaptedQuestion);
   }
 

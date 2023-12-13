@@ -84,8 +84,14 @@ public class MainQuestionController {
         .build();
   }
 
-  @GetMapping
-  public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestions() {
+
+
+  //verificar todas as rotas abaixo com o vinculo das adaptedQuestions
+
+  @GetMapping("/{mainQuestionId}/adapted-questions")
+  public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestionsFromMainQuestionById(
+      @PathVariable UUID mainQuestionId
+  ) {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(AdaptedQuestionOutputDto
@@ -100,12 +106,13 @@ public class MainQuestionController {
             .parseDto(adaptedQuestionService.findAdaptedQuestionById(adaptedQuestionId)));
   }
 
-  @PostMapping
+  @PostMapping("/{mainQuestionId}/adapted-question")
   public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestion(
+      @PathVariable UUID mainQuestionId,
       @RequestBody QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestion(AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
+        .createAdaptedQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
@@ -127,6 +134,28 @@ public class MainQuestionController {
   @DeleteMapping("/{adaptedQuestionId}")
   public ResponseEntity<Void> deleteAdaptedQuestionById(@PathVariable UUID adaptedQuestionId) {
     adaptedQuestionService.deleteAdaptedQuestionById(adaptedQuestionId);
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
+  }
+
+  @PutMapping("/{mainQuestionId}/subject")
+  public ResponseEntity<MainQuestionOutputDto> addSubjectToMainQuestion(
+      @PathVariable UUID mainQuestionId,
+      @RequestBody List<UUID> subjectsId
+  ) {
+    MainQuestion mainQuestionUpdated = mainQuestionService.addSubject(mainQuestionId, subjectsId);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
+  }
+
+  @DeleteMapping("/{mainQuestionId}/subject")
+  public ResponseEntity<Void> removeSubjectFromMainQUestion(
+      @PathVariable UUID mainQuestionId,
+      @RequestBody List<UUID> subjectsId
+  ) {
+    mainQuestionService.removeSubject(mainQuestionId, subjectsId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

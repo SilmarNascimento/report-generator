@@ -12,7 +12,7 @@ public interface AdaptedQuestionServiceInterface {
   List<AdaptedQuestion> findAllAdaptedQuestion();
   AdaptedQuestion findAdaptedQuestionById(UUID adaptedQuestionId);
   List<AdaptedQuestion> findAllAdaptedQuestionsByMainQuestionId(UUID mainQuestionId);
-  AdaptedQuestion createAdaptedQuestion(AdaptedQuestion adaptedQuestion);
+  AdaptedQuestion createAdaptedQuestion(UUID mainQuestionId, AdaptedQuestion   adaptedQuestion);
   AdaptedQuestion updateAdaptedQuestionById(UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
   void deleteAdaptedQuestionById(UUID adaptedQuestionId);
 }
