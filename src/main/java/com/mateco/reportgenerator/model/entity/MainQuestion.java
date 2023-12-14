@@ -48,7 +48,10 @@ public class MainQuestion {
   private Alternative answer;
 
   @Column(name = "adapted_questions")
-  @OneToMany(mappedBy = "mainQuestion")
+  @OneToMany(
+      mappedBy = "mainQuestion",
+      orphanRemoval = true
+  )
   private List<AdaptedQuestion> adaptedQuestions;
 
   @ManyToMany(mappedBy = "mockExamQuestions")

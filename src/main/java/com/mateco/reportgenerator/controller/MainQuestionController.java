@@ -84,10 +84,6 @@ public class MainQuestionController {
         .build();
   }
 
-
-
-  //verificar todas as rotas abaixo com o vinculo das adaptedQuestions
-
   @GetMapping("/{mainQuestionId}/adapted-questions")
   public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestionsFromMainQuestion(
       @PathVariable UUID mainQuestionId
@@ -139,8 +135,11 @@ public class MainQuestionController {
   }
 
   @DeleteMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
-  public ResponseEntity<Void> deleteAdaptedQuestionFromMainQuestionById(@PathVariable UUID adaptedQuestionId) {
-    adaptedQuestionService.deleteAdaptedQuestionById(adaptedQuestionId);
+  public ResponseEntity<Void> deleteAdaptedQuestionFromMainQuestionById(
+      @PathVariable UUID mainQuestionId,
+      @PathVariable UUID adaptedQuestionId
+  ) {
+    adaptedQuestionService.deleteAdaptedQuestionFromMainQuestionById(mainQuestionId, adaptedQuestionId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

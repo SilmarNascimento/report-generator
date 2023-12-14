@@ -75,7 +75,14 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   }
 
   @Override
-  public void deleteAdaptedQuestionById(UUID adaptedQuestionId) {
+  public void deleteAdaptedQuestionFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    mainQuestionFound.getAdaptedQuestions().stream()
+        .filter((AdaptedQuestion question) -> adaptedQuestionId.equals(question.getId()))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
+
     adaptedQuestionRepository.deleteById(adaptedQuestionId);
   }
 }
