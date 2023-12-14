@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -24,12 +25,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MainQuestion {
+@EqualsAndHashCode(callSuper = true)
+public class MainQuestion extends Question{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private UUID id;
-
-  private String title;
 
   @ManyToMany
   @JoinTable(
@@ -39,10 +39,10 @@ public class MainQuestion {
   )
   private List<Subject> subjects;
 
-  private String level;
-
-  private String image;
-
+  @OneToMany(
+      mappedBy = "mainQuestion",
+      orphanRemoval = true
+  )
   private List<Alternative> alternatives;
 
   private Alternative answer;
@@ -77,10 +77,8 @@ public class MainQuestion {
       List<MockExam> mockExams,
       List<Handout> handout
   ) {
-    this.title = title;
+    super(title, level, image, alternatives, answer);
     this.subjects = subjects;
-    this.level = level;
-    this.image = image;
     this.alternatives = alternatives;
     this.answer = answer;
     this.adaptedQuestions = adaptedQuestions;
@@ -95,9 +93,7 @@ public class MainQuestion {
       List<Alternative> alternatives,
       Alternative answer
   ) {
-    this.title = title;
-    this.level = level;
-    this.image = image;
+    super(title, level, image, alternatives, answer);
     this.alternatives = alternatives;
     this.answer = answer;
   }

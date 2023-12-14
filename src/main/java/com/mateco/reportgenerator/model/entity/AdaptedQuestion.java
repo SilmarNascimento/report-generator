@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -20,17 +22,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdaptedQuestion {
+@EqualsAndHashCode(callSuper = true)
+public class AdaptedQuestion extends Question {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private UUID id;
 
-  private String title;
-
-  private String level;
-
-  private String image;
-
+  @OneToMany(
+      mappedBy = "adaptedQuestion",
+      orphanRemoval = true
+  )
   private List<Alternative> alternatives;
 
   private Alternative answer;
@@ -40,13 +41,14 @@ public class AdaptedQuestion {
   @JsonIgnore
   private MainQuestion mainQuestion;
 
-  public AdaptedQuestion(String title, String level, String image, List<Alternative> alternatives,
-      Alternative answer) {
-    this.title = title;
-    this.level = level;
-    this.image = image;
-    this.alternatives = alternatives;
-    this.answer = answer;
+  public AdaptedQuestion(
+      String title,
+      String level,
+      String image,
+      List<Alternative> alternatives,
+      Alternative answer
+  ) {
+    super(title, level, image, alternatives, answer);
   }
 
   public static AdaptedQuestion parseAdaptedQuestion(QuestionInputDto questionInputDto) {
