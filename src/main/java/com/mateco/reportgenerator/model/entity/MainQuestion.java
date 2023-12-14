@@ -77,7 +77,7 @@ public class MainQuestion extends Question{
       List<MockExam> mockExams,
       List<Handout> handout
   ) {
-    super(title, level, image, alternatives, answer);
+    super(title, level, image);
     this.subjects = subjects;
     this.alternatives = alternatives;
     this.answer = answer;
@@ -93,7 +93,7 @@ public class MainQuestion extends Question{
       List<Alternative> alternatives,
       Alternative answer
   ) {
-    super(title, level, image, alternatives, answer);
+    super(title, level, image);
     this.alternatives = alternatives;
     this.answer = answer;
   }

@@ -18,4 +18,10 @@ public abstract class Question {
   private List<Alternative> alternatives;
 
   private Alternative answer;
+
+  public Question(String title, String level, String image) {
+    this.title = title;
+    this.level = level;
+    this.image = image;
+  }
 }

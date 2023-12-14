@@ -48,7 +48,9 @@ public class AdaptedQuestion extends Question {
       List<Alternative> alternatives,
       Alternative answer
   ) {
-    super(title, level, image, alternatives, answer);
+    super(title, level, image);
+    this.alternatives = alternatives;
+    this.answer = answer;
   }
 
   public static AdaptedQuestion parseAdaptedQuestion(QuestionInputDto questionInputDto) {
