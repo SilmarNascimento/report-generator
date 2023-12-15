@@ -3,6 +3,7 @@ package com.mateco.reportgenerator.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +30,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class MainQuestion extends Question{
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "UUID")
   private UUID id;
 
   @ManyToMany
@@ -45,11 +47,13 @@ public class MainQuestion extends Question{
   )
   private List<Alternative> alternatives;
 
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "mainQuestionAnswer")
   private Alternative answer;
 
   @Column(name = "adapted_questions")
   @OneToMany(
       mappedBy = "mainQuestion",
+      cascade = CascadeType.ALL,
       orphanRemoval = true
   )
   private List<AdaptedQuestion> adaptedQuestions;

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Subject {
   @Id
-  @GeneratedValue
+  @GeneratedValue(generator = "UUID")
   private UUID id;
 
   private String name;

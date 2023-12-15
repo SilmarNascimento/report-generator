@@ -21,12 +21,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Handout {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "UUID")
   private UUID id;
 
   private String name;
-
-  private String year;
 
   @ManyToMany
   @JoinTable(

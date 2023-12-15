@@ -45,7 +45,7 @@ public class MainQuestionController {
             .parseDto(mainQuestionService.findAllMainQuestions()));
   }
 
-  @GetMapping("/{mainQuestiontId}")
+  @GetMapping("/{mainQuestionId}")
   public ResponseEntity<MainQuestionOutputDto> findMainQuestionById(@PathVariable UUID mainQuestionId) {
     return ResponseEntity
         .status(HttpStatus.OK)

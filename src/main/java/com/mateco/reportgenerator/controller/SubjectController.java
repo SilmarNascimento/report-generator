@@ -52,10 +52,10 @@ public class SubjectController {
 
   @PutMapping("/{subjectId}")
   public ResponseEntity<SubjectOutputDto> updateSubjectById(
-      @PathVariable UUID subjectID,
-      SubjectInputDto subjectInputDto
+      @PathVariable UUID subjectId,
+      @RequestBody SubjectInputDto subjectInputDto
   ) {
-    Subject updatedSubject = subjectService.updateSubject(subjectID, Subject.parseSubject(subjectInputDto));
+    Subject updatedSubject = subjectService.updateSubject(subjectId, Subject.parseSubject(subjectInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(SubjectOutputDto.parseDto(updatedSubject));

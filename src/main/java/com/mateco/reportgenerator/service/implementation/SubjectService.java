@@ -37,6 +37,7 @@ public class SubjectService implements SubjectServiceInterface {
 
   @Override
   public Subject createSubject(Subject subject) {
+    System.out.printf(subject.getName());
     subjectRepository.findByName(subject.getName())
         .ifPresent(subjectFound -> {
           throw new AlreadyExistsException("Conteúdo já cadastrado!");

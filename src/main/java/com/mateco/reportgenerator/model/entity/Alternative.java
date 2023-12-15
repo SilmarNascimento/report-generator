@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Alternative {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "UUID")
   private UUID id;
 
   private String description;
@@ -32,8 +33,18 @@ public class Alternative {
   @JsonIgnore
   private MainQuestion mainQuestion;
 
+  @OneToOne()
+  @JoinColumn(name = "main_question_answer_id")
+  @JsonIgnore
+  private MainQuestion mainQuestionAnswer;
+
   @ManyToOne
   @JoinColumn(name = "adapted_question_id")
   @JsonIgnore
   private AdaptedQuestion adaptedQuestion;
+
+  @OneToOne()
+  @JoinColumn(name = "adapted_question_answer_id")
+  @JsonIgnore
+  private AdaptedQuestion adaptedQuestionAnswer;
 }
