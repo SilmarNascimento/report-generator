@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
@@ -42,7 +43,9 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public List<MainQuestion> findAllMainQuestions() {
-    return mainQuestionRepository.findAll();
+    List<MainQuestion> achei = mainQuestionRepository.findAll();
+    System.out.println("retorno da lista de questões principais " + achei);
+    return achei;
   }
 
   @Override
@@ -53,6 +56,10 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public MainQuestion createMainQuestion(MainQuestion question) {
+    System.out.println(question);
+    List<Subject> subjectList = question.getSubjects();
+    List<Alternative> alternativeList = question.getAlternatives();
+    Alternative CorectAnswer = question.getAnswer();
     return mainQuestionRepository.save(question);
   }
 

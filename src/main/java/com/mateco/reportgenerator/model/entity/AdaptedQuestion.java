@@ -57,8 +57,8 @@ public class AdaptedQuestion extends Question {
         questionInputDto.title(),
         questionInputDto.level(),
         questionInputDto.image(),
-        questionInputDto.alternatives(),
-        questionInputDto.answer()
+        Alternative.parseAlternative(questionInputDto.alternatives()),
+        Alternative.parseAlternative(questionInputDto.answer())
     );
   }
 }
