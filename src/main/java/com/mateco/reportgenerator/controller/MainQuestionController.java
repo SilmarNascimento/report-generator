@@ -1,10 +1,12 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.AlternativeOutputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
@@ -40,7 +42,6 @@ public class MainQuestionController {
   @GetMapping
   public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
     List<MainQuestion> questions = mainQuestionService.findAllMainQuestions();
-    System.out.println(questions.get(0).toString());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto

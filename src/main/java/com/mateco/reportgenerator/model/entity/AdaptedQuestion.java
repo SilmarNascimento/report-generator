@@ -26,10 +26,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AdaptedQuestion extends Question {
-  @Id
-  @GeneratedValue(generator = "UUID")
-  private UUID id;
-
   @OneToMany(
       mappedBy = "adaptedQuestion",
       orphanRemoval = true

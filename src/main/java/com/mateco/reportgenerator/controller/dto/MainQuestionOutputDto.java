@@ -15,8 +15,8 @@ public record MainQuestionOutputDto(
     List<Subject> subjects,
     String level,
     String image,
-    List<Alternative> alternatives,
-    Alternative answer,
+    List<AlternativeOutputDto> alternatives,
+    AlternativeOutputDto answer,
     List<AdaptedQuestion> adaptedQuestions,
     List<MockExam> mockExams,
     List<Handout> handout
@@ -28,8 +28,8 @@ public record MainQuestionOutputDto(
         mainQuestion.getSubjects(),
         mainQuestion.getLevel(),
         mainQuestion.getImage(),
-        mainQuestion.getAlternatives(),
-        mainQuestion.getAnswer(),
+        AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
+        AlternativeOutputDto.parseDto(mainQuestion.getAnswer()),
         mainQuestion.getAdaptedQuestions(),
         mainQuestion.getMockExams(),
         mainQuestion.getHandout()
@@ -44,8 +44,8 @@ public record MainQuestionOutputDto(
           mainQuestion.getSubjects(),
           mainQuestion.getLevel(),
           mainQuestion.getImage(),
-          mainQuestion.getAlternatives(),
-          mainQuestion.getAnswer(),
+          AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
+          AlternativeOutputDto.parseDto(mainQuestion.getAnswer()),
           mainQuestion.getAdaptedQuestions(),
           mainQuestion.getMockExams(),
           mainQuestion.getHandout()

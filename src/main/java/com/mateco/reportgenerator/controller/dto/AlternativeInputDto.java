@@ -1,5 +1,8 @@
 package com.mateco.reportgenerator.controller.dto;
 
-public record AlternativeInputDto() {
+public record AlternativeInputDto(
+    String description,
+    String image
+) {
 
 }

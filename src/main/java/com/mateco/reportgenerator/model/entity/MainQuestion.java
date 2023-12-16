@@ -29,10 +29,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MainQuestion extends Question {
-  @Id
-  @GeneratedValue(generator = "UUID")
-  private UUID id;
-
   @ManyToMany
   @JoinTable(
       name = "questions_content",
