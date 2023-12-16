@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.model.entity;
 
+import jakarta.persistence.MappedSuperclass;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,16 +9,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@MappedSuperclass
 public abstract class Question {
-  private String title;
+  protected String title;
 
-  private String level;
+  protected String level;
 
-  private String image;
+  protected String image;
 
-  private List<Alternative> alternatives;
+  protected List<Alternative> alternatives;
 
-  private Alternative answer;
+  protected Alternative answer;
 
   public Question(String title, String level, String image) {
     this.title = title;

@@ -39,10 +39,12 @@ public class MainQuestionController {
 
   @GetMapping
   public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
+    List<MainQuestion> questions = mainQuestionService.findAllMainQuestions();
+    System.out.println(questions.get(0).toString());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto
-            .parseDto(mainQuestionService.findAllMainQuestions()));
+            .parseDto(questions));
   }
 
   @GetMapping("/{mainQuestionId}")

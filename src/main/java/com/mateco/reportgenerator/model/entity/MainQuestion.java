@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MainQuestion extends Question{
+public class MainQuestion extends Question {
   @Id
   @GeneratedValue(generator = "UUID")
   private UUID id;
