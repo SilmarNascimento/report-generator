@@ -36,4 +36,10 @@ public class Subject {
   public static Subject parseSubject(SubjectInputDto inputDto) {
     return new Subject(inputDto.name());
   }
+
+  public static List<Subject> parseSubject(List<SubjectInputDto> subjectInputDtos) {
+    return subjectInputDtos.stream()
+        .map((SubjectInputDto inputDto) -> new Subject(inputDto.name()))
+        .toList();
+  }
 }

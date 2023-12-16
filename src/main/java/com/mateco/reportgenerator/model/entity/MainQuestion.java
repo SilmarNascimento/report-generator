@@ -103,19 +103,19 @@ public class MainQuestion extends Question {
         mainQuestionInputDto.title(),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
-        mainQuestionInputDto.alternatives(),
-        mainQuestionInputDto.answer()
+        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        Alternative.parseAlternative(mainQuestionInputDto.answer())
     );
   }
 
   public static MainQuestion parseMainQuestion(MainQuestionInputDto mainQuestionInputDto) {
     return new MainQuestion(
         mainQuestionInputDto.title(),
-        mainQuestionInputDto.subjects(),
+        Subject.parseSubject(mainQuestionInputDto.subjects()),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
-        mainQuestionInputDto.alternatives(),
-        mainQuestionInputDto.answer(),
+        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        Alternative.parseAlternative(mainQuestionInputDto.answer()),
         mainQuestionInputDto.adaptedQuestions(),
         mainQuestionInputDto.mockExams(),
         mainQuestionInputDto.handout()

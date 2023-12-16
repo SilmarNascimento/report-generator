@@ -7,8 +7,8 @@ public record QuestionInputDto(
     String title,
     String level,
     String image,
-    List<Alternative>alternatives,
-    Alternative answer
+    List<AlternativeInputDto>alternatives,
+    AlternativeInputDto answer
 ) {
 
 }

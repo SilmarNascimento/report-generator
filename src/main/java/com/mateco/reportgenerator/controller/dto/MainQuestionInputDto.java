@@ -10,11 +10,11 @@ import java.util.List;
 
 public record MainQuestionInputDto(
     String title,
-    List<Subject> subjects,
+    List<SubjectInputDto> subjects,
     String level,
     String image,
-    List<Alternative> alternatives,
-    Alternative answer,
+    List<AlternativeInputDto> alternatives,
+    AlternativeInputDto answer,
     List<AdaptedQuestion> adaptedQuestions,
     List<MockExam> mockExams,
     List<Handout> handout
