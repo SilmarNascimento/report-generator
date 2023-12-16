@@ -11,8 +11,8 @@ public interface AlternativeServiceInterface {
   List<Alternative> findAllAlternativesByMainQuestionId(UUID mainQuestionId);
   List<Alternative> findAllAlternativesByAdaptedQuestionId(UUID adaptedQuestionId);
   Alternative findAlternativeById(UUID alternativeId);
-  Alternative createAlternative(MainQuestion mainQuestion, Alternative alternative);
-  Alternative createAlternative(AdaptedQuestion adaptedQuestion, Alternative alternative);
+  List<Alternative> createAlternatives(MainQuestion mainQuestion, List<Alternative> alternative);
+  List<Alternative> createAlternatives(AdaptedQuestion adaptedQuestion, List<Alternative> alternative);
   Alternative updateAlternativeById(UUID alternativeId, Alternative alternative);
   void deleteAlternativeById(UUID alternativeId);
 }

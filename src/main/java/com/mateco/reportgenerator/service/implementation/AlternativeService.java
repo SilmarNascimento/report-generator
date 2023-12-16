@@ -51,21 +51,21 @@ public class AlternativeService implements AlternativeServiceInterface {
   }
 
   @Override
-  public Alternative createAlternative(
+  public List<Alternative> createAlternatives(
       MainQuestion mainQuestion,
-      Alternative alternative
+      List<Alternative> alternatives
   ) {
-    alternative.setMainQuestion(mainQuestion);
-    return alternativeRespository.save(alternative);
+    alternatives.forEach((Alternative alternative) -> alternative.setMainQuestion(mainQuestion));
+    return alternativeRespository.saveAll(alternatives);
   }
 
   @Override
-  public Alternative createAlternative(
+  public List<Alternative> createAlternatives(
       AdaptedQuestion adaptedQuestion,
-      Alternative alternative
+      List<Alternative> alternatives
   ) {
-    alternative.setAdaptedQuestion(adaptedQuestion);
-    return alternativeRespository.save(alternative);
+    alternatives.forEach((Alternative alternative) -> alternative.setAdaptedQuestion(adaptedQuestion));
+    return alternativeRespository.saveAll(alternatives);
   }
 
   @Override
