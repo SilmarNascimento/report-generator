@@ -39,6 +39,7 @@ public class MainQuestion extends Question {
 
   @OneToMany(
       mappedBy = "mainQuestion",
+      cascade = CascadeType.ALL,
       orphanRemoval = true
   )
   private List<Alternative> alternatives;

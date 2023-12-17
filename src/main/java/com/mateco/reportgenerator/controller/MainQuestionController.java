@@ -42,6 +42,7 @@ public class MainQuestionController {
   @GetMapping
   public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
     List<MainQuestion> questions = mainQuestionService.findAllMainQuestions();
+    System.out.println(questions);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto
@@ -69,11 +70,11 @@ public class MainQuestionController {
 
   @PutMapping("/{mainQuestionId}")
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
-      @PathVariable UUID mainQuestionID,
+      @PathVariable UUID mainQuestionId,
       MainQuestionInputDto mainQuestionInputDto
   ) {
     MainQuestion updatedMainQuestion = mainQuestionService
-        .updateMainQuestionById(mainQuestionID, MainQuestion.parseMainQuestion(mainQuestionInputDto));
+        .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto.parseDto(updatedMainQuestion));
@@ -123,13 +124,13 @@ public class MainQuestionController {
   @PutMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionOfMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      @PathVariable UUID adaptedQuestionID,
+      @PathVariable UUID adaptedQuestionId,
       QuestionInputDto questionInputDto
   ) {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
         .updateAdaptedQuestionOfMainQuestionById(
             mainQuestionId,
-            adaptedQuestionID,
+            adaptedQuestionId,
             AdaptedQuestion.parseAdaptedQuestion(questionInputDto)
         );
     return ResponseEntity

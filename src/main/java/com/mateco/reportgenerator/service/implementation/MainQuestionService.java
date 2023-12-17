@@ -7,12 +7,15 @@ import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
+import com.mateco.reportgenerator.model.repository.AlternativeRespository;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
+import com.mateco.reportgenerator.service.AlternativeServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,26 +29,25 @@ import org.springframework.stereotype.Service;
 public class MainQuestionService implements MainQuestionServiceInterface {
   private final MainQuestionRepository mainQuestionRepository;
   private final AdaptedQuestionRepository adaptedQuestionRepository;
+  private final AlternativeServiceInterface alternativeService;
   private  final SubjectRepository subjectRepository;
 
   @Autowired
   public MainQuestionService(
       MainQuestionRepository mainQuestionRepository,
       AdaptedQuestionRepository adaptedQuestionRepository,
+      AlternativeService alternativeService,
       SubjectRepository subjectRepository
   ) {
     this.mainQuestionRepository = mainQuestionRepository;
     this.adaptedQuestionRepository = adaptedQuestionRepository;
+    this.alternativeService = alternativeService;
     this.subjectRepository = subjectRepository;
   }
 
-
-
   @Override
   public List<MainQuestion> findAllMainQuestions() {
-    List<MainQuestion> achei = mainQuestionRepository.findAll();
-    System.out.println("retorno da lista de questões principais " + achei);
-    return achei;
+    return mainQuestionRepository.findAll();
   }
 
   @Override
@@ -56,11 +58,10 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public MainQuestion createMainQuestion(MainQuestion question) {
-    System.out.println(question);
-    List<Subject> subjectList = question.getSubjects();
+    MainQuestion mainQuestionSaved = mainQuestionRepository.save(question);
     List<Alternative> alternativeList = question.getAlternatives();
-    Alternative CorectAnswer = question.getAnswer();
-    return mainQuestionRepository.save(question);
+    alternativeService.createAlternatives(mainQuestionSaved, alternativeList);
+    return mainQuestionSaved;
   }
 
   @Override

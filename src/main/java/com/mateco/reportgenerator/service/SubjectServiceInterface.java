@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface SubjectServiceInterface {
   List<Subject> findAllSubjects();
   Subject findSubjectById(UUID subjectId);
+  List<Subject> findAllByName(List<String> subjectNameList);
   Subject createSubject(Subject subject);
   Subject updateSubject(UUID subjectId, Subject subject);
   void deleteSubject(UUID subjectId);
