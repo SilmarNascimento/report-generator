@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
+import com.mateco.reportgenerator.service.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,12 +29,10 @@ import lombok.NoArgsConstructor;
 public class AdaptedQuestion extends Question {
   @OneToMany(
       mappedBy = "adaptedQuestion",
+      cascade = CascadeType.ALL,
       orphanRemoval = true
   )
   private List<Alternative> alternatives;
-
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "adaptedQuestionAnswer")
-  private Alternative answer;
 
   @ManyToOne
   @JoinColumn(name = "main_question_id")
@@ -44,12 +43,10 @@ public class AdaptedQuestion extends Question {
       String title,
       String level,
       String image,
-      List<Alternative> alternatives,
-      Alternative answer
+      List<Alternative> alternatives
   ) {
     super(title, level, image);
     this.alternatives = alternatives;
-    this.answer = answer;
   }
 
   public static AdaptedQuestion parseAdaptedQuestion(QuestionInputDto questionInputDto) {
@@ -57,8 +54,7 @@ public class AdaptedQuestion extends Question {
         questionInputDto.title(),
         questionInputDto.level(),
         questionInputDto.image(),
-        Alternative.parseAlternative(questionInputDto.alternatives()),
-        Alternative.parseAlternative(questionInputDto.answer())
+        Alternative.parseAlternative(questionInputDto.alternatives())
     );
   }
 }

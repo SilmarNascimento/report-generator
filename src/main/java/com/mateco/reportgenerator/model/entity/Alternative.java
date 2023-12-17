@@ -35,20 +35,13 @@ public class Alternative {
   @JsonIgnore
   private MainQuestion mainQuestion;
 
-  @OneToOne()
-  @JoinColumn(name = "main_question_answer_id")
-  @JsonIgnore
-  private MainQuestion mainQuestionAnswer;
 
   @ManyToOne
   @JoinColumn(name = "adapted_question_id")
   @JsonIgnore
   private AdaptedQuestion adaptedQuestion;
 
-  @OneToOne()
-  @JoinColumn(name = "adapted_question_answer_id")
-  @JsonIgnore
-  private AdaptedQuestion adaptedQuestionAnswer;
+  private boolean questionAnswer;
 
   public Alternative(String description, String image) {
     this.description = description;

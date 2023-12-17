@@ -3,9 +3,11 @@ package com.mateco.reportgenerator.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
+import com.mateco.reportgenerator.service.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,12 +42,10 @@ public class MainQuestion extends Question {
   @OneToMany(
       mappedBy = "mainQuestion",
       cascade = CascadeType.ALL,
-      orphanRemoval = true
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
   )
   private List<Alternative> alternatives;
-
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "mainQuestionAnswer")
-  private Alternative answer;
 
   @Column(name = "adapted_questions")
   @OneToMany(
@@ -73,7 +73,6 @@ public class MainQuestion extends Question {
       String level,
       String image,
       List<Alternative> alternatives,
-      Alternative answer,
       List<AdaptedQuestion> adaptedQuestions,
       List<MockExam> mockExams,
       List<Handout> handout
@@ -81,7 +80,6 @@ public class MainQuestion extends Question {
     super(title, level, image);
     this.subjects = subjects;
     this.alternatives = alternatives;
-    this.answer = answer;
     this.adaptedQuestions = adaptedQuestions;
     this.mockExams = mockExams;
     this.handout = handout;
@@ -91,12 +89,10 @@ public class MainQuestion extends Question {
       String title,
       String level,
       String image,
-      List<Alternative> alternatives,
-      Alternative answer
+      List<Alternative> alternatives
   ) {
     super(title, level, image);
     this.alternatives = alternatives;
-    this.answer = answer;
   }
 
   public static MainQuestion parseMainQuestion(QuestionInputDto mainQuestionInputDto) {
@@ -104,8 +100,7 @@ public class MainQuestion extends Question {
         mainQuestionInputDto.title(),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
-        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
-        Alternative.parseAlternative(mainQuestionInputDto.answer())
+        Alternative.parseAlternative(mainQuestionInputDto.alternatives())
     );
   }
 
@@ -116,7 +111,6 @@ public class MainQuestion extends Question {
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
-        Alternative.parseAlternative(mainQuestionInputDto.answer()),
         mainQuestionInputDto.adaptedQuestions(),
         mainQuestionInputDto.mockExams(),
         mainQuestionInputDto.handout()

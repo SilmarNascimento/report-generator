@@ -47,20 +47,23 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public List<MainQuestion> findAllMainQuestions() {
-    return mainQuestionRepository.findAll();
+    List<MainQuestion> list = mainQuestionRepository.findAll();
+    System.out.println("lista de questões encontradas: " + list);
+    return list;
   }
 
   @Override
   public MainQuestion findMainQuestionById(UUID questionId) {
-    return mainQuestionRepository.findById(questionId)
+    MainQuestion mainQuestion = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    System.out.println("questão encontrada por Id: " + mainQuestion);
+    return mainQuestion;
   }
 
   @Override
   public MainQuestion createMainQuestion(MainQuestion question) {
     MainQuestion mainQuestionSaved = mainQuestionRepository.save(question);
-    List<Alternative> alternativeList = question.getAlternatives();
-    alternativeService.createAlternatives(mainQuestionSaved, alternativeList);
+    System.out.println("retorno ao salvar no banco de dados a MainQuestion: " + mainQuestionSaved.toString());
     return mainQuestionSaved;
   }
 

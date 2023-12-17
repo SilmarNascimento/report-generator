@@ -22,7 +22,6 @@ public interface MainQuestionServiceInterface {
   MainQuestion addSubject(UUID questionId, List<UUID> subjecstId);
   void removeSubject(UUID questionId, List<UUID> subjectsId);
 
-
   AdaptedQuestion addAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
   void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
 

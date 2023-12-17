@@ -14,7 +14,6 @@ public record MainQuestionInputDto(
     String level,
     String image,
     List<AlternativeInputDto> alternatives,
-    AlternativeInputDto answer,
     List<AdaptedQuestion> adaptedQuestions,
     List<MockExam> mockExams,
     List<Handout> handout

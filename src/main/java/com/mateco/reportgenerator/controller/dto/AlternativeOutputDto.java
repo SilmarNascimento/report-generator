@@ -5,12 +5,14 @@ import java.util.List;
 
 public record AlternativeOutputDto(
     String description,
-    String image
+    String image,
+    boolean questionAnswer
 ) {
   public static AlternativeOutputDto parseDto(Alternative alternative) {
     return new AlternativeOutputDto(
         alternative.getDescription(),
-        alternative.getImage()
+        alternative.getImage(),
+        alternative.isQuestionAnswer()
     );
   }
 
@@ -18,7 +20,8 @@ public record AlternativeOutputDto(
     return alternatives.stream()
         .map((Alternative alternative) -> new AlternativeOutputDto(
           alternative.getDescription(),
-          alternative.getImage()))
+          alternative.getImage(),
+          alternative.isQuestionAnswer()))
         .toList();
   }
 }
