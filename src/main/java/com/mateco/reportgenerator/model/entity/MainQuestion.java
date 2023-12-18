@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -85,22 +86,16 @@ public class MainQuestion extends Question {
     this.handout = handout;
   }
 
-  public MainQuestion(
-      String title,
-      String level,
-      String image,
-      List<Alternative> alternatives
-  ) {
-    super(title, level, image);
-    this.alternatives = alternatives;
-  }
-
   public static MainQuestion parseMainQuestion(QuestionInputDto mainQuestionInputDto) {
     return new MainQuestion(
         mainQuestionInputDto.title(),
+        new ArrayList<>(),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
-        Alternative.parseAlternative(mainQuestionInputDto.alternatives())
+        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
     );
   }
 

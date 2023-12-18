@@ -43,6 +43,11 @@ public class Alternative {
 
   private boolean questionAnswer;
 
+  @Override
+  public String toString() {
+    return "";
+  }
+
   public Alternative(String description, String image, boolean questionAnswer) {
     this.description = description;
     this.image = image;

@@ -15,6 +15,7 @@ import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,11 +62,10 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
+  @Transactional
   public MainQuestion createMainQuestion(MainQuestion question) {
-    MainQuestion mainQuestionSaved = mainQuestionRepository.save(question);
-    alternativeService.createAlternatives(mainQuestionSaved, mainQuestionSaved.getAlternatives());
-    System.out.println("retorno ao salvar no banco de dados a MainQuestion: " + mainQuestionSaved.toString());
-    return mainQuestionSaved;
+    question.getAlternatives().forEach((Alternative alternative) -> alternative.setMainQuestion(question));
+    return mainQuestionRepository.save(question);
   }
 
   @Override
