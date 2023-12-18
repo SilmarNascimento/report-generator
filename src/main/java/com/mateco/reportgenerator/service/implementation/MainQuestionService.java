@@ -63,6 +63,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   @Override
   public MainQuestion createMainQuestion(MainQuestion question) {
     MainQuestion mainQuestionSaved = mainQuestionRepository.save(question);
+    alternativeService.createAlternatives(mainQuestionSaved, mainQuestionSaved.getAlternatives());
     System.out.println("retorno ao salvar no banco de dados a MainQuestion: " + mainQuestionSaved.toString());
     return mainQuestionSaved;
   }

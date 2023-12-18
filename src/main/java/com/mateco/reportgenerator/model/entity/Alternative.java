@@ -43,15 +43,17 @@ public class Alternative {
 
   private boolean questionAnswer;
 
-  public Alternative(String description, String image) {
+  public Alternative(String description, String image, boolean questionAnswer) {
     this.description = description;
     this.image = image;
+    this.questionAnswer = questionAnswer;
   }
 
   public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto) {
     return new Alternative(
         alternativeInputDto.description(),
-        alternativeInputDto.image()
+        alternativeInputDto.image(),
+        alternativeInputDto.questionAnswer()
     );
   }
 
@@ -59,7 +61,8 @@ public class Alternative {
     return alternativesInputDto.stream()
         .map((AlternativeInputDto alternativeInputDto) -> new Alternative(
           alternativeInputDto.description(),
-          alternativeInputDto.image()
+          alternativeInputDto.image(),
+          alternativeInputDto.questionAnswer()
         ))
         .toList();
   }
