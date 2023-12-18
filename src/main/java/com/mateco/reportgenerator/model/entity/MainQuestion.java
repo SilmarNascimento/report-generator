@@ -106,9 +106,9 @@ public class MainQuestion extends Question {
         mainQuestionInputDto.level(),
         mainQuestionInputDto.image(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
-        mainQuestionInputDto.adaptedQuestions(),
-        mainQuestionInputDto.mockExams(),
-        mainQuestionInputDto.handout()
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
     );
   }
 }

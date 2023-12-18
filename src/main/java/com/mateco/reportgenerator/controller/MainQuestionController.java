@@ -71,7 +71,7 @@ public class MainQuestionController {
   @PutMapping("/{mainQuestionId}")
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      MainQuestionInputDto mainQuestionInputDto
+      @RequestBody MainQuestionInputDto mainQuestionInputDto
   ) {
     MainQuestion updatedMainQuestion = mainQuestionService
         .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto));

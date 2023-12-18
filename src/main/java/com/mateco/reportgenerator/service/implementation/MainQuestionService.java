@@ -48,17 +48,13 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public List<MainQuestion> findAllMainQuestions() {
-    List<MainQuestion> list = mainQuestionRepository.findAll();
-    System.out.println("lista de questões encontradas: " + list);
-    return list;
+    return mainQuestionRepository.findAll();
   }
 
   @Override
   public MainQuestion findMainQuestionById(UUID questionId) {
-    MainQuestion mainQuestion = mainQuestionRepository.findById(questionId)
+    return mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    System.out.println("questão encontrada por Id: " + mainQuestion);
-    return mainQuestion;
   }
 
   @Override
@@ -72,8 +68,12 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+    System.out.println(question);
+    UpdateEntity.setUpdateNullProperty(question, mainQuestionFound);
+    System.out.println(question);
     UpdateEntity.copyNonNullProperties(question, mainQuestionFound);
-    return mainQuestionFound;
+    System.out.println(mainQuestionFound);
+    return mainQuestionRepository.save(mainQuestionFound);
   }
 
   @Override

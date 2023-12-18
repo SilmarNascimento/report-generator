@@ -1,6 +1,9 @@
 package com.mateco.reportgenerator.utils;
 
+import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,5 +49,15 @@ public class UpdateEntity {
     String[] result = new String[emptyNames.size()];
     return emptyNames.toArray(result);
   }
-}
 
+  public static void setUpdateNullProperty(MainQuestion questionSource, MainQuestion questionTarget) {
+    questionSource.setAlternatives(questionTarget.getAlternatives());
+    questionSource.setAdaptedQuestions(questionTarget.getAdaptedQuestions());
+    questionSource.setMockExams(questionTarget.getMockExams());
+    questionSource.setHandout(questionTarget.getHandout());
+  }
+
+  public static void setUpdateNullProperty(AdaptedQuestion question) {
+    question.setAlternatives(null);
+  }
+}
