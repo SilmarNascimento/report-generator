@@ -64,10 +64,6 @@ public class MainQuestion extends Question {
   @JsonIgnore
   private List<Handout> handout;
 
-  public void setSubjects(Subject subject) {
-    this.subjects.add(subject);
-  }
-
   public MainQuestion(
       String title,
       List<Subject> subjects,

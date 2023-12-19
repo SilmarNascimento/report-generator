@@ -38,7 +38,6 @@ public class UpdateEntity {
     PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
     Set<String> emptyNames = new HashSet<>();
-    System.out.println(emptyNames);
     for (PropertyDescriptor pd : pds) {
       Object srcValue = src.getPropertyValue(pd.getName());
       if (srcValue == null) {
@@ -51,6 +50,7 @@ public class UpdateEntity {
   }
 
   public static void setUpdateNullProperty(MainQuestion questionSource, MainQuestion questionTarget) {
+    questionSource.setSubjects(questionTarget.getSubjects());
     questionSource.setAlternatives(questionTarget.getAlternatives());
     questionSource.setAdaptedQuestions(questionTarget.getAdaptedQuestions());
     questionSource.setMockExams(questionTarget.getMockExams());

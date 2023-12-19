@@ -89,8 +89,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     List<Subject> mainQuestionSubjectList = subjectList.stream()
         .filter((Subject subject) -> subjectsId.contains(subject))
         .toList();
-    mainQuestionSubjectList
-        .forEach((Subject subject) -> mainQuestionFound.setSubjects(subject));
+    mainQuestionFound.setSubjects(mainQuestionSubjectList);
     mainQuestionRepository.save(mainQuestionFound);
     return mainQuestionFound;
   }
