@@ -68,11 +68,8 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    System.out.println(question);
     UpdateEntity.setUpdateNullProperty(question, mainQuestionFound);
-    System.out.println(question);
     UpdateEntity.copyNonNullProperties(question, mainQuestionFound);
-    System.out.println(mainQuestionFound);
     return mainQuestionRepository.save(mainQuestionFound);
   }
 
@@ -106,17 +103,23 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
-  public AdaptedQuestion addAdaptedQuestion(
+  public MainQuestion addAdaptedQuestion(
       UUID questionId,
-      UUID adaptedQuestionId
+      AdaptedQuestion adaptedQuestion
   ) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    AdaptedQuestion adaptedQuestionFound = adaptedQuestionRepository.findById(adaptedQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
-    adaptedQuestionFound.setMainQuestion(mainQuestionFound);
-    adaptedQuestionRepository.save(adaptedQuestionFound);
-    return adaptedQuestionFound;
+    adaptedQuestion.setMainQuestion(mainQuestionFound);
+    adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> alternative.setAdaptedQuestion(adaptedQuestion));
+
+    List<AdaptedQuestion> adaptedQuestionList = mainQuestionFound.getAdaptedQuestions();
+    adaptedQuestionList.add(adaptedQuestion);
+    mainQuestionFound.setAdaptedQuestions(adaptedQuestionList);
+
+    System.out.println(mainQuestionFound);
+    System.out.println(mainQuestionFound.getAdaptedQuestions());
+
+    return mainQuestionRepository.save(mainQuestionFound);
   }
 
   @Override

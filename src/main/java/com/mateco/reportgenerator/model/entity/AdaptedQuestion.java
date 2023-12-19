@@ -49,6 +49,17 @@ public class AdaptedQuestion extends Question {
     this.alternatives = alternatives;
   }
 
+  @Override
+  public String toString() {
+    return "AdaptedQuestion{" +
+        "id: " + this.getId() +
+        "title: " + this.getTitle() +
+        "level: " + this.getLevel() +
+        "image: " + this.image +
+        '}';
+  }
+
+
   public static AdaptedQuestion parseAdaptedQuestion(QuestionInputDto questionInputDto) {
     return new AdaptedQuestion(
         questionInputDto.title(),

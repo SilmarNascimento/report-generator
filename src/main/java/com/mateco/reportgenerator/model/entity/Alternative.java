@@ -45,7 +45,11 @@ public class Alternative {
 
   @Override
   public String toString() {
-    return "";
+    return "Alternative{" +
+        "id: " + this.getId() +
+        "description: " + this.description +
+        "image: " + this.image +
+        '}';
   }
 
   public Alternative(String description, String image, boolean questionAnswer) {

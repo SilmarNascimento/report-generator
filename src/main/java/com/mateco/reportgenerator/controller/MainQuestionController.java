@@ -110,15 +110,14 @@ public class MainQuestionController {
   }
 
   @PostMapping("/{mainQuestionId}/adapted-questions")
-  public ResponseEntity<AdaptedQuestionOutputDto> createAdaptedQuestionForMainQuestion(
+  public ResponseEntity<MainQuestionOutputDto> createAdaptedQuestionForMainQuestion(
       @PathVariable UUID mainQuestionId,
       @RequestBody QuestionInputDto questionInputDto
   ) {
-    AdaptedQuestion adaptedQuestionCreated = adaptedQuestionService
-        .createAdaptedQuestionForMainQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
+    MainQuestion mainQuestionCreated = mainQuestionService.addAdaptedQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(AdaptedQuestionOutputDto.parseDto(adaptedQuestionCreated));
+        .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
   }
 
   @PutMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
