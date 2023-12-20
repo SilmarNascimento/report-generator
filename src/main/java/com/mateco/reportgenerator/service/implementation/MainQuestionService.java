@@ -79,30 +79,29 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
+  @Transactional
   public MainQuestion addSubject(UUID questionId, List<UUID> subjectsId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    List<Subject> subjectList = subjectRepository.findAll();
-    List<Subject> subjectListToAdd = subjectList.stream()
-        .filter((Subject subject) -> subjectsId.contains(subject.getId()))
-        .toList();
+    List<Subject> subjectListToAdd = subjectRepository.findAllById(subjectsId);
 
-    List<Subject> mainQuestionSubjectList = mainQuestionFound.getSubjects();
-    mainQuestionSubjectList.addAll(subjectListToAdd);
-    mainQuestionFound.setSubjects(mainQuestionSubjectList);
+    if (subjectListToAdd.isEmpty()) {
+      throw new NotFoundException("Nenhum assunto encontrado com os IDs fornecidos!");
+    }
+
+    mainQuestionFound.getSubjects().addAll(subjectListToAdd);
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
 
   @Override
+  @Transactional
   public void removeSubject(UUID questionId, List<UUID> subjectsId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    List<Subject> mainQuestionSubjectList = mainQuestionFound.getSubjects();
-    mainQuestionSubjectList.removeIf(subject -> subjectsId.contains(subject.getId()));
-    mainQuestionFound.setSubjects(mainQuestionSubjectList);
+    mainQuestionFound.getSubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
 
     mainQuestionRepository.save(mainQuestionFound);
   }
