@@ -137,12 +137,12 @@ public class MainQuestionController {
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
   }
 
-  @DeleteMapping("/{mainQuestiontId}/adapted-questions/{adaptedQuestionId}")
+  @DeleteMapping("/{mainQuestionId}/adapted-questions/{adaptedQuestionId}")
   public ResponseEntity<Void> deleteAdaptedQuestionFromMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId
   ) {
-    adaptedQuestionService.deleteAdaptedQuestionFromMainQuestionById(mainQuestionId, adaptedQuestionId);
+    mainQuestionService.removeAdaptedQuestion(mainQuestionId, adaptedQuestionId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
