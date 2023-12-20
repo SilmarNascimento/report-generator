@@ -82,6 +82,18 @@ public class MainQuestion extends Question {
     this.handout = handout;
   }
 
+  @Override
+  public String toString() {
+    return "Subject {" +
+        "id: " + this.getId() +
+        "title: " + this.title +
+        "level: " + this.level +
+        "image: " + this.image +
+        "subjects: " + this.subjects +
+        "alternatives: " + this.alternatives +
+        '}';
+  }
+
   public static MainQuestion parseMainQuestion(QuestionInputDto mainQuestionInputDto) {
     return new MainQuestion(
         mainQuestionInputDto.title(),

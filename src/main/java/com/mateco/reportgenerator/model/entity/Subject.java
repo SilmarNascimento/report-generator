@@ -37,6 +37,14 @@ public class Subject {
     return new Subject(inputDto.name());
   }
 
+  @Override
+  public String toString() {
+    return "Subject {" +
+        "id: " + this.getId() +
+        "name: " + this.name +
+        '}';
+  }
+
   public static List<Subject> parseSubject(List<SubjectInputDto> subjectInputDtos) {
     return subjectInputDtos.stream()
         .map((SubjectInputDto inputDto) -> new Subject(inputDto.name()))

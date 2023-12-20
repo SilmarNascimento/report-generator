@@ -43,6 +43,12 @@ public class Alternative {
 
   private boolean questionAnswer;
 
+  public Alternative(String description, String image, boolean questionAnswer) {
+    this.description = description;
+    this.image = image;
+    this.questionAnswer = questionAnswer;
+  }
+
   @Override
   public String toString() {
     return "Alternative{" +
@@ -50,12 +56,6 @@ public class Alternative {
         "description: " + this.description +
         "image: " + this.image +
         '}';
-  }
-
-  public Alternative(String description, String image, boolean questionAnswer) {
-    this.description = description;
-    this.image = image;
-    this.questionAnswer = questionAnswer;
   }
 
   public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto) {
