@@ -117,9 +117,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     adaptedQuestion.setMainQuestion(mainQuestionFound);
     adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> alternative.setAdaptedQuestion(adaptedQuestion));
 
-    List<AdaptedQuestion> adaptedQuestionList = mainQuestionFound.getAdaptedQuestions();
-    adaptedQuestionList.add(adaptedQuestion);
-    mainQuestionFound.setAdaptedQuestions(adaptedQuestionList);
+    mainQuestionFound.getAdaptedQuestions().add(adaptedQuestion);
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
