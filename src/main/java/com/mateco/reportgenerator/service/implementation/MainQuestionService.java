@@ -121,9 +121,6 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     adaptedQuestionList.add(adaptedQuestion);
     mainQuestionFound.setAdaptedQuestions(adaptedQuestionList);
 
-    System.out.println(mainQuestionFound);
-    System.out.println(mainQuestionFound.getAdaptedQuestions());
-
     return mainQuestionRepository.save(mainQuestionFound);
   }
 
@@ -133,33 +130,14 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
     AdaptedQuestion adaptedQuestionFound = adaptedQuestionRepository.findById(adaptedQuestionId)
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
+
     if (!adaptedQuestionFound.getMainQuestion().equals(mainQuestionFound)) {
       throw new ConflictDataException("Questão adaptada não pertence à questão principal!");
     }
-    adaptedQuestionFound.setMainQuestion(null);
-  }
 
-  @Override
-  public MockExam addMockExam(UUID questionId, UUID mockExamId, MockExam mockExam) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    return null;
-  }
+    mainQuestionFound.getAdaptedQuestions()
+        .removeIf(adaptedQuestion -> adaptedQuestionId.equals(adaptedQuestion.getId()));
 
-  @Override
-  public void removeMockExam(UUID questionId, UUID mockExamId) {
-
-  }
-
-  @Override
-  public Handout addHandout(UUID questionId, UUID handoutId, Handout handout) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    return null;
-  }
-
-  @Override
-  public void removeHandout(UUID questionId, UUID handoutId) {
-
+    mainQuestionRepository.save(mainQuestionFound);
   }
 }

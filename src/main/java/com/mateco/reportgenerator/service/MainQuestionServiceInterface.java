@@ -25,10 +25,4 @@ public interface MainQuestionServiceInterface {
 
   MainQuestion addAdaptedQuestion(UUID questionId, AdaptedQuestion adaptedQuestion);
   void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
-
-  MockExam addMockExam(UUID questionId, UUID mockExamId, MockExam mockExam);
-  void removeMockExam(UUID questionId, UUID mockExamId);
-
-  Handout addHandout(UUID questionId, UUID handoutId, Handout handout);
-  void removeHandout(UUID questionId, UUID handoutId);
 }
