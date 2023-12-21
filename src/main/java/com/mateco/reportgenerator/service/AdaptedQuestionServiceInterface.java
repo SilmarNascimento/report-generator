@@ -11,7 +11,5 @@ import java.util.UUID;
 public interface AdaptedQuestionServiceInterface {
   List<AdaptedQuestion> findAllAdaptedQuestionFromMainQuestion(UUID mainQuestionId);
   AdaptedQuestion findAdaptedQuestionsFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId);
-  AdaptedQuestion createAdaptedQuestionForMainQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion);
   AdaptedQuestion updateAdaptedQuestionOfMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId, AdaptedQuestion adaptedQuestion);
-  void deleteAdaptedQuestionFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId);
 }

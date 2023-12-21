@@ -19,40 +19,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
   private final AdaptedQuestionRepository adaptedQuestionRepository;
-  private final MainQuestionRepository mainQuestionRepository;
 
   @Autowired
   public AdaptedQuestionService(
-      AdaptedQuestionRepository adaptedQuestionRepository,
-      MainQuestionRepository mainQuestionRepository
+      AdaptedQuestionRepository adaptedQuestionRepository
   ) {
     this.adaptedQuestionRepository = adaptedQuestionRepository;
-    this.mainQuestionRepository = mainQuestionRepository;
   }
 
   @Override
   public List<AdaptedQuestion> findAllAdaptedQuestionFromMainQuestion(UUID mainQuestionId) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    return mainQuestionFound.getAdaptedQuestions();
+    return adaptedQuestionRepository.findAllByMainQuestionId(mainQuestionId);
   }
 
   @Override
   public AdaptedQuestion findAdaptedQuestionsFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    return mainQuestionFound.getAdaptedQuestions().stream()
+    List<AdaptedQuestion> adaptedQuestionList = adaptedQuestionRepository.findAllByMainQuestionId(mainQuestionId);
+    return adaptedQuestionList.stream()
         .filter((AdaptedQuestion adaptedQuestion) -> adaptedQuestionId.equals(adaptedQuestion.getId()))
         .findFirst()
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
-  }
-
-  @Override
-  public AdaptedQuestion createAdaptedQuestionForMainQuestion(UUID mainQuestionId, AdaptedQuestion adaptedQuestion) {
-    MainQuestion questionFound = mainQuestionRepository.findById(mainQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    adaptedQuestion.setMainQuestion(questionFound);
-    return adaptedQuestionRepository.save(adaptedQuestion);
   }
 
   @Override
@@ -61,28 +47,15 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
       UUID adaptedQuestionId,
       AdaptedQuestion adaptedQuestion
   ) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    AdaptedQuestion adaptedQuestionFound = mainQuestionFound.getAdaptedQuestions().stream()
+    List<AdaptedQuestion> adaptedQuestionList = adaptedQuestionRepository.findAllByMainQuestionId(mainQuestionId);
+    AdaptedQuestion adaptedQuestionFound = adaptedQuestionList.stream()
         .filter((AdaptedQuestion question) -> adaptedQuestionId.equals(question.getId()))
         .findFirst()
         .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
 
+    adaptedQuestion.setAlternatives(adaptedQuestionFound.getAlternatives());
     UpdateEntity.copyNonNullProperties(adaptedQuestion, adaptedQuestionFound);
-    adaptedQuestionRepository.save(adaptedQuestionFound);
 
-    return adaptedQuestionFound;
-  }
-
-  @Override
-  public void deleteAdaptedQuestionFromMainQuestionById(UUID mainQuestionId, UUID adaptedQuestionId) {
-    MainQuestion mainQuestionFound = mainQuestionRepository.findById(mainQuestionId)
-        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
-    mainQuestionFound.getAdaptedQuestions().stream()
-        .filter((AdaptedQuestion question) -> adaptedQuestionId.equals(question.getId()))
-        .findFirst()
-        .orElseThrow(() -> new NotFoundException("Questão adaptada não encontrada!"));
-
-    adaptedQuestionRepository.deleteById(adaptedQuestionId);
+    return adaptedQuestionRepository.save(adaptedQuestionFound);
   }
 }

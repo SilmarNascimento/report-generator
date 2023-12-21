@@ -56,11 +56,20 @@ public class AdaptedQuestion extends Question {
         "title: " + this.getTitle() +
         "level: " + this.getLevel() +
         "image: " + this.image +
+        "alternatives: " + this.alternatives +
         '}';
   }
 
 
   public static AdaptedQuestion parseAdaptedQuestion(QuestionInputDto questionInputDto) {
+    if (questionInputDto.alternatives() == null || questionInputDto.alternatives().isEmpty()) {
+      return new AdaptedQuestion(
+          questionInputDto.title(),
+          questionInputDto.level(),
+          questionInputDto.image(),
+          null
+      );
+    }
     return new AdaptedQuestion(
         questionInputDto.title(),
         questionInputDto.level(),
