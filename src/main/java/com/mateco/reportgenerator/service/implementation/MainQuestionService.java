@@ -17,7 +17,9 @@ import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,12 +87,13 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
     List<Subject> subjectListToAdd = subjectRepository.findAllById(subjectsId);
-
     if (subjectListToAdd.isEmpty()) {
       throw new NotFoundException("Nenhum assunto encontrado com os IDs fornecidos!");
     }
 
-    mainQuestionFound.getSubjects().addAll(subjectListToAdd);
+    Set<Subject> previousSubjectSet = new HashSet<>(mainQuestionFound.getSubjects());
+    previousSubjectSet.addAll(subjectListToAdd);
+    mainQuestionFound.setSubjects(new ArrayList<>(previousSubjectSet));
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
