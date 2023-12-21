@@ -5,6 +5,7 @@ import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
+import com.mateco.reportgenerator.controller.dto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
@@ -151,9 +152,10 @@ public class MainQuestionController {
   @PutMapping("/{mainQuestionId}/subject")
   public ResponseEntity<MainQuestionOutputDto> addSubjectToMainQuestion(
       @PathVariable UUID mainQuestionId,
-      @RequestBody List<UUID> subjectsId
+      @RequestBody SubjectListInputDto subjectIdList
   ) {
-    MainQuestion mainQuestionUpdated = mainQuestionService.addSubject(mainQuestionId, subjectsId);
+    MainQuestion mainQuestionUpdated = mainQuestionService
+        .addSubject(mainQuestionId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
