@@ -38,15 +38,15 @@ public class Attachment {
   private byte[] content;
 
   @ManyToOne
-  @JoinColumn(name = "main_question_id")
+  @JoinColumn(name = "question_id")
   @JsonIgnore
-  private MainQuestion mainQuestion;
+  private Question question;
 
 
   @ManyToOne
-  @JoinColumn(name = "adapted_question_id")
+  @JoinColumn(name = "alternative_id")
   @JsonIgnore
-  private AdaptedQuestion adaptedQuestion;
+  private Alternative alternative;
 
   public Attachment(String title, String type, long size, byte[] content) {
     this.title = title;

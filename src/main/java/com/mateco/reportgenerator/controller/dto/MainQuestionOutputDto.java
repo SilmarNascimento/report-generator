@@ -12,7 +12,7 @@ import java.util.UUID;
 public record MainQuestionOutputDto(
     UUID id,
     String title,
-    List<Subject> subjects,
+    List<SubjectOutputDto> subjects,
     String level,
     List<AttachmentOutputDto> images,
     List<AlternativeOutputDto> alternatives,
@@ -24,7 +24,7 @@ public record MainQuestionOutputDto(
     return new MainQuestionOutputDto(
         mainQuestion.getId(),
         mainQuestion.getTitle(),
-        mainQuestion.getSubjects(),
+        SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
         mainQuestion.getLevel(),
         AttachmentOutputDto.parseDto(mainQuestion.getImages()),
         AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
@@ -39,7 +39,7 @@ public record MainQuestionOutputDto(
         .map((MainQuestion mainQuestion) -> new MainQuestionOutputDto(
           mainQuestion.getId(),
           mainQuestion.getTitle(),
-          mainQuestion.getSubjects(),
+          SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
           mainQuestion.getLevel(),
           AttachmentOutputDto.parseDto(mainQuestion.getImages()),
           AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),

@@ -8,11 +8,8 @@ import java.util.UUID;
 public record AdaptedQuestionOutputDto(
     UUID id,
     String title,
-
     String level,
-
-    byte[] image,
-
+    List<AttachmentOutputDto> images,
     List<Alternative>alternatives
 
 ) {
@@ -21,7 +18,7 @@ public record AdaptedQuestionOutputDto(
         adaptedQuestion.getId(),
         adaptedQuestion.getTitle(),
         adaptedQuestion.getLevel(),
-        adaptedQuestion.getImages(),
+        AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
         adaptedQuestion.getAlternatives()
     );
   }
@@ -32,7 +29,7 @@ public record AdaptedQuestionOutputDto(
           adaptedQuestion.getId(),
           adaptedQuestion.getTitle(),
           adaptedQuestion.getLevel(),
-          adaptedQuestion.getImages(),
+          AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
           adaptedQuestion.getAlternatives()
         )).toList();
   }

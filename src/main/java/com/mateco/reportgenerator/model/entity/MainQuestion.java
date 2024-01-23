@@ -47,14 +47,6 @@ public class MainQuestion extends Question {
       orphanRemoval = true,
       fetch = FetchType.EAGER
   )
-  private List<Attachment> images;
-
-  @OneToMany(
-      mappedBy = "mainQuestion",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER
-  )
   private List<Alternative> alternatives;
 
   @Column(name = "adapted_questions")

@@ -33,13 +33,6 @@ public class AdaptedQuestion extends Question {
   @JoinColumn(name = "main_question_id")
   @JsonIgnore
   private MainQuestion mainQuestion;
-  @OneToMany(
-      mappedBy = "adaptedQuestion",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER
-  )
-  private List<Attachment> images;
 
   @OneToMany(
       mappedBy = "adaptedQuestion",

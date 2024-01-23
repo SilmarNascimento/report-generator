@@ -1,8 +1,11 @@
 package com.mateco.reportgenerator.model.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToMany;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,12 @@ public abstract class Question {
 
   protected String level;
 
+  @OneToMany(
+      mappedBy = "question",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   protected List<Attachment> images;
 
   public Question(String title, String level, List<Attachment> images) {
