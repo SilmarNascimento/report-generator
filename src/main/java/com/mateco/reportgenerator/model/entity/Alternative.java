@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class Alternative {
 
   private String description;
 
-  private Attachment image;
+  private List<Attachment> image;
 
   @ManyToOne
   @JoinColumn(name = "main_question_id")
@@ -43,7 +44,7 @@ public class Alternative {
 
   private boolean questionAnswer;
 
-  public Alternative(String description, String image, boolean questionAnswer) {
+  public Alternative(String description, List<Attachment> image, boolean questionAnswer) {
     this.description = description;
     this.image = image;
     this.questionAnswer = questionAnswer;
@@ -58,21 +59,28 @@ public class Alternative {
         '}';
   }
 
-  public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto) {
+  public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto)
+      throws IOException {
     return new Alternative(
         alternativeInputDto.description(),
-        alternativeInputDto.image(),
+        Attachment.parseAttachment(alternativeInputDto.image()),
         alternativeInputDto.questionAnswer()
     );
   }
 
   public static List<Alternative> parseAlternative(List<AlternativeInputDto> alternativesInputDto) {
     return alternativesInputDto.stream()
-        .map((AlternativeInputDto alternativeInputDto) -> new Alternative(
-          alternativeInputDto.description(),
-          alternativeInputDto.image(),
-          alternativeInputDto.questionAnswer()
-        ))
+        .map((AlternativeInputDto alternativeInputDto) -> {
+          try {
+            return new Alternative(
+              alternativeInputDto.description(),
+              Attachment.parseAttachment(alternativeInputDto.image()),
+              alternativeInputDto.questionAnswer()
+            );
+          } catch (IOException exception) {
+            throw new RuntimeException(exception);
+          }
+        })
         .toList();
   }
 }

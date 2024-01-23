@@ -24,7 +24,7 @@ public record AlternativeOutputDto(
         .map((Alternative alternative) -> new AlternativeOutputDto(
           alternative.getId(),
           alternative.getDescription(),
-          alternative.getImage(),
+          AttachmentOutputDto.parseDto(alternative.getImage()),
           alternative.isQuestionAnswer()))
         .toList();
   }

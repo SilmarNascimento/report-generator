@@ -21,7 +21,7 @@ public record AdaptedQuestionOutputDto(
         adaptedQuestion.getId(),
         adaptedQuestion.getTitle(),
         adaptedQuestion.getLevel(),
-        adaptedQuestion.getImage(),
+        adaptedQuestion.getImages(),
         adaptedQuestion.getAlternatives()
     );
   }
@@ -32,7 +32,7 @@ public record AdaptedQuestionOutputDto(
           adaptedQuestion.getId(),
           adaptedQuestion.getTitle(),
           adaptedQuestion.getLevel(),
-          adaptedQuestion.getImage(),
+          adaptedQuestion.getImages(),
           adaptedQuestion.getAlternatives()
         )).toList();
   }

@@ -55,15 +55,6 @@ public class Attachment {
     this.content = content;
   }
 
-  public static Attachment parseAttachment(MultipartFile inputImage) throws IOException {
-    return new Attachment(
-        inputImage.getName(),
-        inputImage.getContentType(),
-        inputImage.getSize(),
-        inputImage.getBytes()
-    );
-  }
-
   public static List<Attachment> parseAttachment(List<MultipartFile> inputImages) throws IOException {
     return inputImages.stream()
         .map((MultipartFile inputImage) -> {

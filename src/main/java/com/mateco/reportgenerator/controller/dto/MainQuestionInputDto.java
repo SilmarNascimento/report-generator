@@ -12,7 +12,7 @@ public record MainQuestionInputDto(
     String title,
     List<SubjectInputDto> subjects,
     String level,
-    MultipartFile image,
+    List<MultipartFile> images,
     List<AlternativeInputDto> alternatives,
     List<AdaptedQuestion> adaptedQuestions,
     List<MockExam> mockExams,

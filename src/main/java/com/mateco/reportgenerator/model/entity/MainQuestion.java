@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +47,14 @@ public class MainQuestion extends Question {
       orphanRemoval = true,
       fetch = FetchType.EAGER
   )
+  private List<Attachment> images;
+
+  @OneToMany(
+      mappedBy = "mainQuestion",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
   private List<Alternative> alternatives;
 
   @Column(name = "adapted_questions")
@@ -68,7 +77,7 @@ public class MainQuestion extends Question {
       String title,
       List<Subject> subjects,
       String level,
-      String image,
+      List<Attachment> image,
       List<Alternative> alternatives,
       List<AdaptedQuestion> adaptedQuestions,
       List<MockExam> mockExams,
@@ -88,18 +97,20 @@ public class MainQuestion extends Question {
         "id: " + this.getId() +
         "title: " + this.title +
         "level: " + this.level +
-        "image: " + this.image +
+        "image: " + this.images +
         "subjects: " + this.subjects +
         "alternatives: " + this.alternatives +
         '}';
   }
 
-  public static MainQuestion parseMainQuestion(QuestionInputDto mainQuestionInputDto) {
+  public static MainQuestion parseMainQuestion(
+      QuestionInputDto mainQuestionInputDto
+  ) throws IOException {
     return new MainQuestion(
         mainQuestionInputDto.title(),
         new ArrayList<>(),
         mainQuestionInputDto.level(),
-        mainQuestionInputDto.image(),
+        Attachment.parseAttachment(mainQuestionInputDto.image()),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
         new ArrayList<>(),
         new ArrayList<>(),
@@ -107,12 +118,14 @@ public class MainQuestion extends Question {
     );
   }
 
-  public static MainQuestion parseMainQuestion(MainQuestionInputDto mainQuestionInputDto) {
+  public static MainQuestion parseMainQuestion(
+      MainQuestionInputDto mainQuestionInputDto
+  ) throws IOException {
     return new MainQuestion(
         mainQuestionInputDto.title(),
         Subject.parseSubject(mainQuestionInputDto.subjects()),
         mainQuestionInputDto.level(),
-        mainQuestionInputDto.image(),
+        Attachment.parseAttachment(mainQuestionInputDto.images()),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
         new ArrayList<>(),
         new ArrayList<>(),
