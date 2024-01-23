@@ -14,7 +14,7 @@ public record MainQuestionOutputDto(
     String title,
     List<Subject> subjects,
     String level,
-    String image,
+    byte[] image,
     List<AlternativeOutputDto> alternatives,
     List<AdaptedQuestion> adaptedQuestions,
     List<MockExam> mockExams,

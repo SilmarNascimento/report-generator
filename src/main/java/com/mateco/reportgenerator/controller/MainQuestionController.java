@@ -164,9 +164,9 @@ public class MainQuestionController {
   @DeleteMapping("/{mainQuestionId}/subject")
   public ResponseEntity<Void> removeSubjectFromMainQUestion(
       @PathVariable UUID mainQuestionId,
-      @RequestBody List<UUID> subjectsId
+      @RequestBody SubjectListInputDto subjectIdList
   ) {
-    mainQuestionService.removeSubject(mainQuestionId, subjectsId);
+    mainQuestionService.removeSubject(mainQuestionId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

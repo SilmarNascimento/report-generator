@@ -1,8 +1,10 @@
 package com.mateco.reportgenerator.controller.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public record AlternativeInputDto(
     String description,
-    String image,
+    MultipartFile image,
     boolean questionAnswer
 ) {
 

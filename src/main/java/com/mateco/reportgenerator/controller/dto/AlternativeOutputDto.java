@@ -7,7 +7,7 @@ import java.util.UUID;
 public record AlternativeOutputDto(
     UUID id,
     String description,
-    String image,
+    byte[] image,
     boolean questionAnswer
 ) {
   public static AlternativeOutputDto parseDto(Alternative alternative) {

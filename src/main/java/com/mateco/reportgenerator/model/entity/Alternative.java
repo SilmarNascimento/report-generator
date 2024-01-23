@@ -28,7 +28,7 @@ public class Alternative {
 
   private String description;
 
-  private String image;
+  private Attachment image;
 
   @ManyToOne
   @JoinColumn(name = "main_question_id")

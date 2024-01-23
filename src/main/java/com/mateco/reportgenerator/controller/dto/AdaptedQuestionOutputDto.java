@@ -11,7 +11,7 @@ public record AdaptedQuestionOutputDto(
 
     String level,
 
-    String image,
+    byte[] image,
 
     List<Alternative>alternatives
 
