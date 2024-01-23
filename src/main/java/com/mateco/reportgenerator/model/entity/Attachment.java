@@ -48,7 +48,12 @@ public class Attachment {
   @JsonIgnore
   private Alternative alternative;
 
-  public Attachment(String title, String type, long size, byte[] content) {
+  public Attachment(
+      String title,
+      String type,
+      long size,
+      byte[] content
+  ) {
     this.title = title;
     this.type = type;
     this.size = size;

@@ -69,13 +69,13 @@ public class MainQuestion extends Question {
       String title,
       List<Subject> subjects,
       String level,
-      List<Attachment> image,
+      List<Attachment> images,
       List<Alternative> alternatives,
       List<AdaptedQuestion> adaptedQuestions,
       List<MockExam> mockExams,
       List<Handout> handout
   ) {
-    super(title, level, image);
+    super(title, level, images);
     this.subjects = subjects;
     this.alternatives = alternatives;
     this.adaptedQuestions = adaptedQuestions;

@@ -33,12 +33,12 @@ public class Alternative {
   private String description;
 
   @OneToMany(
-      mappedBy = "question",
+      mappedBy = "alternative",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.EAGER
   )
-  private List<Attachment> image;
+  private List<Attachment> images;
 
   @ManyToOne
   @JoinColumn(name = "main_question_id")
@@ -53,9 +53,9 @@ public class Alternative {
 
   private boolean questionAnswer;
 
-  public Alternative(String description, List<Attachment> image, boolean questionAnswer) {
+  public Alternative(String description, List<Attachment> images, boolean questionAnswer) {
     this.description = description;
-    this.image = image;
+    this.images = images;
     this.questionAnswer = questionAnswer;
   }
 
@@ -64,7 +64,7 @@ public class Alternative {
     return "Alternative{" +
         "id: " + this.getId() +
         "description: " + this.description +
-        "image: " + this.image +
+        "image: " + this.images +
         '}';
   }
 
