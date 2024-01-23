@@ -79,14 +79,14 @@ public class AdaptedQuestion extends Question {
       return new AdaptedQuestion(
           questionInputDto.title(),
           questionInputDto.level(),
-          Attachment.parseAttachment(questionInputDto.image()),
+          Attachment.parseAttachment(questionInputDto.images()),
           null
       );
     }
     return new AdaptedQuestion(
         questionInputDto.title(),
         questionInputDto.level(),
-        Attachment.parseAttachment(questionInputDto.image()),
+        Attachment.parseAttachment(questionInputDto.images()),
         Alternative.parseAlternative(questionInputDto.alternatives())
     );
   }

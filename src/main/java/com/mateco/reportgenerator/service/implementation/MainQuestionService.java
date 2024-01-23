@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.Attachment;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
@@ -63,6 +64,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   @Transactional
   public MainQuestion createMainQuestion(MainQuestion question) {
     question.getAlternatives().forEach((Alternative alternative) -> alternative.setMainQuestion(question));
+    question.getImages().forEach((Attachment attachment) -> attachment.setMainQuestion(question));
     return mainQuestionRepository.save(question);
   }
 

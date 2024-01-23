@@ -111,7 +111,7 @@ public class MainQuestion extends Question {
         mainQuestionInputDto.title(),
         new ArrayList<>(),
         mainQuestionInputDto.level(),
-        Attachment.parseAttachment(mainQuestionInputDto.image()),
+        Attachment.parseAttachment(mainQuestionInputDto.images()),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
         new ArrayList<>(),
         new ArrayList<>(),

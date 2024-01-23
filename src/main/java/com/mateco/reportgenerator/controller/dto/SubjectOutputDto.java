@@ -14,7 +14,7 @@ public record SubjectOutputDto(
     return new SubjectOutputDto(subject.getId(), subject.getName());
   }
 
-  public static List<SubjectOutputDto> parseDto(List<Subject> subjects) {
+  public static List<SubjectOutputDto>  parseDto(List<Subject> subjects) {
     return subjects.stream()
         .map((Subject subject) -> new SubjectOutputDto(subject.getId(), subject.getName()))
         .toList();

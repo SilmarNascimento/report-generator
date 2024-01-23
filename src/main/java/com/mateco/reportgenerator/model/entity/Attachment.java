@@ -9,6 +9,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -65,6 +66,9 @@ public class Attachment {
   }
 
   public static List<Attachment> parseAttachment(List<MultipartFile> inputImages) throws IOException {
+    if (inputImages == null) {
+      return new ArrayList<>();
+    }
     return inputImages.stream()
         .map((MultipartFile inputImage) -> {
           try {

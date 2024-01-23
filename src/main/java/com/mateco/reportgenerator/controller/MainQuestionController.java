@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.AlternativeInputDto;
 import com.mateco.reportgenerator.controller.dto.AlternativeOutputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
@@ -24,7 +25,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/main-questions")
@@ -44,7 +47,6 @@ public class MainQuestionController {
   @GetMapping
   public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
     List<MainQuestion> questions = mainQuestionService.findAllMainQuestions();
-    System.out.println(questions);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto
@@ -61,8 +63,17 @@ public class MainQuestionController {
 
   @PostMapping
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @RequestBody QuestionInputDto mainQuestionInputDto
+      @RequestParam("title") String title,
+      @RequestParam("level") String level,
+      @RequestParam("images") List<MultipartFile> images,
+      @RequestParam("alternatives") List<AlternativeInputDto> alternatives
   ) throws IOException {
+    QuestionInputDto mainQuestionInputDto = new QuestionInputDto(
+      title,
+      level,
+      images,
+      alternatives
+    );
     MainQuestion mainQuestionCreated = mainQuestionService
         .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
