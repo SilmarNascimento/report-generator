@@ -7,14 +7,14 @@ import java.util.UUID;
 public record AlternativeOutputDto(
     UUID id,
     String description,
-    byte[] image,
+    List<AttachmentOutputDto> images,
     boolean questionAnswer
 ) {
   public static AlternativeOutputDto parseDto(Alternative alternative) {
     return new AlternativeOutputDto(
         alternative.getId(),
         alternative.getDescription(),
-        alternative.getImage(),
+        AttachmentOutputDto.parseDto(alternative.getImage()),
         alternative.isQuestionAnswer()
     );
   }
