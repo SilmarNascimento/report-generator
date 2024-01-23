@@ -11,6 +11,7 @@ import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ public class MainQuestionController {
   @PostMapping
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
       @RequestBody QuestionInputDto mainQuestionInputDto
-  ) {
+  ) throws IOException {
     MainQuestion mainQuestionCreated = mainQuestionService
         .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
@@ -73,7 +74,7 @@ public class MainQuestionController {
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @RequestBody MainQuestionInputDto mainQuestionInputDto
-  ) {
+  ) throws IOException {
     MainQuestion updatedMainQuestion = mainQuestionService
         .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
@@ -114,8 +115,9 @@ public class MainQuestionController {
   public ResponseEntity<MainQuestionOutputDto> createAdaptedQuestionForMainQuestion(
       @PathVariable UUID mainQuestionId,
       @RequestBody QuestionInputDto questionInputDto
-  ) {
-    MainQuestion mainQuestionCreated = mainQuestionService.addAdaptedQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
+  ) throws IOException {
+    MainQuestion mainQuestionCreated = mainQuestionService
+        .addAdaptedQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
@@ -126,7 +128,7 @@ public class MainQuestionController {
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId,
       @RequestBody QuestionInputDto questionInputDto
-  ) {
+  ) throws IOException {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
         .updateAdaptedQuestionOfMainQuestionById(
             mainQuestionId,

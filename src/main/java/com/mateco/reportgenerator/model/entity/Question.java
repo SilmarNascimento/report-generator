@@ -25,17 +25,8 @@ public abstract class Question {
 
   protected String level;
 
-  @OneToMany(
-      mappedBy = "question",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER
-  )
-  protected List<Attachment> images;
-
-  public Question(String title, String level, List<Attachment> images) {
+  public Question(String title, String level) {
     this.title = title;
     this.level = level;
-    this.images = images;
   }
 }

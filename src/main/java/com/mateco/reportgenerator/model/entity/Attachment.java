@@ -38,10 +38,14 @@ public class Attachment {
   private byte[] content;
 
   @ManyToOne
-  @JoinColumn(name = "question_id")
+  @JoinColumn(name = "main_question_id")
   @JsonIgnore
-  private Question question;
+  private MainQuestion mainQuestion;
 
+  @ManyToOne
+  @JoinColumn(name = "adapted_question_id")
+  @JsonIgnore
+  private AdaptedQuestion adaptedQuestion;
 
   @ManyToOne
   @JoinColumn(name = "alternative_id")

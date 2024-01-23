@@ -37,6 +37,14 @@ public class AdaptedQuestion extends Question {
   @OneToMany(
       mappedBy = "adaptedQuestion",
       cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  protected List<Attachment> images;
+
+  @OneToMany(
+      mappedBy = "adaptedQuestion",
+      cascade = CascadeType.ALL,
       orphanRemoval = true
   )
   private List<Alternative> alternatives;
@@ -47,7 +55,8 @@ public class AdaptedQuestion extends Question {
       List<Attachment> images,
       List<Alternative> alternatives
   ) {
-    super(title, level, images);
+    super(title, level);
+    this.images = images;
     this.alternatives = alternatives;
   }
 

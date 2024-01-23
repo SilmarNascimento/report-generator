@@ -33,6 +33,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MainQuestion extends Question {
+  @OneToMany(
+      mappedBy = "mainQuestion",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER
+  )
+  protected List<Attachment> images;
+
   @ManyToMany
   @JoinTable(
       name = "questions_content",
@@ -75,7 +83,8 @@ public class MainQuestion extends Question {
       List<MockExam> mockExams,
       List<Handout> handout
   ) {
-    super(title, level, images);
+    super(title, level);
+    this.images = images;
     this.subjects = subjects;
     this.alternatives = alternatives;
     this.adaptedQuestions = adaptedQuestions;

@@ -14,7 +14,7 @@ public record AlternativeOutputDto(
     return new AlternativeOutputDto(
         alternative.getId(),
         alternative.getDescription(),
-        AttachmentOutputDto.parseDto(alternative.getImage()),
+        AttachmentOutputDto.parseDto(alternative.getImages()),
         alternative.isQuestionAnswer()
     );
   }
@@ -24,7 +24,7 @@ public record AlternativeOutputDto(
         .map((Alternative alternative) -> new AlternativeOutputDto(
           alternative.getId(),
           alternative.getDescription(),
-          AttachmentOutputDto.parseDto(alternative.getImage()),
+          AttachmentOutputDto.parseDto(alternative.getImages()),
           alternative.isQuestionAnswer()))
         .toList();
   }
