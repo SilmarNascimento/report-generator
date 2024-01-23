@@ -10,7 +10,7 @@ public record AdaptedQuestionOutputDto(
     String title,
     String level,
     List<AttachmentOutputDto> images,
-    List<Alternative>alternatives
+    List<AlternativeOutputDto>alternatives
 
 ) {
   public static AdaptedQuestionOutputDto parseDto(AdaptedQuestion adaptedQuestion) {
@@ -19,7 +19,7 @@ public record AdaptedQuestionOutputDto(
         adaptedQuestion.getTitle(),
         adaptedQuestion.getLevel(),
         AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
-        adaptedQuestion.getAlternatives()
+        AlternativeOutputDto.parseDto(adaptedQuestion.getAlternatives())
     );
   }
 
@@ -30,7 +30,7 @@ public record AdaptedQuestionOutputDto(
           adaptedQuestion.getTitle(),
           adaptedQuestion.getLevel(),
           AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
-          adaptedQuestion.getAlternatives()
+          AlternativeOutputDto.parseDto(adaptedQuestion.getAlternatives())
         )).toList();
   }
 }

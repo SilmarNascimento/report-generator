@@ -16,7 +16,7 @@ public record MainQuestionOutputDto(
     String level,
     List<AttachmentOutputDto> images,
     List<AlternativeOutputDto> alternatives,
-    List<AdaptedQuestion> adaptedQuestions,
+    List<AdaptedQuestionOutputDto> adaptedQuestions,
     List<MockExam> mockExams,
     List<Handout> handout
 ) {
@@ -28,7 +28,7 @@ public record MainQuestionOutputDto(
         mainQuestion.getLevel(),
         AttachmentOutputDto.parseDto(mainQuestion.getImages()),
         AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
-        mainQuestion.getAdaptedQuestions(),
+        AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
         mainQuestion.getMockExams(),
         mainQuestion.getHandout()
     );
@@ -43,7 +43,7 @@ public record MainQuestionOutputDto(
           mainQuestion.getLevel(),
           AttachmentOutputDto.parseDto(mainQuestion.getImages()),
           AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
-          mainQuestion.getAdaptedQuestions(),
+          AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
           mainQuestion.getMockExams(),
           mainQuestion.getHandout()
         )).toList();
