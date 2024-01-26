@@ -1,5 +1,6 @@
-package com.mateco.reportgenerator.utils;
+package com.mateco.reportgenerator.service.implementation;
 
+import com.mateco.reportgenerator.service.ImageServiceInterface;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class ImageService {
+public class ImageService implements ImageServiceInterface {
   @Value("${directory.resources.static.image}")
   private String imageDirectoryPath;
+
+  @Override
   public List<String> uploadImages(List<MultipartFile> images) throws IOException {
     File directory = new File(imageDirectoryPath);
     if (!directory.exists()) {
