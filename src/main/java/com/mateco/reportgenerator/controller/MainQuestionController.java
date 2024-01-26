@@ -13,6 +13,7 @@ import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -63,17 +65,18 @@ public class MainQuestionController {
 
   @PostMapping
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @RequestParam("title") String title,
+      @ModelAttribute QuestionInputDto mainQuestionInputDto
+      /* @RequestParam("title") String title,
       @RequestParam("level") String level,
       @RequestParam("images") List<MultipartFile> images,
-      @RequestParam("alternatives") List<AlternativeInputDto> alternatives
+      @RequestParam("alternatives") List<AlternativeInputDto> alternatives */
   ) throws IOException {
-    QuestionInputDto mainQuestionInputDto = new QuestionInputDto(
+    /* QuestionInputDto mainQuestionInputDto = new QuestionInputDto(
       title,
       level,
       images,
       alternatives
-    );
+    );*/
     MainQuestion mainQuestionCreated = mainQuestionService
         .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto));
     return ResponseEntity
