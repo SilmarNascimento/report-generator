@@ -2,21 +2,16 @@ package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
-import com.mateco.reportgenerator.service.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,13 +29,7 @@ public class AdaptedQuestion extends Question {
   @JsonIgnore
   private MainQuestion mainQuestion;
 
-  @OneToMany(
-      mappedBy = "adaptedQuestion",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER
-  )
-  protected List<Attachment> images;
+  protected List<String> images;
 
   @OneToMany(
       mappedBy = "adaptedQuestion",
@@ -52,7 +41,7 @@ public class AdaptedQuestion extends Question {
   public AdaptedQuestion(
       String title,
       String level,
-      List<Attachment> images,
+      List<String> images,
       List<Alternative> alternatives
   ) {
     super(title, level);
@@ -74,19 +63,19 @@ public class AdaptedQuestion extends Question {
 
   public static AdaptedQuestion parseAdaptedQuestion(
       QuestionInputDto questionInputDto
-  ) throws IOException {
+  ) {
     if (questionInputDto.alternatives() == null || questionInputDto.alternatives().isEmpty()) {
       return new AdaptedQuestion(
           questionInputDto.title(),
           questionInputDto.level(),
-          Attachment.parseAttachment(questionInputDto.images()),
+          new ArrayList<>(),
           null
       );
     }
     return new AdaptedQuestion(
         questionInputDto.title(),
         questionInputDto.level(),
-        Attachment.parseAttachment(questionInputDto.images()),
+        new ArrayList<>(),
         Alternative.parseAlternative(questionInputDto.alternatives())
     );
   }

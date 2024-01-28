@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public record QuestionInputDto(
     String title,
     String level,
-    List<MultipartFile> images,
     List<AlternativeInputDto> alternatives
 ) {
 

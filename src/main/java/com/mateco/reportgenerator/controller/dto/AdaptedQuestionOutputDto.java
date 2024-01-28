@@ -9,7 +9,7 @@ public record AdaptedQuestionOutputDto(
     UUID id,
     String title,
     String level,
-    List<AttachmentOutputDto> images,
+    List<String> images,
     List<AlternativeOutputDto>alternatives
 
 ) {
@@ -18,7 +18,7 @@ public record AdaptedQuestionOutputDto(
         adaptedQuestion.getId(),
         adaptedQuestion.getTitle(),
         adaptedQuestion.getLevel(),
-        AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
+        adaptedQuestion.getImages(),
         AlternativeOutputDto.parseDto(adaptedQuestion.getAlternatives())
     );
   }
@@ -29,7 +29,7 @@ public record AdaptedQuestionOutputDto(
           adaptedQuestion.getId(),
           adaptedQuestion.getTitle(),
           adaptedQuestion.getLevel(),
-          AttachmentOutputDto.parseDto(adaptedQuestion.getImages()),
+          adaptedQuestion.getImages(),
           AlternativeOutputDto.parseDto(adaptedQuestion.getAlternatives())
         )).toList();
   }
