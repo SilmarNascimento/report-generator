@@ -7,14 +7,14 @@ import java.util.UUID;
 public record AlternativeOutputDto(
     UUID id,
     String description,
-    List<AttachmentOutputDto> images,
+    List<String> images,
     boolean questionAnswer
 ) {
   public static AlternativeOutputDto parseDto(Alternative alternative) {
     return new AlternativeOutputDto(
         alternative.getId(),
         alternative.getDescription(),
-        AttachmentOutputDto.parseDto(alternative.getImages()),
+        alternative.getImages(),
         alternative.isQuestionAnswer()
     );
   }
@@ -24,7 +24,7 @@ public record AlternativeOutputDto(
         .map((Alternative alternative) -> new AlternativeOutputDto(
           alternative.getId(),
           alternative.getDescription(),
-          AttachmentOutputDto.parseDto(alternative.getImages()),
+          alternative.getImages(),
           alternative.isQuestionAnswer()))
         .toList();
   }
