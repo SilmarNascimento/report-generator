@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface MainQuestionServiceInterface {
   List<MainQuestion> findAllMainQuestions();
   MainQuestion findMainQuestionById(UUID questionId);
-  MainQuestion createMainQuestion(MainQuestion question);
+  MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages);
   MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question);
   void deleteMainQuestionById(UUID questionId);
 

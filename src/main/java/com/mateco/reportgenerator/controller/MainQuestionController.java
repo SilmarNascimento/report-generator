@@ -11,6 +11,7 @@ import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
+import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,14 +39,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class MainQuestionController {
   private final MainQuestionServiceInterface mainQuestionService;
   private final AdaptedQuestionServiceInterface adaptedQuestionService;
+  private final ImageServiceInterface imageService;
 
   @Autowired
   public MainQuestionController(
       MainQuestionServiceInterface mainQuestionService,
-      AdaptedQuestionServiceInterface adaptedQuestionService
+      AdaptedQuestionServiceInterface adaptedQuestionService,
+      ImageServiceInterface imageService
   ) {
     this.mainQuestionService = mainQuestionService;
     this.adaptedQuestionService = adaptedQuestionService;
+    this.imageService = imageService;
   }
 
   @GetMapping
@@ -63,22 +69,16 @@ public class MainQuestionController {
             .parseDto(mainQuestionService.findMainQuestionById(mainQuestionId)));
   }
 
-  @PostMapping
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @ModelAttribute QuestionInputDto mainQuestionInputDto
-      /* @RequestParam("title") String title,
-      @RequestParam("level") String level,
-      @RequestParam("images") List<MultipartFile> images,
-      @RequestParam("alternatives") List<AlternativeInputDto> alternatives */
+      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
+      @RequestPart("images") List<MultipartFile> images
   ) throws IOException {
-    /* QuestionInputDto mainQuestionInputDto = new QuestionInputDto(
-      title,
-      level,
-      images,
-      alternatives
-    );*/
+    List<String> questionImages = imageService.uploadImages(images);
+
     MainQuestion mainQuestionCreated = mainQuestionService
-        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto));
+        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto), questionImages);
+
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));

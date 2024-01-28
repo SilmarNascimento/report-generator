@@ -62,9 +62,23 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   @Transactional
-  public MainQuestion createMainQuestion(MainQuestion question) {
-    question.getAlternatives().forEach((Alternative alternative) -> alternative.setMainQuestion(question));
-    question.getImages().forEach((Attachment attachment) -> attachment.setMainQuestion(question));
+  public MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages) {
+    int alternativeQuantity = question.getAlternatives().size();
+    int questionImagesQuantity = questionImages.size();
+    int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
+    int alternativeImageOffset = questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
+    final int[] alternativeIndex = {alternativeImageOffset};
+
+    question.setImages(questionImages.subList(0,alternativeImageOffset));
+    question.getAlternatives().forEach((Alternative alternative) -> {
+      alternative.setMainQuestion(question);
+      alternative.setImages(questionImages.subList(
+          alternativeIndex[0],
+          alternativeIndex[0]+ imagesPerAlternative
+      ));
+      alternativeIndex[0] += imagesPerAlternative;
+    });
+
     return mainQuestionRepository.save(question);
   }
 
