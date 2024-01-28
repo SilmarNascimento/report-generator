@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -32,13 +33,7 @@ public class Alternative {
 
   private String description;
 
-  @OneToMany(
-      mappedBy = "alternative",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER
-  )
-  private List<Attachment> images;
+  private List<String> images;
 
   @ManyToOne
   @JoinColumn(name = "main_question_id")
@@ -53,7 +48,7 @@ public class Alternative {
 
   private boolean questionAnswer;
 
-  public Alternative(String description, List<Attachment> images, boolean questionAnswer) {
+  public Alternative(String description, List<String> images, boolean questionAnswer) {
     this.description = description;
     this.images = images;
     this.questionAnswer = questionAnswer;
@@ -68,28 +63,21 @@ public class Alternative {
         '}';
   }
 
-  public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto)
-      throws IOException {
+  public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto) {
     return new Alternative(
         alternativeInputDto.description(),
-        Attachment.parseAttachment(alternativeInputDto.image()),
+        new ArrayList<>(),
         alternativeInputDto.questionAnswer()
     );
   }
 
   public static List<Alternative> parseAlternative(List<AlternativeInputDto> alternativesInputDto) {
     return alternativesInputDto.stream()
-        .map((AlternativeInputDto alternativeInputDto) -> {
-          try {
-            return new Alternative(
-              alternativeInputDto.description(),
-              Attachment.parseAttachment(alternativeInputDto.image()),
-              alternativeInputDto.questionAnswer()
-            );
-          } catch (IOException exception) {
-            throw new RuntimeException(exception);
-          }
-        })
+        .map((AlternativeInputDto alternativeInputDto) -> new Alternative(
+            alternativeInputDto.description(),
+            new ArrayList<>(),
+            alternativeInputDto.questionAnswer()
+          ))
         .toList();
   }
 }
