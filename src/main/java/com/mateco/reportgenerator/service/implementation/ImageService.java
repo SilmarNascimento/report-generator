@@ -3,7 +3,6 @@ package com.mateco.reportgenerator.service.implementation;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageService implements ImageServiceInterface {
   @Value("${directory.resources.static.image}")
   private String imageDirectoryPath;
+
+  @Value("${directory.domain.image}")
+  private String domainPath;
 
   @Override
   public List<String> uploadImages(List<MultipartFile> images) throws IOException {
@@ -37,7 +39,7 @@ public class ImageService implements ImageServiceInterface {
           throw new RuntimeException("Failed to save image: " + fileName, exception);
         }
 
-        return filePath;
+        return domainPath + File.separator + fileName;
       })
       .toList();
   }
