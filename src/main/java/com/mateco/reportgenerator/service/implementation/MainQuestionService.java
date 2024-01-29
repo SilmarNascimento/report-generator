@@ -128,12 +128,29 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   @Override
   public MainQuestion addAdaptedQuestion(
       UUID questionId,
-      AdaptedQuestion adaptedQuestion
+      AdaptedQuestion adaptedQuestion,
+      List<String> questionImages
   ) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+
     adaptedQuestion.setMainQuestion(mainQuestionFound);
-    adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> alternative.setAdaptedQuestion(adaptedQuestion));
+
+    int alternativeQuantity = adaptedQuestion.getAlternatives().size();
+    int questionImagesQuantity = questionImages.size();
+    int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
+    int alternativeImageOffset = questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
+    final int[] alternativeIndex = {alternativeImageOffset};
+
+    adaptedQuestion.setImages(questionImages.subList(0,alternativeImageOffset));
+    adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> {
+      alternative.setAdaptedQuestion(adaptedQuestion);
+      alternative.setImages(questionImages.subList(
+          alternativeIndex[0],
+          alternativeIndex[0]+ imagesPerAlternative
+      ));
+      alternativeIndex[0] += imagesPerAlternative;
+    });
 
     mainQuestionFound.getAdaptedQuestions().add(adaptedQuestion);
 

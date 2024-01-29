@@ -1,20 +1,16 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.AlternativeInputDto;
-import com.mateco.reportgenerator.controller.dto.AlternativeOutputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,7 +66,7 @@ public class MainQuestionController {
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
       @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
-      @RequestPart("images") List<MultipartFile> images
+      @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
     List<String> questionImages = imageService.uploadImages(images);
 
@@ -84,10 +78,11 @@ public class MainQuestionController {
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
   }
 
-  @PutMapping("/{mainQuestionId}")
+  @PutMapping(value = "/{mainQuestionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      @RequestBody MainQuestionInputDto mainQuestionInputDto
+      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
+      @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
     MainQuestion updatedMainQuestion = mainQuestionService
         .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto));
@@ -128,10 +123,18 @@ public class MainQuestionController {
   @PostMapping("/{mainQuestionId}/adapted-questions")
   public ResponseEntity<MainQuestionOutputDto> createAdaptedQuestionForMainQuestion(
       @PathVariable UUID mainQuestionId,
-      @RequestBody QuestionInputDto questionInputDto
+      @RequestPart("adaptedQuestionInputDto") QuestionInputDto questionInputDto,
+      @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
+    List<String> questionImages = imageService.uploadImages(images);
+
     MainQuestion mainQuestionCreated = mainQuestionService
-        .addAdaptedQuestion(mainQuestionId, AdaptedQuestion.parseAdaptedQuestion(questionInputDto));
+        .addAdaptedQuestion(
+            mainQuestionId,
+            AdaptedQuestion.parseAdaptedQuestion(questionInputDto),
+            questionImages
+        );
+
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
