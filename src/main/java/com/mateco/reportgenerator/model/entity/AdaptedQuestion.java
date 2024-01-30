@@ -3,11 +3,13 @@ package com.mateco.reportgenerator.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class AdaptedQuestion extends Question {
       cascade = CascadeType.ALL,
       orphanRemoval = true
   )
+  @ElementCollection
+  @OrderColumn
   private List<Alternative> alternatives;
 
   public AdaptedQuestion(
@@ -59,7 +63,6 @@ public class AdaptedQuestion extends Question {
         "alternatives: " + this.alternatives +
         '}';
   }
-
 
   public static AdaptedQuestion parseAdaptedQuestion(
       QuestionInputDto questionInputDto

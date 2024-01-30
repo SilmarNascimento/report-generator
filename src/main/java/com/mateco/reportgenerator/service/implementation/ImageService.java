@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,10 @@ public class ImageService implements ImageServiceInterface {
 
   @Override
   public List<String> uploadImages(List<MultipartFile> images) throws IOException {
+    if (images == null) {
+      return new ArrayList<>();
+    }
+
     File directory = new File(imageDirectoryPath);
     if (!directory.exists()) {
       directory.mkdirs();
@@ -42,6 +47,19 @@ public class ImageService implements ImageServiceInterface {
         return domainPath + File.separator + fileName;
       })
       .toList();
+  }
+
+  @Override
+  public void deleteImages(List<String> previousImages) {
+    previousImages.forEach((String imageURL) -> {
+          String imagePath = imageURL.replace(domainPath, imageDirectoryPath);
+
+          File previousImage = new File(imagePath);
+
+          if (!previousImage.delete()) {
+            throw new SecurityException("Erro ao excluir o arquivo: " + imagePath);
+          }
+        });
   }
 
 }

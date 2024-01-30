@@ -1,10 +1,12 @@
 package com.mateco.reportgenerator.utils;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
@@ -51,13 +53,11 @@ public class UpdateEntity {
 
   public static void setUpdateNullProperty(MainQuestion questionSource, MainQuestion questionTarget) {
     questionSource.setSubjects(questionTarget.getSubjects());
+    questionSource.setImages(questionTarget.getImages());
     questionSource.setAlternatives(questionTarget.getAlternatives());
     questionSource.setAdaptedQuestions(questionTarget.getAdaptedQuestions());
     questionSource.setMockExams(questionTarget.getMockExams());
     questionSource.setHandout(questionTarget.getHandout());
   }
 
-  public static void setUpdateNullProperty(AdaptedQuestion question) {
-    question.setAlternatives(null);
-  }
 }

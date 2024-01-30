@@ -7,4 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ImageServiceInterface {
   List<String> uploadImages(List<MultipartFile> images) throws IOException;
 
+  void deleteImages(List<String> previousImages);
 }

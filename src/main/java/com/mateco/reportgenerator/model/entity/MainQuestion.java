@@ -6,6 +6,7 @@ import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +52,8 @@ public class MainQuestion extends Question {
       orphanRemoval = true,
       fetch = FetchType.EAGER
   )
+  @ElementCollection
+  @OrderColumn
   private List<Alternative> alternatives;
 
   @Column(name = "adapted_questions")

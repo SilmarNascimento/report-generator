@@ -84,8 +84,10 @@ public class MainQuestionController {
       @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
+    List<String> questionImages = imageService.uploadImages(images);
+
     MainQuestion updatedMainQuestion = mainQuestionService
-        .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto));
+        .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto), questionImages);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto.parseDto(updatedMainQuestion));
@@ -144,7 +146,8 @@ public class MainQuestionController {
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionOfMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId,
-      @RequestBody QuestionInputDto questionInputDto
+      @RequestPart("adaptedQuestionInputDto") QuestionInputDto questionInputDto,
+      @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
     AdaptedQuestion updatedQuestion = adaptedQuestionService
         .updateAdaptedQuestionOfMainQuestionById(
