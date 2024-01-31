@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +33,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MainQuestionService implements MainQuestionServiceInterface {
+
   private final MainQuestionRepository mainQuestionRepository;
   private final AdaptedQuestionRepository adaptedQuestionRepository;
   private final AlternativeServiceInterface alternativeService;
   private final ImageServiceInterface imageService;
-  private  final SubjectRepository subjectRepository;
+  private final SubjectRepository subjectRepository;
 
   @Autowired
   public MainQuestionService(
@@ -73,7 +75,8 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
-  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, List<String> questionImages) {
+  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question,
+      List<String> questionImages) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
@@ -161,33 +164,36 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     int alternativeQuantity = question.getAlternatives().size();
     int questionImagesQuantity = questionImages.size();
     int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
-    int alternativeImageOffset = questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
+    int alternativeImageOffset =
+        questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
     final int[] alternativeIndex = {alternativeImageOffset};
 
-    question.setImages(questionImages.subList(0,alternativeImageOffset));
+    question.setImages(questionImages.subList(0, alternativeImageOffset));
     question.getAlternatives().forEach((Alternative alternative) -> {
       alternative.setMainQuestion(question);
       alternative.setImages(questionImages.subList(
           alternativeIndex[0],
-          alternativeIndex[0]+ imagesPerAlternative
+          alternativeIndex[0] + imagesPerAlternative
       ));
       alternativeIndex[0] += imagesPerAlternative;
     });
   }
 
-  private static void setAdaptedQuestionImage(AdaptedQuestion adaptedQuestion, List<String> questionImages) {
+  private static void setAdaptedQuestionImage(AdaptedQuestion adaptedQuestion,
+      List<String> questionImages) {
     int alternativeQuantity = adaptedQuestion.getAlternatives().size();
     int questionImagesQuantity = questionImages.size();
     int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
-    int alternativeImageOffset = questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
+    int alternativeImageOffset =
+        questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
     final int[] alternativeIndex = {alternativeImageOffset};
 
-    adaptedQuestion.setImages(questionImages.subList(0,alternativeImageOffset));
+    adaptedQuestion.setImages(questionImages.subList(0, alternativeImageOffset));
     adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> {
       alternative.setAdaptedQuestion(adaptedQuestion);
       alternative.setImages(questionImages.subList(
           alternativeIndex[0],
-          alternativeIndex[0]+ imagesPerAlternative
+          alternativeIndex[0] + imagesPerAlternative
       ));
       alternativeIndex[0] += imagesPerAlternative;
     });
@@ -197,18 +203,20 @@ public class MainQuestionService implements MainQuestionServiceInterface {
       List<Alternative> sourceAlternatives,
       List<Alternative> targetAlternatives
   ) {
-    final int[] index = {0};
-    return targetAlternatives.stream()
-        .map((Alternative alternative) -> {
-          alternative.setDescription(sourceAlternatives.get(index[0]).getDescription());
-          alternative.setQuestionAnswer(sourceAlternatives.get(index[0]).isQuestionAnswer());
-          List<String> previousImages = alternative.getImages();
-          imageService.deleteImages(previousImages);
-          alternative.setImages(sourceAlternatives.get(index[0]).getImages());
-          index[0] += 1;
+    for (int index = 0; index < Math.min(sourceAlternatives.size(), targetAlternatives.size());
+        index++) {
+      Alternative sourceAlternative = sourceAlternatives.get(index);
+      Alternative targetAlternative = targetAlternatives.get(index);
 
-          return alternative;
-        })
-        .toList();
+      targetAlternative.setDescription(sourceAlternative.getDescription());
+      targetAlternative.setQuestionAnswer(sourceAlternative.isQuestionAnswer());
+
+      List<String> previousImages = targetAlternative.getImages();
+      imageService.deleteImages(previousImages);
+      targetAlternative.setImages(new ArrayList<>(sourceAlternative.getImages()));
+    }
+
+    return targetAlternatives;
   }
+
 }

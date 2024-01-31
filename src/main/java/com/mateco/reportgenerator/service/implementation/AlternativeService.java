@@ -70,14 +70,6 @@ public class AlternativeService implements AlternativeServiceInterface {
     return alternativeRespository.saveAll(alternatives);
   }
 
-  /*
-  receber uma lista de alternativas (possivelmente) atualizadas, receber a lista de alternativas antigas
-  comparar se elas são diferentes
-  se forem iguais manter do mesmo jeito
-  se forem diferente, atualizar os campos certos da entidade já salva
-  na mudança de alguma imagem, retirar da pasta a iamgem que não pertenca à alternativa alguma
-
-  * */
   @Override
   public Alternative updateAlternativeById(UUID alternativetId, Alternative alternative) {
     Alternative alternativeFound = alternativeRespository.findById(alternativetId)

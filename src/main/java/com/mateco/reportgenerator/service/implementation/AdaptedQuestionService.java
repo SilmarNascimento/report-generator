@@ -10,6 +10,7 @@ import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +65,13 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
       throw new ConflictDataException("Questões principal e adaptada não relacionadas");
     }
 
-    setAdaptedQuestionImage(adaptedQuestionFound, questionImages);
+    setAdaptedQuestionImage(adaptedQuestion, questionImages);
+
+    adaptedQuestionFound.setImages(adaptedQuestion.getImages());
     adaptedQuestionFound.setAlternatives(
         updateAlternative(adaptedQuestion.getAlternatives(), adaptedQuestionFound.getAlternatives())
     );
 
-    UpdateEntity.setCollectionsProperty(adaptedQuestion, adaptedQuestionFound);
     UpdateEntity.copyNonNullProperties(adaptedQuestion, adaptedQuestionFound);
 
     return adaptedQuestionRepository.save(adaptedQuestionFound);
@@ -97,18 +99,19 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
       List<Alternative> sourceAlternatives,
       List<Alternative> targetAlternatives
   ) {
-    final int[] index = {0};
-    return targetAlternatives.stream()
-        .map((Alternative alternative) -> {
-          alternative.setDescription(sourceAlternatives.get(index[0]).getDescription());
-          alternative.setQuestionAnswer(sourceAlternatives.get(index[0]).isQuestionAnswer());
-          List<String> previousImages = alternative.getImages();
-          imageService.deleteImages(previousImages);
-          alternative.setImages(sourceAlternatives.get(index[0]).getImages());
-          index[0] += 1;
+    for (int index = 0; index < Math.min(sourceAlternatives.size(), targetAlternatives.size());
+        index++) {
+      Alternative sourceAlternative = sourceAlternatives.get(index);
+      Alternative targetAlternative = targetAlternatives.get(index);
 
-          return alternative;
-        })
-        .toList();
+      targetAlternative.setDescription(sourceAlternative.getDescription());
+      targetAlternative.setQuestionAnswer(sourceAlternative.isQuestionAnswer());
+
+      List<String> previousImages = targetAlternative.getImages();
+      imageService.deleteImages(previousImages);
+      targetAlternative.setImages(new ArrayList<>(sourceAlternative.getImages()));
+    }
+
+    return targetAlternatives;
   }
 }

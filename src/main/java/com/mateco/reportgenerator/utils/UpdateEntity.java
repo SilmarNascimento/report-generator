@@ -52,9 +52,4 @@ public class UpdateEntity {
     return collectionOrEmptyNames.toArray(result);
   }
 
-  public static void setCollectionsProperty(AdaptedQuestion questionSource, AdaptedQuestion questionTarget) {
-    questionSource.setImages(questionTarget.getImages());
-    questionSource.setAlternatives(questionTarget.getAlternatives());
-  }
-
 }
