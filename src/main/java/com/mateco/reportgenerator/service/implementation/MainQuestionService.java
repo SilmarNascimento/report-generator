@@ -79,10 +79,13 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
     setMainQuestionImages(question, questionImages);
 
-    mainQuestionFound.setAlternatives(updateAlternative(question.getAlternatives(), mainQuestionFound.getAlternatives()));
+    mainQuestionFound.setImages(question.getImages());
+    mainQuestionFound.setAlternatives(
+        updateAlternative(question.getAlternatives(), mainQuestionFound.getAlternatives())
+    );
 
-    UpdateEntity.setUpdateNullProperty(question, mainQuestionFound);
     UpdateEntity.copyNonNullProperties(question, mainQuestionFound);
+
     return mainQuestionRepository.save(mainQuestionFound);
   }
 

@@ -5,6 +5,7 @@ import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,25 +40,21 @@ public class UpdateEntity {
     final BeanWrapper src = new BeanWrapperImpl(source);
     PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-    Set<String> emptyNames = new HashSet<>();
+    Set<String> collectionOrEmptyNames = new HashSet<>();
     for (PropertyDescriptor pd : pds) {
       Object srcValue = src.getPropertyValue(pd.getName());
-      if (srcValue == null) {
-        emptyNames.add(pd.getName());
+      if (srcValue == null || srcValue instanceof Collection<?> || pd.getName().equals("id")) {
+        collectionOrEmptyNames.add(pd.getName());
       }
     }
 
-    String[] result = new String[emptyNames.size()];
-    return emptyNames.toArray(result);
+    String[] result = new String[collectionOrEmptyNames.size()];
+    return collectionOrEmptyNames.toArray(result);
   }
 
-  public static void setUpdateNullProperty(MainQuestion questionSource, MainQuestion questionTarget) {
-    questionSource.setSubjects(questionTarget.getSubjects());
+  public static void setCollectionsProperty(AdaptedQuestion questionSource, AdaptedQuestion questionTarget) {
     questionSource.setImages(questionTarget.getImages());
     questionSource.setAlternatives(questionTarget.getAlternatives());
-    questionSource.setAdaptedQuestions(questionTarget.getAdaptedQuestions());
-    questionSource.setMockExams(questionTarget.getMockExams());
-    questionSource.setHandout(questionTarget.getHandout());
   }
 
 }

@@ -149,11 +149,14 @@ public class MainQuestionController {
       @RequestPart("adaptedQuestionInputDto") QuestionInputDto questionInputDto,
       @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
+    List<String> questionImages = imageService.uploadImages(images);
+
     AdaptedQuestion updatedQuestion = adaptedQuestionService
         .updateAdaptedQuestionOfMainQuestionById(
             mainQuestionId,
             adaptedQuestionId,
-            AdaptedQuestion.parseAdaptedQuestion(questionInputDto)
+            AdaptedQuestion.parseAdaptedQuestion(questionInputDto),
+            questionImages
         );
     return ResponseEntity
         .status(HttpStatus.OK)
