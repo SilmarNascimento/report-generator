@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,6 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   private final MainQuestionRepository mainQuestionRepository;
   private final AdaptedQuestionRepository adaptedQuestionRepository;
-  private final AlternativeServiceInterface alternativeService;
   private final ImageServiceInterface imageService;
   private final SubjectRepository subjectRepository;
 
@@ -44,13 +44,11 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   public MainQuestionService(
       MainQuestionRepository mainQuestionRepository,
       AdaptedQuestionRepository adaptedQuestionRepository,
-      AlternativeService alternativeService,
       ImageServiceInterface imageService,
       SubjectRepository subjectRepository
   ) {
     this.mainQuestionRepository = mainQuestionRepository;
     this.adaptedQuestionRepository = adaptedQuestionRepository;
-    this.alternativeService = alternativeService;
     this.imageService = imageService;
     this.subjectRepository = subjectRepository;
   }
@@ -69,7 +67,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   @Override
   @Transactional
   public MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages) {
-    setMainQuestionImages(question, questionImages);
+    question.updateMainQuestionImages(questionImages);
 
     return mainQuestionRepository.save(question);
   }
@@ -80,11 +78,15 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    setMainQuestionImages(question, questionImages);
+    question.updateMainQuestionImages(questionImages);
 
     mainQuestionFound.setImages(question.getImages());
     mainQuestionFound.setAlternatives(
-        updateAlternative(question.getAlternatives(), mainQuestionFound.getAlternatives())
+        UpdateEntity.updateAlternative(
+            question.getAlternatives(),
+            mainQuestionFound.getAlternatives(),
+            imageService
+        )
     );
 
     UpdateEntity.copyNonNullProperties(question, mainQuestionFound);
@@ -94,6 +96,17 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   public void deleteMainQuestionById(UUID questionId) {
+    MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
+        .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
+
+    List<String> allQuestionImages = Stream.concat(
+            mainQuestionFound.getImages().stream(),
+            mainQuestionFound.getAlternatives().stream()
+                .flatMap(alternative -> alternative.getImages().stream())
+        )
+        .collect(Collectors.toList());
+    imageService.deleteImages(allQuestionImages);
+
     mainQuestionRepository.deleteById(questionId);
   }
 
@@ -136,7 +149,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
     adaptedQuestion.setMainQuestion(mainQuestionFound);
-    setAdaptedQuestionImage(adaptedQuestion, questionImages);
+    adaptedQuestion.updateAdaptedQuestionImage(questionImages);
 
     mainQuestionFound.getAdaptedQuestions().add(adaptedQuestion);
 
@@ -157,66 +170,17 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     mainQuestionFound.getAdaptedQuestions()
         .removeIf(adaptedQuestion -> adaptedQuestionId.equals(adaptedQuestion.getId()));
 
+    List<String> adaptedQuestionImages = adaptedQuestionFound.getImages();
+    List<String> alternativeImages = new ArrayList<>();
+    adaptedQuestionFound.getAlternatives()
+        .forEach((Alternative alternative) -> {
+          List<String> imagelist = alternative.getImages();
+          alternativeImages.addAll(imagelist);
+        });
+    adaptedQuestionImages.addAll(alternativeImages);
+    imageService.deleteImages(adaptedQuestionImages);
+
     mainQuestionRepository.save(mainQuestionFound);
-  }
-
-  private static void setMainQuestionImages(MainQuestion question, List<String> questionImages) {
-    int alternativeQuantity = question.getAlternatives().size();
-    int questionImagesQuantity = questionImages.size();
-    int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
-    int alternativeImageOffset =
-        questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
-    final int[] alternativeIndex = {alternativeImageOffset};
-
-    question.setImages(questionImages.subList(0, alternativeImageOffset));
-    question.getAlternatives().forEach((Alternative alternative) -> {
-      alternative.setMainQuestion(question);
-      alternative.setImages(questionImages.subList(
-          alternativeIndex[0],
-          alternativeIndex[0] + imagesPerAlternative
-      ));
-      alternativeIndex[0] += imagesPerAlternative;
-    });
-  }
-
-  private static void setAdaptedQuestionImage(AdaptedQuestion adaptedQuestion,
-      List<String> questionImages) {
-    int alternativeQuantity = adaptedQuestion.getAlternatives().size();
-    int questionImagesQuantity = questionImages.size();
-    int imagesPerAlternative = questionImagesQuantity / alternativeQuantity;
-    int alternativeImageOffset =
-        questionImagesQuantity - (imagesPerAlternative * alternativeQuantity);
-    final int[] alternativeIndex = {alternativeImageOffset};
-
-    adaptedQuestion.setImages(questionImages.subList(0, alternativeImageOffset));
-    adaptedQuestion.getAlternatives().forEach((Alternative alternative) -> {
-      alternative.setAdaptedQuestion(adaptedQuestion);
-      alternative.setImages(questionImages.subList(
-          alternativeIndex[0],
-          alternativeIndex[0] + imagesPerAlternative
-      ));
-      alternativeIndex[0] += imagesPerAlternative;
-    });
-  }
-
-  private List<Alternative> updateAlternative(
-      List<Alternative> sourceAlternatives,
-      List<Alternative> targetAlternatives
-  ) {
-    for (int index = 0; index < Math.min(sourceAlternatives.size(), targetAlternatives.size());
-        index++) {
-      Alternative sourceAlternative = sourceAlternatives.get(index);
-      Alternative targetAlternative = targetAlternatives.get(index);
-
-      targetAlternative.setDescription(sourceAlternative.getDescription());
-      targetAlternative.setQuestionAnswer(sourceAlternative.isQuestionAnswer());
-
-      List<String> previousImages = targetAlternative.getImages();
-      imageService.deleteImages(previousImages);
-      targetAlternative.setImages(new ArrayList<>(sourceAlternative.getImages()));
-    }
-
-    return targetAlternatives;
   }
 
 }

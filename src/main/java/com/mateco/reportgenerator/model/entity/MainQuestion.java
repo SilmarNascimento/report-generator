@@ -132,4 +132,22 @@ public class MainQuestion extends Question {
         new ArrayList<>()
     );
   }
+
+  public void updateMainQuestionImages(List<String> questionImages) {
+    int alternativeQuantity = this.getAlternatives().size();
+    int imagesPerAlternative = questionImages.size() / alternativeQuantity;
+    int alternativeImageOffset =
+        questionImages.size() - (imagesPerAlternative * alternativeQuantity);
+    final int[] alternativeIndex = {alternativeImageOffset};
+
+    this.setImages(questionImages.subList(0, alternativeImageOffset));
+    this.getAlternatives().forEach((Alternative alternative) -> {
+      alternative.setMainQuestion(this);
+      alternative.setImages(questionImages.subList(
+          alternativeIndex[0],
+          alternativeIndex[0] + imagesPerAlternative
+      ));
+      alternativeIndex[0] += imagesPerAlternative;
+    });
+  }
 }
