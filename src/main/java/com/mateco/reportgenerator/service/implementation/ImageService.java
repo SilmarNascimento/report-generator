@@ -1,5 +1,7 @@
 package com.mateco.reportgenerator.service.implementation;
 
+import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -8,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,5 +65,4 @@ public class ImageService implements ImageServiceInterface {
           }
         });
   }
-
 }

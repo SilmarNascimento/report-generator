@@ -80,6 +80,9 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
     question.updateMainQuestionImages(questionImages);
 
+    List<String> bodyQuestionImages = mainQuestionFound.getImages();
+    imageService.deleteImages(bodyQuestionImages);
+
     mainQuestionFound.setImages(question.getImages());
     mainQuestionFound.setAlternatives(
         UpdateEntity.updateAlternative(
@@ -99,13 +102,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    List<String> allQuestionImages = Stream.concat(
-            mainQuestionFound.getImages().stream(),
-            mainQuestionFound.getAlternatives().stream()
-                .flatMap(alternative -> alternative.getImages().stream())
-        )
-        .collect(Collectors.toList());
-    imageService.deleteImages(allQuestionImages);
+    imageService.deleteImages(mainQuestionFound.getAllStringImages());
 
     mainQuestionRepository.deleteById(questionId);
   }
@@ -170,15 +167,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     mainQuestionFound.getAdaptedQuestions()
         .removeIf(adaptedQuestion -> adaptedQuestionId.equals(adaptedQuestion.getId()));
 
-    List<String> adaptedQuestionImages = adaptedQuestionFound.getImages();
-    List<String> alternativeImages = new ArrayList<>();
-    adaptedQuestionFound.getAlternatives()
-        .forEach((Alternative alternative) -> {
-          List<String> imagelist = alternative.getImages();
-          alternativeImages.addAll(imagelist);
-        });
-    adaptedQuestionImages.addAll(alternativeImages);
-    imageService.deleteImages(adaptedQuestionImages);
+    imageService.deleteImages(adaptedQuestionFound.getAllStringImages());
 
     mainQuestionRepository.save(mainQuestionFound);
   }

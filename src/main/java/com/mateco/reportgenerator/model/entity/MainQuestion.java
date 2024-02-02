@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -149,5 +151,24 @@ public class MainQuestion extends Question {
       ));
       alternativeIndex[0] += imagesPerAlternative;
     });
+  }
+
+  public List<String> getAllStringImages() {
+    List<String> allMainQuestionImages = Stream.concat(
+            this.getImages().stream(),
+            this.getAlternatives().stream()
+                .flatMap(alternative -> alternative.getImages().stream())
+        )
+        .collect(Collectors.toList());
+
+    List<AdaptedQuestion> allAdaptedQuestions = this.getAdaptedQuestions();
+    if (!allAdaptedQuestions.isEmpty()) {
+      List<String> allAdaptedQuestionStringImages = allAdaptedQuestions.stream()
+          .flatMap(adaptedQuestion -> adaptedQuestion.getAllStringImages().stream())
+          .collect(Collectors.toList());
+      allMainQuestionImages.addAll(allAdaptedQuestionStringImages);
+    }
+
+    return allMainQuestionImages;
   }
 }

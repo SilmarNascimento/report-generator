@@ -14,6 +14,8 @@ import jakarta.persistence.Table;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -99,5 +101,14 @@ public class AdaptedQuestion extends Question {
       ));
       alternativeIndex[0] += imagesPerAlternative;
     });
+  }
+
+  public List<String> getAllStringImages() {
+    return Stream.concat(
+            this.getImages().stream(),
+            this.getAlternatives().stream()
+                .flatMap(alternative -> alternative.getImages().stream())
+        )
+        .collect(Collectors.toList());
   }
 }

@@ -67,6 +67,9 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
 
     adaptedQuestion.updateAdaptedQuestionImage(questionImages);
 
+    List<String> bodyQuestionImages = adaptedQuestionFound.getImages();
+    imageService.deleteImages(bodyQuestionImages);
+
     adaptedQuestionFound.setImages(adaptedQuestion.getImages());
     adaptedQuestionFound.setAlternatives(
         UpdateEntity.updateAlternative(
