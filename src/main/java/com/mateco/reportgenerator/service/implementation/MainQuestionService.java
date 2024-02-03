@@ -1,17 +1,11 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Alternative;
-import com.mateco.reportgenerator.model.entity.Attachment;
-import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
-import com.mateco.reportgenerator.model.repository.AlternativeRespository;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
-import com.mateco.reportgenerator.service.AlternativeServiceInterface;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
