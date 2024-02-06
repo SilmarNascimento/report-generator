@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MainQuestionService implements MainQuestionServiceInterface {
-
   private final MainQuestionRepository mainQuestionRepository;
   private final AdaptedQuestionRepository adaptedQuestionRepository;
   private final ImageServiceInterface imageService;

@@ -123,7 +123,7 @@ public class AdaptedQuestionServiceTests {
   }
 
   @Test
-  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade AdaptedQuestion por seu Id")
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade AdaptedQuestion relacionada ao Id da MainQuestion")
   public void findAdaptedQuestionsFromMainQuestionByIdTestConflictDataError() {
     Mockito
         .when(adaptedQuestionRepository.findById(mockAdaptedQuestionId))
