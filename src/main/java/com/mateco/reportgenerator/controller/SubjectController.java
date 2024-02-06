@@ -29,7 +29,7 @@ public class SubjectController {
   }
 
   @GetMapping
-  public ResponseEntity<List<SubjectOutputDto>> findAllSubject() {
+  public ResponseEntity<List<SubjectOutputDto>> findAllSubjects() {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(SubjectOutputDto.parseDto(subjectService.findAllSubjects()));
