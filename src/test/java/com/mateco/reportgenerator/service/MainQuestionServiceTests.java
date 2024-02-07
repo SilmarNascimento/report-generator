@@ -1,15 +1,16 @@
 package com.mateco.reportgenerator.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
+import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
 import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
@@ -17,6 +18,7 @@ import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.service.implementation.MainQuestionService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,20 +48,31 @@ public class MainQuestionServiceTests {
   private SubjectRepository subjectRepository;
 
   private UUID mockMainQuestionId;
+  private UUID mockAdaptedQuestionId;
+  private UUID mockAdaptedQuestionId02;
+
+  private UUID mockSubjectId01;
+  private UUID mockSubjectId02;
   private MainQuestion mockMainQuestion01;
   private MainQuestion mockMainQuestion02;
-  private Alternative mockAlternative01;
-  private Alternative mockAlternative02;
+  private AdaptedQuestion mockAdaptedQuestion01;
+  private AdaptedQuestion mockAdaptedQuestion02;
+  private Subject mockSubject01;
+  private Subject mockSubject02;
 
   @BeforeEach
   public void setUp() {
     mockMainQuestionId = UUID.randomUUID();
-    mockAlternative01 = new Alternative(
-      "descrição da alternativa 01",
-      List.of("imagem alternativa 01"),
-      false
+    mockAdaptedQuestionId = UUID.randomUUID();
+    mockSubjectId01 = UUID.randomUUID();
+    mockSubjectId02 = UUID.randomUUID();
+
+    Alternative mockAlternative01 = new Alternative(
+        "descrição da alternativa 01",
+        List.of("imagem alternativa 01"),
+        false
     );
-    mockAlternative02 = new Alternative(
+    Alternative mockAlternative02 = new Alternative(
         "descrição da alternativa 02",
         List.of("imagem alternativa 02"),
         true
@@ -85,6 +98,33 @@ public class MainQuestionServiceTests {
         new ArrayList<>(),
         new ArrayList<>()
     );
+
+    mockSubject01 = new Subject("Geometria");
+    mockSubject01.setId(mockSubjectId01);
+    mockMainQuestion01.getSubjects().add(mockSubject01);
+
+    mockSubject02 = new Subject("Algebra");
+    mockSubject02.setId(mockSubjectId02);
+
+    mockAdaptedQuestion01 = new AdaptedQuestion(
+        "titulo da questão adaptada 01",
+        "médio",
+        new ArrayList<>(),
+        List.of(mockAlternative01, mockAlternative02)
+    );
+    mockAdaptedQuestion01.setMainQuestion(mockMainQuestion02);
+    mockAdaptedQuestion01.setId(mockAdaptedQuestionId);
+
+    mockAdaptedQuestion02 = new AdaptedQuestion(
+        "titulo da questão adaptada 01",
+        "médio",
+        new ArrayList<>(),
+        List.of(mockAlternative01, mockAlternative02)
+    );
+    mockAdaptedQuestionId02 = UUID.randomUUID();
+    mockAdaptedQuestion02.setId(mockAdaptedQuestionId02);
+    mockMainQuestion01.getAdaptedQuestions().add(mockAdaptedQuestion02);
+    mockAdaptedQuestion02.setMainQuestion(mockMainQuestion01);
   }
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades MainQuestion")
@@ -242,5 +282,291 @@ public class MainQuestionServiceTests {
     );
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+  }
+
+  @Test
+  @DisplayName("Verifica se é adicionado uma lista de entidades Subject à uma MainQuestion")
+  public void addSubjectTest() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(subjectRepository.findAllById(List.of(mockSubjectId02)))
+        .thenReturn(List.of(mockSubject02));
+
+    Mockito
+        .when(mainQuestionRepository.save(any(MainQuestion.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    MainQuestion serviceResponse = mainQuestionService
+        .addSubject(
+            mockMainQuestionId,
+            List.of(mockSubjectId02)
+        );
+
+    assertNotNull(serviceResponse);
+
+    List<Subject> subjectResponseList = serviceResponse.getSubjects();
+    assertEquals(2, subjectResponseList.size());
+    assertTrue(subjectResponseList.contains(mockSubject01));
+    assertTrue(subjectResponseList.contains(mockSubject02));
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(subjectRepository).findAllById(List.of(mockSubjectId02));
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é adicionado uma lista de entidades Subject à uma MainQuestion sem repetições")
+  public void addSubjectWithDuplicatesTest() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(subjectRepository.findAllById(List.of(mockSubjectId01, mockSubjectId02)))
+        .thenReturn(List.of(mockSubject01, mockSubject02));
+
+    Mockito
+        .when(mainQuestionRepository.save(any(MainQuestion.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    MainQuestion serviceResponse = mainQuestionService
+        .addSubject(
+            mockMainQuestionId,
+            List.of(mockSubjectId01, mockSubjectId02)
+        );
+
+    assertNotNull(serviceResponse);
+
+    List<Subject> subjectResponseList = serviceResponse.getSubjects();
+    assertEquals(2, subjectResponseList.size());
+    assertTrue(subjectResponseList.contains(mockSubject01));
+    assertTrue(subjectResponseList.contains(mockSubject02));
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(subjectRepository).findAllById(List.of(mockSubjectId01, mockSubjectId02));
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MainQuestion por seu Id")
+  public void addSubjectTestNotFoundMainQuestionError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .addSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma lista de Subject por seus Ids")
+  public void addSubjectTestNotFoundSubjectError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(subjectRepository.findAllById(List.of(mockSubjectId01, mockSubjectId02)))
+        .thenReturn(new ArrayList<>());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .addSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(subjectRepository).findAllById(any(Collection.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é removido uma lista de entidades Subject de uma MainQuestion")
+  public void removeSubjectTest() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionRepository.save(any(MainQuestion.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    mainQuestionService.removeSubject(
+          mockMainQuestionId,
+          List.of(mockSubjectId01)
+      );
+
+    List<Subject> subjectList = mockMainQuestion01.getSubjects();
+    assertEquals(0, subjectList.size());
+    assertFalse(subjectList.contains(mockSubject01));
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MainQuestion por seu Id")
+  public void removeSubjectTestNotFoundError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .addSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+  }
+
+  @Test
+  @DisplayName("Verifica se é criado e adicionado uma entidade AdaptedQuestion à uma MainQuestion")
+  public void addAdaptedQuestionTest() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionRepository.save(any(MainQuestion.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    MainQuestion serviceResponse = mainQuestionService
+        .addAdaptedQuestion(
+            mockMainQuestionId,
+            mockAdaptedQuestion01,
+            List.of("imagem da questão adaptada", "imagem da alternativa 01", "imagem da alternativa 02")
+        );
+
+    assertNotNull(serviceResponse);
+
+    List<AdaptedQuestion> adaptedQuestionResponseList = serviceResponse.getAdaptedQuestions();
+    assertEquals(2, adaptedQuestionResponseList.size());
+    assertTrue(adaptedQuestionResponseList.contains(mockAdaptedQuestion01));
+
+    AdaptedQuestion adaptedQuestionAdded = adaptedQuestionResponseList
+        .get(adaptedQuestionResponseList.size() - 1);
+    assertEquals(mockMainQuestion01, adaptedQuestionAdded.getMainQuestion());
+    assertEquals(mockAdaptedQuestion01.getTitle(), adaptedQuestionAdded.getTitle());
+    assertEquals(mockAdaptedQuestion01.getLevel(), adaptedQuestionAdded.getLevel());
+    assertEquals(List.of("imagem da questão adaptada"), adaptedQuestionAdded.getImages());
+
+    List<Alternative> alternativeList = adaptedQuestionAdded.getAlternatives();
+    assertEquals(List.of("imagem da alternativa 01"), alternativeList.get(0).getImages());
+    assertEquals(List.of("imagem da alternativa 02"), alternativeList.get(1).getImages());
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MainQuestion por seu Id")
+  public void addAdaptedQuestionTestNotFoundError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .addAdaptedQuestion(mockMainQuestionId, mockAdaptedQuestion01, new ArrayList<>())
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+  }
+
+  @Test
+  @DisplayName("Verifica se é removido uma entidade AdaptedQuestion de uma MainQuestion")
+  public void removeAdaptedQuestionTest() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(adaptedQuestionRepository.findById(mockAdaptedQuestionId02))
+        .thenReturn(Optional.of(mockAdaptedQuestion02));
+
+    Mockito
+        .doNothing().when(imageService).deleteImages(any());
+
+    Mockito
+        .when(mainQuestionRepository.save(any(MainQuestion.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    mainQuestionService.removeAdaptedQuestion(
+        mockMainQuestionId,
+        mockAdaptedQuestionId02
+    );
+
+    List<AdaptedQuestion> adaptedQuestionList = mockMainQuestion01.getAdaptedQuestions();
+    assertEquals(0, adaptedQuestionList.size());
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MainQuestion por seu Id")
+  public void removeAdaptedQuestionTestNotFoundMainQuestionError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .removeAdaptedQuestion(mockMainQuestionId, mockAdaptedQuestionId02)
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade AdaptedQuestion por seu Id")
+  public void removeAdaptedQuestionTestNotFoundAdaptedQuestionError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(adaptedQuestionRepository.findById(mockAdaptedQuestionId02))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mainQuestionService
+            .removeAdaptedQuestion(mockMainQuestionId, mockAdaptedQuestionId02)
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(adaptedQuestionRepository).findById(mockAdaptedQuestionId02);
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso as entidades AdaptedQuestion e MainQuestion não estejam relacionadas")
+  public void removeAdaptedQuestionTestConflictDataError() {
+    Mockito
+        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .thenReturn(Optional.of(mockMainQuestion01));
+
+    Mockito
+        .when(adaptedQuestionRepository.findById(mockAdaptedQuestionId))
+        .thenReturn(Optional.of(mockAdaptedQuestion01));
+
+    assertThrows(
+        ConflictDataException.class,
+        () -> mainQuestionService
+            .removeAdaptedQuestion(mockMainQuestionId, mockAdaptedQuestionId)
+    );
+
+    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(adaptedQuestionRepository).findById(mockAdaptedQuestionId);
   }
 }
