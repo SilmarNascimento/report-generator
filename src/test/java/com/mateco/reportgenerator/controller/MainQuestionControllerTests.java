@@ -1,15 +1,37 @@
 package com.mateco.reportgenerator.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.emptyArray;
+import static org.hamcrest.Matchers.isA;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
+import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.service.implementation.AdaptedQuestionService;
 import com.mateco.reportgenerator.service.implementation.MainQuestionService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,9 +46,584 @@ public class MainQuestionControllerTests {
   @MockBean
   private ImageServiceInterface imageService;
 
-  @Test
-  @DisplayName("")
-  public void nomeDoTest() {
+  private String baseUrl;
+  private UUID mockMainQuestionId01;
+  private UUID mockMainQuestionId02;
+  private UUID mockAdaptedQuestionId01;
+  private UUID mockAdaptedQuestionId02;
+  private MockMultipartFile mockFile01;
+  private MockMultipartFile mockFile02;
+  private MockMultipartFile mockFile03;
+  private List<MockMultipartFile> multipartFiles;
+  private String mainQuestionInput;
+  private MainQuestion mockMainQuestion01;
+  private MainQuestion mockMainQuestion02;
+  private AdaptedQuestion mockAdaptedQuestion01;
+  private AdaptedQuestion mockAdaptedQuestion02;
 
+  @BeforeEach
+  public void setUp() {
+    baseUrl = "/main-questions";
+    mockMainQuestionId01 = UUID.randomUUID();
+    mockMainQuestionId02 = UUID.randomUUID();
+    mockAdaptedQuestionId01 = UUID.randomUUID();
+    mockAdaptedQuestionId02 = UUID.randomUUID();
+
+    mockFile01 = new MockMultipartFile("file", "filename1.jpg", "image/jpeg", "image_example_01".getBytes());
+    mockFile02 = new MockMultipartFile("file", "filename2.jpg", "image/jpeg", "image_example_02".getBytes());
+    mockFile03 = new MockMultipartFile("file", "filename3.jpg", "image/jpeg", "image_example_03".getBytes());
+    multipartFiles = List.of(mockFile01, mockFile02, mockFile03);
+
+    mainQuestionInput = "{\n"
+        + "\t\"title\": \"titulo da questao\",\n"
+        + "\t\"level\": \"nivel da questao\",\n"
+        + "\t\"alternatives\": [\n"
+        + "\t\t{\n"
+        + "\t\t\t\"description\": \"descricao da alternativa\",\n"
+        + "\t\t\t\"questionAnswer\": false\n"
+        + "\t\t},\n"
+        + "\t\t{\n"
+        + "\t\t\t\"description\": \"descricao da alternativa\",\n"
+        + "\t\t\t\"questionAnswer\": false\n"
+        + "\t\t}\n"
+        + "\t]\n"
+        + "}";
+
+    Alternative mockAlternative01 = new Alternative(
+        "descrição da alternativa 01",
+        List.of("imagem alternativa 01"),
+        false
+    );
+    Alternative mockAlternative02 = new Alternative(
+        "descrição da alternativa 02",
+        List.of("imagem alternativa 02"),
+        true
+    );
+
+    mockMainQuestion01 = new MainQuestion(
+        "título questão 01",
+        new ArrayList<>(),
+        "difícil",
+        List.of("imagem da questão 01"),
+        List.of(mockAlternative01, mockAlternative02),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
+    );
+    mockMainQuestion01.setId(mockMainQuestionId01);
+
+    mockMainQuestion02 = new MainQuestion(
+        "título questão 02",
+        new ArrayList<>(),
+        "difícil",
+        List.of("imagem da questão 02"),
+        List.of(mockAlternative01, mockAlternative02),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
+    );
+    mockMainQuestion02.setId(mockMainQuestionId02);
+
+    mockAdaptedQuestion01 = new AdaptedQuestion(
+        "título da questão adaptada 01",
+        "fácil",
+        List.of("imagem da questão adaptada 01"),
+        List.of(mockAlternative01, mockAlternative02)
+    );
+    mockAdaptedQuestion01.setId(mockAdaptedQuestionId01);
+    mockMainQuestion01.getAdaptedQuestions().add(mockAdaptedQuestion01);
+    mockAdaptedQuestion01.setMainQuestion(mockMainQuestion01);
+
+    mockAdaptedQuestion02 = new AdaptedQuestion(
+        "título questão adaptada 02",
+        "médio",
+        List.of("imagem da questão 02"),
+        List.of(mockAlternative01, mockAlternative02)
+    );
+    mockAdaptedQuestion02.setId(mockAdaptedQuestionId02);
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista de todas as entidades MainQuestion")
+  public void findAllMainQuestionsTest() throws Exception {
+    Mockito
+        .when(mainQuestionService.findAllMainQuestions())
+        .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
+
+    ResultActions httpResponse = mockMvc.perform(get(baseUrl));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$", isA(List.class)))
+        .andExpect(jsonPath("$.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.[0].handouts", isA(List.class)))
+        .andExpect(jsonPath("$.[1].id").value(mockMainQuestionId02.toString()))
+        .andExpect(jsonPath("$.[1].title").value("título questão 02"))
+        .andExpect(jsonPath("$.[1].level").value("difícil"))
+        .andExpect(jsonPath("$.[1].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].images.[0]").value("imagem da questão 02"))
+        .andExpect(jsonPath("$.[1].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.[1].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.[1].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.[1].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.[1].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.[1].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.[1].handouts", isA(List.class)));
+
+    Mockito.verify(mainQuestionService).findAllMainQuestions();
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma entidade MainQuestion pelo seu id")
+  public void findMainQuestionByIdTest() throws Exception {
+    Mockito
+        .when(mainQuestionService.findMainQuestionById(mockMainQuestionId01))
+        .thenReturn(mockMainQuestion01);
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.title").value("título questão 01"))
+        .andExpect(jsonPath("$.level").value("difícil"))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.images", isA(List.class)))
+        .andExpect(jsonPath("$.images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.handouts", isA(List.class)));
+
+    Mockito.verify(mainQuestionService).findMainQuestionById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é disparado uma exceção quando não se encontra uma entidade MainQuestion por seu id")
+  public void findMainQuestionByIdTestNotFoundError() throws Exception {
+    Mockito
+        .when(mainQuestionService.findMainQuestionById(any(UUID.class)))
+        .thenThrow(new NotFoundException("Questão principal não encontrada!"));
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
+
+    Mockito.verify(mainQuestionService).findMainQuestionById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se criado uma entidade MainQuestion")
+  public void createMainQuestionTest() throws Exception {
+    Mockito
+        .when(mainQuestionService.createMainQuestion(
+            any(MainQuestion.class),
+            any(List.class)
+        )).thenReturn(mockMainQuestion01);
+
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of("imagem da questão 01", "imagem alternativa 01", "imagem alternativa 02"));
+
+    MockMultipartFile inputJsonPart = new MockMultipartFile(
+        "mainQuestionInputDto",
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mainQuestionInput.getBytes()
+    );
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.POST, baseUrl)
+          .file(multipartFiles.get(0))
+          .file(multipartFiles.get(1))
+          .file(multipartFiles.get(2))
+          .file(inputJsonPart)
+          .contentType(MediaType.MULTIPART_FORM_DATA)
+    );
+
+    httpResponse
+        .andExpect(status().is(201))
+        .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.title").value("título questão 01"))
+        .andExpect(jsonPath("$.level").value("difícil"))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.images", isA(List.class)))
+        .andExpect(jsonPath("$.images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.handouts", isA(List.class)));
+
+    Mockito.verify(mainQuestionService).createMainQuestion(any(MainQuestion.class), any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é atualizada uma entidade MainQuestion pelo seu id")
+  public void updateMainQuestionByIdTest() throws Exception {
+    Mockito
+        .when(mainQuestionService.updateMainQuestionById(
+            any(UUID.class),
+            any(MainQuestion.class),
+            any(List.class)
+        )).thenReturn(mockMainQuestion01);
+
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
+
+    MockMultipartFile inputJsonPart = new MockMultipartFile(
+        "mainQuestionInputDto",
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mainQuestionInput.getBytes()
+    );
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.PUT, endpoint)
+            .file(multipartFiles.get(0))
+            .file(multipartFiles.get(1))
+            .file(multipartFiles.get(2))
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.title").value("título questão 01"))
+        .andExpect(jsonPath("$.level").value("difícil"))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.images", isA(List.class)))
+        .andExpect(jsonPath("$.images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.handouts", isA(List.class)));
+
+    Mockito.verify(mainQuestionService)
+        .updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é disparado uma exceção quando uma entidade MainQuestion não é encontrada pelo seu id")
+  public void updateMainQuestionByIdTestNotFounfError() throws Exception {
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
+
+    Mockito
+        .when(mainQuestionService.updateMainQuestionById(
+            any(UUID.class),
+            any(MainQuestion.class),
+            any(List.class)
+        )).thenThrow(new NotFoundException("Questão principal não encontrada!"));
+
+    MockMultipartFile inputJsonPart = new MockMultipartFile(
+        "mainQuestionInputDto",
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mainQuestionInput.getBytes()
+    );
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.PUT, endpoint)
+            .file(multipartFiles.get(0))
+            .file(multipartFiles.get(1))
+            .file(multipartFiles.get(2))
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+
+    );
+
+    httpResponse
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
+
+    Mockito.verify(mainQuestionService)
+        .updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se uma entidade MainQuestion é deletada pelo seu id")
+  public void deleteMainQuestionByIdTest() throws Exception {
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
+
+    Mockito
+        .doNothing().when(mainQuestionService).deleteMainQuestionById(any(UUID.class));
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(delete(endpoint));
+
+    httpResponse
+        .andExpect(status().is(204));
+
+    Mockito.verify(mainQuestionService).deleteMainQuestionById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se uma exceção é disparada quando não se encontra uma entidade MainQuestion pelo seu id")
+  public void deleteMainQuestionByIdTestNotFoundError() throws Exception {
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
+
+    Mockito
+        .doThrow(new NotFoundException("Questão principal não encontrada!"))
+        .when(mainQuestionService).deleteMainQuestionById(any(UUID.class));
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(delete(endpoint));
+
+    httpResponse
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
+
+    Mockito.verify(mainQuestionService).deleteMainQuestionById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista de AdaptedQuestions de uma MainQuestion pelo seu Id")
+  public void findAllAdaptedQuestionsFromMainQuestionTest() throws Exception {
+    Mockito
+        .when(adaptedQuestionService.findAllAdaptedQuestionFromMainQuestion(any(UUID.class)))
+        .thenReturn(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
+
+    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString() + "/adapted-questions";
+
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$", isA(List.class)))
+        .andExpect(jsonPath("$.[0].id").value(mockAdaptedQuestionId01.toString()))
+        .andExpect(jsonPath("$.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.[1].id").value(mockAdaptedQuestionId02.toString()))
+        .andExpect(jsonPath("$.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].images.[0]").value("imagem da questão 02"))
+        .andExpect(jsonPath("$.[1].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.[1].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.[1].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.[1].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"));
+
+    Mockito.verify(adaptedQuestionService).findAllAdaptedQuestionFromMainQuestion(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma entidade AdaptedQuestions de uma MainQuestion pelos seus Ids")
+  public void findAdaptedQuestionsFromMainQuestionByIdTest() throws Exception {
+    Mockito
+        .when(adaptedQuestionService
+            .findAdaptedQuestionsFromMainQuestionById(any(UUID.class), any(UUID.class)))
+        .thenReturn(mockAdaptedQuestion01);
+
+    String endpoint = baseUrl
+        + "/"
+        + mockMainQuestionId01.toString()
+        + "/adapted-questions/"
+        + mockAdaptedQuestionId01.toString();
+
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockAdaptedQuestionId01.toString()))
+        .andExpect(jsonPath("$.images", isA(List.class)))
+        .andExpect(jsonPath("$.images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value("imagem alternativa 02"));
+
+    Mockito.verify(adaptedQuestionService)
+        .findAdaptedQuestionsFromMainQuestionById(any(UUID.class), any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é criado e relacionado uma entidade AdaptedQuestions em uma MainQuestion")
+  public void createAdaptedQuestionForMainQuestionTest() throws Exception {
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of(
+            "imagem da questão adaptada 01",
+            "imagem alternativa 01",
+            "imagem alternativa 02"
+        ));
+
+    Mockito
+        .when(mainQuestionService
+            .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class)))
+        .thenReturn(mockMainQuestion01);
+
+    String endpoint = baseUrl
+        + "/"
+        + mockMainQuestionId01.toString()
+        + "/adapted-questions";
+
+    MockMultipartFile inputJsonPart = new MockMultipartFile(
+        "adaptedQuestionInputDto",
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mainQuestionInput.getBytes()
+    );
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.POST, endpoint)
+            .file(multipartFiles.get(0))
+            .file(multipartFiles.get(1))
+            .file(multipartFiles.get(2))
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+    );
+
+    httpResponse
+        .andExpect(status().is(201))
+        .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.images", isA(List.class)))
+        .andExpect(jsonPath("$.images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[*].id").exists())
+        .andExpect(jsonPath("$.adaptedQuestions.[0].title").value("título da questão adaptada 01"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].level").value("fácil"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].images.[0]").value("imagem da questão adaptada 01"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"));
+
+    Mockito.verify(mainQuestionService)
+        .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é criado e relacionado uma entidade AdaptedQuestions em uma MainQuestion")
+  public void createAdaptedQuestionForMainQuestionTestNotFoundMainQuestionError() throws Exception {
+    Mockito
+        .when(imageService.uploadImages(any()))
+        .thenReturn(List.of(
+            "imagem da questão adaptada 01",
+            "imagem alternativa 01",
+            "imagem alternativa 02"
+        ));
+
+    Mockito
+        .when(mainQuestionService
+            .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class)))
+        .thenThrow(new NotFoundException("Questão principal não encontrada!"));
+
+    String endpoint = baseUrl
+        + "/"
+        + mockMainQuestionId01.toString()
+        + "/adapted-questions";
+
+    MockMultipartFile inputJsonPart = new MockMultipartFile(
+        "adaptedQuestionInputDto",
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mainQuestionInput.getBytes()
+    );
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.POST, endpoint)
+            .file(multipartFiles.get(0))
+            .file(multipartFiles.get(1))
+            .file(multipartFiles.get(2))
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+    );
+
+    httpResponse
+        .andExpect(status().is(404))
+        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
+
+    Mockito.verify(mainQuestionService)
+        .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class));
   }
 }
+
+// "Verifica se uma entidade Subject é adicionada à entidade MainQuestion"

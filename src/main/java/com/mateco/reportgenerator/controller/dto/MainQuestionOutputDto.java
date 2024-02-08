@@ -18,7 +18,7 @@ public record MainQuestionOutputDto(
     List<AlternativeOutputDto> alternatives,
     List<AdaptedQuestionOutputDto> adaptedQuestions,
     List<MockExam> mockExams,
-    List<Handout> handout
+    List<Handout> handouts
 ) {
   public static MainQuestionOutputDto parseDto (MainQuestion mainQuestion) {
     return new MainQuestionOutputDto(

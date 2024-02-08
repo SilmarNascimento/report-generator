@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,9 @@ public class Subject {
   }
 
   public static List<Subject> parseSubject(List<SubjectInputDto> subjectInputDtos) {
+    if (subjectInputDtos == null) {
+      return new ArrayList<>();
+    }
     return subjectInputDtos.stream()
         .map((SubjectInputDto inputDto) -> new Subject(inputDto.name()))
         .toList();

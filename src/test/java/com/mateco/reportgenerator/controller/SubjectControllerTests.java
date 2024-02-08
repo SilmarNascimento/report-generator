@@ -54,7 +54,6 @@ public class SubjectControllerTests {
 
     mockSubject02 = new Subject("Algebra");
     mockSubject02.setId(mockSubjectId02);
-
   }
 
   @Test
