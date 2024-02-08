@@ -50,7 +50,6 @@ public class MainQuestionServiceTests {
   private UUID mockMainQuestionId;
   private UUID mockAdaptedQuestionId;
   private UUID mockAdaptedQuestionId02;
-
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
   private MainQuestion mockMainQuestion01;
