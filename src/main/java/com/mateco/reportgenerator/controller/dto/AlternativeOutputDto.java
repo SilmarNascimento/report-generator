@@ -10,14 +10,6 @@ public record AlternativeOutputDto(
     List<String> images,
     boolean questionAnswer
 ) {
-  public static AlternativeOutputDto parseDto(Alternative alternative) {
-    return new AlternativeOutputDto(
-        alternative.getId(),
-        alternative.getDescription(),
-        alternative.getImages(),
-        alternative.isQuestionAnswer()
-    );
-  }
 
   public static List<AlternativeOutputDto> parseDto(List<Alternative> alternatives) {
     return alternatives.stream()

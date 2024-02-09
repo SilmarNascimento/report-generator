@@ -26,7 +26,7 @@ public class ImageService implements ImageServiceInterface {
 
   @Override
   public List<String> uploadImages(List<MultipartFile> images) throws IOException {
-    if (images == null) {
+    if (images == null || images.isEmpty()) {
       return new ArrayList<>();
     }
 

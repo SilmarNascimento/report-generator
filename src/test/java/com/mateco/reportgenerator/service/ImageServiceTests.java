@@ -55,6 +55,48 @@ public class ImageServiceTests {
   }
 
   @Test
+  @DisplayName("Verifica se ocorre o armazenamento de arquivos no sistema e é retornado uma lista de URL")
+  public void uploadImageTestNullList() throws IOException {
+    List<String> filesURL = imageService.uploadImages(null);
+
+    assertEquals(0, filesURL.size());
+
+    List<Path> filesInDirectory = listFilesInDirectory(path);
+
+    assertEquals(0, filesInDirectory.size());
+
+    List<String> filesName = filesInDirectory.stream()
+        .map(filePath -> {
+          String stringFileName = filePath.toString().replace(path.toString(), "");
+          return stringFileName.split("_")[1];
+        })
+        .collect(Collectors.toList());
+
+    assertTrue(filesName.isEmpty());
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o armazenamento de arquivos no sistema e é retornado uma lista de URL")
+  public void uploadImageTestEmptyList() throws IOException {
+    List<String> filesURL = imageService.uploadImages(new ArrayList<>());
+
+    assertEquals(0, filesURL.size());
+
+    List<Path> filesInDirectory = listFilesInDirectory(path);
+
+    assertEquals(0, filesInDirectory.size());
+
+    List<String> filesName = filesInDirectory.stream()
+        .map(filePath -> {
+          String stringFileName = filePath.toString().replace(path.toString(), "");
+          return stringFileName.split("_")[1];
+        })
+        .collect(Collectors.toList());
+
+    assertTrue(filesName.isEmpty());
+  }
+
+  @Test
   @DisplayName("Verifica se ocorre a remoção dos arquivos no sistema baseado numa lista de URL")
   public void deleteImageTest() throws IOException {
     List<Path> filesInDirectory = listFilesInDirectory(path);
