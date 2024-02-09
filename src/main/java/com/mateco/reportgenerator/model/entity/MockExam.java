@@ -26,6 +26,12 @@ public class MockExam {
 
   private String name;
 
+  private List<String> className;
+
+  private List<Subject> subjects;
+
+  private int number;
+
   @ManyToMany
   @JoinTable(
       name = "exam_questions",

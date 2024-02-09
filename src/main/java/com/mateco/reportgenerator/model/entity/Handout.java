@@ -2,7 +2,6 @@ package com.mateco.reportgenerator.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -24,7 +23,15 @@ public class Handout {
   @GeneratedValue(generator = "UUID")
   private UUID id;
 
-  private String name;
+  private String title;
+
+  private String edition;
+
+  private String volume;
+
+  private List<Subject> subjects;
+
+  private List<Chapter> chapters;
 
   @ManyToMany
   @JoinTable(
@@ -33,4 +40,6 @@ public class Handout {
       inverseJoinColumns = @JoinColumn(name = "handout_id")
   )
   private List<MainQuestion> handoutQuestions;
+
+  private List<Alternative> answers;
 }
