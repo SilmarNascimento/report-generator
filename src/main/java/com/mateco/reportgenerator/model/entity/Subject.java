@@ -30,6 +30,10 @@ public class Subject {
   @JsonIgnore
   private List<MainQuestion> mainQuestions;
 
+  @ManyToMany(mappedBy = "subjects")
+  @JsonIgnore
+  private List<MockExam> mockExams;
+
   public Subject(String name) {
     this.name = name;
   }

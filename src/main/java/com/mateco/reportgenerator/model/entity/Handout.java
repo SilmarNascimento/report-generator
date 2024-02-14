@@ -29,9 +29,7 @@ public class Handout {
 
   private String volume;
 
-  private List<Subject> subjects;
-
-  private List<Chapter> chapters;
+  // private List<Subject> subjects;
 
   @ManyToMany
   @JoinTable(
@@ -41,5 +39,5 @@ public class Handout {
   )
   private List<MainQuestion> handoutQuestions;
 
-  private List<Alternative> answers;
+  // private List<Alternative> answers;
 }
