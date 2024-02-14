@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.model.entity;
 
+import com.mateco.reportgenerator.controller.dto.MockExamInputDto;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -57,6 +58,20 @@ public class MockExam {
   @MapKeyColumn(name="answer_key")
   @Column(name="answer_value")
   private Map<Integer, String> answers;
+
+  public MockExam(String name, List<String> className, int number) {
+    this.name = name;
+    this.className = className;
+    this.number = number;
+  }
+
+  public static MockExam parseMockExam(MockExamInputDto examInputDto) {
+    return new MockExam(
+        examInputDto.name(),
+        examInputDto.className(),
+        examInputDto.number()
+    );
+  }
 
   public List<Alternative> generateAnswers() {
 
