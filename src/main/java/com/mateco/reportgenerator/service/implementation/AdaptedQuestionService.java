@@ -1,16 +1,12 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Alternative;
-import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
-import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +75,7 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
         )
     );
 
-    UpdateEntity.copyNonNullProperties(adaptedQuestion, adaptedQuestionFound);
+    UpdateEntity.copyNonNullOrListProperties(adaptedQuestion, adaptedQuestionFound);
 
     return adaptedQuestionRepository.save(adaptedQuestionFound);
   }

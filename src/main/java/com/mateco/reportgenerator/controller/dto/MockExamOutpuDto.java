@@ -1,6 +1,5 @@
 package com.mateco.reportgenerator.controller.dto;
 
-import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;

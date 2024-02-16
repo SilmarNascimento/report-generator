@@ -46,7 +46,7 @@ public class MockExamResponse {
 
   @ElementCollection
   @OrderColumn
-  private List<List<AdaptedQuestion>> adaptedQuestionList;
+  private List<AdaptedQuestionWrapper> adaptedQuestionList;
 
   private String comment;
 

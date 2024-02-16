@@ -1,8 +1,6 @@
 package com.mateco.reportgenerator.utils;
 
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
-import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ public class UpdateEntity {
    * Static Method - Atualiza todos os atributos não nulos de um objeto numa
    *                 entidade salva no banco de dados.
    */
-  public static void copyNonNullProperties(Object source, Object target) {
+  public static void copyNonNullOrListProperties(Object source, Object target) {
     BeanUtils.copyProperties(source, target, getNullPropertyName(source));
   }
 

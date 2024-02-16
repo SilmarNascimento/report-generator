@@ -4,6 +4,6 @@ import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface StudentMockExamResponseRepository extends JpaRepository<MockExamResponse, UUID> {
+public interface MockExamResponseRepository extends JpaRepository<MockExamResponse, UUID> {
 
 }

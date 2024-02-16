@@ -1,7 +1,7 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
-import com.mateco.reportgenerator.model.repository.StudentMockExamResponseRepository;
+import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,13 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileService implements FileServiceInterface {
-  private final StudentMockExamResponseRepository studentMockExamResponseRepository;
-
-  @Autowired
-  public FileService(StudentMockExamResponseRepository studentMockExamResponseRepository) {
-    this.studentMockExamResponseRepository = studentMockExamResponseRepository;
-  }
-
   @Override
   public List<MockExamResponse> xlsxReader(MultipartFile studentsResponse) throws IOException {
     try (Workbook workbook = new XSSFWorkbook(studentsResponse.getInputStream())) {
@@ -43,7 +36,6 @@ public class FileService implements FileServiceInterface {
       });
 
       return MockExamResponse.parseResponse(allResponses);
-      // return studentMockExamResponseRepository.saveAll(StudentMockExamResponse.parseResponse(allResponses));
     } catch (IOException e) {
       throw  new IOException(e.getMessage());
     }

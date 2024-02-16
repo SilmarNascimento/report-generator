@@ -1,3 +1,4 @@
+/*
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
@@ -90,7 +91,7 @@ public class TesteController {
   }
 }
 
-/*
+
   mockExamQuestions.forEach(mainQuestion -> {
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion.getAlternatives().get(filterIndex).isQuestionAnswer())

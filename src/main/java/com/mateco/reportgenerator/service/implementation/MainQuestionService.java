@@ -17,8 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +83,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         )
     );
 
-    UpdateEntity.copyNonNullProperties(question, mainQuestionFound);
+    UpdateEntity.copyNonNullOrListProperties(question, mainQuestionFound);
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
