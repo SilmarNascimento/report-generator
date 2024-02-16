@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,28 +54,22 @@ public class MockExam {
       joinColumns = @JoinColumn(name = "main_question_id"),
       inverseJoinColumns = @JoinColumn(name = "mock_exam_id")
   )
-  private List<MainQuestion> mockExamQuestions;
-
   @ElementCollection
-  @CollectionTable(name="mock_exam_response_answers", joinColumns=@JoinColumn(name="mock_exam_id"))
-  @MapKeyColumn(name="answer_key")
-  @Column(name="answer_value")
-  private Map<Integer, String> answers;
+  @OrderColumn
+  private List<MainQuestion> mockExamQuestions;
 
   public MockExam(
       String name,
       List<String> className,
       List<Subject> subjects,
       int number,
-      List<MainQuestion> mockExamQuestions,
-      Map<Integer, String> answers
+      List<MainQuestion> mockExamQuestions
   ) {
     this.name = name;
     this.className = className;
     this.subjects = subjects;
     this.number = number;
     this.mockExamQuestions = mockExamQuestions;
-    this.answers = answers;
   }
 
   public static MockExam parseMockExam(MockExamInputDto examInputDto) {
@@ -83,41 +78,8 @@ public class MockExam {
         examInputDto.className(),
         new ArrayList<>(),
         examInputDto.number(),
-        new ArrayList<>(),
-        new HashMap<>()
+        new ArrayList<>()
     );
   }
 
-  public Map<Integer, String> generateAnswers() {
-    List<MainQuestion> questions = this.mockExamQuestions;
-
-    final int[] initialKey = {136};
-
-    return questions.stream()
-        .collect(Collectors.toMap(
-            question -> initialKey[0]++,
-            question -> generateAlternativeLetter(question)
-        ));
-  };
-
-  private String generateAlternativeLetter(MainQuestion question) {
-    List<Alternative> alternativeList = question.getAlternatives();
-
-    int index = 0;
-    for (Alternative alternative: alternativeList) {
-      if (alternative.isQuestionAnswer()) {
-        break;
-      }
-      index ++;
-    }
-
-    Map<Integer, String> map = new HashMap<>();
-    map.put(0, "A");
-    map.put(1, "B");
-    map.put(2, "C");
-    map.put(3, "D");
-    map.put(4, "E");
-
-    return map.getOrDefault(index, "");
-  }
 }

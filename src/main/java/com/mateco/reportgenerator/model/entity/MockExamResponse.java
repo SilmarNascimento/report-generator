@@ -1,18 +1,17 @@
 package com.mateco.reportgenerator.model.entity;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -20,11 +19,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "students_mock_exam_response")
+@Table(name = "mock_exam_response")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentMockExamResponse {
+public class MockExamResponse {
   @Id
   @GeneratedValue(generator = "UUID")
   private UUID id;
@@ -33,37 +32,45 @@ public class StudentMockExamResponse {
 
   private String email;
 
+  @ManyToOne
+  @JoinColumn(name = "mock_exam_id")
+  private MockExam mockExam;
+
   private int correctAnswers;
 
   private int totalQuestions;
 
   @ElementCollection
-  @CollectionTable(name="mock_exam_response_answers", joinColumns=@JoinColumn(name="exam_response_id"))
-  @MapKeyColumn(name="answer_key")
-  @Column(name="answer_value")
-  private Map<Integer, String> answers;
+  @OrderColumn
+  private List<String> responses;
+
+  @ElementCollection
+  @OrderColumn
+  private List<List<AdaptedQuestion>> adaptedQuestionList;
 
   private String comment;
 
   private LocalDateTime createdAt;
 
-  public StudentMockExamResponse(
+  public MockExamResponse(
       String name,
       String email,
       int totalQuestions,
-      Map<Integer, String> answers,
+      List<String> responses,
       String comment,
       LocalDateTime createdAt
   ) {
     this.name = name;
     this.email = email;
+    this.mockExam = null;
     this.totalQuestions = totalQuestions;
-    this.answers = answers;
+    this.responses = responses;
+    this.adaptedQuestionList = new ArrayList<>();
     this.comment = comment;
     this.createdAt = createdAt;
   }
 
-  public static List<StudentMockExamResponse> parseResponse(List<List<String>> studentsResponse) {
+  public static List<MockExamResponse> parseResponse(List<List<String>> studentsResponse) {
     return studentsResponse.stream()
         .map(studentResponse -> {
           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yy H:mm");
@@ -74,19 +81,15 @@ public class StudentMockExamResponse {
           String comment = studentResponse.get(studentResponse.size() - 1);
           List<String> studentAnswers = studentResponse.subList(4, studentResponse.size() - 1);
 
-          final int[] initialKey = {136};
+          List<String> responses = studentAnswers.stream()
+              .map(answer -> answer)
+              .collect(Collectors.toList());
 
-          Map<Integer, String> answers = studentAnswers.stream()
-              .collect(Collectors.toMap(
-                  answer -> initialKey[0]++,
-                  answer -> answer
-              ));
-
-          return new StudentMockExamResponse(
+          return new MockExamResponse(
               name,
               email,
               studentAnswers.size(),
-              answers,
+              responses,
               comment,
               LocalDateTime.parse(createdAt, formatter)
           );
