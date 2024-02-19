@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/mock-exams")
+@RequestMapping("/mock-exam")
 public class MockExamController {
   private final MockExamServiceInterface mockExamService;
   private final FileServiceInterface fileService;
@@ -139,7 +139,7 @@ public class MockExamController {
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
-    mockExamService.removeSubject(mockExamId, mainQuestionList.mainQuestionsId());
+    mockExamService.removeMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();
@@ -151,7 +151,6 @@ public class MockExamController {
       @RequestParam UUID mockExamId
   ) throws IOException {
     List<MockExamResponse> mockExamResponses= fileService.xlsxReader(studentsAnswer);
-    System.out.println(mockExamResponses);
 
     List<MockExamResponse> examResponses = mockExamService.registerAllMockExamResponses(mockExamResponses, mockExamId);
 

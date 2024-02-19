@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/main-questions")
+@RequestMapping("/main-question")
 public class MainQuestionController {
   private final MainQuestionServiceInterface mainQuestionService;
   private final AdaptedQuestionServiceInterface adaptedQuestionService;
@@ -102,7 +102,7 @@ public class MainQuestionController {
         .build();
   }
 
-  @GetMapping("/{mainQuestionId}/adapted-questions")
+  @GetMapping("/{mainQuestionId}/adapted-question")
   public ResponseEntity<List<AdaptedQuestionOutputDto>> findAllAdaptedQuestionsFromMainQuestion(
       @PathVariable UUID mainQuestionId
   ) {
@@ -112,7 +112,7 @@ public class MainQuestionController {
             .parseDto(adaptedQuestionService.findAllAdaptedQuestionFromMainQuestion(mainQuestionId)));
   }
 
-  @GetMapping("/{mainQuestionId}/adapted-questions/{adaptedQuestionId}")
+  @GetMapping("/{mainQuestionId}/adapted-question/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> findAdaptedQuestionFromMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId
@@ -123,7 +123,7 @@ public class MainQuestionController {
             .parseDto(adaptedQuestionService.findAdaptedQuestionsFromMainQuestionById(mainQuestionId, adaptedQuestionId)));
   }
 
-  @PostMapping("/{mainQuestionId}/adapted-questions")
+  @PostMapping("/{mainQuestionId}/adapted-question")
   public ResponseEntity<MainQuestionOutputDto> createAdaptedQuestionForMainQuestion(
       @PathVariable UUID mainQuestionId,
       @RequestPart("adaptedQuestionInputDto") QuestionInputDto questionInputDto,
@@ -143,7 +143,7 @@ public class MainQuestionController {
         .body(MainQuestionOutputDto.parseDto(mainQuestionCreated));
   }
 
-  @PutMapping("/{mainQuestionId}/adapted-questions/{adaptedQuestionId}")
+  @PutMapping("/{mainQuestionId}/adapted-question/{adaptedQuestionId}")
   public ResponseEntity<AdaptedQuestionOutputDto> updateAdaptedQuestionOfMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId,
@@ -164,7 +164,7 @@ public class MainQuestionController {
         .body(AdaptedQuestionOutputDto.parseDto(updatedQuestion));
   }
 
-  @DeleteMapping("/{mainQuestionId}/adapted-questions/{adaptedQuestionId}")
+  @DeleteMapping("/{mainQuestionId}/adapted-question/{adaptedQuestionId}")
   public ResponseEntity<Void> deleteAdaptedQuestionFromMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @PathVariable UUID adaptedQuestionId

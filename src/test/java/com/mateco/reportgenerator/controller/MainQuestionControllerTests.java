@@ -875,7 +875,7 @@ public class MainQuestionControllerTests {
         + "/subject";
 
     ResultActions httpResponse = mockMvc.perform(
-        put(endpoint)
+        patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
     );
@@ -904,7 +904,7 @@ public class MainQuestionControllerTests {
         + "/subject";
 
     ResultActions httpResponse = mockMvc.perform(
-        put(endpoint)
+        patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
     );
@@ -929,7 +929,7 @@ public class MainQuestionControllerTests {
         + "/subject";
 
     ResultActions httpResponse = mockMvc.perform(
-        put(endpoint)
+        patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
     );
