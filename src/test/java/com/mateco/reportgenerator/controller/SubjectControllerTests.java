@@ -45,7 +45,7 @@ public class SubjectControllerTests {
 
   @BeforeEach
   public void setUp() {
-    baseUrl = "/subjects";
+    baseUrl = "/subject";
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
 

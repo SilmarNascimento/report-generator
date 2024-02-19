@@ -71,7 +71,7 @@ public class MainQuestionControllerTests {
 
   @BeforeEach
   public void setUp() {
-    baseUrl = "/main-questions";
+    baseUrl = "/main-question";
     mockMainQuestionId01 = UUID.randomUUID();
     mockMainQuestionId02 = UUID.randomUUID();
     mockAdaptedQuestionId01 = UUID.randomUUID();
@@ -443,7 +443,10 @@ public class MainQuestionControllerTests {
         .when(adaptedQuestionService.findAllAdaptedQuestionFromMainQuestion(any(UUID.class)))
         .thenReturn(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
 
-    String endpoint = baseUrl + "/" + mockMainQuestionId01.toString() + "/adapted-questions";
+    String endpoint = baseUrl
+        + "/"
+        + mockMainQuestionId01.toString()
+        + "/adapted-question";
 
     ResultActions httpResponse = mockMvc.perform(get(endpoint));
 
@@ -487,7 +490,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     ResultActions httpResponse = mockMvc.perform(get(endpoint));
@@ -529,7 +532,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions";
+        + "/adapted-question";
 
     MockMultipartFile inputJsonPart = createInputJsonPart("adaptedQuestionInputDto");
 
@@ -593,7 +596,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions";
+        + "/adapted-question";
 
     MockMultipartFile inputJsonPart = createInputJsonPart("adaptedQuestionInputDto");
 
@@ -637,7 +640,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     MockMultipartFile inputJsonPart = createInputJsonPart("adaptedQuestionInputDto");
@@ -699,7 +702,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     MockMultipartFile inputJsonPart = createInputJsonPart("adaptedQuestionInputDto");
@@ -749,7 +752,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     MockMultipartFile inputJsonPart = createInputJsonPart("adaptedQuestionInputDto");
@@ -785,7 +788,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + mockMainQuestionId01.toString()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     ResultActions httpResponse = mockMvc.perform(delete(endpoint));
@@ -806,7 +809,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + UUID.randomUUID()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     ResultActions httpResponse = mockMvc.perform(delete(endpoint));
@@ -828,7 +831,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + UUID.randomUUID()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     ResultActions httpResponse = mockMvc.perform(delete(endpoint));
@@ -850,7 +853,7 @@ public class MainQuestionControllerTests {
     String endpoint = baseUrl
         + "/"
         + UUID.randomUUID()
-        + "/adapted-questions/"
+        + "/adapted-question/"
         + mockAdaptedQuestionId01.toString();
 
     ResultActions httpResponse = mockMvc.perform(delete(endpoint));
