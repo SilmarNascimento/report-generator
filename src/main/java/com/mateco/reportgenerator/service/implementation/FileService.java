@@ -37,7 +37,7 @@ public class FileService implements FileServiceInterface {
 
       return MockExamResponse.parseResponse(allResponses);
     } catch (IOException e) {
-      throw  new IOException(e.getMessage());
+      throw new IOException(e.getMessage());
     }
   }
 }
