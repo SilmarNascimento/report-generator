@@ -31,6 +31,7 @@ public class MockExamService implements MockExamServiceInterface {
   private final SubjectRepository subjectRepository;
   private final MockExamResponseRepository mockExamResponseRepository;
 
+  @Autowired
   public MockExamService(
       MockExamRepository mockExamRepository,
       MainQuestionRepository mainQuestionRepository,
@@ -42,9 +43,6 @@ public class MockExamService implements MockExamServiceInterface {
     this.subjectRepository = subjectRepository;
     this.mockExamResponseRepository = mockExamResponseRepository;
   }
-
-  @Autowired
-
 
   @Override
   public List<MockExam> findAllMockExams() {
@@ -131,7 +129,7 @@ public class MockExamService implements MockExamServiceInterface {
     mockExamRepository.save(mockExamFound);
   }
 
-  public List<MockExamResponse> registerAllMockExamResponses(List<MockExamResponse> mockExamResponses, UUID mockExamId) {
+  public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
 
@@ -142,22 +140,22 @@ public class MockExamService implements MockExamServiceInterface {
     map.put(3, "D");
     map.put(4, "E");
 
-    for (int index = 0; index < mockExamResponses.size(); index ++) {
-      MockExamResponse studentResponse = mockExamResponses.get(index);
+    for (MockExamResponse studentResponse : mockExamResponses) {
       studentResponse.setMockExam(mockExamFound);
 
       List<MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
       List<String> studentAnswers = studentResponse.getResponses();
       List<AdaptedQuestionWrapper> reportAdaptedQuestions = new ArrayList<>();
 
-      for (MainQuestion mainQuestion : mockExamQuestions) {
+      for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
+        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex);
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
-            .filter(
-                filterIndex -> mainQuestion.getAlternatives().get(filterIndex).isQuestionAnswer())
+            .filter(filterIndex -> mainQuestion
+                .getAlternatives().get(filterIndex).isQuestionAnswer())
             .findFirst()
             .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada"));
 
-        if (map.get(correctAlternativeIndex).equals(studentAnswers.get(index))) {
+        if (map.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
         } else {
           List<AdaptedQuestion> adaptedQuestionList = mainQuestion.getAdaptedQuestions();

@@ -24,5 +24,5 @@ public interface MockExamServiceInterface {
   MockExam addMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId);
   void removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionId);
 
-  List<MockExamResponse> registerAllMockExamResponses(List<MockExamResponse> mockExamResponses, UUID mockExamId);
+  List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses);
 }

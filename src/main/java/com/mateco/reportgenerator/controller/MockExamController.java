@@ -152,7 +152,7 @@ public class MockExamController {
   ) throws IOException {
     List<MockExamResponse> mockExamResponses= fileService.xlsxReader(studentsAnswer);
 
-    List<MockExamResponse> examResponses = mockExamService.registerAllMockExamResponses(mockExamResponses, mockExamId);
+    List<MockExamResponse> examResponses = mockExamService.registerAllMockExamResponses(mockExamId, mockExamResponses);
 
     return ResponseEntity
         .status(HttpStatus.OK)

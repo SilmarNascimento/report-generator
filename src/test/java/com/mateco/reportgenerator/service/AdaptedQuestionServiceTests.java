@@ -32,7 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @ExtendWith(MockitoExtension.class)
 public class AdaptedQuestionServiceTests {
   @Autowired
-  private AdaptedQuestionService adaptedQuestionService;
+  private AdaptedQuestionServiceInterface adaptedQuestionService;
 
   @MockBean
   private MainQuestionRepository mainQuestionRepository;

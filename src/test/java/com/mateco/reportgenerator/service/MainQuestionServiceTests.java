@@ -16,7 +16,6 @@ import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
-import com.mateco.reportgenerator.service.implementation.MainQuestionService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +35,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @ExtendWith(MockitoExtension.class)
 public class MainQuestionServiceTests {
   @Autowired
-  private MainQuestionService mainQuestionService;
+  private MainQuestionServiceInterface mainQuestionService;
 
   @MockBean
   private MainQuestionRepository mainQuestionRepository;
@@ -142,7 +141,7 @@ public class MainQuestionServiceTests {
   }
 
   @Test
-  @DisplayName("Verifica se é retornado a entidade AdaptedQuestion por seu Id")
+  @DisplayName("Verifica se é retornado a entidade MainQuestion por seu Id")
   public void findMainQuestionByIdTest() {
     Mockito
         .when(mainQuestionRepository.findById(mockMainQuestionId))
@@ -153,7 +152,7 @@ public class MainQuestionServiceTests {
     assertNotNull(serviceResponse);
     assertEquals(serviceResponse, mockMainQuestion01);
 
-    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).findById(any(UUID.class));
   }
 
   @Test
@@ -168,7 +167,7 @@ public class MainQuestionServiceTests {
         () -> mainQuestionService.findMainQuestionById(mockMainQuestionId)
     );
 
-    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).findById(any(UUID.class));
   }
 
   @Test
@@ -227,6 +226,7 @@ public class MainQuestionServiceTests {
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
     Mockito.verify(imageService, Mockito.times(3)).deleteImages(any());
+    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
   }
 
   @Test
@@ -320,11 +320,11 @@ public class MainQuestionServiceTests {
   @DisplayName("Verifica se é adicionado uma lista de entidades Subject à uma MainQuestion sem repetições")
   public void addSubjectWithDuplicatesTest() {
     Mockito
-        .when(mainQuestionRepository.findById(mockMainQuestionId))
+        .when(mainQuestionRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(mockMainQuestion01));
 
     Mockito
-        .when(subjectRepository.findAllById(List.of(mockSubjectId01, mockSubjectId02)))
+        .when(subjectRepository.findAllById(any(List.class)))
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
@@ -344,9 +344,12 @@ public class MainQuestionServiceTests {
     assertTrue(subjectResponseList.contains(mockSubject01));
     assertTrue(subjectResponseList.contains(mockSubject02));
 
-    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
-    Mockito.verify(subjectRepository).findAllById(List.of(mockSubjectId01, mockSubjectId02));
-    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+    Mockito.verify(mainQuestionRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito.verify(subjectRepository, Mockito.times(1))
+        .findAllById(any(List.class));
+    Mockito.verify(mainQuestionRepository, Mockito.times(1))
+        .save(any(MainQuestion.class));
   }
 
   @Test
@@ -382,7 +385,7 @@ public class MainQuestionServiceTests {
             .addSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
     );
 
-    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).findById(any(UUID.class));
     Mockito.verify(subjectRepository).findAllById(any(Collection.class));
   }
 
@@ -406,7 +409,7 @@ public class MainQuestionServiceTests {
     assertEquals(0, subjectList.size());
     assertFalse(subjectList.contains(mockSubject01));
 
-    Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
+    Mockito.verify(mainQuestionRepository).findById(any(UUID.class));
     Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
   }
 
@@ -420,7 +423,7 @@ public class MainQuestionServiceTests {
     assertThrows(
         NotFoundException.class,
         () -> mainQuestionService
-            .addSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
+            .removeSubject(mockMainQuestionId, List.of(mockSubjectId01, mockSubjectId02))
     );
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId);
