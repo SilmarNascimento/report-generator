@@ -1,13 +1,18 @@
 package com.mateco.reportgenerator.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +33,9 @@ public class ImageServiceTests {
 
   @Value("${directory.resources.static.image}")
   private Path path;
+
+  @Mock
+  private MockMultipartFile mockMultipartFile;
 
   @Test
   @DisplayName("Verifica se ocorre o armazenamento de arquivos no sistema e é retornado uma lista de URL")
@@ -116,10 +124,33 @@ public class ImageServiceTests {
 
   @Test
   @DisplayName("Verifica se ocorre o disparo de uma exceção ao deletar um arquivo inexistente")
-  public void deleteImageTestError() {
+  public void deleteImageTestError() throws IOException {
     List<String> inexistentFile = List.of(path.toString() + "fakeFile.jpg");
 
     assertThrows(SecurityException.class, () -> imageService.deleteImages(inexistentFile));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção IOException na leitura de um arquivo inexistente")
+  public void xlsxReaderTestError() throws IOException {
+    Mockito.when(mockMultipartFile.getBytes()).thenThrow(new IOException("Erro ao ler arquivo"));
+
+    assertThrows(
+        RuntimeException.class,
+        () -> imageService.uploadImages(List.of(mockMultipartFile))
+    );
+
+    List<Path> filesInDirectory = listFilesInDirectory(path);
+
+    List<String> filesPath = filesInDirectory.stream()
+        .map(filePath -> filePath.toString())
+        .collect(Collectors.toList());
+
+    imageService.deleteImages(filesPath);
+
+    List<Path> updatedFilesInDirectory = listFilesInDirectory(path);
+
+    assertEquals(0, updatedFilesInDirectory.size());
   }
 
   private List<Path> listFilesInDirectory(Path directory) throws IOException {

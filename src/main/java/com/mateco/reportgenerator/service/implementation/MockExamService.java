@@ -65,6 +65,8 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
 
+    mockExamFound.setSubjects(mockExam.getSubjects());
+
     UpdateEntity.copyNonNullOrListProperties(mockExam, mockExamFound);
 
     return mockExamRepository.save(mockExamFound);
@@ -78,7 +80,7 @@ public class MockExamService implements MockExamServiceInterface {
   @Override
   public MockExam addSubject(UUID mockExamId, List<UUID> subjecstId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     List<Subject> subjectListToAdd = subjectRepository.findAllById(subjecstId);
     if (subjectListToAdd.isEmpty()) {
@@ -95,7 +97,7 @@ public class MockExamService implements MockExamServiceInterface {
   @Override
   public void removeSubject(UUID mockExamId, List<UUID> subjectsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     mockExamFound.getSubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
 
@@ -105,7 +107,7 @@ public class MockExamService implements MockExamServiceInterface {
   @Override
   public MockExam addMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     List<MainQuestion> mainQuestionListToAdd = mainQuestionRepository.findAllById(mainQuestionsId);
     if (mainQuestionListToAdd.isEmpty()) {
@@ -122,7 +124,7 @@ public class MockExamService implements MockExamServiceInterface {
   @Override
   public void removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     mockExamFound.getMockExamQuestions().removeIf(mainQuestion -> mainQuestionsId.contains(mainQuestion.getId()));
 
@@ -131,7 +133,7 @@ public class MockExamService implements MockExamServiceInterface {
 
   public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     Map<Integer, String> map = new HashMap<>();
     map.put(0, "A");
@@ -153,7 +155,7 @@ public class MockExamService implements MockExamServiceInterface {
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
             .findFirst()
-            .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada"));
+            .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada!"));
 
         if (map.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);

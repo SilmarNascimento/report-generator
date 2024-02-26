@@ -1,7 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.isA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,9 +53,6 @@ public class MainQuestionControllerTests {
   private UUID mockMainQuestionId02;
   private UUID mockAdaptedQuestionId01;
   private UUID mockAdaptedQuestionId02;
-  private MockMultipartFile mockFile01;
-  private MockMultipartFile mockFile02;
-  private MockMultipartFile mockFile03;
   private List<MockMultipartFile> multipartFiles;
   private Alternative mockAlternative01;
   private Alternative mockAlternative02;
@@ -77,9 +73,12 @@ public class MainQuestionControllerTests {
     mockAdaptedQuestionId01 = UUID.randomUUID();
     mockAdaptedQuestionId02 = UUID.randomUUID();
 
-    mockFile01 = new MockMultipartFile("file", "filename1.jpg", "image/jpeg", "image_example_01".getBytes());
-    mockFile02 = new MockMultipartFile("file", "filename2.jpg", "image/jpeg", "image_example_02".getBytes());
-    mockFile03 = new MockMultipartFile("file", "filename3.jpg", "image/jpeg", "image_example_03".getBytes());
+    MockMultipartFile mockFile01 = new MockMultipartFile("file", "filename1.jpg", "image/jpeg",
+        "image_example_01".getBytes());
+    MockMultipartFile mockFile02 = new MockMultipartFile("file", "filename2.jpg", "image/jpeg",
+        "image_example_02".getBytes());
+    MockMultipartFile mockFile03 = new MockMultipartFile("file", "filename3.jpg", "image/jpeg",
+        "image_example_03".getBytes());
     multipartFiles = List.of(mockFile01, mockFile02, mockFile03);
 
     mainQuestionInput = "{\n"
@@ -1002,4 +1001,3 @@ public class MainQuestionControllerTests {
   }
 }
 
-// "Verifica se uma entidade Subject é adicionada à entidade MainQuestion"

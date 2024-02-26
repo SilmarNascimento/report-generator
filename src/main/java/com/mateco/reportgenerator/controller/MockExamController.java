@@ -70,7 +70,7 @@ public class MockExamController {
   }
 
   @PostMapping
-  public ResponseEntity<MockExamOutpuDto> createMockExam(MockExamInputDto mockExamInputDto) {
+  public ResponseEntity<MockExamOutpuDto> createMockExam(@RequestBody MockExamInputDto mockExamInputDto) {
     MockExam mockExam = mockExamService.createMockExam(MockExam.parseMockExam(mockExamInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -79,7 +79,7 @@ public class MockExamController {
 
   @PutMapping("/{mockExamId}")
   public ResponseEntity<MockExamOutpuDto> updateMockExamById(
-      @RequestParam UUID mockExamId,
+      @PathVariable UUID mockExamId,
       @RequestBody MockExamInputDto examInputDto
   ){
     MockExam updatedMockExam = mockExamService
@@ -91,7 +91,7 @@ public class MockExamController {
   }
 
   @DeleteMapping("/{mockExamId}")
-  public ResponseEntity<Void> deleteMockExamById(@RequestParam UUID mockExamId) {
+  public ResponseEntity<Void> deleteMockExamById(@PathVariable UUID mockExamId) {
     mockExamService.deleteMockExamById(mockExamId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
@@ -145,10 +145,10 @@ public class MockExamController {
         .build();
   }
 
-  @PostMapping("/mock-exam/{mockExamId}/responses")
+  @PostMapping("/{mockExamId}/responses")
   public ResponseEntity<List<MockExamResponseOutputDto>> registerMockExamResponses(
       @RequestPart("studentsMockExamsAnswers") MultipartFile studentsAnswer,
-      @RequestParam UUID mockExamId
+      @PathVariable UUID mockExamId
   ) throws IOException {
     List<MockExamResponse> mockExamResponses= fileService.xlsxReader(studentsAnswer);
 

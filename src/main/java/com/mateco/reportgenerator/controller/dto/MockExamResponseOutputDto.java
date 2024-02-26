@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller.dto;
 
+import com.mateco.reportgenerator.model.entity.AdaptedQuestionWrapper;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,47 +14,23 @@ public record MockExamResponseOutputDto(
     UUID mockExamId,
     int correctAnswers,
     List<String> response,
-    List<List<AdaptedQuestionOutputDto>> adaptedQuestions,
+    List<AdaptedQuestionWrapper> adaptedQuestions,
     String comment,
     LocalDateTime createdAt
 ) {
-  public static MockExamResponseOutputDto parseDto(MockExamResponse examResponse) {
-    List<List<AdaptedQuestionOutputDto>> adaptedQuestionsList = examResponse.getAdaptedQuestionList().stream()
-        .map(questionsList -> AdaptedQuestionOutputDto.parseDto(questionsList.getAdaptedQuestionList()))
-        .collect(Collectors.toList());
-
-    return new MockExamResponseOutputDto(
-        examResponse.getId(),
-        examResponse.getName(),
-        examResponse.getEmail(),
-        examResponse.getMockExam().getId(),
-        examResponse.getCorrectAnswers(),
-        examResponse.getResponses(),
-        adaptedQuestionsList,
-        examResponse.getComment(),
-        examResponse.getCreatedAt()
-    );
-  }
 
   public static List<MockExamResponseOutputDto> parseDto(List<MockExamResponse> examResponses) {
     return examResponses.stream()
-        .map(examResponse -> {
-            List<List<AdaptedQuestionOutputDto>> adaptedQuestionsList = examResponse.getAdaptedQuestionList().stream()
-                .map(questionsList -> AdaptedQuestionOutputDto.parseDto(questionsList.getAdaptedQuestionList()))
-                .collect(Collectors.toList());
-
-            return new MockExamResponseOutputDto(
+        .map(examResponse -> new MockExamResponseOutputDto(
                 examResponse.getId(),
                 examResponse.getName(),
                 examResponse.getEmail(),
                 examResponse.getMockExam().getId(),
                 examResponse.getCorrectAnswers(),
                 examResponse.getResponses(),
-                adaptedQuestionsList,
+                examResponse.getAdaptedQuestionList(),
                 examResponse.getComment(),
                 examResponse.getCreatedAt()
-            );
-        })
-        .collect(Collectors.toList());
+        )).collect(Collectors.toList());
   }
 }

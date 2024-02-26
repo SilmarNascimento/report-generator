@@ -58,7 +58,6 @@ public class FileServiceTests {
     } catch (IOException e) {
       throw new IOException(e.getMessage());
     }
-
   }
 
   @Test

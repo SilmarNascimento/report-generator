@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,11 +21,8 @@ import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,11 +54,6 @@ public class MockExamServiceTests {
   private UUID mockExamId02;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
-  private UUID mockResponseId01;
-  private UUID mockResponseId02;
-  private UUID mockResponseId03;
-  private AdaptedQuestion mockAdaptedQuestion01;
-  private AdaptedQuestion mockAdaptedQuestion02;
   private UUID mockMainQuestionId01;
   private UUID mockMainQuestionId02;
   private UUID mockMainQuestionId03;
@@ -83,9 +74,9 @@ public class MockExamServiceTests {
     mockExamId02 = UUID.randomUUID();
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
-    mockResponseId01 = UUID.randomUUID();
-    mockResponseId02 = UUID.randomUUID();
-    mockResponseId03 = UUID.randomUUID();
+    UUID mockResponseId01 = UUID.randomUUID();
+    UUID mockResponseId02 = UUID.randomUUID();
+    UUID mockResponseId03 = UUID.randomUUID();
     mockMainQuestionId01 = UUID.randomUUID();
     mockMainQuestionId02 = UUID.randomUUID();
     mockMainQuestionId03 = UUID.randomUUID();
@@ -107,13 +98,13 @@ public class MockExamServiceTests {
     mockSubject02 = new Subject("Algebra");
     mockSubject02.setId(mockSubjectId02);
 
-    mockAdaptedQuestion01 = new AdaptedQuestion(
+    AdaptedQuestion mockAdaptedQuestion01 = new AdaptedQuestion(
         "titulo da questão adaptada 01",
         "médio",
         new ArrayList<>(),
         List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative)
     );
-    mockAdaptedQuestion02 = new AdaptedQuestion(
+    AdaptedQuestion mockAdaptedQuestion02 = new AdaptedQuestion(
         "titulo da questão adaptada 02",
         "difícil",
         new ArrayList<>(),
@@ -680,5 +671,10 @@ public class MockExamServiceTests {
     MockExamResponse studentResponse03 = serviceResponse.get(2);
     assertEquals(0, studentResponse03.getCorrectAnswers());
     assertEquals(2, studentResponse03.getAdaptedQuestionList().size());
+
+    Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito.verify(mockExamResponseRepository, Mockito.times(1))
+        .saveAll(any(List.class));
   }
 }
