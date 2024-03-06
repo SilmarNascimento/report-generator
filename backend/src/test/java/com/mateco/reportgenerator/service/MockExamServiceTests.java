@@ -273,7 +273,8 @@ public class MockExamServiceTests {
     assertInstanceOf(List.class, serviceResponse.getSubjects());
     assertInstanceOf(List.class, serviceResponse.getMockExamQuestions());
 
-    Mockito.verify(mockExamRepository, Mockito.times(1))
+    Mockito
+        .verify(mockExamRepository, Mockito.times(1))
         .save(any(MockExam.class));
   }
 

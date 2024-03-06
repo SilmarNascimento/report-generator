@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.mateco</groupId>
-	<artifactId>report-generator</artifactId>
+	<artifactId>report-generator-API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>report-generator</name>
+	<name>report-generator-API</name>
 	<description>Student personal report generator</description>
 	<properties>
 		<java.version>17</java.version>
