@@ -1,4 +1,3 @@
-import  { App } from './App.tsx';
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -12,12 +11,9 @@ import { Tags } from './pages/Tags.tsx';
 
 const router = createBrowserRouter([
   {
-    path: "",
-    element: <App />,
-    errorElement: <NotFoundPage />
-  }, {
     path: "/login",
-    element: <Login />
+    element: <Login />,
+    errorElement: <NotFoundPage />
   }, {
     path: "/tags",
     element: <Tags />

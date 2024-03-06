@@ -1,6 +1,6 @@
 import { Plus, Search, Filter, FileDown, MoreHorizontal, Loader2 } from 'lucide-react'
 import { Header } from './components/header'
-import { NavigationBar } from './components/NavigationBar'
+import { NavigationBar } from './components/navigationBar'
 import { Button } from './components/ui/button'
 import { Control, Input } from './components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table'
@@ -9,7 +9,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { FormEvent, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog';
-import { CreateTagForm } from './components/create-tag-forms';
+import { CreateTagForm } from './components/ui/create-tag-forms';
 
 export interface TagResponse {
   first: number
