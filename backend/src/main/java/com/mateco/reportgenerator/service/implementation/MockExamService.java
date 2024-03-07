@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,8 +48,9 @@ public class MockExamService implements MockExamServiceInterface {
   }
 
   @Override
-  public List<MockExam> findAllMockExams() {
-    return mockExamRepository.findAll();
+  public Page<MockExam> findAllMockExams(int pageNumber, int pageSize) {
+    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    return mockExamRepository.findAll(pageable);
   }
 
   @Override

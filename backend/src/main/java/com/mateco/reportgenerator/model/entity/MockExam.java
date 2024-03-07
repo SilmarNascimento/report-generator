@@ -1,6 +1,6 @@
 package com.mateco.reportgenerator.model.entity;
 
-import com.mateco.reportgenerator.controller.dto.MockExamInputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

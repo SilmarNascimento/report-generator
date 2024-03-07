@@ -1,11 +1,10 @@
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectInputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectOutputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectInputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

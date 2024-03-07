@@ -1,4 +1,4 @@
-package com.mateco.reportgenerator.controller.dto;
+package com.mateco.reportgenerator.controller.dto.alternativeDto;
 
 import com.mateco.reportgenerator.model.entity.Alternative;
 import java.util.List;

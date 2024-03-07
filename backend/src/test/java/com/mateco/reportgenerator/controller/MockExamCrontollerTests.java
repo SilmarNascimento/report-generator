@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.controller;
 
 import static org.hamcrest.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -14,9 +15,9 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mateco.reportgenerator.controller.dto.MainQuestionListInputDto;
-import com.mateco.reportgenerator.controller.dto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectListInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
@@ -25,7 +26,6 @@ import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -198,30 +199,52 @@ public class MockExamCrontollerTests {
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades MockExam")
   public void findAllMockExamsTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    Page<MockExam> page = Mockito.mock(Page.class);
+
     Mockito
-        .when(mockExamService.findAllMockExams())
+        .when(page.getNumber())
+        .thenReturn(pageNumber);
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
         .thenReturn(List.of(mockExam01, mockExam02));
+
+    Mockito
+        .when(mockExamService.findAllMockExams(anyInt(), anyInt()))
+        .thenReturn(page);
 
     ResultActions httpResponse = mockMvc
         .perform(get(baseUrl));
 
     httpResponse
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$", isA(List.class)))
-        .andExpect(jsonPath("$.[0].id").value(mockExamId01.toString()))
-        .andExpect(jsonPath("$.[0].name").value(mockExam01.getName()))
-        .andExpect(jsonPath("$.[0].className", isA(List.class)))
-        .andExpect(jsonPath("$.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.[0].number").value(1))
-        .andExpect(jsonPath("$.[0].mockExamQuestions", isA(List.class)))
-        .andExpect(jsonPath("$.[1].id").value(mockExamId02.toString()))
-        .andExpect(jsonPath("$.[1].name").value(mockExam02.getName()))
-        .andExpect(jsonPath("$.[1].className", isA(List.class)))
-        .andExpect(jsonPath("$.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.[1].number").value(1))
-        .andExpect(jsonPath("$.[1].mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.page").value(pageNumber))
+        .andExpect(jsonPath("$.itemsNumber").value(pageSize))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockExamId01.toString()))
+        .andExpect(jsonPath("$.data.[0].name").value(mockExam01.getName()))
+        .andExpect(jsonPath("$.data.[0].className", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].number").value(1))
+        .andExpect(jsonPath("$.data.[0].mockExamQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].id").value(mockExamId02.toString()))
+        .andExpect(jsonPath("$.data.[1].name").value(mockExam02.getName()))
+        .andExpect(jsonPath("$.data.[1].className", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].number").value(1))
+        .andExpect(jsonPath("$.data.[1].mockExamQuestions", isA(List.class)));
 
-    Mockito.verify(mockExamService).findAllMockExams();
+    Mockito
+        .verify(mockExamService, Mockito.times(1))
+        .findAllMockExams(anyInt(), anyInt());
   }
 
   @Test

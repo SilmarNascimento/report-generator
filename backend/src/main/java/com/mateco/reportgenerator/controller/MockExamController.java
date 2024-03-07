@@ -1,26 +1,20 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.MainQuestionListInputDto;
-import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.MockExamOutpuDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
 import com.mateco.reportgenerator.controller.dto.MockExamResponseOutputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectListInputDto;
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.MainQuestion;
+import com.mateco.reportgenerator.controller.dto.PageOutputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
-import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,12 +44,14 @@ public class MockExamController {
   }
 
   @GetMapping
-  public ResponseEntity<List<MockExamOutpuDto>> findAllMockExams() {
-    List<MockExam> mockExams = mockExamService.findAllMockExams();
+  public ResponseEntity<PageOutputDto<MockExamOutpuDto>> findAllMockExams(
+      @RequestParam(required = false, defaultValue = "0") int pageNumber,
+      @RequestParam(required = false, defaultValue = "20") int pageSize
+  ) {
+    Page<MockExam> mockExamsPage = mockExamService.findAllMockExams(pageNumber, pageSize);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto
-            .parseDto(mockExams));
+        .body(PageOutputDto.parseMockExamPageDto(mockExamsPage));
   }
 
   @GetMapping("/{mockExamId}")

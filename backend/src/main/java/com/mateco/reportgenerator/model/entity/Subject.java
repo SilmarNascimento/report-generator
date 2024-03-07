@@ -1,7 +1,7 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mateco.reportgenerator.controller.dto.SubjectInputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectInputDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

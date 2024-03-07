@@ -1,4 +1,4 @@
-package com.mateco.reportgenerator.controller.dto;
+package com.mateco.reportgenerator.controller.dto.questionDto;
 
 import java.util.List;
 import java.util.UUID;

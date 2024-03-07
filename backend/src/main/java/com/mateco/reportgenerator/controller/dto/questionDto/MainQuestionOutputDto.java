@@ -1,11 +1,10 @@
-package com.mateco.reportgenerator.controller.dto;
+package com.mateco.reportgenerator.controller.dto.questionDto;
 
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeOutputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
-import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import java.util.UUID;
 

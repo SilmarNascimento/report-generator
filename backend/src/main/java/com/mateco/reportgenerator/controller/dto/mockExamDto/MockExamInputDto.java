@@ -1,4 +1,4 @@
-package com.mateco.reportgenerator.controller.dto;
+package com.mateco.reportgenerator.controller.dto.mockExamDto;
 
 import java.util.List;
 

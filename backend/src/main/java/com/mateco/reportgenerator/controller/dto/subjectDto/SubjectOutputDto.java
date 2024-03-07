@@ -1,8 +1,6 @@
-package com.mateco.reportgenerator.controller.dto;
+package com.mateco.reportgenerator.controller.dto.subjectDto;
 
-import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.Subject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

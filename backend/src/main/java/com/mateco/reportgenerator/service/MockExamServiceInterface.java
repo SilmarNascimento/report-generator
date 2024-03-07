@@ -4,10 +4,11 @@ import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
 
 public interface MockExamServiceInterface {
 
-  List<MockExam> findAllMockExams();
+  Page<MockExam> findAllMockExams(int pageNumber, int pageSize);
 
   MockExam findMockExamById(UUID mockExamId);
 

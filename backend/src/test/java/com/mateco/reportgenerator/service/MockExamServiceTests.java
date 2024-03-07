@@ -34,6 +34,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -209,18 +212,31 @@ public class MockExamServiceTests {
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades MockExam")
   public void findAllMockExamTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<MockExam> page = Mockito.mock(Page.class);
+
     Mockito
-        .when(mockExamRepository.findAll())
+        .when(page.getContent())
         .thenReturn(List.of(mockExam01, mockExam02));
 
-    List<MockExam> serviceResponse = mockExamService.findAllMockExams();
+    Mockito
+        .when(mockExamRepository.findAll(mockPageable))
+        .thenReturn(page);
 
-    assertEquals(2, serviceResponse.size());
-    assertTrue(serviceResponse.contains(mockExam01));
-    assertTrue(serviceResponse.contains(mockExam02));
+    Page<MockExam> serviceResponse = mockExamService.findAllMockExams(pageNumber, pageSize);
 
-    Mockito.verify(mockExamRepository, Mockito.times(1))
-        .findAll();
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
+    assertTrue(serviceResponse.getContent().contains(mockExam01));
+    assertTrue(serviceResponse.getContent().contains(mockExam02));
+
+    Mockito
+        .verify(mockExamRepository, Mockito.times(1))
+        .findAll(any(Pageable.class));
   }
 
   @Test

@@ -1,11 +1,11 @@
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
-import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
-import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
-import com.mateco.reportgenerator.controller.dto.MainQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.SubjectListInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.AdaptedQuestionOutputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
