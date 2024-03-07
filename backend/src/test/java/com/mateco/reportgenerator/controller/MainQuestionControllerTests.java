@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.Matchers.isA;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -159,51 +161,73 @@ public class MainQuestionControllerTests {
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades MainQuestion")
   public void findAllMainQuestionsTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
     Mockito
-        .when(mainQuestionService.findAllMainQuestions())
+        .when(page.getNumber())
+        .thenReturn(pageNumber);
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
         .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
+
+    Mockito
+        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt()))
+        .thenReturn(page);
 
     ResultActions httpResponse = mockMvc.perform(get(baseUrl));
 
     httpResponse
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$", isA(List.class)))
-        .andExpect(jsonPath("$.[0].id").value(mockMainQuestionId01.toString()))
-        .andExpect(jsonPath("$.[0].title").value("título questão 01"))
-        .andExpect(jsonPath("$.[0].level").value("difícil"))
-        .andExpect(jsonPath("$.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[0].images.[0]").value("imagem da questão 01"))
-        .andExpect(jsonPath("$.[0].alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.[0].alternatives.[0].description").value("descrição da alternativa 01"))
-        .andExpect(jsonPath("$.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
-        .andExpect(jsonPath("$.[0].alternatives.[1].description").value("descrição da alternativa 02"))
-        .andExpect(jsonPath("$.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
-        .andExpect(jsonPath("$.[0].adaptedQuestions", isA(List.class)))
-        .andExpect(jsonPath("$.[0].mockExams", isA(List.class)))
-        .andExpect(jsonPath("$.[0].handouts", isA(List.class)))
-        .andExpect(jsonPath("$.[1].id").value(mockMainQuestionId02.toString()))
-        .andExpect(jsonPath("$.[1].title").value("título questão 02"))
-        .andExpect(jsonPath("$.[1].level").value("difícil"))
-        .andExpect(jsonPath("$.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].images.[0]").value("imagem da questão 02"))
-        .andExpect(jsonPath("$.[1].alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.[1].alternatives.[0].description").value("descrição da alternativa 01"))
-        .andExpect(jsonPath("$.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
-        .andExpect(jsonPath("$.[1].alternatives.[1].description").value("descrição da alternativa 02"))
-        .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"))
-        .andExpect(jsonPath("$.[1].adaptedQuestions", isA(List.class)))
-        .andExpect(jsonPath("$.[1].mockExams", isA(List.class)))
-        .andExpect(jsonPath("$.[1].handouts", isA(List.class)));
+        .andExpect(jsonPath("$.page").value(pageNumber))
+        .andExpect(jsonPath("$.itemsNumber").value(pageSize))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].id").value(mockMainQuestionId02.toString()))
+        .andExpect(jsonPath("$.data.[1].title").value("título questão 02"))
+        .andExpect(jsonPath("$.data.[1].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images.[0]").value("imagem da questão 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].handouts", isA(List.class)));
 
-    Mockito.verify(mainQuestionService).findAllMainQuestions();
+    Mockito
+        .verify(mainQuestionService)
+        .findAllMainQuestions(any(Integer.class), any(Integer.class));
   }
 
   @Test

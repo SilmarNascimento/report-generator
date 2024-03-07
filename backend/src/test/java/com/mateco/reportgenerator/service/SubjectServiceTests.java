@@ -61,7 +61,9 @@ public class SubjectServiceTests {
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject")
   public void findAllSubjectsTest() {
-    Pageable mockPageable = PageRequest.of(0, 2);
+    int pageNumber = 0;
+    int pageSize = 2;
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
     Page<Subject> page = Mockito.mock(Page.class);
 
     Mockito
@@ -72,15 +74,15 @@ public class SubjectServiceTests {
         .when(subjectRepository.findAll(mockPageable))
         .thenReturn(page);
 
-    Page<Subject> serviceResponse = subjectService.findAllSubjects(0, 2);
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize);
     List<String> subjectsName = serviceResponse.getContent().stream()
         .map(Subject::getName)
         .toList();
 
     assertFalse(serviceResponse.isEmpty());
     assertInstanceOf(Page.class, serviceResponse);
-    assertEquals(0, serviceResponse.getNumber());
-    assertEquals(2, serviceResponse.getContent().size());
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
     assertTrue(subjectsName.contains(mockSubject01.getName()));
     assertTrue(subjectsName.contains(mockSubject02.getName()));
 

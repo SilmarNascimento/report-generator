@@ -1,5 +1,8 @@
 package com.mateco.reportgenerator.controller.dto;
 
+import com.mateco.reportgenerator.model.entity.MainQuestion;
+import com.mateco.reportgenerator.model.entity.MockExam;
+import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import org.springframework.data.domain.Page;
 
@@ -9,12 +12,30 @@ public record PageOutputDto<Type>(
     int pages,
     List<Type> data
 ) {
-  public static <Type> PageOutputDto<Type> parseDto(Page<Type> page) {
+  public static PageOutputDto<SubjectOutputDto> parseSubjectPageDto(Page<Subject> page) {
     return new PageOutputDto<>(
         page.getNumber(),
         page.getNumberOfElements(),
         page.getTotalPages(),
-        page.getContent()
+        SubjectOutputDto.parseDto(page.getContent())
+    );
+  }
+
+  public static PageOutputDto<MainQuestionOutputDto> parseMainQuestionPageDto(Page<MainQuestion> page) {
+    return new PageOutputDto<>(
+        page.getNumber(),
+        page.getNumberOfElements(),
+        page.getTotalPages(),
+        MainQuestionOutputDto.parseDto(page.getContent())
+    );
+  }
+
+  public static PageOutputDto<MockExamOutpuDto> parseMockExamPageDto(Page<MockExam> page) {
+    return new PageOutputDto<>(
+        page.getNumber(),
+        page.getNumberOfElements(),
+        page.getTotalPages(),
+        MockExamOutpuDto.parseDto(page.getContent())
     );
   }
 }

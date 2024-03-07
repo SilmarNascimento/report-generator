@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.MainQuestionInputDto;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,12 +51,14 @@ public class MainQuestionController {
   }
 
   @GetMapping
-  public ResponseEntity<List<MainQuestionOutputDto>> findAllMainQuestions() {
-    List<MainQuestion> questions = mainQuestionService.findAllMainQuestions();
+  public ResponseEntity<PageOutputDto<MainQuestionOutputDto>> findAllMainQuestions(
+      @RequestParam(required = false, defaultValue = "0") int pageNumber,
+      @RequestParam(required = false, defaultValue = "20") int pageSize
+  ) {
+    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MainQuestionOutputDto
-            .parseDto(questions));
+        .body(PageOutputDto.parseMainQuestionPageDto(questionsPage));
   }
 
   @GetMapping("/{mainQuestionId}")

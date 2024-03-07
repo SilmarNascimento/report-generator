@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,6 +31,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -127,17 +131,31 @@ public class MainQuestionServiceTests {
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades MainQuestion")
   public void findAllMainQuestionsTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
     Mockito
-        .when(mainQuestionRepository.findAll())
+        .when(page.getContent())
         .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
 
-    List<MainQuestion> serviceResponse = mainQuestionService.findAllMainQuestions();
+    Mockito
+        .when(mainQuestionRepository.findAll(mockPageable))
+        .thenReturn(page);
 
-    assertEquals(2, serviceResponse.size());
-    assertTrue(serviceResponse.contains(mockMainQuestion01));
-    assertTrue(serviceResponse.contains(mockMainQuestion02));
+    Page<MainQuestion> serviceResponse = mainQuestionService.findAllMainQuestions(pageNumber, pageSize);
 
-    Mockito.verify(mainQuestionRepository).findAll();
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
+    assertTrue(serviceResponse.getContent().contains(mockMainQuestion01));
+    assertTrue(serviceResponse.getContent().contains(mockMainQuestion02));
+
+    Mockito
+        .verify(mainQuestionRepository)
+        .findAll(any(Pageable.class));
   }
 
   @Test

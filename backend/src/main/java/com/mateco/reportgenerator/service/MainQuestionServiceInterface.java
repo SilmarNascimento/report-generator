@@ -8,13 +8,15 @@ import com.mateco.reportgenerator.model.entity.Question;
 import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface - assinatura dos métodos para a camada service
  *                     da entidade MainQuestion.
  */
 public interface MainQuestionServiceInterface {
-  List<MainQuestion> findAllMainQuestions();
+  Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize);
   MainQuestion findMainQuestionById(UUID questionId);
   MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages);
   MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, List<String> questionImages);
