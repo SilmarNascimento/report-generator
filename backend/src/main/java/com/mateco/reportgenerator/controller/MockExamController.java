@@ -5,6 +5,7 @@ import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
 import com.mateco.reportgenerator.controller.dto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -51,7 +52,10 @@ public class MockExamController {
     Page<MockExam> mockExamsPage = mockExamService.findAllMockExams(pageNumber, pageSize);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(PageOutputDto.parseMockExamPageDto(mockExamsPage));
+        .body(PageOutputDto.parseDto(
+            mockExamsPage,
+            mockExam -> MockExamOutpuDto.parseDto(mockExam)
+        ));
   }
 
   @GetMapping("/{mockExamId}")

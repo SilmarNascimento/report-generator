@@ -7,6 +7,8 @@ import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 
 public record PageOutputDto<Type>(
@@ -15,30 +17,14 @@ public record PageOutputDto<Type>(
     int pages,
     List<Type> data
 ) {
-  public static PageOutputDto<SubjectOutputDto> parseSubjectPageDto(Page<Subject> page) {
+  public static <Type, Dto> PageOutputDto<Dto> parseDto(Page<Type> page, Function<Type, Dto> dtoConverter) {
     return new PageOutputDto<>(
         page.getNumber(),
         page.getNumberOfElements(),
         page.getTotalPages(),
-        SubjectOutputDto.parseDto(page.getContent())
-    );
-  }
-
-  public static PageOutputDto<MainQuestionOutputDto> parseMainQuestionPageDto(Page<MainQuestion> page) {
-    return new PageOutputDto<>(
-        page.getNumber(),
-        page.getNumberOfElements(),
-        page.getTotalPages(),
-        MainQuestionOutputDto.parseDto(page.getContent())
-    );
-  }
-
-  public static PageOutputDto<MockExamOutpuDto> parseMockExamPageDto(Page<MockExam> page) {
-    return new PageOutputDto<>(
-        page.getNumber(),
-        page.getNumberOfElements(),
-        page.getTotalPages(),
-        MockExamOutpuDto.parseDto(page.getContent())
+        page.getContent().stream()
+            .map(dtoConverter)
+            .collect(Collectors.toList())
     );
   }
 }

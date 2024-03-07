@@ -58,7 +58,10 @@ public class MainQuestionController {
     Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(PageOutputDto.parseMainQuestionPageDto(questionsPage));
+        .body(PageOutputDto.parseDto(
+            questionsPage,
+            question -> MainQuestionOutputDto.parseDto(question)
+        ));
   }
 
   @GetMapping("/{mainQuestionId}")

@@ -38,7 +38,10 @@ public class SubjectController {
     Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(PageOutputDto.parseSubjectPageDto(subjectPage));
+        .body(PageOutputDto.parseDto(
+            subjectPage,
+            subject -> SubjectOutputDto.parseDto(subject)
+        ));
   }
 
   @GetMapping("/{subjectId}")
