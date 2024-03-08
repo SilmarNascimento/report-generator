@@ -7,7 +7,7 @@ import { Login } from './pages/Login.tsx';
 import { MainQuestions } from './pages/MainQuestions.tsx';
 import { MockExams } from './pages/MockExams.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
-import { Tags } from './pages/Tags.tsx';
+import { Subjects } from './pages/Subjects.tsx';
 
 const router = createBrowserRouter([
   {
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />
   }, {
     path: "/tags",
-    element: <Tags />
+    element: <Subjects />
   }, {
     path: "/main-questions",
     element: <MainQuestions />
