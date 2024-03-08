@@ -203,14 +203,17 @@ public class MockExamCrontollerTests {
   public void findAllMockExamsDefaultParametersTest() throws Exception {
     int pageNumber = 0;
     int pageSize = 20;
+    long totalItems = 2;
+
     Page<MockExam> page = Mockito.mock(Page.class);
 
-    Mockito
-        .when(page.getNumber())
-        .thenReturn(pageNumber);
+
     Mockito
         .when(page.getNumberOfElements())
         .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
     Mockito
         .when(page.getTotalPages())
         .thenReturn(1);
@@ -227,8 +230,8 @@ public class MockExamCrontollerTests {
 
     httpResponse
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.page").value(pageNumber))
-        .andExpect(jsonPath("$.itemsNumber").value(pageSize))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
         .andExpect(jsonPath("$.pages").value(1))
         .andExpect(jsonPath("$.data", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].id").value(mockExamId01.toString()))
@@ -259,14 +262,16 @@ public class MockExamCrontollerTests {
   public void findAllMockExamsQueryParametersTest() throws Exception {
     int pageNumber = 0;
     int pageSize = 2;
+    long totalItems = 2;
+
     Page<MockExam> page = Mockito.mock(Page.class);
 
     Mockito
-        .when(page.getNumber())
-        .thenReturn(pageNumber);
-    Mockito
         .when(page.getNumberOfElements())
         .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
     Mockito
         .when(page.getTotalPages())
         .thenReturn(1);
@@ -283,8 +288,8 @@ public class MockExamCrontollerTests {
 
     httpResponse
         .andExpect(status().is(200))
-        .andExpect(jsonPath("$.page").value(pageNumber))
-        .andExpect(jsonPath("$.itemsNumber").value(pageSize))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
         .andExpect(jsonPath("$.pages").value(1))
         .andExpect(jsonPath("$.data", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].id").value(mockExamId01.toString()))

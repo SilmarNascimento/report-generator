@@ -12,15 +12,15 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 
 public record PageOutputDto<Type>(
-    int page,
-    int itemsNumber,
+    int pageItems,
+    long totalItems,
     int pages,
     List<Type> data
 ) {
   public static <Type, Dto> PageOutputDto<Dto> parseDto(Page<Type> page, Function<Type, Dto> dtoConverter) {
     return new PageOutputDto<>(
-        page.getNumber(),
         page.getNumberOfElements(),
+        page.getTotalElements(),
         page.getTotalPages(),
         page.getContent().stream()
             .map(dtoConverter)

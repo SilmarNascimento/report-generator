@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <Login />,
     errorElement: <NotFoundPage />
   }, {
-    path: "/tags",
+    path: "/subjects",
     element: <Subjects />
   }, {
     path: "/main-questions",

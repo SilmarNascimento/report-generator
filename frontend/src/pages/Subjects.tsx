@@ -12,8 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Control, Input } from "../components/ui/input";
 
 export interface SubjectPageResponse {
-  page: number
   itemsNumber: number
+  totalItems: number
   pages: number
   data: Subject[]
 }
@@ -34,7 +34,7 @@ export function Subjects() {
   const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
     queryKey: ['get-subjects', urlFilter, page],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page}&pageSize=10&title=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=10&title=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -151,7 +151,7 @@ export function Subjects() {
           </TableBody>
         </Table>
 
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.itemsNumber} page={subjectPageResponse.page} />}
+        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.itemsNumber} page={page} totalItems={subjectPageResponse.totalItems}/>}
       </main>
     </>
   )

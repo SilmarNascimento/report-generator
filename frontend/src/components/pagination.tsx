@@ -10,12 +10,13 @@ import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger } from './ui/select'
 
 interface PaginationProps {
-  pages: number
-  items: number
   page: number
+  items: number
+  totalItems: number
+  pages: number
 }
 
-export function Pagination({ items, page, pages }: PaginationProps) {
+export function Pagination({ items, page, pages, totalItems }: PaginationProps) {
   const [, setSearchParams] = useSearchParams()
 
   function firstPage() {
@@ -60,7 +61,7 @@ export function Pagination({ items, page, pages }: PaginationProps) {
 
   return (
     <div className="flex text-sm items-center justify-between text-zinc-500">
-      <span>Showing 10 of {items} items</span>
+      <span>Showing {items} of {totalItems} items</span>
       <div className="flex items-center gap-8">
         <div className="flex items-center gap-2">
           <span>Rows per page</span>
