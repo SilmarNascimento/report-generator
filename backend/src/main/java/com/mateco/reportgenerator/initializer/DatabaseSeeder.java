@@ -15,8 +15,11 @@ public class DatabaseSeeder implements CommandLineRunner {
   private final MockExamRepository mockExamRepository;
 
   @Autowired
-  public DatabaseSeeder(SubjectRepository subjectRepository,
-      MainQuestionRepository mainQuestionRepository, MockExamRepository mockExamRepository) {
+  public DatabaseSeeder(
+      SubjectRepository subjectRepository,
+      MainQuestionRepository mainQuestionRepository,
+      MockExamRepository mockExamRepository
+  ) {
     this.subjectRepository = subjectRepository;
     this.mainQuestionRepository = mainQuestionRepository;
     this.mockExamRepository = mockExamRepository;

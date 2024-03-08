@@ -138,7 +138,7 @@ export function Subjects() {
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    {subject.id} video(s)
+                    {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="icon">
