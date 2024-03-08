@@ -1,13 +1,23 @@
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { Check, ChevronDown } from 'lucide-react'
 import { ComponentProps } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { twMerge } from 'tailwind-merge'
 
 export interface SelectProps
   extends ComponentProps<typeof SelectPrimitive.Root> {}
 
 export function Select(props: SelectProps) {
-  return <SelectPrimitive.Root {...props} />
+  const [, setSearchParams] = useSearchParams();
+
+  function handleSelectChange(value: string) {
+    setSearchParams(params => {
+      params.set('pageSize', value)
+
+      return params
+    })
+  }
+  return <SelectPrimitive.Root {...props} onValueChange={handleSelectChange}/>
 }
 
 export interface SelectTriggerProps
@@ -16,6 +26,9 @@ export interface SelectTriggerProps
 }
 
 export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
+  const [searchParams] = useSearchParams();
+  const pageSize = searchParams.get('pageSize') ?? "batatinha";
+  
   return (
     <SelectPrimitive.Trigger
       className={twMerge(
@@ -24,7 +37,9 @@ export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
       )}
       {...props}
     >
-      <SelectPrimitive.Value placeholder="Select an option" />
+      <SelectPrimitive.Value placeholder="Select an option" >
+        {pageSize}
+      </SelectPrimitive.Value>
 
       <SelectPrimitive.Icon className="text-zinc-600">
         <ChevronDown className="size-4" />
@@ -39,7 +54,7 @@ export interface SelectContentProps
 export function SelectContent({ className, ...props }: SelectContentProps) {
   return (
     <SelectPrimitive.Portal>
-      <SelectPrimitive.Content
+      <SelectPrimitive.Content onChange={() => console.log("SelectPrimitiveContent")}
         sideOffset={6}
         position="popper"
         className={twMerge(
@@ -58,13 +73,14 @@ export interface SelectItemProps
 export function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
     <SelectPrimitive.Item
+      onChange={() => console.log("SelectPrimitive")}
       className={twMerge(
         'flex items-center gap-2 text-zinc-300 px-3 py-1.5 justify-between outline-none hover:bg-zinc-800',
         className,
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText onChange={() => console.log("SelectPrimitiveItemText")}>{children}</SelectPrimitive.ItemText>
 
       <SelectPrimitive.ItemIndicator>
         <Check className="text-zinc-300 size-4" />

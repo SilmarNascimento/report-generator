@@ -3,7 +3,7 @@ import { Header } from "../components/header";
 import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
 import { useSearchParams } from "react-router-dom";
-import { FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../components/ui/button";
 import { FileDown, Filter, Loader2, MoreHorizontal, Plus, Search } from "lucide-react";
@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Control, Input } from "../components/ui/input";
 
 export interface SubjectPageResponse {
-  itemsNumber: number
+  pageItems: number
   totalItems: number
   pages: number
   data: Subject[]
@@ -30,11 +30,12 @@ export function Subjects() {
   const [filter, setFilter] = useState(urlFilter);
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
   const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
     queryKey: ['get-subjects', urlFilter, page],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=10&title=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&title=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -81,10 +82,10 @@ export function Subjects() {
               <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[320px] z-10 bg-zinc-950 border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
-                    Create tag
+                    Create Subject
                   </Dialog.Title>
                   <Dialog.Description className="text-sm text-zinc-500">
-                    Tags can be used to group videos about similar concepts.
+                    Subjects can be used to group objects with similar concepts.
                   </Dialog.Description>
                 </div>
 
@@ -151,7 +152,7 @@ export function Subjects() {
           </TableBody>
         </Table>
 
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.itemsNumber} page={page} totalItems={subjectPageResponse.totalItems}/>}
+        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
       </main>
     </>
   )

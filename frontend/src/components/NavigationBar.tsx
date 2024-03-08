@@ -25,7 +25,7 @@ export function NavigationBar() {
         </NavLink>
 
         <NavLink
-          to={"/tags"}
+          to={"/subjects"}
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
         >
           <Tags className="size-4" />

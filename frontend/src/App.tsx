@@ -4,12 +4,11 @@ import { NavigationBar } from './components/navigationBar'
 import { Button } from './components/ui/button'
 import { Control, Input } from './components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table'
-import { Pagination } from './components/pagination'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { FormEvent, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog';
-import { CreateTagForm } from './components/ui/createSubjectForm';
+import { CreateSubjectForm } from './components/ui/createSubjectForm';
 
 export interface TagResponse {
   first: number
@@ -92,7 +91,7 @@ export function App() {
                   </Dialog.Description>
                 </div>
 
-                <CreateTagForm />
+                <CreateSubjectForm />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -156,10 +155,11 @@ export function App() {
           </TableBody>
         </Table>
 
-        {tagsResponse && <Pagination pages={tagsResponse.pages} items={tagsResponse.items} page={page} />}
+       
       </main>
     </div>
   )
 }
 
+//  {tagsResponse && <Pagination pages={tagsResponse.pages} totalItems={tagsResponse.items} page={page} />}
 

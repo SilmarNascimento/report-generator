@@ -17,7 +17,7 @@ interface PaginationProps {
 }
 
 export function Pagination({ items, page, pages, totalItems }: PaginationProps) {
-  const [, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams();
 
   function firstPage() {
     setSearchParams(params => {
@@ -66,7 +66,7 @@ export function Pagination({ items, page, pages, totalItems }: PaginationProps) 
         <div className="flex items-center gap-2">
           <span>Rows per page</span>
 
-          <Select defaultValue="10">
+          <Select>
             <SelectTrigger aria-label="Page" />
             <SelectContent>
               <SelectItem value="10">10</SelectItem>
