@@ -1,45 +1,40 @@
-import { Plus, Search, Filter, FileDown, MoreHorizontal, Loader2 } from 'lucide-react'
-import { Header } from './components/header'
-import { NavigationBar } from './components/navigationBar'
-import { Button } from './components/ui/button'
-import { Control, Input } from './components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table'
-import { Pagination } from './components/pagination'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
-import { FormEvent, useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog';
-import { CreateTagForm } from './components/ui/createSubjectForm';
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { Header } from "../components/header";
+import { NavigationBar } from "../components/navigationBar";
+import { Pagination } from "../components/pagination";
+import { useSearchParams } from "react-router-dom";
+import { FormEvent, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Button } from "../components/ui/button";
+import { FileDown, Filter, Loader2, MoreHorizontal, Plus, Search } from "lucide-react";
+import { CreateSubjectForm } from "../components/ui/createSubjectForm";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Control, Input } from "../components/ui/input";
 
-export interface TagResponse {
-  first: number
-  prev: number | null
-  next: number
-  last: number
+export interface SubjectPageResponse {
+  page: number
+  itemsNumber: number
   pages: number
-  items: number
-  data: Tag[]
+  data: Subject[]
 }
 
-export interface Tag {
-  title: string
-  slug: string
-  amountOfVideos: number
+export interface Subject {
   id: string
+  name: string
 }
 
-export function App() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const urlFilter = searchParams.get('filter') ?? ''
-  
-  const [filter, setFilter] = useState(urlFilter)
+export function Subjects() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlFilter = searchParams.get('filter') ?? '';
 
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  const [filter, setFilter] = useState(urlFilter);
 
-  const { data: tagsResponse, isLoading, isFetching } = useQuery<TagResponse>({
-    queryKey: ['get-tags', urlFilter, page],
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+
+  const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
+    queryKey: ['get-subjects', urlFilter, page],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:3333/tags?_page=${page}&_per_page=10&title=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page}&pageSize=10&title=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -63,14 +58,15 @@ export function App() {
   }
 
   return (
-    <div className="py-10 space-y-8">
+    <>
       <div>
         <Header />
         <NavigationBar />
       </div>
+
       <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold">Tags</h1>
+        <div className="flex items-center gap-3 mt-3">
+          <h1 className="text-xl font-bold">Subjects</h1>
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
@@ -92,7 +88,7 @@ export function App() {
                   </Dialog.Description>
                 </div>
 
-                <CreateTagForm />
+                <CreateSubjectForm />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -127,23 +123,22 @@ export function App() {
             <TableRow>
               <TableHead></TableHead>
               <TableHead>Tag</TableHead>
-              <TableHead>Amount of videos</TableHead>
+              <TableHead>Id</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tagsResponse?.data.map((tag) => {
+            {subjectPageResponse?.data.map((subject) => {
               return (
-                <TableRow key={tag.id}>
+                <TableRow key={subject.id}>
                   <TableCell></TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">{tag.title}</span>
-                      <span className="text-xs text-zinc-500">{tag.slug}</span>
+                      <span className="font-medium">{subject.name}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    {tag.amountOfVideos} video(s)
+                    {subject.id} video(s)
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="icon">
@@ -156,10 +151,8 @@ export function App() {
           </TableBody>
         </Table>
 
-        {tagsResponse && <Pagination pages={tagsResponse.pages} items={tagsResponse.items} page={page} />}
+        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.itemsNumber} page={subjectPageResponse.page} />}
       </main>
-    </div>
+    </>
   )
 }
-
-
