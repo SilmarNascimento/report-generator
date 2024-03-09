@@ -33,10 +33,11 @@ export function App() {
   
   const [filter, setFilter] = useState(urlFilter)
 
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+  const pageSize = searchParams.get('pageSize') ?? "10";
 
   const { data: tagsResponse, isLoading, isFetching } = useQuery<TagResponse>({
-    queryKey: ['get-tags', urlFilter, page],
+    queryKey: ['get-tags', urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(`http://localhost:3333/tags?_page=${page}&_per_page=10&title=${urlFilter}`)
       const data = await response.json()

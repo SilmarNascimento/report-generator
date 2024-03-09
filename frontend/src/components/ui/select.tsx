@@ -12,6 +12,7 @@ export function Select(props: SelectProps) {
 
   function handleSelectChange(value: string) {
     setSearchParams(params => {
+      params.set('page', '1')
       params.set('pageSize', value)
 
       return params
@@ -27,7 +28,7 @@ export interface SelectTriggerProps
 
 export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
   const [searchParams] = useSearchParams();
-  const pageSize = searchParams.get('pageSize') ?? "batatinha";
+  const pageSize = searchParams.get('pageSize') ?? "10";
   
   return (
     <SelectPrimitive.Trigger

@@ -33,7 +33,7 @@ export function Subjects() {
   const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
   const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
-    queryKey: ['get-subjects', urlFilter, page],
+    queryKey: ['get-subjects', urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&title=${urlFilter}`)
       const data = await response.json()
