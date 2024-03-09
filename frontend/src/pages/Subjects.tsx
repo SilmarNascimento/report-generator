@@ -41,6 +41,7 @@ export function Subjects() {
       return data
     },
     placeholderData: keepPreviousData,
+    staleTime: Infinity,
   })
 
   function handleFilter(event: FormEvent) {
@@ -103,7 +104,7 @@ export function Subjects() {
               <Search className="size-3" />
               <Control 
                 placeholder="Search tags..." 
-                onChange={e => setFilter(e.target.value)}
+                onChange={event => setFilter(event.target.value)}
                 value={filter}
               />
             </Input>

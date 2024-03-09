@@ -20,28 +20,41 @@ export function CreateSubjectForm() {
   })
 
 
-  const { mutateAsync } = useMutation({
+  const createSubject = useMutation({
     mutationFn: async ({ name }: CreateTagSchema) => {
-           await fetch('http://localhost:8080/subject', {
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-        }),
+      try {
+        const response = await fetch('http://localhost:8080/subject',
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({ name }),
       })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['get-subjects'],
-      })
+
+      if (response.status === 201) {
+        queryClient.invalidateQueries({
+          queryKey: ['get-subjects'],
+        })
+      }
+
+      if (response.status === 400) {
+        const errorMessage = await response.text();
+        console.log("Error: ", errorMessage);
+      }
+      
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
     }
   })
 
-  async function createSubject({ name }: CreateTagSchema) {
-    await mutateAsync({ name })
+  async function handleCreateSubject({ name }: CreateTagSchema) {
+    await createSubject.mutateAsync({ name })
   }
 
   return (
-    <form onSubmit={handleSubmit(createSubject)} className="w-full space-y-6">
+    <form onSubmit={handleSubmit(handleCreateSubject)} className="w-full space-y-6">
       <div className="space-y-2">
         <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
         <input 
