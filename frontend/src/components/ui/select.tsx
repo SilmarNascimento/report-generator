@@ -38,7 +38,7 @@ export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
       )}
       {...props}
     >
-      <SelectPrimitive.Value placeholder="Select an option" >
+      <SelectPrimitive.Value placeholder={pageSize} >
         {pageSize}
       </SelectPrimitive.Value>
 

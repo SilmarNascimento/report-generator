@@ -3,13 +3,14 @@ import { Header } from "../components/header";
 import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
 import { useSearchParams } from "react-router-dom";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../components/ui/button";
-import { FileDown, Filter, Loader2, MoreHorizontal, Plus, Search } from "lucide-react";
+import { FileDown, Filter, Loader2, Plus, Search, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../components/ui/createSubjectForm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Control, Input } from "../components/ui/input";
+import { EditSubjectForm } from "../components/ui/editSubjectForm";
 
 export interface SubjectPageResponse {
   pageItems: number
@@ -80,7 +81,7 @@ export function Subjects() {
 
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[320px] z-10 bg-zinc-950 border-l border-zinc-900">
+              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
                     Create Subject
@@ -143,16 +144,38 @@ export function Subjects() {
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon">
-                      <MoreHorizontal className="size-4" />
+                    <Button size="icon" className="mx-0.5">
+                      <X className="size-3" color="red"/>
                     </Button>
+                
+                    <Dialog.Root>
+                      <Dialog.Trigger asChild>
+                        <Button size="icon" className="mx-0.5">
+                          <Pencil className="size-3" color="green"/>
+                        </Button>
+                      </Dialog.Trigger>
+
+                      <Dialog.Portal>
+                        <Dialog.Overlay className="fixed inset-0 bg-black/70" />
+                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
+                          <div className="space-y-3">
+                            <Dialog.Title className="text-xl font-bold">
+                              Edit Subject
+                            </Dialog.Title>
+                            <Dialog.Description className="text-sm text-zinc-500">
+                              Edit the Subject's attribute.
+                            </Dialog.Description>
+                          </div>
+                          <EditSubjectForm entity={subject} />
+                        </Dialog.Content>
+                      </Dialog.Portal>
+                    </Dialog.Root>
                   </TableCell>
                 </TableRow>
               )
             })}
           </TableBody>
         </Table>
-
         {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
       </main>
     </>
