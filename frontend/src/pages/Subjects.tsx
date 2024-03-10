@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Header } from "../components/header";
 import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
@@ -25,6 +25,7 @@ export interface Subject {
 }
 
 export function Subjects() {
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlFilter = searchParams.get('filter') ?? '';
 
@@ -44,6 +45,32 @@ export function Subjects() {
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   })
+
+  const deleteSubject = useMutation({
+    mutationFn: async ({ id }: Subject) => {
+      try {
+        await fetch(`http://localhost:8080/subject/${id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'DELETE',
+        })
+      
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['get-subjects'],
+      })
+    }
+  })
+
+  async function handleDeleteSubject(subject: Subject) {
+    await deleteSubject.mutateAsync(subject)
+  }
 
   function handleFilter(event: FormEvent) {
     event.preventDefault()
@@ -144,7 +171,7 @@ export function Subjects() {
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5">
+                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteSubject(subject)}>
                       <X className="size-3" color="red"/>
                     </Button>
                 
