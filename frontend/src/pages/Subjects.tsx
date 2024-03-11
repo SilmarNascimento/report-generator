@@ -35,11 +35,13 @@ export function Subjects() {
 
   useEffect(() => {
     setSearchParams(params => {
-      params.set('page', '1');
-      params.set('query', debouncedQueryFilter)
-
+      if (params.get('query') !== debouncedQueryFilter) {
+        params.set('page', '1');
+        params.set('query', debouncedQueryFilter);
+        return new URLSearchParams(params);
+      }
       return params;
-    })
+    });
   }, [debouncedQueryFilter, setSearchParams]);
 
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
@@ -82,17 +84,6 @@ export function Subjects() {
   async function handleDeleteSubject(subject: Subject) {
     await deleteSubject.mutateAsync(subject)
   }
-
-  // function handleFilter(event: FormEvent) {
-  //   event.preventDefault()
-
-  //   setSearchParams(params => {
-  //     params.set('page', '1')
-  //     params.set('filter', filter)
-
-  //     return params
-  //   })
-  // }
 
   if (isLoading) {
     return null
