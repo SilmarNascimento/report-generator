@@ -60,9 +60,10 @@ public class SubjectServiceTests {
 
   @Test
   @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject")
-  public void findAllSubjectsTest() {
+  public void findAllSubjectsNullQueryTest() {
     int pageNumber = 0;
     int pageSize = 2;
+
     Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
     Page<Subject> page = Mockito.mock(Page.class);
 
@@ -74,7 +75,42 @@ public class SubjectServiceTests {
         .when(subjectRepository.findAll(mockPageable))
         .thenReturn(page);
 
-    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize);
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null);
+    List<String> subjectsName = serviceResponse.getContent().stream()
+        .map(Subject::getName)
+        .toList();
+
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
+    assertTrue(subjectsName.contains(mockSubject01.getName()));
+    assertTrue(subjectsName.contains(mockSubject02.getName()));
+
+    Mockito
+        .verify(subjectRepository)
+        .findAll(any(Pageable.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject")
+  public void findAllSubjectsNonNullQueryTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    String query = "ome";
+
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject01, mockSubject02));
+
+    Mockito
+        .when(subjectRepository.findAll(mockPageable))
+        .thenReturn(page);
+
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query);
     List<String> subjectsName = serviceResponse.getContent().stream()
         .map(Subject::getName)
         .toList();

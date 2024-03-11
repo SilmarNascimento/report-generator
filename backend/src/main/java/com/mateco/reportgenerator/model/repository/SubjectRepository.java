@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +18,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
   @NonNull
-  Page<Subject> findAll(@NonNull Pageable pageable);
+  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%)")
+  Page<Subject> findAll(@NonNull Pageable pageable, String query);
   Optional<Subject> findByName(String name);
   List<Subject> findAllByNameIn(List<String> subjectName);
 }

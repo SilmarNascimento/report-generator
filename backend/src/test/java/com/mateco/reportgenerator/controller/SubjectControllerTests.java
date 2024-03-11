@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -83,7 +84,7 @@ public class SubjectControllerTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt()))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
         .thenReturn(page);
 
     ResultActions httpResponse = mockMvc.perform(get(baseUrl));
@@ -101,12 +102,14 @@ public class SubjectControllerTests {
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
   }
 
   @Test
@@ -132,7 +135,7 @@ public class SubjectControllerTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt()))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
         .thenReturn(page);
 
     String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
@@ -151,12 +154,116 @@ public class SubjectControllerTests {
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades Subject com parâmetros de paginação default e filtro por query")
+  public void findAllSubjectsQueryFilterTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    String query = "ome";
+
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject01));
+
+    Mockito
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(String.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "?query=" + query;
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockSubjectId01.toString()))
+        .andExpect(jsonPath("$.data.[0].name").value(mockSubject01.getName()));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    Mockito
+        .verify(subjectService, Mockito.times(1))
+        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades Subject com query parameters")
+  public void findAllSubjectsAllParametersAndFiltersTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    long totalItems = 2;
+    String query = "ome";
+
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject01));
+
+    Mockito
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&query=" + query;
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockSubjectId01.toString()))
+        .andExpect(jsonPath("$.data.[0].name").value(mockSubject01.getName()));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    Mockito
+        .verify(subjectService, Mockito.times(1))
+        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
   }
 
   @Test

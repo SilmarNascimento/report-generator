@@ -33,9 +33,10 @@ public class SubjectController {
   @GetMapping
   public ResponseEntity<PageOutputDto<SubjectOutputDto>> findAllSubjects(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
-      @RequestParam(required = false, defaultValue = "20") int pageSize
+      @RequestParam(required = false, defaultValue = "20") int pageSize,
+      @RequestParam(required = false) String query
   ) {
-    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize);
+    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize, query);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
