@@ -3,10 +3,10 @@ import { Header } from "../components/header";
 import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
 import { useSearchParams } from "react-router-dom";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../components/ui/button";
-import { FileDown, Filter, Loader2, Plus, Search, X, Pencil } from "lucide-react";
+import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../components/ui/createSubjectForm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Control, Input } from "../components/ui/input";
@@ -29,13 +29,14 @@ export function Subjects() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const urlFilter = searchParams.get('filter') ?? '';
+  const urlFilter = searchParams.get('query') ?? '';
   const [filter, setFilter] = useState(urlFilter);
-  const debouncedQueryFilter = useDebounceValue(filter, 1500);
+  const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
     setSearchParams(params => {
       params.set('page', '1');
+      params.set('query', debouncedQueryFilter)
 
       return params;
     })
@@ -47,7 +48,7 @@ export function Subjects() {
   const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
     queryKey: ['get-subjects', urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&title=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -82,16 +83,16 @@ export function Subjects() {
     await deleteSubject.mutateAsync(subject)
   }
 
-  function handleFilter(event: FormEvent) {
-    event.preventDefault()
+  // function handleFilter(event: FormEvent) {
+  //   event.preventDefault()
 
-    setSearchParams(params => {
-      params.set('page', '1')
-      params.set('filter', filter)
+  //   setSearchParams(params => {
+  //     params.set('page', '1')
+  //     params.set('filter', filter)
 
-      return params
-    })
-  }
+  //     return params
+  //   })
+  // }
 
   if (isLoading) {
     return null
@@ -137,7 +138,7 @@ export function Subjects() {
         </div>
 
         <div className="flex items-center justify-between">
-          <form onSubmit={handleFilter} className="flex items-center gap-2">
+          <form className="flex items-center gap-2">
             <Input variant='filter'>
               <Search className="size-3" />
               <Control 
@@ -146,10 +147,6 @@ export function Subjects() {
                 value={filter}
               />
             </Input>
-            <Button type="submit">
-              <Filter className="size-3" />
-              Apply filters
-            </Button>
           </form>
 
           <Button>
