@@ -53,14 +53,15 @@ public class MainQuestionController {
   @GetMapping
   public ResponseEntity<PageOutputDto<MainQuestionOutputDto>> findAllMainQuestions(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
-      @RequestParam(required = false, defaultValue = "20") int pageSize
+      @RequestParam(required = false, defaultValue = "20") int pageSize,
+      @RequestParam(required = false) String query
   ) {
-    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize);
+    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
             questionsPage,
-            question -> MainQuestionOutputDto.parseDto(question)
+            MainQuestionOutputDto::parseDto
         ));
   }
 
