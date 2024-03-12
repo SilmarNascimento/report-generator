@@ -12,18 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Control, Input } from "../components/ui/input";
 import { EditSubjectForm } from "../components/subject/editSubjectForm";
 import useDebounceValue from "../hooks/useDebounceValue";
-
-export interface SubjectPageResponse {
-  pageItems: number
-  totalItems: number
-  pages: number
-  data: Subject[]
-}
-
-export interface Subject {
-  id: string
-  name: string
-}
+import { Subject, SubjectPageResponse } from "../interfaces";
 
 export function Subjects() {
   const queryClient = useQueryClient();

@@ -10,20 +10,9 @@ import { Button } from "../components/ui/button";
 import { FileDown, Loader2, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
 
-export interface SubjectPageResponse {
-  pageItems: number
-  totalItems: number
-  pages: number
-  data: Subject[]
-}
-
-export interface Subject {
-  id: string
-  name: string
-}
-
-export function MainQuestion() {
+export function MainQuestions() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -45,10 +34,10 @@ export function MainQuestion() {
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
-  const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
-    queryKey: ['get-subjects', urlFilter, page, pageSize],
+  const { data: mainQuestionPageResponse, isLoading, isFetching } = useQuery<MainQuestionPageResponse>({
+    queryKey: ['get-main-questions', urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -57,10 +46,10 @@ export function MainQuestion() {
     staleTime: Infinity,
   })
 
-  const deleteSubject = useMutation({
-    mutationFn: async ({ id }: Subject) => {
+  const deleteMainQuestion = useMutation({
+    mutationFn: async ({ id }: MainQuestion) => {
       try {
-        await fetch(`http://localhost:8080/subject/${id}`,
+        await fetch(`http://localhost:8080/main-question/${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -74,13 +63,13 @@ export function MainQuestion() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['get-subjects'],
+        queryKey: ['get-main-questions'],
       })
     }
   })
 
-  async function handleDeleteSubject(subject: Subject) {
-    await deleteSubject.mutateAsync(subject)
+  async function handleDeleteMainQuestion(question: MainQuestion) {
+    await deleteMainQuestion.mutateAsync(question)
   }
 
   if (isLoading) {
@@ -148,26 +137,36 @@ export function MainQuestion() {
           <TableHeader>
             <TableRow>
               <TableHead></TableHead>
-              <TableHead>Tag</TableHead>
-              <TableHead>Id</TableHead>
+              <TableHead>
+                <span>Enunciado</span>
+              </TableHead>
+              <TableHead>
+                <span>Número de questões alternativas</span>
+              </TableHead>
+              <TableHead>
+                <span>Número de simulados</span>
+              </TableHead>
+              <TableHead>
+                <span>Número de apostilas</span>
+              </TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {subjectPageResponse?.data.map((subject) => {
+            {mainQuestionPageResponse?.data.map((question) => {
               return (
-                <TableRow key={subject.id}>
+                <TableRow key={question.id}>
                   <TableCell></TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">{subject.name}</span>
+                      <span className="font-medium">{question.title}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    {subject.id}
+                    {question.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteSubject(subject)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>
                       <X className="size-3" color="red"/>
                     </Button>
                 
@@ -189,7 +188,7 @@ export function MainQuestion() {
                               Edit the Subject's attribute.
                             </Dialog.Description>
                           </div>
-                          <EditSubjectForm entity={subject} />
+                          <EditSubjectForm entity={question} />
                         </Dialog.Content>
                       </Dialog.Portal>
                     </Dialog.Root>
@@ -199,7 +198,15 @@ export function MainQuestion() {
             })}
           </TableBody>
         </Table>
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
+        { mainQuestionPageResponse
+          && 
+          <Pagination
+            pages={mainQuestionPageResponse.pages}
+            items={mainQuestionPageResponse.pageItems}
+            page={page}
+            totalItems={mainQuestionPageResponse.totalItems}
+          />
+        }
       </main>
     </>
   )
