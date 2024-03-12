@@ -41,7 +41,7 @@ public class SubjectController {
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
             subjectPage,
-            subject -> SubjectOutputDto.parseDto(subject)
+            SubjectOutputDto::parseDto
         ));
   }
 

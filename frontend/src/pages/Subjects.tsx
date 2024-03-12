@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../components/ui/button";
 import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
-import { CreateSubjectForm } from "../components/ui/createSubjectForm";
+import { CreateSubjectForm } from "../components/subject/createSubjectForm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { Control, Input } from "../components/ui/input";
-import { EditSubjectForm } from "../components/ui/editSubjectForm";
+import { EditSubjectForm } from "../components/subject/editSubjectForm";
 import useDebounceValue from "../hooks/useDebounceValue";
 
 export interface SubjectPageResponse {

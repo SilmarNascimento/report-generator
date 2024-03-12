@@ -8,7 +8,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { FormEvent, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog';
-import { CreateSubjectForm } from './components/ui/createSubjectForm';
+import { CreateSubjectForm } from './components/subject/createSubjectForm';
 
 export interface TagResponse {
   first: number

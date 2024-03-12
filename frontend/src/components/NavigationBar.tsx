@@ -1,4 +1,4 @@
-import { Book, ScrollText, Tags, Settings} from 'lucide-react'
+import { Book, ScrollText, Tags, Presentation, BarChartBig} from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 export function NavigationBar() {
@@ -8,6 +8,14 @@ export function NavigationBar() {
   return (
     <div className="border-b border-zinc-800 py-4">
       <nav className="flex items-center gap-2 max-w-[1200px] mx-auto">
+        <NavLink
+          to={"/dash-board"}
+          className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
+        >
+          <Presentation className="size-4" />
+          Dashboard
+        </NavLink>
+
         <NavLink
           to={"/mock-exams"}
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
@@ -29,15 +37,15 @@ export function NavigationBar() {
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
         >
           <Tags className="size-4" />
-          Tags
+          Assuntos
         </NavLink>
 
         <NavLink
           to={"/settings"}
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
         >
-          <Settings className="size-4" />
-          Settings
+          <BarChartBig className="size-4" />
+          Resultados
         </NavLink>
       </nav>
     </div>

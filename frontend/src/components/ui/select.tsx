@@ -55,7 +55,7 @@ export interface SelectContentProps
 export function SelectContent({ className, ...props }: SelectContentProps) {
   return (
     <SelectPrimitive.Portal>
-      <SelectPrimitive.Content onChange={() => console.log("SelectPrimitiveContent")}
+      <SelectPrimitive.Content
         sideOffset={6}
         position="popper"
         className={twMerge(
@@ -74,14 +74,15 @@ export interface SelectItemProps
 export function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
     <SelectPrimitive.Item
-      onChange={() => console.log("SelectPrimitive")}
       className={twMerge(
         'flex items-center gap-2 text-zinc-300 px-3 py-1.5 justify-between outline-none hover:bg-zinc-800',
         className,
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText onChange={() => console.log("SelectPrimitiveItemText")}>{children}</SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText>
+        {children}
+      </SelectPrimitive.ItemText>
 
       <SelectPrimitive.ItemIndicator>
         <Check className="text-zinc-300 size-4" />
