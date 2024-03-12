@@ -141,6 +141,9 @@ export function MainQuestions() {
                 <span>Enunciado</span>
               </TableHead>
               <TableHead>
+                <span>Nível</span>
+              </TableHead>
+              <TableHead>
                 <span>Número de questões alternativas</span>
               </TableHead>
               <TableHead>

@@ -6,39 +6,44 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-const createSubjectSchema = z.object({
+const mainQuestionSchema = z.object({
+  id: z.string(),
   name: z.string().min(3, { message: 'Minimum 3 characters.' }),
 })
 
-type CreateSubjectSchema = z.infer<typeof createSubjectSchema>
+type MainQuestionSchema = z.infer<typeof mainQuestionSchema>
 
-export function CreateSubjectForm() {
+interface EditSubjectFormProps {
+  entity: MainQuestionSchema;
+}
+
+export function EditMainQuestionForm( { entity }: EditSubjectFormProps) {
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState } = useForm<CreateSubjectSchema>({
-    resolver: zodResolver(createSubjectSchema),
+  const { register, handleSubmit, formState } = useForm<MainQuestionSchema>({
+    resolver: zodResolver(mainQuestionSchema),
   })
 
 
-  const createSubject = useMutation({
-    mutationFn: async ({ name }: CreateSubjectSchema) => {
+  const editSubject = useMutation({
+    mutationFn: async ({ id, name }: MainQuestionSchema) => {
       try {
-        const response = await fetch('http://localhost:8080/subject',
+        const response = await fetch(`http://localhost:8080/subject/${id}`,
         {
           headers: {
             'Content-Type': 'application/json',
           },
-          method: 'POST',
+          method: 'PUT',
           body: JSON.stringify({ name }),
       })
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
         })
       }
 
-      if (response.status === 400) {
+      if (response.status === 404) {
         const errorMessage = await response.text();
         console.log("Error: ", errorMessage);
       }
@@ -49,23 +54,34 @@ export function CreateSubjectForm() {
     }
   })
 
-  async function handleCreateSubject({ name }: CreateSubjectSchema) {
-    await createSubject.mutateAsync({ name })
+  async function handleEditSubject({ id, name }: MainQuestionSchema) {
+    await editSubject.mutateAsync({ id, name })
   }
 
   return (
-    <form onSubmit={handleSubmit(handleCreateSubject)} className="w-full space-y-6">
+    <form onSubmit={handleSubmit(handleEditSubject)} className="w-full space-y-6">
+      <div className="space-y-2">
+        <label className="text-sm font-medium block" htmlFor="title">Subject Id</label>
+        <input 
+          {...register('id')}
+          id="subjectId" 
+          type="text"
+          value={entity.id}
+          readOnly 
+          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+        />
+        {formState.errors?.id && <p className="text-sm text-red-400">{formState.errors.id.message}</p> }
+      </div>
       <div className="space-y-2">
         <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
         <input 
           {...register('name')}
           id="name" 
-          type="text" 
+          type="text"
+          defaultValue={entity.name} 
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {formState.errors?.name && (
-          <p className="text-sm text-red-400">{formState.errors.name.message}</p>
-        )}
+        {formState.errors?.name && <p className="text-sm text-red-400">{formState.errors.name.message}</p> }
       </div>
 
       <div className="flex items-center justify-end gap-2">

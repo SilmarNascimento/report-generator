@@ -6,24 +6,65 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-const createSubjectSchema = z.object({
+const subjectSchema = z.object({
   name: z.string().min(3, { message: 'Minimum 3 characters.' }),
-})
+});
 
-type CreateSubjectSchema = z.infer<typeof createSubjectSchema>
+const alternativeSchema = z.object({
+  id: z.string(),
+  description: z.string(),
+  images: z.array(z.string()),
+  questionAnswer: z.boolean()
+});
 
-export function CreateSubjectForm() {
+const adaptedQuestionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  level: z.string(),
+  images: z.array(z.string()),
+  alternatives: z.array(alternativeSchema)
+});
+
+const mockExamSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  className: z.array(z.string()),
+  subjects: z.array(subjectSchema),
+  images: z.array(z.string()),
+  number: z.number().positive(),
+});
+
+const handoutSchema = z.object({
+  id: z.string(),
+  title: z.string()
+});
+
+const createMainQuestionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  subjects: z.array(subjectSchema),
+  level: z.string(),
+  images: z.array(z.string()),
+  alternatives: z.array(alternativeSchema),
+  adaptedQuestions: z.array(adaptedQuestionSchema),
+  mockExams: z.array(mockExamSchema),
+  handouts: z.array(handoutSchema)
+});
+
+type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
+
+export function CreateMainQuestionForm() {
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState } = useForm<CreateSubjectSchema>({
-    resolver: zodResolver(createSubjectSchema),
+  const { register, handleSubmit, formState } = useForm<CreateMainQuestionSchema>({
+    resolver: zodResolver(createMainQuestionSchema),
   })
 
 
   const createSubject = useMutation({
-    mutationFn: async ({ name }: CreateSubjectSchema) => {
+    mutationFn: async ({ name }: CreateMainQuestionSchema) => {
       try {
-        const response = await fetch('http://localhost:8080/subject',
+        const response = await fetch('http://localhost:8080/main-question',
         {
           headers: {
             'Content-Type': 'application/json',
@@ -49,7 +90,7 @@ export function CreateSubjectForm() {
     }
   })
 
-  async function handleCreateSubject({ name }: CreateSubjectSchema) {
+  async function handleCreateSubject({ name }: CreateMainQuestionSchema) {
     await createSubject.mutateAsync({ name })
   }
 
