@@ -7,7 +7,6 @@ export type MockExam =  {
   name: string
   className: string[]
   subjects: Subject[]
-  images: string[]
   number: number
   mockExamQuestions: MainQuestion[]
 }

@@ -11,6 +11,8 @@ import { FileDown, Loader2, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
+import { CreateMainQuestionForm } from "../components/mainQuestion/createMainQuestionForm";
+import { EditMainQuestionForm } from "../components/mainQuestion/editMainQuestionForm";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -100,14 +102,14 @@ export function MainQuestions() {
               <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
-                    Create Subject
+                    Create Main Question
                   </Dialog.Title>
                   <Dialog.Description className="text-sm text-zinc-500">
-                    Subjects can be used to group objects with similar concepts.
+                    Main Questions are can be used to group objects with similar concepts.
                   </Dialog.Description>
                 </div>
 
-                <CreateSubjectForm />
+                <CreateMainQuestionForm />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -191,7 +193,7 @@ export function MainQuestions() {
                               Edit the Subject's attribute.
                             </Dialog.Description>
                           </div>
-                          <EditSubjectForm entity={question} />
+                          <EditMainQuestionForm entity={question} />
                         </Dialog.Content>
                       </Dialog.Portal>
                     </Dialog.Root>

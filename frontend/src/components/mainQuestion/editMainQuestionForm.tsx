@@ -6,12 +6,65 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-const mainQuestionSchema = z.object({
-  id: z.string(),
-  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
-})
+function checkFileType(file: File) {
+  if (file?.name) {
+      const fileType = file.name.split(".").pop();
+      if (fileType && ["gif", "png", "jpg"].includes(fileType)) return true; 
+  }
+  return false;
+}
 
-type MainQuestionSchema = z.infer<typeof mainQuestionSchema>
+const fileSchema = z.any()
+    .refine(file => file instanceof File, {
+      message: 'A file is required',
+    })
+    .refine((file) => checkFileType(file), "Only .jpg, .gif, .png formats are supported.");
+
+const subjectSchema = z.object({
+  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
+});
+
+const alternativeSchema = z.object({
+  id: z.string(),
+  description: z.string(),
+  images: z.array(fileSchema),
+  questionAnswer: z.boolean()
+});
+
+const adaptedQuestionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  level: z.string(),
+  images: z.array(fileSchema),
+  alternatives: z.array(alternativeSchema)
+});
+
+const mockExamSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  className: z.array(z.string()),
+  subjects: z.array(subjectSchema),
+  number: z.number().positive(),
+});
+
+const handoutSchema = z.object({
+  id: z.string(),
+  title: z.string()
+});
+
+const editMainQuestionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  subjects: z.array(subjectSchema),
+  level: z.string(),
+  images: z.array(fileSchema),
+  alternatives: z.array(alternativeSchema),
+  adaptedQuestions: z.array(adaptedQuestionSchema),
+  mockExams: z.array(mockExamSchema),
+  handouts: z.array(handoutSchema)
+});
+
+type MainQuestionSchema = z.infer<typeof editMainQuestionSchema>
 
 interface EditSubjectFormProps {
   entity: MainQuestionSchema;
@@ -21,7 +74,7 @@ export function EditMainQuestionForm( { entity }: EditSubjectFormProps) {
   const queryClient = useQueryClient()
 
   const { register, handleSubmit, formState } = useForm<MainQuestionSchema>({
-    resolver: zodResolver(mainQuestionSchema),
+    resolver: zodResolver(editMainQuestionSchema),
   })
 
 
