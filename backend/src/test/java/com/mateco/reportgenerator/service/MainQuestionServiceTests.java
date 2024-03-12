@@ -34,8 +34,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class MainQuestionServiceTests {
   @Autowired
@@ -129,10 +131,11 @@ public class MainQuestionServiceTests {
     mockAdaptedQuestion02.setMainQuestion(mockMainQuestion01);
   }
   @Test
-  @DisplayName("Verifica se é retornado uma lista de todas as entidades MainQuestion")
-  public void findAllMainQuestionsTest() {
+  @DisplayName("Verifica se é retornado uma página com uma lista de todas as entidades MainQuestion sem filtro")
+  public void findAllMainQuestionsNullQueryTest() {
     int pageNumber = 0;
     int pageSize = 2;
+
     Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
     Page<MainQuestion> page = Mockito.mock(Page.class);
 
@@ -141,10 +144,10 @@ public class MainQuestionServiceTests {
         .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
 
     Mockito
-        .when(mainQuestionRepository.findAll(mockPageable))
+        .when(mainQuestionRepository.findAll(mockPageable, null))
         .thenReturn(page);
 
-    Page<MainQuestion> serviceResponse = mainQuestionService.findAllMainQuestions(pageNumber, pageSize);
+    Page<MainQuestion> serviceResponse = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, null);
 
     assertFalse(serviceResponse.isEmpty());
     assertInstanceOf(Page.class, serviceResponse);
@@ -155,7 +158,38 @@ public class MainQuestionServiceTests {
 
     Mockito
         .verify(mainQuestionRepository)
-        .findAll(any(Pageable.class));
+        .findAll(any(Pageable.class), any());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma página com uma lista de todas as entidades MainQuestion com filtro")
+  public void findAllMainQuestionsNonNullQueryTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    String query = "ome";
+
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionRepository.findAll(mockPageable, query))
+        .thenReturn(page);
+
+    Page<MainQuestion> serviceResponse = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query);
+
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(page.getContent().size(), serviceResponse.getContent().size());
+    assertTrue(serviceResponse.getContent().contains(mockMainQuestion01));
+
+    Mockito
+        .verify(mainQuestionRepository)
+        .findAll(any(Pageable.class), any(String.class));
   }
 
   @Test

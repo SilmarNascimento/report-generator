@@ -23,7 +23,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,6 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class SubjectServiceTests {
   @Autowired
   private SubjectServiceInterface subjectService;
@@ -59,7 +62,7 @@ public class SubjectServiceTests {
   }
 
   @Test
-  @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject")
+  @DisplayName("Verifica se é retornado uma página com uma lista de todas as entidades Subject")
   public void findAllSubjectsNullQueryTest() {
     int pageNumber = 0;
     int pageSize = 2;
@@ -72,7 +75,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(mockPageable))
+        .when(subjectRepository.findAll(mockPageable, null))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null);
@@ -89,7 +92,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class));
+        .findAll(any(Pageable.class), any());
   }
 
   @Test
@@ -107,7 +110,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(mockPageable))
+        .when(subjectRepository.findAll(mockPageable, query))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query);
@@ -124,7 +127,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class));
+        .findAll(any(Pageable.class), any(String.class));
   }
 
   @Test

@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.Matchers.isA;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -182,7 +183,7 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
 
     Mockito
-        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt()))
+        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt(), any()))
         .thenReturn(page);
 
     ResultActions httpResponse = mockMvc.perform(get(baseUrl));
@@ -230,12 +231,14 @@ public class MainQuestionControllerTests {
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
     Mockito
         .verify(mainQuestionService, Mockito.times(1))
-        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
   }
 
   @Test
@@ -261,7 +264,7 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
 
     Mockito
-        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt()))
+        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt(), any()))
         .thenReturn(page);
 
     String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
@@ -310,12 +313,146 @@ public class MainQuestionControllerTests {
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
     Mockito
         .verify(mainQuestionService, Mockito.times(1))
-        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture());
+        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades MainQuestion com parâmetros de paginação default e filtro por query")
+  public void findAllMainQuestionsQueryFilterTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    String query = "ome";
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt(), any()))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "?query=" + query;
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades MainQuestion com parâmetros de paginação e filtro por query")
+  public void findAllMainQuestionsAllParametersAndFiltersTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    long totalItems = 2;
+    String query = "ome";
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionService.findAllMainQuestions(anyInt(), anyInt(), any()))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&query=" + query;
+    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllMainQuestions(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
   }
 
   @Test

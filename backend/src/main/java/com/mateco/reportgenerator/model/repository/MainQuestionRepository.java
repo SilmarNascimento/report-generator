@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface MainQuestionRepository extends JpaRepository<MainQuestion, UUID> {
+  @NonNull
   @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%)")
   Page<MainQuestion> findAll(@NonNull Pageable pageable, String query);
 }
