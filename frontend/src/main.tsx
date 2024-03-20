@@ -9,19 +9,31 @@ import { MockExams } from './pages/MockExams.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
+import { CreateMainQuestion } from "./pages/createMainQuestion.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
     errorElement: <NotFoundPage />
-  }, {
+  },
+  {
     path: "/subjects",
     element: <Subjects />
-  }, {
+  },
+  {
     path: "/main-questions",
     element: <MainQuestions />
-  }, {
+  },
+  {
+    path: "/main-questions/create",
+    element: <CreateMainQuestion />
+  },
+  {
+    path: "/main-questions/edit/:mainQuestionId",
+    element: <CreateMainQuestion />
+  },
+  {
     path: "/mock-exams",
     element: <MockExams />
   },

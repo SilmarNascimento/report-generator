@@ -2,21 +2,21 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { Header } from "../components/header";
 import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import useDebounceValue from "../hooks/useDebounceValue";
 import { Button } from "../components/ui/button";
-import { FileDown, Loader2, Pencil, Plus, Search, X } from "lucide-react";
+import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
-import { CreateMainQuestionForm } from "../components/mainQuestion/createMainQuestionForm";
 import { EditMainQuestionForm } from "../components/mainQuestion/editMainQuestionForm";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const urlFilter = searchParams.get('query') ?? '';
   const [filter, setFilter] = useState(urlFilter);
@@ -36,7 +36,7 @@ export function MainQuestions() {
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
-  const { data: mainQuestionPageResponse, isLoading, isFetching } = useQuery<MainQuestionPageResponse>({
+  const { data: mainQuestionPageResponse, isLoading } = useQuery<MainQuestionPageResponse>({
     queryKey: ['get-main-questions', urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
@@ -78,6 +78,10 @@ export function MainQuestions() {
     return null
   }
 
+  function handleCreateNewMainQuestion() {
+    navigate("/main-questions/create");
+  }
+
   return (
     <>
       <div>
@@ -88,33 +92,14 @@ export function MainQuestions() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Subjects</h1>
+            <Button
+              variant='primary'
+              onClick={handleCreateNewMainQuestion}
+            >
+              <Plus className="size-3" />
+              Nova Questão Principal
+            </Button>
 
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <Button variant='primary'>
-                <Plus className="size-3" />
-                Create new
-              </Button>
-            </Dialog.Trigger>
-
-            <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
-                <div className="space-y-3">
-                  <Dialog.Title className="text-xl font-bold">
-                    Create Main Question
-                  </Dialog.Title>
-                  <Dialog.Description className="text-sm text-zinc-500">
-                    Main Questions are can be used to group objects with similar concepts.
-                  </Dialog.Description>
-                </div>
-
-                <CreateMainQuestionForm />
-              </Dialog.Content>
-            </Dialog.Portal>
-          </Dialog.Root>
-
-          {isFetching && <Loader2 className="size-4 animate-spin text-zinc-500" />}
         </div>
 
         <div className="flex items-center justify-between">

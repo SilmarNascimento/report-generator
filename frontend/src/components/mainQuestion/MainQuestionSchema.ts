@@ -47,7 +47,7 @@ export const handoutSchema = z.object({
 });
 
 export const createMainQuestionSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, { message: "Enunciado é obrigatório" }),
   subjects: z.array(subjectSchema),
   level: z.string(),
   images: z.array(fileSchema),
