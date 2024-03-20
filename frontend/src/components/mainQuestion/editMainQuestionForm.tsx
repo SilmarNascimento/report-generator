@@ -5,64 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { editMainQuestionSchema } from './MainQuestionSchema';
+import { AlternativeForm } from '../alternativesForm';
 
-function checkFileType(file: File) {
-  if (file?.name) {
-      const fileType = file.name.split(".").pop();
-      if (fileType && ["gif", "png", "jpg"].includes(fileType)) return true; 
-  }
-  return false;
-}
 
-const fileSchema = z.any()
-    .refine(file => file instanceof File, {
-      message: 'A file is required',
-    })
-    .refine((file) => checkFileType(file), "Only .jpg, .gif, .png formats are supported.");
-
-const subjectSchema = z.object({
-  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
-});
-
-const alternativeSchema = z.object({
-  id: z.string(),
-  description: z.string(),
-  images: z.array(fileSchema),
-  questionAnswer: z.boolean()
-});
-
-const adaptedQuestionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  level: z.string(),
-  images: z.array(fileSchema),
-  alternatives: z.array(alternativeSchema)
-});
-
-const mockExamSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  className: z.array(z.string()),
-  subjects: z.array(subjectSchema),
-  number: z.number().positive(),
-});
-
-const handoutSchema = z.object({
-  id: z.string(),
-  title: z.string()
-});
-
-const editMainQuestionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  subjects: z.array(subjectSchema),
-  level: z.string(),
-  images: z.array(fileSchema),
-  alternatives: z.array(alternativeSchema),
-  adaptedQuestions: z.array(adaptedQuestionSchema),
-  mockExams: z.array(mockExamSchema),
-  handouts: z.array(handoutSchema)
-});
 
 type MainQuestionSchema = z.infer<typeof editMainQuestionSchema>
 
@@ -73,21 +19,21 @@ interface EditSubjectFormProps {
 export function EditMainQuestionForm( { entity }: EditSubjectFormProps) {
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState } = useForm<MainQuestionSchema>({
+  const { register, handleSubmit, formState, control } = useForm<MainQuestionSchema>({
     resolver: zodResolver(editMainQuestionSchema),
   })
 
 
   const editSubject = useMutation({
-    mutationFn: async ({ id, name }: MainQuestionSchema) => {
+    mutationFn: async (data: MainQuestionSchema) => {
       try {
-        const response = await fetch(`http://localhost:8080/subject/${id}`,
+        const response = await fetch(`http://localhost:8080/main-question/${data.id}`,
         {
           headers: {
             'Content-Type': 'application/json',
           },
           method: 'PUT',
-          body: JSON.stringify({ name }),
+          body: JSON.stringify(data),
       })
 
       if (response.status === 200) {
@@ -107,35 +53,64 @@ export function EditMainQuestionForm( { entity }: EditSubjectFormProps) {
     }
   })
 
-  async function handleEditSubject({ id, name }: MainQuestionSchema) {
-    await editSubject.mutateAsync({ id, name })
+  async function handleEditSubject(data: MainQuestionSchema) {
+    await editSubject.mutateAsync(data)
   }
 
   return (
     <form onSubmit={handleSubmit(handleEditSubject)} className="w-full space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium block" htmlFor="title">Subject Id</label>
+        <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
         <input 
-          {...register('id')}
-          id="subjectId" 
-          type="text"
-          value={entity.id}
-          readOnly 
+          {...register('title')}
+          id="enunciado" 
+          type="text" 
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {formState.errors?.id && <p className="text-sm text-red-400">{formState.errors.id.message}</p> }
+        {formState.errors?.title && (
+          <p className="text-sm text-red-400">{formState.errors.title.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium block" htmlFor="images">Imagem do enunciado</label>
+        <input 
+          {...register('images')}
+          id="images" 
+          type="file" 
+          multiple
+          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+        />
+        {formState.errors?.title && (
+          <p className="text-sm text-red-400">{formState.errors.title.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
+        <input 
+          {...register('level')}
+          id="level" 
+          type="text" 
+          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+        />
+        {formState.errors?.level && (
+          <p className="text-sm text-red-400">{formState.errors.level.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-3">
+        <Dialog.Title className="text-lg font-bold">
+          Alternativas
+        </Dialog.Title>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
-        <input 
-          {...register('name')}
-          id="name" 
-          type="text"
-          defaultValue={entity.name} 
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-        />
-        {formState.errors?.name && <p className="text-sm text-red-400">{formState.errors.name.message}</p> }
+        {[...Array(5)].map((_, index) => (
+          <AlternativeForm key={index} index={index} control={control} errors={formState.errors} />
+        ))}
       </div>
+
+
 
       <div className="flex items-center justify-end gap-2">
         <Dialog.Close asChild>

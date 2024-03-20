@@ -8,6 +8,7 @@ import { MainQuestions } from './pages/MainQuestions.tsx';
 import { MockExams } from './pages/MockExams.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
+import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient} >
       <RouterProvider router={router} />
+      <ToastContainer />
     </QueryClientProvider>
   </React.StrictMode>,
 )

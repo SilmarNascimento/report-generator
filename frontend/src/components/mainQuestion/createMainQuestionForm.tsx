@@ -5,106 +5,95 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-
-function checkFileType(file: File) {
-  if (file?.name) {
-      const fileType = file.name.split(".").pop();
-      if (fileType && ["gif", "png", "jpg"].includes(fileType)) return true; 
-  }
-  return false;
-}
-
-const fileSchema = z.any()
-    .refine(file => file instanceof File, {
-      message: 'A file is required',
-    })
-    .refine((file) => checkFileType(file), "Only .jpg, .gif, .png formats are supported.");
-
-const subjectSchema = z.object({
-  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
-});
-
-const alternativeSchema = z.object({
-  id: z.string(),
-  description: z.string(),
-  images: z.array(fileSchema),
-  questionAnswer: z.boolean()
-});
-
-const adaptedQuestionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  level: z.string(),
-  images: z.array(fileSchema),
-  alternatives: z.array(alternativeSchema)
-});
-
-const mockExamSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  className: z.array(z.string()),
-  subjects: z.array(subjectSchema),
-  number: z.number().positive(),
-});
-
-const handoutSchema = z.object({
-  id: z.string(),
-  title: z.string()
-});
-
-const createMainQuestionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  subjects: z.array(subjectSchema),
-  level: z.string(),
-  images: z.array(fileSchema),
-  alternatives: z.array(alternativeSchema),
-  adaptedQuestions: z.array(adaptedQuestionSchema),
-  mockExams: z.array(mockExamSchema),
-  handouts: z.array(handoutSchema)
-});
+import { AlternativeForm } from '../alternativesForm';
+import { alternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
+import { CreateQuestion } from '../../interfaces/createQuestion';
+import { CreateAlternative } from '../../interfaces/createAlternative';
+import { Bounce, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
 
 export function CreateMainQuestionForm() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { register, handleSubmit, formState } = useForm<CreateMainQuestionSchema>({
+  const { register, handleSubmit, formState, control } = useForm<CreateMainQuestionSchema>({
     resolver: zodResolver(createMainQuestionSchema),
   })
 
 
   const createMainQuestion = useMutation({
-    mutationFn: async ({ name }: CreateMainQuestionSchema) => {
-      try {
-        const response = await fetch('http://localhost:8080/main-question',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({ name }),
+    mutationFn: async (data: CreateMainQuestionSchema) => {
+      const formData = new FormData();
+
+      const titleImage = data.images;
+      const alternativeImages = data.alternatives
+        .flatMap((alternative: z.infer<typeof alternativeSchema>) => alternative.images);
+      const totalImages = titleImage.concat(alternativeImages);
+      totalImages.forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+
+      const createAlternatives = data.alternatives.map((alternative) => {
+        const createAlternative: CreateAlternative = {
+          description: alternative.description,
+          questionAnswer: alternative.questionAnswer
+        }
+        return createAlternative
       })
+
+      const createMainQuestion: CreateQuestion = {
+        title: data.title,
+        level: data.level,
+        alternatives: createAlternatives
+      };
+      
+      formData.append("mainQuestionInputDto", JSON.stringify(createMainQuestion));
+
+      const response = await fetch('http://localhost:8080/main-question',
+        {
+          method: 'POST',
+          body: formData,
+        })
 
       if (response.status === 201) {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
-        })
+        });
+        toast.success('Cliente salvo com sucesso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        navigate("/main-questions");
       }
 
       if (response.status === 400) {
         const errorMessage = await response.text();
-        console.log("Error: ", errorMessage);
-      }
-      
-      } catch (error) {
-        console.error('Erro na requisição:', error);
+        toast.warn( errorMessage, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     }
   })
 
-  async function handleCreateSubject({ name }: CreateMainQuestionSchema) {
-    await createMainQuestion.mutateAsync({ name })
+  async function handleCreateSubject(data: CreateMainQuestionSchema) {
+    await createMainQuestion.mutateAsync(data)
   }
 
   return (
@@ -117,9 +106,9 @@ export function CreateMainQuestionForm() {
           type="text" 
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {formState.errors?.title && (
-          <p className="text-sm text-red-400">{formState.errors.title.message}</p>
-        )}
+        <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
+          {formState.errors?.title ? formState.errors.title.message : '\u00A0'}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -148,6 +137,24 @@ export function CreateMainQuestionForm() {
           <p className="text-sm text-red-400">{formState.errors.level.message}</p>
         )}
       </div>
+
+      <div className="space-y-3">
+        <Dialog.Title className="text-lg font-bold">
+          Alternativas
+        </Dialog.Title>
+      </div>
+      <div className="space-y-2">
+        {[...Array(5)].map((_, index) => (
+          <AlternativeForm key={index} index={index} control={control} errors={formState.errors} />
+        ))}
+      </div>
+
+
+
+
+
+
+
 
       <div className="flex items-center justify-end gap-2">
         <Dialog.Close asChild>
