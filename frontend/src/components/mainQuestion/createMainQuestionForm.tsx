@@ -120,9 +120,9 @@ export function CreateMainQuestionForm() {
           multiple
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {formState.errors?.title && (
-          <p className="text-sm text-red-400">{formState.errors.title.message}</p>
-        )}
+        <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
+          {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -133,9 +133,9 @@ export function CreateMainQuestionForm() {
           type="text" 
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {formState.errors?.level && (
-          <p className="text-sm text-red-400">{formState.errors.level.message}</p>
-        )}
+        <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
+          {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
+        </p>
       </div>
 
       <div className="space-y-3">

@@ -16,19 +16,33 @@ export const AlternativeForm = ({ index, control, errors }: AlternativeFormProps
       <Controller
         name={`alternatives.${index}.description`}
         control={control}
-        defaultValue=""
         render={({ field }) => (
-          <input {...field} placeholder={`Descrição da ${index + 1}ª Alternativa`} />
+          <div>
+            <label htmlFor={`description${index}`}>Descrição</label>
+            <input
+              id={`description${index}`}
+              {...field}
+              placeholder={`Descrição da ${index + 1}ª Alternativa`}
+            />
+            <p className={`text-sm ${errors?.alternatives?.[index]?.description ? 'text-red-400' : 'text-transparent'}`}>
+              {errors?.alternatives?.[index]?.description?.message ? errors?.alternatives?.[index]?.description?.message : '\u00A0'}
+            </p>
+          </div>
         )}
       />
-      {errors.alternatives?.[index]?.description && <span>Este campo é obrigatório</span>}
 
       <Controller
         name={`alternatives.${index}.images`}
         control={control}
         defaultValue={[]}
         render={({ field }) => (
-          <input type="file" {...field} multiple />
+          <div>
+            <label htmlFor={`questionAnswer${index}`}>Escolha uma imagem</label>
+            <input type="file" {...field} multiple id={`questionAnswer${index}`} />
+            <p className={`text-sm ${errors?.alternatives?.[index]?.images ? 'text-red-400' : 'text-transparent'}`}>
+              {errors?.alternatives?.[index]?.images?.message ? errors?.alternatives?.[index]?.images?.message : '\u00A0'}
+            </p>
+          </div>
         )}
       />
 
@@ -38,21 +52,14 @@ export const AlternativeForm = ({ index, control, errors }: AlternativeFormProps
         defaultValue={false}
         render={({ field }) => (
           <div>
-            <label>
-              <input type="radio" {...field} name="questionAnswer" value={index}/>
-              Correta
-            </label>
+            <label htmlFor={`questionAnswer${index}`}>Resposta</label>
+            <input type="radio" {...field} id={`questionAnswer${index}`} name="questionAnswer" value={index}/>
+            <p className={`text-sm ${errors?.alternatives?.[index]?.questionAnswer ? 'text-red-400' : 'text-transparent'}`}>
+              {errors?.alternatives?.[index]?.questionAnswer?.message ? errors?.alternatives?.[index]?.questionAnswer?.message : '\u00A0'}
+            </p>
           </div>
         )}
       />
-      {errors.alternatives?.[index]?.questionAnswer && <span>{errors?.alternatives[index]?.questionAnswer?.message}</span>}
     </div>
   );
 };
-
-// { errors.alternatives?.[index]?.images
-//   &&
-//   errors.alternatives?.[index]?.images.map((error, i) => (
-//     <span key={i}>{error?.message}</span>
-//   )
-// )}
