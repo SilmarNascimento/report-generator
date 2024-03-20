@@ -21,7 +21,7 @@ export function Select ({ defaultValue }: SelectProps) {
     >
       <option
         value="Fácil"
-        className='text-zinc-800 hover:bg-gray-200'
+        className='text-zinc-800'
       >
         Fácil
       </option>

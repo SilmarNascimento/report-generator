@@ -11,6 +11,7 @@ import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { Bounce, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { Select } from '../ui/selectForm';
 
 type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
 
@@ -127,12 +128,7 @@ export function CreateMainQuestionForm() {
 
       <div className="space-y-2">
         <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
-        <input 
-          {...register('level')}
-          id="level" 
-          type="text" 
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-        />
+        <Select />
         <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
           {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
         </p>
