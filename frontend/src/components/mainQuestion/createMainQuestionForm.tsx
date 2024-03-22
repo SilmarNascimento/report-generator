@@ -10,7 +10,7 @@ import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { Bounce, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { Select } from '../ui/selectForm';
+import { SelectLevel } from '../ui/selectLevel';
 
 type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
 
@@ -21,18 +21,21 @@ export function CreateMainQuestionForm() {
   const formMethods = useForm<CreateMainQuestionSchema>({
     resolver: zodResolver(createMainQuestionSchema),
   })
-  const { register, handleSubmit, formState, control } = formMethods;
+  const { register, handleSubmit, formState } = formMethods;
 
 
   const createMainQuestion = useMutation({
     mutationFn: async (data: CreateMainQuestionSchema) => {
       const formData = new FormData();
 
-      const titleImage = data.images;
-      const alternativeImages = data.alternatives
-        .flatMap((alternative: z.infer<typeof alternativeSchema>) => alternative.images);
+      const titleImage: File[] = Array.from(data.images.files)
+        .filter((file): file is File => file !== undefined);
+
+      const alternativeImages: File[] = data.alternatives
+        .flatMap((alternative: z.infer<typeof alternativeSchema>) => Array.from(alternative.images.files)
+          .filter((file): file is File => file !== undefined));
       const totalImages = titleImage.concat(alternativeImages);
-      totalImages.forEach((file, index) => {
+      totalImages.forEach((file: File, index: number) => {
         formData.append(`images[${index}]`, file);
       });
 
@@ -93,13 +96,13 @@ export function CreateMainQuestionForm() {
     }
   })
 
-  async function handleCreateSubject(data: CreateMainQuestionSchema) {
+  async function handleCreateMainQUestion(data: CreateMainQuestionSchema) {
     await createMainQuestion.mutateAsync(data)
   }
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleCreateSubject)} className="w-[90%] m-auto space-y-6">
+      <form onSubmit={handleSubmit(handleCreateMainQUestion)} className="w-[90%] m-auto space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <textarea 
@@ -113,12 +116,13 @@ export function CreateMainQuestionForm() {
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="images">Imagem do enunciado</label>
+          <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
           <input 
             {...register('images')}
             id="images" 
             type="file" 
             multiple
+            hidden
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
           <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
@@ -128,7 +132,7 @@ export function CreateMainQuestionForm() {
 
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
-          <Select />
+          <SelectLevel />
           <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
           </p>
@@ -139,21 +143,15 @@ export function CreateMainQuestionForm() {
             Alternativas
           </span>
         </div>
-        <div>
+        <div className="space-y-4">
           {[...Array(5)].map((_, index) => (
-            <AlternativeForm key={index} index={index} control={control} errors={formState.errors} />
+            <AlternativeForm key={index} index={index} errors={formState.errors} />
           ))}
         </div>
 
 
 
-        <div className="flex items-center justify-end gap-2">
-          <Button
-            onClick={() => navigate("/main-questions")}
-          >
-            <X className="size-3" />
-            Cancel
-          </Button>
+        <div className="flex items-center justify-center gap-2">
           <Button
             disabled={formState.isSubmitting}
             className="bg-teal-400 text-teal-950"
@@ -161,6 +159,12 @@ export function CreateMainQuestionForm() {
           >
             {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
             Save
+          </Button>
+          <Button
+            onClick={() => navigate("/main-questions")}
+          >
+            <X className="size-3" />
+            Cancel
           </Button>
         </div>
       </form>

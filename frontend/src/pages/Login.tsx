@@ -19,23 +19,6 @@ export function Login() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginSchema>({
     resolver: zodResolver(createTagSchema),
   });
-
-  // const { mutateAsync } = useMutation({
-  //   mutationFn: async ({ username, password }: CreateTagSchema) => {
-  //     await fetch('http://localhost:3333/tags', {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         username,
-  //         password
-  //       }),
-  //     })
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['get-tags'],
-  //     })
-  //   }
-  // });
   
   const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));

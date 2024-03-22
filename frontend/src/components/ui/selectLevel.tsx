@@ -5,7 +5,7 @@ interface SelectProps {
   defaultValue?: string;
 }
 
-export function Select ({ defaultValue }: SelectProps) {
+export function SelectLevel ({ defaultValue }: SelectProps) {
   const { register, setValue } = useFormContext();
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {

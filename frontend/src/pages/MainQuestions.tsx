@@ -153,7 +153,24 @@ export function MainQuestions() {
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    {question.id}
+                    <span>
+                      {question.level}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <span>
+                      {question.adaptedQuestions.length}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                  <span>
+                      {question.mockExams.length}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <span>
+                      {question.handouts.length}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>
