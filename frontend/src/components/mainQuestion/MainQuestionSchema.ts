@@ -1,18 +1,6 @@
 import { z } from 'zod'
 
-const MAX_UPLOAD_SIZE = 1024 * 1024 * 3;
-const fileSchema = z
-    .custom<File>(val => val instanceof File, 'Please upload a file')
-    .optional()
-    .refine((file) => {
-      return !file || file.size <= MAX_UPLOAD_SIZE;
-    }, 'File size must be less than 3MB');
-
-  const fileListSchema = z.object({
-    length: z.number(),
-    item: z.function(),
-    files: z.array(fileSchema)
-  });
+const fileListSchema = z.instanceof(FileList);
 
 export const subjectSchema = z.object({
   name: z.string().min(3, { message: 'Minimum 3 characters.' }),
@@ -21,7 +9,13 @@ export const subjectSchema = z.object({
 export const alternativeSchema = z.object({
   id: z.string(),
   description: z.string().min(1, { message: 'Descrição da alternativa é obrigatório'}),
-  images: fileListSchema,
+  images: fileListSchema.optional(),
+  questionAnswer: z.boolean()
+});
+
+export const createAlternativeSchema = z.object({
+  description: z.string().min(1, { message: 'Descrição da alternativa é obrigatório'}),
+  images: fileListSchema.optional(),
   questionAnswer: z.boolean()
 });
 
@@ -48,13 +42,9 @@ export const handoutSchema = z.object({
 
 export const createMainQuestionSchema = z.object({
   title: z.string().min(1, { message: "Enunciado é obrigatório" }),
-  subjects: z.array(subjectSchema),
   level: z.enum(["Fácil", "Médio", "Difícil"]),
-  images: fileListSchema,
-  alternatives: z.array(alternativeSchema),
-  adaptedQuestions: z.array(adaptedQuestionSchema),
-  mockExams: z.array(mockExamSchema),
-  handouts: z.array(handoutSchema)
+  images: fileListSchema.optional(),
+  alternatives: z.array(createAlternativeSchema),
 });
 
 export const editMainQuestionSchema = z.object({
@@ -62,7 +52,7 @@ export const editMainQuestionSchema = z.object({
   title: z.string().min(1, { message: "Enunciado é obrigatório" }),
   subjects: z.array(subjectSchema),
   level: z.enum(["Fácil", "Médio", "Difícil"]),
-  images: fileListSchema,
+  images: fileListSchema.optional(),
   alternatives: z.array(alternativeSchema),
   adaptedQuestions: z.array(adaptedQuestionSchema),
   mockExams: z.array(mockExamSchema),

@@ -7,7 +7,13 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const createSubjectSchema = z.object({
-  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
+  name: z.string()
+  .min(3, { message: 'Minimum 3 characters.' })
+  .transform(name => {
+    return name.trim().split(' ').map(word => {
+      return word[0].toLocaleLowerCase().concat(word.substring(1))
+    }).join(' ')
+  }),
 })
 
 type CreateSubjectSchema = z.infer<typeof createSubjectSchema>

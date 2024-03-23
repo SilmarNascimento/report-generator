@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternativesForm';
-import { alternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
+import { createAlternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { Bounce, toast } from 'react-toastify';
@@ -27,13 +27,22 @@ export function CreateMainQuestionForm() {
   const createMainQuestion = useMutation({
     mutationFn: async (data: CreateMainQuestionSchema) => {
       const formData = new FormData();
+      let titleImage: File[] = [];
+      const alternativeImages: File[] = [];
 
-      const titleImage: File[] = Array.from(data.images.files)
-        .filter((file): file is File => file !== undefined);
+      if (data.images) {
+        titleImage = Array.from(data?.images)
+          .filter((file): file is File => file !== undefined);
+      }
 
-      const alternativeImages: File[] = data.alternatives
-        .flatMap((alternative: z.infer<typeof alternativeSchema>) => Array.from(alternative.images.files)
-          .filter((file): file is File => file !== undefined));
+      const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
+      for (const alternative of alternatives) {
+        if (alternative.images) {
+          const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
+          alternativeImages.push(...files);
+        }
+      }
+
       const totalImages = titleImage.concat(alternativeImages);
       totalImages.forEach((file: File, index: number) => {
         formData.append(`images[${index}]`, file);
@@ -100,6 +109,10 @@ export function CreateMainQuestionForm() {
     await createMainQuestion.mutateAsync(data)
   }
 
+  if (formState?.errors) {
+    console.log(formState.errors);
+  }
+
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(handleCreateMainQUestion)} className="w-[90%] m-auto space-y-6">
@@ -123,6 +136,7 @@ export function CreateMainQuestionForm() {
             type="file" 
             multiple
             hidden
+            accept="image/*,.pdf"
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
           <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>

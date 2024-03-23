@@ -38,6 +38,8 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
           {...register(`alternatives.${index}.images`)}
           type="file"
           multiple
+          hidden
+          accept="image/*,.pdf"
           id={`questionAnswer${index}`}
         />
         <p className={`text-xs ${errors?.alternatives?.[index]?.images ? 'text-red-400' : 'text-transparent'}`}>
