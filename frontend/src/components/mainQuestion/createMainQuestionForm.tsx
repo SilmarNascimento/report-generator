@@ -12,20 +12,20 @@ import { Bounce, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 
-type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
+type CreateMainQuestionForm = z.infer<typeof createMainQuestionSchema>
 
 export function CreateMainQuestionForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const formMethods = useForm<CreateMainQuestionSchema>({
+  const formMethods = useForm<CreateMainQuestionForm>({
     resolver: zodResolver(createMainQuestionSchema),
   })
   const { register, handleSubmit, formState } = formMethods;
 
 
   const createMainQuestion = useMutation({
-    mutationFn: async (data: CreateMainQuestionSchema) => {
+    mutationFn: async (data: CreateMainQuestionForm) => {
       const formData = new FormData();
       let titleImage: File[] = [];
       const alternativeImages: File[] = [];
@@ -108,7 +108,7 @@ export function CreateMainQuestionForm() {
     }
   })
 
-  async function handleCreateMainQUestion(data: CreateMainQuestionSchema) {
+  async function handleCreateMainQUestion(data: CreateMainQuestionForm) {
     await createMainQuestion.mutateAsync(data)
   }
 

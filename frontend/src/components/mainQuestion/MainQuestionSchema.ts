@@ -50,11 +50,20 @@ export const createMainQuestionSchema = z.object({
 export const editMainQuestionSchema = z.object({
   id: z.string(),
   title: z.string().min(1, { message: "Enunciado é obrigatório" }),
-  subjects: z.array(subjectSchema),
   level: z.enum(["Fácil", "Médio", "Difícil"]),
   images: fileListSchema.optional(),
-  alternatives: z.array(alternativeSchema),
-  adaptedQuestions: z.array(adaptedQuestionSchema),
-  mockExams: z.array(mockExamSchema),
-  handouts: z.array(handoutSchema)
+  alternatives: z.array(createAlternativeSchema),
+  questionAnswer: z.string()
+});
+
+export const editMainQuestionForm = z.object({
+  title: z.string().min(1, { message: "Enunciado é obrigatório" }),
+  subjects: z.string(),
+  level: z.enum(["Fácil", "Médio", "Difícil"]),
+  images: fileListSchema.optional(),
+  alternatives: z.array(createAlternativeSchema),
+  questionAnswer: z.string(),
+  adaptedQuestion: adaptedQuestionSchema,
+  mockExams: mockExamSchema,
+  handout: handoutSchema
 });

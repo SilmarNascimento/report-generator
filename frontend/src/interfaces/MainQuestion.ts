@@ -8,7 +8,7 @@ export type MainQuestion =  {
   id: string
   title: string
   subjects: Subject[]
-  level: string
+  level: "Fácil" | "Médio" | "Difícil"
   images: string[]
   alternatives: Alternative[]
   adaptedQuestions: AdaptedQuestion[]
