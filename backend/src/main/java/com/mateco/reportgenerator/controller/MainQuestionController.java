@@ -91,7 +91,7 @@ public class MainQuestionController {
   @PutMapping(value = "/{mainQuestionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
+      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "images", required = false) List<MultipartFile> images
   ) throws IOException {
     List<String> questionImages = imageService.uploadImages(images);

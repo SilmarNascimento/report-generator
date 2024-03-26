@@ -68,8 +68,11 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
-  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question,
-      List<String> questionImages) {
+  public MainQuestion updateMainQuestionById(
+      UUID questionId,
+      MainQuestion question,
+      List<String> questionImages
+  ) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 

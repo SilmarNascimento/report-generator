@@ -56,7 +56,7 @@ export function EditMainQuestionForm() {
 
 
 
-  const editSubject = useMutation({
+  const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionSchema) => {
       const formData = new FormData();
       let titleImage: File[] = [];
@@ -140,14 +140,14 @@ export function EditMainQuestionForm() {
     }
   })
 
-  async function handleEditSubject(data: EditMainQuestionForm) {
+  async function handleEditMainQuestion(data: EditMainQuestionForm) {
     const id = mainQuestionId ?? "";
-    await editSubject.mutateAsync({ id, ...data})
+    await editMainQuestion.mutateAsync({ id, ...data})
   }
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleEditSubject)} className="w-full space-y-6" encType='multipart/form-data'>
+      <form onSubmit={handleSubmit(handleEditMainQuestion)} className="w-full space-y-6" encType='multipart/form-data'>
         <div className="space-y-2">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <input 
