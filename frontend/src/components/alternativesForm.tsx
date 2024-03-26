@@ -49,8 +49,8 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
             type="radio"
             id={`questionAnswer${index}`}
             value={`${index}`}
-            checked={watch(`questionAnswer`) === index}
-            onChange={() => setValue(`questionAnswer` , index)}
+            checked={watch(`questionAnswer`) === index.toString()}
+            onChange={() => setValue(`questionAnswer` , index.toString())}
           />
           <label htmlFor={`questionAnswer${index}` }><span className="bg-red-700">Resposta</span></label>
         </div>

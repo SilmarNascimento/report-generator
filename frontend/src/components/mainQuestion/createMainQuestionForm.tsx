@@ -162,8 +162,6 @@ export function CreateMainQuestionForm() {
           ))}
         </div>
 
-
-
         <div className="flex items-center justify-center gap-2">
           <Button
             disabled={formState.isSubmitting}

@@ -14,7 +14,6 @@ const createTagSchema = z.object({
 type LoginSchema = z.infer<typeof createTagSchema>
 
 export function Login() {
-  //const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginSchema>({
     resolver: zodResolver(createTagSchema),

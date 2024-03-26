@@ -11,6 +11,7 @@ import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
 import { CreateMainQuestion } from "./pages/createMainQuestion.tsx";
+import { EditMainQuestion } from "./pages/editMainQuestion.tsx";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/main-questions/edit/:mainQuestionId",
-    element: <CreateMainQuestion />
+    element: <EditMainQuestion />
   },
   {
     path: "/mock-exams",

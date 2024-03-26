@@ -12,10 +12,10 @@ export function EditMainQuestion() {
       </div>
         <div className="flex flex-col my-8">
           <span className="font-bold text-lg">
-            Nova Questão
+            Editar Questão
           </span>
           <span className="font-normal text-lg">
-            Informe os campos a seguir para criar uma nova Questão
+            Altere os campos a seguir para atualizar a Questão
           </span>
         </div>
         <EditMainQuestionForm />

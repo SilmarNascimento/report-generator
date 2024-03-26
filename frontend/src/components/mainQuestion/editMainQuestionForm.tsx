@@ -3,7 +3,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
-import * as Dialog from '@radix-ui/react-dialog'
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createAlternativeSchema, editMainQuestionForm, editMainQuestionSchema } from './MainQuestionSchema';
 import { AlternativeForm } from '../alternativesForm';
@@ -15,8 +14,6 @@ import { CreateAlternative } from '../../interfaces/createAlternative';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect } from 'react';
 
-
-
 type EditMainQuestionForm = z.infer<typeof editMainQuestionForm>
 type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>
 
@@ -26,35 +23,35 @@ export function EditMainQuestionForm() {
   const navigate = useNavigate();
 
   const formMethods = useForm<EditMainQuestionForm>({
-    resolver: zodResolver(editMainQuestionSchema),
+    resolver: zodResolver(editMainQuestionForm),
   });
-  const { register, handleSubmit, formState, setValue, control } = formMethods;
+  const { register, handleSubmit, formState, setValue, control, watch } = formMethods;
 
-
-  const { data: mainQuestionFoundResponse, isLoading } = useQuery<MainQuestion>({
+  const { data: mainQuestionFoundResponse } = useQuery<MainQuestion>({
     queryKey: ['get-main-questions', mainQuestionId],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
       const data = await response.json()
 
+      console.log(data);
       return data
     },
     placeholderData: keepPreviousData,
     staleTime: Infinity,
-  });
+  });  
 
   useEffect(() => {
     if (mainQuestionFoundResponse) {
       setValue('title', mainQuestionFoundResponse.title);
-      setValue('email', mainQuestionFoundResponse.email);
       setValue('level', mainQuestionFoundResponse.level);
-      setValue('telephone', telephoneFormatter(mainQuestionFoundResponse.telephone));
-      setValue('status', mainQuestionFoundResponse.status);
+      mainQuestionFoundResponse.alternatives.forEach((alternative, index) => {
+        setValue(`alternatives.${index}.description`, alternative.description);
+        if (alternative.questionAnswer) {
+          setValue('questionAnswer', index.toString());
+        }
+      });
     }
   }, [mainQuestionFoundResponse, setValue]);
-
-
-
 
   const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionSchema) => {
@@ -102,7 +99,7 @@ export function EditMainQuestionForm() {
       const response = await fetch(`http://localhost:8080/main-question/${data.id}`,
       {
         method: 'PUT',
-        body: JSON.stringify(data),
+        body: formData,
       })
 
       if (response.status === 200) {
@@ -141,8 +138,15 @@ export function EditMainQuestionForm() {
   })
 
   async function handleEditMainQuestion(data: EditMainQuestionForm) {
+    console.log(data);
     const id = mainQuestionId ?? "";
     await editMainQuestion.mutateAsync({ id, ...data})
+  }
+
+  if (formState.errors) {
+    console.log(watch());
+    
+    console.log(formState.errors);
   }
 
   return (
@@ -156,9 +160,9 @@ export function EditMainQuestionForm() {
             type="text" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
-          {formState.errors?.title && (
-            <p className="text-sm text-red-400">{formState.errors.title.message}</p>
-          )}
+          <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.title ? formState.errors.title.message : '\u00A0'}
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -168,11 +172,12 @@ export function EditMainQuestionForm() {
             id="images" 
             type="file" 
             multiple
+            hidden
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
-          {formState.errors?.title && (
-            <p className="text-sm text-red-400">{formState.errors.title.message}</p>
-          )}
+          <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -189,9 +194,9 @@ export function EditMainQuestionForm() {
         </div>
 
         <div className="space-y-3">
-          <Dialog.Title className="text-lg font-bold">
+          <span className="text-lg font-medium">
             Alternativas
-          </Dialog.Title>
+          </span>
         </div>
         <div className="space-y-2">
           {[...Array(5)].map((_, index) => (
@@ -199,18 +204,18 @@ export function EditMainQuestionForm() {
           ))}
         </div>
 
-
-
-        <div className="flex items-center justify-end gap-2">
-          <Dialog.Close asChild>
-            <Button>
-              <X className="size-3" />
-              Cancel
-            </Button>
-          </Dialog.Close>
-          <Button disabled={formState.isSubmitting} className="bg-teal-400 text-teal-950" type="submit">
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            disabled={formState.isSubmitting}
+            className="bg-teal-400 text-teal-950"
+            type="submit"
+          >
             {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
             Save
+          </Button>
+          <Button>
+            <X className="size-3" />
+            Cancel
           </Button>
         </div>
       </form>

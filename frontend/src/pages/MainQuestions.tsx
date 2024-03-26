@@ -4,14 +4,12 @@ import { NavigationBar } from "../components/navigationBar";
 import { Pagination } from "../components/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
 import useDebounceValue from "../hooks/useDebounceValue";
 import { Button } from "../components/ui/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
-import { EditMainQuestionForm } from "../components/mainQuestion/editMainQuestionForm";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -49,9 +47,9 @@ export function MainQuestions() {
   })
 
   const deleteMainQuestion = useMutation({
-    mutationFn: async ({ id }: MainQuestion) => {
+    mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
       try {
-        await fetch(`http://localhost:8080/main-question/${id}`,
+        await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -78,6 +76,10 @@ export function MainQuestions() {
     return null
   }
 
+  function handleEditMainQuestion(mainQuestionId: string) {
+    navigate(`/main-questions/edit/${mainQuestionId}`);
+  }
+
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
   }
@@ -99,7 +101,6 @@ export function MainQuestions() {
               <Plus className="size-3" />
               Nova Questão Principal
             </Button>
-
         </div>
 
         <div className="flex items-center justify-between">
@@ -149,7 +150,9 @@ export function MainQuestions() {
                   <TableCell></TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">{question.title}</span>
+                      <span className="font-medium">
+                        {question.title}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
@@ -176,29 +179,9 @@ export function MainQuestions() {
                     <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>
                       <X className="size-3" color="red"/>
                     </Button>
-                
-                    <Dialog.Root>
-                      <Dialog.Trigger asChild>
-                        <Button size="icon" className="mx-0.5">
-                          <Pencil className="size-3" color="green"/>
-                        </Button>
-                      </Dialog.Trigger>
-
-                      <Dialog.Portal>
-                        <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
-                          <div className="space-y-3">
-                            <Dialog.Title className="text-xl font-bold">
-                              Edit Subject
-                            </Dialog.Title>
-                            <Dialog.Description className="text-sm text-zinc-500">
-                              Edit the Subject's attribute.
-                            </Dialog.Description>
-                          </div>
-                          <EditMainQuestionForm entity={question} />
-                        </Dialog.Content>
-                      </Dialog.Portal>
-                    </Dialog.Root>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleEditMainQuestion(question.id)}>
+                      <Pencil className="size-3" color="green"/>
+                    </Button>
                   </TableCell>
                 </TableRow>
               )
