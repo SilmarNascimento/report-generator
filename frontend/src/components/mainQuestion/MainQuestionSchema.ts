@@ -15,8 +15,7 @@ export const alternativeSchema = z.object({
 
 export const createAlternativeSchema = z.object({
   description: z.string().min(1, { message: 'Descrição da alternativa é obrigatório'}),
-  images: fileListSchema.optional(),
-  questionAnswer: z.boolean()
+  images: fileListSchema.optional()
 });
 
 export const adaptedQuestionSchema = z.object({
@@ -45,6 +44,7 @@ export const createMainQuestionSchema = z.object({
   level: z.enum(["Fácil", "Médio", "Difícil"]),
   images: fileListSchema.optional(),
   alternatives: z.array(createAlternativeSchema),
+  questionAnswer: z.string()
 });
 
 export const editMainQuestionSchema = z.object({

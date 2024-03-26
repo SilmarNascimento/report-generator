@@ -10,12 +10,7 @@ interface AlternativeFormProps {
 }
 
 export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
-  const { register } = useFormContext();
-
-  if (errors) {
-    console.log(errors);
-    
-  }
+  const { register, watch, setValue } = useFormContext();
 
   return (
     <div>
@@ -50,16 +45,17 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
       <div className="space-y-1 flex flex-col justify-center items-start">
         <div className="flex flex-row justify-start gap-4 items-center">
           <input
-            {...register(`alternatives.${index}.questionAnswer`)}
+            {...register(`questionAnswer`)}
             type="radio"
             id={`questionAnswer${index}`}
-            name="questionAnswer"
-            value={index}
+            value={`${index}`}
+            checked={watch(`questionAnswer`) === index}
+            onChange={() => setValue(`questionAnswer` , index)}
           />
           <label htmlFor={`questionAnswer${index}` }><span className="bg-red-700">Resposta</span></label>
         </div>
-        <p className={`text-xs ${errors?.alternatives?.[index]?.questionAnswer ? 'text-red-400' : 'text-transparent'}`}>
-          {errors?.alternatives?.[index]?.questionAnswer?.message ? errors?.alternatives?.[index]?.questionAnswer?.message : '\u00A0'}
+        <p className={`text-xs ${errors?.questionAnswer ? 'text-red-400' : 'text-transparent'}`}>
+          {errors?.questionAnswer?.message ? <span>Defina uma resposta correta</span> : '\u00A0'}
         </p>
       </div>
     </div>

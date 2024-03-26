@@ -19,7 +19,7 @@ export function Test() {
     resolver: zodResolver(formSchema),
   })
 
-  function handleForm(data: any) {
+  function handleForm(data: z.infer<typeof formSchema>) {
     console.log("Dados recebidos do form: ", data);
   }
 

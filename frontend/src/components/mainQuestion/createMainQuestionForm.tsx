@@ -44,35 +44,38 @@ export function CreateMainQuestionForm() {
       }
 
       const totalImages = titleImage.concat(alternativeImages);
-      totalImages.forEach((file: File, index: number) => {
-        formData.append(`images[${index}]`, file);
+      totalImages.forEach((file) => {
+        formData.append('images', file);
       });
 
-      const createAlternatives = data.alternatives.map((alternative) => {
+      const createAlternatives = data.alternatives.map((alternative, index) => {
         const createAlternative: CreateAlternative = {
           description: alternative.description,
-          questionAnswer: alternative.questionAnswer
+          questionAnswer: Number(data.questionAnswer) === index
         }
         return createAlternative
       })
-
       const createMainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives
       };
-      
-      formData.append("mainQuestionInputDto", JSON.stringify(createMainQuestion));
+      const json = JSON.stringify(createMainQuestion);
+      const blob = new Blob([json], {
+        type: 'application/json'
+      });
 
+      formData.append("mainQuestionInputDto", blob);
+      
       const response = await fetch('http://localhost:8080/main-question',
         {
           method: 'POST',
-          body: formData,
+          body: formData
         })
 
       if (response.status === 201) {
         queryClient.invalidateQueries({
-          queryKey: ['get-subjects'],
+          queryKey: ['get-main-questions'],
         });
         toast.success('Cliente salvo com sucesso!', {
           position: "top-right",
@@ -109,13 +112,9 @@ export function CreateMainQuestionForm() {
     await createMainQuestion.mutateAsync(data)
   }
 
-  if (formState?.errors) {
-    console.log(formState.errors);
-  }
-
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleCreateMainQUestion)} className="w-[90%] m-auto space-y-6">
+      <form onSubmit={handleSubmit(handleCreateMainQUestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <textarea 
