@@ -12,12 +12,13 @@ import { DevTool } from '@hookform/devtools'
 import { Bounce, toast } from 'react-toastify';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { CreateQuestion } from '../../interfaces/createQuestion';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type EditMainQuestionForm = z.infer<typeof editMainQuestionForm>
 type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>
 
 export function EditMainQuestionForm() {
+  const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
   const navigate = useNavigate();
@@ -52,6 +53,41 @@ export function EditMainQuestionForm() {
       });
     }
   }, [mainQuestionFoundResponse, setValue]);
+
+  useEffect(() => {
+    function hasChangedValues(): boolean {
+      const updatedFormValues = {...watch()}; 
+
+      const alternatives = updatedFormValues.alternatives.map((alternative, index) => {
+        const createAlternative: CreateAlternative = {
+          description: alternative.description,
+          questionAnswer: Number(updatedFormValues.questionAnswer) === index
+        }
+        return createAlternative
+      })
+      updatedFormValues.alternatives = alternatives;
+
+      if (mainQuestionFoundResponse) {    
+        const keys = Object.keys(updatedFormValues) as (keyof EditMainQuestionForm)[];
+        for (let index = 0; index < keys.length; index ++) {
+          const inputName = keys[index];
+          if (inputName === 'questionAnswer') {
+            continue;
+          }
+          const updatedValue = updatedFormValues[inputName];
+          const originalValue = mainQuestionFoundResponse[inputName];
+
+          if (updatedValue === undefined || originalValue === undefined || updatedValue !== originalValue) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    setHasChanged(hasChangedValues());
+  }, [formState, hasChanged, mainQuestionFoundResponse, watch])
 
   const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionSchema) => {
@@ -143,6 +179,10 @@ export function EditMainQuestionForm() {
     await editMainQuestion.mutateAsync({ id, ...data})
   }
 
+  function handleGoBack() {
+    navigate('/main-questions');
+  }
+
   if (formState.errors) {
     console.log(watch());
     
@@ -206,14 +246,14 @@ export function EditMainQuestionForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting}
+            disabled={formState.isSubmitting  || !hasChanged}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
             {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
             Save
           </Button>
-          <Button>
+          <Button onClick={handleGoBack}>
             <X className="size-3" />
             Cancel
           </Button>

@@ -5,13 +5,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Bounce, toast } from 'react-toastify';
 
 const createSubjectSchema = z.object({
   name: z.string()
   .min(3, { message: 'Minimum 3 characters.' })
   .transform(name => {
     return name.trim().split(' ').map(word => {
-      return word[0].toLocaleLowerCase().concat(word.substring(1))
+      return word[0].toUpperCase().concat(word.substring(1).toLowerCase())
     }).join(' ')
   }),
 })
@@ -28,29 +29,45 @@ export function CreateSubjectForm() {
 
   const createSubject = useMutation({
     mutationFn: async ({ name }: CreateSubjectSchema) => {
-      try {
-        const response = await fetch('http://localhost:8080/subject',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({ name }),
-      })
+      const response = await fetch('http://localhost:8080/subject',
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({ name }),
+      });
 
       if (response.status === 201) {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
-        })
+        });
+        toast.success('Assunto salvo com sucesso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
 
       if (response.status === 400) {
         const errorMessage = await response.text();
-        console.log("Error: ", errorMessage);
-      }
-      
-      } catch (error) {
-        console.error('Erro na requisição:', error);
+        toast.warn( errorMessage, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     }
   })

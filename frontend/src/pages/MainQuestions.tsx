@@ -10,6 +10,7 @@ import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
 import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
+import { Bounce, toast } from "react-toastify";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -64,24 +65,35 @@ export function MainQuestions() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['get-main-questions'],
-      })
+      });
+      toast.success('Questão principal excluída com sucesso!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   })
 
-  async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question)
+  function handleCreateNewMainQuestion() {
+    navigate("/main-questions/create");
   }
-
-  if (isLoading) {
-    return null
-  }
-
+  
   function handleEditMainQuestion(mainQuestionId: string) {
     navigate(`/main-questions/edit/${mainQuestionId}`);
   }
-
-  function handleCreateNewMainQuestion() {
-    navigate("/main-questions/create");
+  
+  async function handleDeleteMainQuestion(question: MainQuestion) {
+    await deleteMainQuestion.mutateAsync(question)
+  
+  }
+  if (isLoading) {
+    return null
   }
 
   return (

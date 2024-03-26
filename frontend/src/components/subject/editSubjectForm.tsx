@@ -5,10 +5,17 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Bounce, toast } from 'react-toastify';
 
 const subjectSchema = z.object({
   id: z.string(),
-  name: z.string().min(3, { message: 'Minimum 3 characters.' }),
+  name: z.string()
+  .min(3, { message: 'Minimum 3 characters.' })
+  .transform(name => {
+    return name.trim().split(' ').map(word => {
+      return word[0].toUpperCase().concat(word.substring(1).toLowerCase())
+    }).join(' ')
+  }),
 })
 
 type SubjectSchema = z.infer<typeof subjectSchema>
@@ -27,29 +34,45 @@ export function EditSubjectForm( { entity }: EditSubjectFormProps) {
 
   const editSubject = useMutation({
     mutationFn: async ({ id, name }: SubjectSchema) => {
-      try {
-        const response = await fetch(`http://localhost:8080/subject/${id}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'PUT',
-          body: JSON.stringify({ name }),
+      const response = await fetch(`http://localhost:8080/subject/${id}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'PUT',
+        body: JSON.stringify({ name }),
       })
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
-        })
+        });
+        toast.success('Assunto alterado com sucesso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
 
       if (response.status === 404) {
         const errorMessage = await response.text();
-        console.log("Error: ", errorMessage);
-      }
-      
-      } catch (error) {
-        console.error('Erro na requisição:', error);
+        toast.warn( errorMessage, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     }
   })

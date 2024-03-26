@@ -10,6 +10,7 @@ import { MockExams } from './pages/MockExams.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { CreateMainQuestion } from "./pages/createMainQuestion.tsx";
 import { EditMainQuestion } from "./pages/editMainQuestion.tsx";
 
