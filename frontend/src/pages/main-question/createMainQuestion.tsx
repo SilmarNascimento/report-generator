@@ -1,6 +1,6 @@
-import { Header } from "../components/header";
-import { CreateMainQuestionForm } from "../components/mainQuestion/createMainQuestionForm";
-import { NavigationBar } from "../components/navigationBar";
+import { Header } from "../../components/header";
+import { CreateMainQuestionForm } from "../../components/mainQuestion/createMainQuestionForm";
+import { NavigationBar } from "../../components/navigationBar";
 
 export function CreateMainQuestion() {
   return (

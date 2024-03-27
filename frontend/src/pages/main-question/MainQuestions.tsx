@@ -1,16 +1,17 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Header } from "../components/header";
-import { NavigationBar } from "../components/navigationBar";
-import { Pagination } from "../components/pagination";
+import { Header } from "../../components/header";
+import { NavigationBar } from "../../components/navigationBar";
+import { Pagination } from "../../components/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import useDebounceValue from "../hooks/useDebounceValue";
-import { Button } from "../components/ui/button";
+import useDebounceValue from "../../hooks/useDebounceValue";
+import { Button } from "../../components/ui/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
-import { MainQuestion, MainQuestionPageResponse } from "../interfaces";
+import { Control, Input } from "../../components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import { MainQuestion, MainQuestionPageResponse } from "../../interfaces";
 import { Bounce, toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -90,8 +91,8 @@ export function MainQuestions() {
   
   async function handleDeleteMainQuestion(question: MainQuestion) {
     await deleteMainQuestion.mutateAsync(question)
-  
   }
+
   if (isLoading) {
     return null
   }
@@ -111,7 +112,7 @@ export function MainQuestions() {
               onClick={handleCreateNewMainQuestion}
             >
               <Plus className="size-3" />
-              Nova Questão Principal
+              Create new
             </Button>
         </div>
 
@@ -144,13 +145,13 @@ export function MainQuestions() {
                 <span>Nível</span>
               </TableHead>
               <TableHead>
-                <span>Número de questões alternativas</span>
+                <span>Questões adaptadas</span>
               </TableHead>
               <TableHead>
-                <span>Número de simulados</span>
+                <span>Simulados</span>
               </TableHead>
               <TableHead>
-                <span>Número de apostilas</span>
+                <span>Apostilas</span>
               </TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -173,19 +174,25 @@ export function MainQuestions() {
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>
-                      {question.adaptedQuestions.length}
-                    </span>
+                    <Link to={`/main-question/${question.id}/adapted-questions`}>
+                      <span>
+                        {question.adaptedQuestions.length}
+                      </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                  <span>
-                      {question.mockExams.length}
-                    </span>
+                    <Link to={`/main-question/${question.id}/mock-exams`}>
+                      <span>
+                        {question.mockExams.length}
+                      </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>
-                      {question.handouts.length}
-                    </span>
+                    <Link to={`/main-question/${question.id}/handouts`}>
+                      <span>
+                        {question.handouts.length}
+                      </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>

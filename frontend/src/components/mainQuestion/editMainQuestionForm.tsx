@@ -174,19 +174,8 @@ export function EditMainQuestionForm() {
   })
 
   async function handleEditMainQuestion(data: EditMainQuestionForm) {
-    console.log(data);
     const id = mainQuestionId ?? "";
     await editMainQuestion.mutateAsync({ id, ...data})
-  }
-
-  function handleGoBack() {
-    navigate('/main-questions');
-  }
-
-  if (formState.errors) {
-    console.log(watch());
-    
-    console.log(formState.errors);
   }
 
   return (
@@ -253,7 +242,7 @@ export function EditMainQuestionForm() {
             {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
             Save
           </Button>
-          <Button onClick={handleGoBack}>
+          <Button onClick={() => navigate("/main-questions")}>
             <X className="size-3" />
             Cancel
           </Button>

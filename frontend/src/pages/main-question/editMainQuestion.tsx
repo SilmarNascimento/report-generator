@@ -1,6 +1,6 @@
-import { Header } from "../components/header";
-import { EditMainQuestionForm } from "../components/mainQuestion/editMainQuestionForm";
-import { NavigationBar } from "../components/navigationBar";
+import { Header } from "../../components/header";
+import { EditMainQuestionForm } from "../../components/mainQuestion/editMainQuestionForm";
+import { NavigationBar } from "../../components/navigationBar";
 
 export function EditMainQuestion() {
   return (

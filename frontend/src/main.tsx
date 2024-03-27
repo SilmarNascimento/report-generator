@@ -4,15 +4,17 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Login } from './pages/Login.tsx';
-import { MainQuestions } from './pages/MainQuestions.tsx';
+import { MainQuestions } from './pages/main-question/MainQuestions.tsx';
 import { Test } from './pages/test.tsx';
-import { MockExams } from './pages/MockExams.tsx';
+import { MockExams } from './pages/main-question/mockExams.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { CreateMainQuestion } from "./pages/createMainQuestion.tsx";
-import { EditMainQuestion } from "./pages/editMainQuestion.tsx";
+import { CreateMainQuestion } from "./pages/main-question/createMainQuestion.tsx";
+import { EditMainQuestion } from "./pages/main-question/editMainQuestion.tsx";
+import { AdaptedQuestions } from "./pages/main-question/adaptedQuestios.tsx";
+import { Handouts } from "./pages/main-question/handouts.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,18 @@ const router = createBrowserRouter([
   {
     path: "/main-questions/edit/:mainQuestionId",
     element: <EditMainQuestion />
+  },
+  {
+    path: "/main-questions/:mainQuestionId/adapted-questions",
+    element: <AdaptedQuestions />
+  },
+  {
+    path: "/main-questions/:mainQuestionId/mock-exams",
+    element: <MockExams />
+  },
+  {
+    path: "/main-questions/:mainQuestionId/handouts",
+    element: <Handouts />
   },
   {
     path: "/mock-exams",
