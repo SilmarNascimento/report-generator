@@ -174,7 +174,7 @@ export function MainQuestions() {
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/adapted-questions`}>
+                    <Link to={`/main-questions/${question.id}/adapted-questions`}>
                       <span>
                         {question.adaptedQuestions.length}
                       </span>

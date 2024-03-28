@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createAlternativeSchema, editMainQuestionForm, editMainQuestionSchema } from './MainQuestionSchema';
-import { AlternativeForm } from '../alternativesForm';
+import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
 import { DevTool } from '@hookform/devtools'
@@ -14,8 +14,8 @@ import { CreateAlternative } from '../../interfaces/createAlternative';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect, useState } from 'react';
 
-type EditMainQuestionForm = z.infer<typeof editMainQuestionForm>
-type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>
+type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>;
+type EditMainQuestionForm = Omit<EditMainQuestionSchema, 'id'>;
 
 export function EditMainQuestionForm() {
   const [hasChanged, setHasChanged] = useState(false);

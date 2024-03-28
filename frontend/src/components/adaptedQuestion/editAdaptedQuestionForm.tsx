@@ -1,31 +1,62 @@
-import { Check, Loader2, X } from 'lucide-react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from "zod";
 import { Button } from "../ui/button";
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { AlternativeForm } from '../alternative/alternativesForm';
-import { createAlternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
-import { CreateQuestion } from '../../interfaces/createQuestion';
-import { CreateAlternative } from '../../interfaces/createAlternative';
-import { Bounce, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { SelectLevel } from '../ui/selectLevel';
+import { adaptedQuestionForm, adaptedQuestionSchema } from "./AdaptedQuestionSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { FormProvider, useForm } from "react-hook-form";
+import { createAlternativeSchema } from "../alternative/AlternativeSchema";
+import { CreateAlternative } from "../../interfaces/createAlternative";
+import { CreateQuestion } from "../../interfaces/createQuestion";
+import { SelectLevel } from "../ui/selectLevel";
+import { AlternativeForm } from "../alternative/alternativesForm";
+import { Check, Loader2, X } from "lucide-react";
+import { AdaptedQuestion } from "../../interfaces";
+import { useEffect } from "react";
+import { successAlert, warningAlert } from "../../utils/toastAlterts";
 
-type CreateMainQuestionForm = z.infer<typeof createMainQuestionSchema>
+type EditAdaptedQuestion = z.infer<typeof adaptedQuestionSchema>
+type EditAdaptedQuestionForm = Omit<EditAdaptedQuestion, "id">;
 
-export function CreateMainQuestionForm() {
+export function EditAdaptedQuestionForm() {
   const queryClient = useQueryClient();
+  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
+  const { adaptedQuestionId } = useParams<{ adaptedQuestionId: string }>() ?? "";
   const navigate = useNavigate();
 
-  const formMethods = useForm<CreateMainQuestionForm>({
-    resolver: zodResolver(createMainQuestionSchema),
+  const formMethods = useForm<EditAdaptedQuestionForm>({
+    resolver: zodResolver(adaptedQuestionForm),
   })
-  const { register, handleSubmit, formState } = formMethods;
+  const { register, handleSubmit, formState, setValue } = formMethods;
 
+  const { data: adaptedQuestionFoundResponse } = useQuery<AdaptedQuestion>({
+    queryKey: ['get-adapted-questions', mainQuestionId, adaptedQuestionId],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`)
+      const data = await response.json()
 
-  const createMainQuestion = useMutation({
-    mutationFn: async (data: CreateMainQuestionForm) => {
+      console.log(data);
+      return data
+    },
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (adaptedQuestionFoundResponse) {
+      setValue('title', adaptedQuestionFoundResponse.title);
+      setValue('level', adaptedQuestionFoundResponse.level);
+      adaptedQuestionFoundResponse.alternatives.forEach((alternative, index) => {
+        setValue(`alternatives.${index}.description`, alternative.description);
+        if (alternative.questionAnswer) {
+          setValue('questionAnswer', index.toString());
+        }
+      });
+    }
+  }, [adaptedQuestionFoundResponse, setValue]);
+
+  const editAdaptedQuestion = useMutation({
+    mutationFn: async (data: EditAdaptedQuestionForm) => {
       const formData = new FormData();
       let titleImage: File[] = [];
       const alternativeImages: File[] = [];
@@ -55,66 +86,46 @@ export function CreateMainQuestionForm() {
         }
         return createAlternative
       })
-      const createMainQuestion: CreateQuestion = {
+      const createAdaptedQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives
       };
-      const json = JSON.stringify(createMainQuestion);
+      const json = JSON.stringify(createAdaptedQuestion);
       const blob = new Blob([json], {
         type: 'application/json'
       });
 
-      formData.append("mainQuestionInputDto", blob);
+      formData.append("adaptedQuestionInputDto", blob);
       
-      const response = await fetch('http://localhost:8080/main-question',
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
         {
-          method: 'POST',
+          method: 'PUT',
           body: formData
         })
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
-        toast.success('Questão principal salva com sucesso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        navigate("/main-questions");
+        successAlert('Questão adaptada salva com sucesso!');
+        navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
       }
 
       if (response.status === 400) {
         const errorMessage = await response.text();
-        toast.warn( errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        warningAlert(errorMessage);
       }
     }
   })
 
-  async function handleCreateMainQuestion(data: CreateMainQuestionForm) {
-    await createMainQuestion.mutateAsync(data)
+  async function handleCreateAdaptedQuestion(data: EditAdaptedQuestionForm) {
+    await editAdaptedQuestion.mutateAsync(data)
   }
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
+      <form onSubmit={handleSubmit(handleCreateAdaptedQuestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <textarea 
@@ -164,7 +175,7 @@ export function CreateMainQuestionForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting}
+            disabled={formState.isSubmitting || !formState.isDirty}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >

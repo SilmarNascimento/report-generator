@@ -1,6 +1,6 @@
 import { FieldErrors, useFormContext } from "react-hook-form";
 import { z } from 'zod';
-import { createMainQuestionSchema } from './mainQuestion/MainQuestionSchema';
+import { createMainQuestionSchema } from '../mainQuestion/MainQuestionSchema';
 
 type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
 
