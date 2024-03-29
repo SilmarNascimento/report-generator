@@ -13,6 +13,7 @@ import { Control, Input } from "../components/ui/input";
 import { EditSubjectForm } from "../components/subject/editSubjectForm";
 import useDebounceValue from "../hooks/useDebounceValue";
 import { Subject, SubjectPageResponse } from "../interfaces";
+import { successAlert } from "../utils/toastAlerts";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -49,9 +50,9 @@ export function Subjects() {
   })
 
   const deleteSubject = useMutation({
-    mutationFn: async ({ id }: Subject) => {
+    mutationFn: async ({ id: subjectId }: Subject) => {
       try {
-        await fetch(`http://localhost:8080/subject/${id}`,
+        await fetch(`http://localhost:8080/subject/${subjectId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -66,7 +67,8 @@ export function Subjects() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['get-subjects'],
-      })
+      });
+      successAlert('Assunto excluído com sucesso!');
     }
   })
 

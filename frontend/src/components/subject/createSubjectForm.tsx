@@ -6,29 +6,21 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
+import { subjectForm, subjectSchema } from './SubjectSchema';
 
-const createSubjectSchema = z.object({
-  name: z.string()
-  .min(3, { message: 'Minimum 3 characters.' })
-  .transform(name => {
-    return name.trim().split(' ').map(word => {
-      return word[0].toUpperCase().concat(word.substring(1).toLowerCase())
-    }).join(' ')
-  }),
-})
-
-type CreateSubjectSchema = z.infer<typeof createSubjectSchema>
+type CreateSubjectSchema = z.infer<typeof subjectSchema>
+type CreateSubjectForm = Omit<CreateSubjectSchema, 'id'>;
 
 export function CreateSubjectForm() {
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState } = useForm<CreateSubjectSchema>({
-    resolver: zodResolver(createSubjectSchema),
+  const { register, handleSubmit, formState } = useForm<CreateSubjectForm>({
+    resolver: zodResolver(subjectForm),
   })
 
 
   const createSubject = useMutation({
-    mutationFn: async ({ name }: CreateSubjectSchema) => {
+    mutationFn: async ({ name }: CreateSubjectForm) => {
       const response = await fetch('http://localhost:8080/subject',
       {
         headers: {
@@ -52,7 +44,7 @@ export function CreateSubjectForm() {
     }
   })
 
-  async function handleCreateSubject({ name }: CreateSubjectSchema) {
+  async function handleCreateSubject({ name }: CreateSubjectForm) {
     await createSubject.mutateAsync({ name })
   }
 
