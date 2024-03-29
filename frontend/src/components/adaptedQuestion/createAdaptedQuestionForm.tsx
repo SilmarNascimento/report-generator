@@ -147,7 +147,7 @@ export function CreateAdaptedQuestionForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting}
+            disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >

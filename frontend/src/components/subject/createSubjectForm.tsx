@@ -98,7 +98,10 @@ export function CreateSubjectForm() {
             Cancel
           </Button>
         </Dialog.Close>
-        <Button disabled={formState.isSubmitting} className="bg-teal-400 text-teal-950" type="submit">
+        <Button
+          disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
+          className="bg-teal-400 text-teal-950" type="submit"
+        >
           {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
           Save
         </Button>
