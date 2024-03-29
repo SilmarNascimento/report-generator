@@ -10,8 +10,8 @@ import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { MainQuestion, MainQuestionPageResponse } from "../../interfaces";
-import { Bounce, toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { successAlert } from "../../utils/toastAlerts";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -67,17 +67,7 @@ export function MainQuestions() {
       queryClient.invalidateQueries({
         queryKey: ['get-main-questions'],
       });
-      toast.success('Questão principal excluída com sucesso!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      successAlert('Questão principal excluída com sucesso!');
     }
   })
 

@@ -105,7 +105,7 @@ export function EditAdaptedQuestionForm() {
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
-          queryKey: ['get-adapted-questions'],
+          queryKey: ['get-main-questions'],
         });
         successAlert('Questão adaptada salva com sucesso!');
         navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
@@ -117,11 +117,6 @@ export function EditAdaptedQuestionForm() {
       }
     }
   })
-
-  console.log(formState.isDirty);
-  console.log(formState.dirtyFields);
-  console.log(formState.defaultValues);
-  console.log(!!Object.keys(formState.dirtyFields).length);
 
   async function handleEditAdaptedQuestion(data: EditAdaptedQuestionForm) {
     await editAdaptedQuestion.mutateAsync(data)

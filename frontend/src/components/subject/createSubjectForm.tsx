@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Bounce, toast } from 'react-toastify';
+import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
 const createSubjectSchema = z.object({
   name: z.string()
@@ -42,32 +42,12 @@ export function CreateSubjectForm() {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
         });
-        toast.success('Assunto salvo com sucesso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        successAlert('Assunto salvo com sucesso!');
       }
 
       if (response.status === 400) {
         const errorMessage = await response.text();
-        toast.warn( errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        warningAlert(errorMessage);
       }
     }
   })

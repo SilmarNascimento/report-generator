@@ -8,9 +8,9 @@ import { AlternativeForm } from '../alternative/alternativesForm';
 import { createAlternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
-import { Bounce, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
+import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
 type CreateMainQuestionForm = z.infer<typeof createMainQuestionSchema>
 
@@ -77,33 +77,12 @@ export function CreateMainQuestionForm() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
-        toast.success('Questão principal salva com sucesso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        navigate("/main-questions");
+        successAlert('Questão principal salva com sucesso!');
       }
 
       if (response.status === 400) {
         const errorMessage = await response.text();
-        toast.warn( errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        warningAlert(errorMessage);
       }
     }
   })

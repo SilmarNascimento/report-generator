@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Bounce, toast } from 'react-toastify';
+import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
 const subjectSchema = z.object({
   id: z.string(),
@@ -47,32 +47,12 @@ export function EditSubjectForm( { entity }: EditSubjectFormProps) {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
         });
-        toast.success('Assunto alterado com sucesso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        successAlert('Assunto alterado com sucesso!');
       }
 
       if (response.status === 404) {
         const errorMessage = await response.text();
-        toast.warn( errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        warningAlert(errorMessage);
       }
     }
   })

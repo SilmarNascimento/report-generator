@@ -9,10 +9,10 @@ import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
 import { DevTool } from '@hookform/devtools'
-import { Bounce, toast } from 'react-toastify';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect, useState } from 'react';
+import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
 type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>;
 type EditMainQuestionForm = Omit<EditMainQuestionSchema, 'id'>;
@@ -124,33 +124,12 @@ export function EditMainQuestionForm() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
-        toast.success('Cliente salvo com sucesso!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        navigate("/main-questions");
+        successAlert('Cliente salvo com sucesso!');
       }
 
       if (response.status === 404) {
         const errorMessage = await response.text();
-        toast.warn( errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        warningAlert(errorMessage);
       }
     }
   })
