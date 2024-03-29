@@ -106,7 +106,7 @@ export function MainQuestions() {
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Subjects</h1>
+          <h1 className="text-xl font-bold">Questões Principais</h1>
             <Button
               variant='primary'
               onClick={handleCreateNewMainQuestion}

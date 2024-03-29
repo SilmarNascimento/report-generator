@@ -11,7 +11,7 @@ import { CreateQuestion } from "../../interfaces/createQuestion";
 import { SelectLevel } from "../ui/selectLevel";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { Check, Loader2, X } from "lucide-react";
-import { successAlert, warningAlert } from "../../utils/toastAlterts";
+import { successAlert, warningAlert } from "../../utils/toastAlerts";
 
 type CreateAdaptedQuestion = z.infer<typeof adaptedQuestionSchema>
 type CreateAdaptedQuestionForm = Omit<CreateAdaptedQuestion, "id">;

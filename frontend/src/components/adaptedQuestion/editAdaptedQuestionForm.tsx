@@ -12,8 +12,8 @@ import { SelectLevel } from "../ui/selectLevel";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { Check, Loader2, X } from "lucide-react";
 import { AdaptedQuestion } from "../../interfaces";
-import { useEffect } from "react";
-import { successAlert, warningAlert } from "../../utils/toastAlterts";
+import { successAlert, warningAlert } from "../../utils/toastAlerts";
+import { DevTool } from "@hookform/devtools";
 
 type EditAdaptedQuestion = z.infer<typeof adaptedQuestionSchema>
 type EditAdaptedQuestionForm = Omit<EditAdaptedQuestion, "id">;
@@ -23,11 +23,6 @@ export function EditAdaptedQuestionForm() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
   const { adaptedQuestionId } = useParams<{ adaptedQuestionId: string }>() ?? "";
   const navigate = useNavigate();
-
-  const formMethods = useForm<EditAdaptedQuestionForm>({
-    resolver: zodResolver(adaptedQuestionForm),
-  })
-  const { register, handleSubmit, formState, setValue } = formMethods;
 
   const { data: adaptedQuestionFoundResponse } = useQuery<AdaptedQuestion>({
     queryKey: ['get-adapted-questions', mainQuestionId, adaptedQuestionId],
@@ -42,18 +37,22 @@ export function EditAdaptedQuestionForm() {
     staleTime: Infinity,
   });
 
-  useEffect(() => {
-    if (adaptedQuestionFoundResponse) {
-      setValue('title', adaptedQuestionFoundResponse.title);
-      setValue('level', adaptedQuestionFoundResponse.level);
-      adaptedQuestionFoundResponse.alternatives.forEach((alternative, index) => {
-        setValue(`alternatives.${index}.description`, alternative.description);
-        if (alternative.questionAnswer) {
-          setValue('questionAnswer', index.toString());
-        }
-      });
+  const questionAnswerIndex = adaptedQuestionFoundResponse?.alternatives
+    .findIndex(alternative => alternative.questionAnswer) ?? '';
+  const alternativesArray = adaptedQuestionFoundResponse?.alternatives
+    .map(alternative => ({ description: alternative.description }));
+
+  const formMethods = useForm<EditAdaptedQuestionForm>({
+    resolver: zodResolver(adaptedQuestionForm),
+    defaultValues: {
+      title: adaptedQuestionFoundResponse?.title,
+      level: adaptedQuestionFoundResponse?.level,
+      questionAnswer: questionAnswerIndex.toString(),
+      alternatives: alternativesArray,
     }
-  }, [adaptedQuestionFoundResponse, setValue]);
+  })
+  const { register, handleSubmit, formState, control } = formMethods;
+
 
   const editAdaptedQuestion = useMutation({
     mutationFn: async (data: EditAdaptedQuestionForm) => {
@@ -106,7 +105,7 @@ export function EditAdaptedQuestionForm() {
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
+          queryKey: ['get-adapted-questions'],
         });
         successAlert('Questão adaptada salva com sucesso!');
         navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
@@ -119,13 +118,18 @@ export function EditAdaptedQuestionForm() {
     }
   })
 
-  async function handleCreateAdaptedQuestion(data: EditAdaptedQuestionForm) {
+  console.log(formState.isDirty);
+  console.log(formState.dirtyFields);
+  console.log(formState.defaultValues);
+  console.log(!!Object.keys(formState.dirtyFields).length);
+
+  async function handleEditAdaptedQuestion(data: EditAdaptedQuestionForm) {
     await editAdaptedQuestion.mutateAsync(data)
   }
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleCreateAdaptedQuestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
+      <form onSubmit={handleSubmit(handleEditAdaptedQuestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <textarea 
@@ -175,7 +179,7 @@ export function EditAdaptedQuestionForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting || !formState.isDirty}
+            disabled={!Object.keys(formState.dirtyFields).length}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
@@ -190,6 +194,7 @@ export function EditAdaptedQuestionForm() {
           </Button>
         </div>
       </form>
+      <DevTool control={control}/>
     </FormProvider>
   )
 }
