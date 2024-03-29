@@ -56,31 +56,13 @@ export function EditMainQuestionForm() {
 
   useEffect(() => {
     function hasChangedValues(): boolean {
-      const updatedFormValues = {...watch()}; 
+      const questionAnswerFormValues = watch("questionAnswer");
 
-      const alternatives = updatedFormValues.alternatives.map((alternative, index) => {
-        const createAlternative: CreateAlternative = {
-          description: alternative.description,
-          questionAnswer: Number(updatedFormValues.questionAnswer) === index
-        }
-        return createAlternative
-      })
-      updatedFormValues.alternatives = alternatives;
-
-      if (mainQuestionFoundResponse) {    
-        const keys = Object.keys(updatedFormValues) as (keyof EditMainQuestionForm)[];
-        for (let index = 0; index < keys.length; index ++) {
-          const inputName = keys[index];
-          if (inputName === 'questionAnswer') {
-            continue;
-          }
-          const updatedValue = updatedFormValues[inputName];
-          const originalValue = mainQuestionFoundResponse[inputName];
-
-          if (updatedValue === undefined || originalValue === undefined || updatedValue !== originalValue) {
-            return true;
-          }
-        }
+      const questionAnswerIndex = mainQuestionFoundResponse?.alternatives
+        .findIndex(alternative => alternative.questionAnswer) ?? '';
+      
+      if (questionAnswerFormValues !== questionAnswerIndex.toString() || !!Object.keys(formState.dirtyFields).length) {
+        return true;
       }
 
       return false;
