@@ -23,10 +23,10 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app-backend
 
 # Copiar o arquivo JAR gerado na etapa de construção para o diretório /target
-COPY --from=build-image /to-build-app/target/report-generator-0.0.1-SNAPSHOT.jar ./target/
+COPY --from=build-image /to-build-app/target/report-generator-API-0.0.1-SNAPSHOT.jar ./target/
 
 # Expor a porta 8080 para acessar a aplicação
 EXPOSE 8080
 
 # Definir o ponto de entrada para iniciar a aplicação Spring Boot
-ENTRYPOINT ["java", "-jar", "target/report-generator-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/report-generator-API-0.0.1-SNAPSHOT.jar"]

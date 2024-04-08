@@ -14,7 +14,6 @@ import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
-import com.mateco.reportgenerator.service.implementation.AdaptedQuestionService;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

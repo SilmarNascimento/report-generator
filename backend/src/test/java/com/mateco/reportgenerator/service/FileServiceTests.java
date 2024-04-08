@@ -3,12 +3,14 @@ package com.mateco.reportgenerator.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.mateco.reportgenerator.configuration.FileLoader;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -36,29 +39,31 @@ import org.springframework.test.context.TestPropertySource;
 public class FileServiceTests {
   @Autowired
   private FileServiceInterface fileService;
+  @Autowired
+  private FileLoader fileLoader;
+
   @Mock
   private MockMultipartFile mockMultipartFile;
-  @Value("${directory.resources.static.test}")
+  @Value("${directory.resources.static.files}")
   private Path path;
 
   private MockMultipartFile file1;
 
   @BeforeEach
   public void setUp() throws IOException {
-    File file = new File(path + File.separator + "MockResponses.xlsx");
+    try (InputStream inputStream = fileLoader.loadMockResponsesFile()) {
+      assertNotNull(inputStream, "Failed to load MockResponses.xlsx");
 
-    try (FileInputStream input = new FileInputStream(file)) {
-      byte[] bytes = new byte[(int) file.length()];
-      input.read(bytes);
+      byte[] bytes = inputStream.readAllBytes();
 
       file1 = new MockMultipartFile(
           "file",
-          file.getName(),
+          "MockResponses.xlsx",
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
           bytes
       );
     } catch (IOException e) {
-      throw new IOException(e.getMessage());
+      throw new IOException("Failed to set up test", e);
     }
   }
 
