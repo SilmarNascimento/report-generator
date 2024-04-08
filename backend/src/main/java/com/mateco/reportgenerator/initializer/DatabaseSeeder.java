@@ -171,4 +171,8 @@ public class DatabaseSeeder implements CommandLineRunner {
     subject = new Subject("Grandezas Proporcionais");
     subjectRepository.save(subject);
   }
+
+  private void seedMainQuestion() {
+
+  }
 }

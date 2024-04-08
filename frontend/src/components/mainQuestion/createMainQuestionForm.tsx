@@ -93,7 +93,7 @@ export function CreateMainQuestionForm() {
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-[90%] m-auto space-y-6">
+      <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-full space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
           <textarea 

@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { MainQuestion, MainQuestionPageResponse } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
+import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -83,16 +84,21 @@ export function MainQuestions() {
     await deleteMainQuestion.mutateAsync(question)
   }
 
+  function handleCorrectAnswer(question: MainQuestion) {
+    const correctIndex = question.alternatives.findIndex(alternative => alternative.questionAnswer);
+    return getAlternativeLetter(correctIndex);
+  }
+
   if (isLoading) {
     return null
   }
 
   return (
     <>
-      <div>
+      <header>
         <Header />
         <NavigationBar />
-      </div>
+      </header>
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
@@ -129,10 +135,13 @@ export function MainQuestions() {
             <TableRow>
               <TableHead></TableHead>
               <TableHead>
-                <span>Enunciado</span>
+                <span>Código</span>
               </TableHead>
               <TableHead>
                 <span>Nível</span>
+              </TableHead>
+              <TableHead>
+                <span>Gabarito</span>
               </TableHead>
               <TableHead>
                 <span>Questões adaptadas</span>
@@ -161,6 +170,11 @@ export function MainQuestions() {
                   <TableCell className="text-zinc-300">
                     <span>
                       {question.level}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <span>
+                      {handleCorrectAnswer(question)}
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">

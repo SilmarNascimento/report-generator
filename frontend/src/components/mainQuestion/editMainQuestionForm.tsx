@@ -34,7 +34,6 @@ export function EditMainQuestionForm() {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
       const data = await response.json()
 
-      console.log(data);
       return data
     },
     placeholderData: keepPreviousData,

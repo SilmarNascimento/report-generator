@@ -79,10 +79,10 @@ export function AdaptedQuestions() {
 
   return (
     <>
-      <div>
+      <header>
         <Header />
         <NavigationBar />
-      </div>
+      </header>
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
