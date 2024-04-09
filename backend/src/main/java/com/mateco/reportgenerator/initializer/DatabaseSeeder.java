@@ -29,7 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    seedSubjects();
+    //seedSubjects();
   }
 
   private void seedSubjects() {

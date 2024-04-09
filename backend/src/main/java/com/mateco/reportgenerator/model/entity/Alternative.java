@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeInputDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -25,6 +26,7 @@ public class Alternative {
   @GeneratedValue(generator = "UUID")
   private UUID id;
 
+  @Column(columnDefinition = "TEXT")
   private String description;
 
   private List<String> images;
@@ -33,7 +35,6 @@ public class Alternative {
   @JoinColumn(name = "main_question_id")
   @JsonIgnore
   private MainQuestion mainQuestion;
-
 
   @ManyToOne
   @JoinColumn(name = "adapted_question_id")

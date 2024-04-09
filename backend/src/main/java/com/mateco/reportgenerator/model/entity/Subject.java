@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectInputDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -24,6 +25,7 @@ public class Subject {
   @GeneratedValue(generator = "UUID")
   private UUID id;
 
+  @Column(unique = true)
   private String name;
 
   @ManyToMany(mappedBy = "subjects")
