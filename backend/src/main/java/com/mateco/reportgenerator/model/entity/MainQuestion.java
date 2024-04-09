@@ -69,7 +69,7 @@ public class MainQuestion extends Question {
   private List<Handout> handout;
 
   @Column(name = "question_number")
-  private int questionNumber;
+  private Integer questionNumber;
 
   public MainQuestion(
       String title,

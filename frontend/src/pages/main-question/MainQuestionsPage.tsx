@@ -103,6 +103,7 @@ export function MainQuestions() {
     } else if (!hasHandout && hasMockExams) {
       return `${question.mockExams[0].releasedYear}:S${question.mockExams[0].number}:${question.questionNumber}`;
     }
+    return ""
   }
 
   return (
@@ -175,7 +176,7 @@ export function MainQuestions() {
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">
-                        {getMainQuestionCode}
+                        {getMainQuestionCode(question)}
                       </span>
                     </div>
                   </TableCell>

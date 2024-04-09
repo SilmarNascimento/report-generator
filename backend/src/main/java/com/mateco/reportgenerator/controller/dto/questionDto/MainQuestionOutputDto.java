@@ -18,7 +18,7 @@ public record MainQuestionOutputDto(
     List<AdaptedQuestionOutputDto> adaptedQuestions,
     List<MockExam> mockExams,
     List<Handout> handouts,
-    int questionNumber
+    Integer questionNumber
 ) {
   public static MainQuestionOutputDto parseDto (MainQuestion mainQuestion) {
     return new MainQuestionOutputDto(
