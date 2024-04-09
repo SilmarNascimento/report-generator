@@ -12,10 +12,7 @@ public record MainQuestionInputDto(
     List<SubjectInputDto> subjects,
     String level,
     List<String> images,
-    List<AlternativeInputDto> alternatives,
-    List<AdaptedQuestion> adaptedQuestions,
-    List<MockExam> mockExams,
-    List<Handout> handout
+    List<AlternativeInputDto> alternatives
 ) {
 
 }

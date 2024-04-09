@@ -11,6 +11,7 @@ import com.mateco.reportgenerator.model.repository.MockExamRepository;
 import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
+import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import java.util.ArrayList;
@@ -113,13 +114,26 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
+    Set<MainQuestion> previousMainQuestionSet = new HashSet<>(mockExamFound.getMockExamQuestions());
+    int nextQuestionNumber = previousMainQuestionSet.size() + MockExam.INITIAL_QUESTION_NUMBER;
+
     List<MainQuestion> mainQuestionListToAdd = mainQuestionRepository.findAllById(mainQuestionsId);
     if (mainQuestionListToAdd.isEmpty()) {
       throw new NotFoundException("Nenhuma questão principal foi encontrada com os IDs fornecidos!");
     }
 
-    Set<MainQuestion> previousMainQuestionSet = new HashSet<>(mockExamFound.getMockExamQuestions());
-    previousMainQuestionSet.addAll(mainQuestionListToAdd);
+    for (MainQuestion question : mainQuestionListToAdd) {
+      if (previousMainQuestionSet.size() >= MockExam.MAXIMUM_QUESTIONS_NUMBER) {
+        throw new ConflictDataException("Limite máximo de questões principais atingido para o Simulado!");
+      }
+
+      if (!previousMainQuestionSet.contains(question)) {
+        question.setQuestionNumber(nextQuestionNumber);
+        previousMainQuestionSet.add(question);
+        nextQuestionNumber++;
+      }
+    }
+
     mockExamFound.setMockExamQuestions(new ArrayList<>(previousMainQuestionSet));
 
     return mockExamRepository.save(mockExamFound);

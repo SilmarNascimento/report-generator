@@ -68,6 +68,9 @@ public class MainQuestion extends Question {
   @JsonIgnore
   private List<Handout> handout;
 
+  @Column(name = "question_number")
+  private int questionNumber;
+
   public MainQuestion(
       String title,
       List<Subject> subjects,

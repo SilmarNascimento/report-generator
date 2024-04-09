@@ -23,6 +23,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MockExam {
+  public static final int INITIAL_QUESTION_NUMBER = 136;
+
+  public static final int MAXIMUM_QUESTIONS_NUMBER = 45;
+
   @Id
   @GeneratedValue(generator = "UUID")
   private UUID id;
@@ -38,6 +42,8 @@ public class MockExam {
       inverseJoinColumns = @JoinColumn(name = "mock_exam_id")
   )
   private List<Subject> subjects;
+
+  private int releasedYear;
 
   private int number;
 
@@ -55,12 +61,14 @@ public class MockExam {
       String name,
       List<String> className,
       List<Subject> subjects,
+      int releasedYear,
       int number,
       List<MainQuestion> mockExamQuestions
   ) {
     this.name = name;
     this.className = className;
     this.subjects = subjects;
+    this.releasedYear = releasedYear;
     this.number = number;
     this.mockExamQuestions = mockExamQuestions;
   }
@@ -70,6 +78,7 @@ public class MockExam {
         examInputDto.name(),
         examInputDto.className(),
         new ArrayList<>(),
+        examInputDto.releasedYear(),
         examInputDto.number(),
         new ArrayList<>()
     );

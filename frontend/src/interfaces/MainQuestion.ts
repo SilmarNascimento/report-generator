@@ -14,4 +14,5 @@ export type MainQuestion =  {
   adaptedQuestions: AdaptedQuestion[]
   mockExams: MockExam[]
   handouts: Handout[]
+  questionNumber: number
 }

@@ -29,6 +29,8 @@ public class Handout {
 
   private String volume;
 
+  private int releasedYear;
+
   // private List<Subject> subjects;
 
   @ManyToMany

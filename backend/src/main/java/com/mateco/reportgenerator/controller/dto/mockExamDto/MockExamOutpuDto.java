@@ -12,6 +12,7 @@ public record MockExamOutpuDto(
     String name,
     List<String> className,
     List<Subject> subjects,
+    int releasedYear,
     int number,
     List<MainQuestionOutputDto> mockExamQuestions
 ) {
@@ -21,6 +22,7 @@ public record MockExamOutpuDto(
         mockExam.getName(),
         mockExam.getClassName(),
         mockExam.getSubjects(),
+        mockExam.getReleasedYear(),
         mockExam.getNumber(),
         MainQuestionOutputDto.parseDto(mockExam.getMockExamQuestions())
     );
@@ -33,6 +35,7 @@ public record MockExamOutpuDto(
               mockExam.getName(),
               mockExam.getClassName(),
               mockExam.getSubjects(),
+              mockExam.getReleasedYear(),
               mockExam.getNumber(),
               MainQuestionOutputDto.parseDto(mockExam.getMockExamQuestions())
           )

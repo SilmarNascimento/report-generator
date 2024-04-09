@@ -78,6 +78,7 @@ export function CreateMainQuestionForm() {
           queryKey: ['get-main-questions'],
         });
         successAlert('Questão principal salva com sucesso!');
+        navigate("/main-questions");
       }
 
       if (response.status === 400) {

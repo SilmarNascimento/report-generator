@@ -194,6 +194,7 @@ public class MockExamServiceTests {
         "primeiro simulado",
         List.of("intensivo", "extensivo"),
         new ArrayList<>(),
+        2024,
         1,
         new ArrayList<>()
     );
@@ -203,6 +204,7 @@ public class MockExamServiceTests {
         "segundo simulado",
         List.of("extensivo"),
         new ArrayList<>(),
+        2024,
         1,
         new ArrayList<>()
     );
@@ -287,6 +289,7 @@ public class MockExamServiceTests {
     assertEquals(serviceResponse.getName(), mockExam01.getName());
     assertInstanceOf(List.class, serviceResponse.getClassName());
     assertEquals(serviceResponse.getClassName(), mockExam01.getClassName());
+    assertEquals(serviceResponse.getReleasedYear(), mockExam01.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam01.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
     assertInstanceOf(List.class, serviceResponse.getMockExamQuestions());
@@ -318,6 +321,7 @@ public class MockExamServiceTests {
     assertEquals(serviceResponse.getName(), mockExam02.getName());
     assertInstanceOf(List.class, serviceResponse.getClassName());
     assertEquals(serviceResponse.getClassName(), mockExam01.getClassName());
+    assertEquals(serviceResponse.getReleasedYear(), mockExam02.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam02.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
     assertInstanceOf(List.class, serviceResponse.getMockExamQuestions());
@@ -539,6 +543,7 @@ public class MockExamServiceTests {
           Assertions.assertThat(question.getAdaptedQuestions()).isInstanceOf(List.class);
           Assertions.assertThat(question.getMockExams()).isInstanceOf(List.class);
           Assertions.assertThat(question.getHandout()).isInstanceOf(List.class);
+          Assertions.assertThat(question.getQuestionNumber()).isInstanceOf(Integer.class);
         });
 
     Mockito.verify(mockExamRepository, Mockito.times(1))

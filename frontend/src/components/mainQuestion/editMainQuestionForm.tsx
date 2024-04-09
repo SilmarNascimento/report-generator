@@ -123,7 +123,8 @@ export function EditMainQuestionForm() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
-        successAlert('Cliente salvo com sucesso!');
+        successAlert('Questão principal alterada com sucesso!');
+        navigate("/main-questions");
       }
 
       if (response.status === 404) {

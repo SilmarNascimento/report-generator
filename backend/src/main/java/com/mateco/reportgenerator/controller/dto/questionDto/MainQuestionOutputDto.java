@@ -17,7 +17,8 @@ public record MainQuestionOutputDto(
     List<AlternativeOutputDto> alternatives,
     List<AdaptedQuestionOutputDto> adaptedQuestions,
     List<MockExam> mockExams,
-    List<Handout> handouts
+    List<Handout> handouts,
+    int questionNumber
 ) {
   public static MainQuestionOutputDto parseDto (MainQuestion mainQuestion) {
     return new MainQuestionOutputDto(
@@ -29,7 +30,8 @@ public record MainQuestionOutputDto(
         AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
         AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
         mainQuestion.getMockExams(),
-        mainQuestion.getHandout()
+        mainQuestion.getHandout(),
+        mainQuestion.getQuestionNumber()
     );
   }
 
@@ -44,7 +46,8 @@ public record MainQuestionOutputDto(
           AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
           AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
           mainQuestion.getMockExams(),
-          mainQuestion.getHandout()
+          mainQuestion.getHandout(),
+          mainQuestion.getQuestionNumber()
         )).toList();
   }
 }

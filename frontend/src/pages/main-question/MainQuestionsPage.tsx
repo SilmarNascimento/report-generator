@@ -93,6 +93,18 @@ export function MainQuestions() {
     return null
   }
 
+  function getMainQuestionCode(question: MainQuestion) {
+    const hasHandout = question.handouts.length !== 0;
+    const hasMockExams = question.mockExams.length !== 0;
+    if (!hasHandout && !hasMockExams) {
+      return "Reserva";
+    } else if (hasHandout && !hasMockExams) {
+      return `${question.handouts[0].releasedYear}:A${question.handouts[0].volume}:${question.questionNumber}`;
+    } else if (!hasHandout && hasMockExams) {
+      return `${question.mockExams[0].releasedYear}:S${question.mockExams[0].number}:${question.questionNumber}`;
+    }
+  }
+
   return (
     <>
       <header>
@@ -163,7 +175,7 @@ export function MainQuestions() {
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">
-                        {question.title}
+                        {getMainQuestionCode}
                       </span>
                     </div>
                   </TableCell>
