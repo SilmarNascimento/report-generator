@@ -101,7 +101,7 @@ export function MockExams() {
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Questões Principais</h1>
+          <h1 className="text-xl font-bold">Simulados</h1>
             <Button
               variant='primary'
               onClick={handleCreateNewMockExam}
@@ -187,7 +187,7 @@ export function MockExams() {
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${mockExam.id}/mock-exams`}>
+                    <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
                       <span>
                         {mockExam.mockExamQuestions.length}
                       </span>

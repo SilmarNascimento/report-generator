@@ -12,8 +12,8 @@ export function CreateMockExam() {
           <NavigationBar />
         </header>
         <FormHeader
-          headerTitle="Nova Questão"
-          headerDetails="Informe os campos a seguir para criar uma nova Questão"
+          headerTitle="Novo Simulado"
+          headerDetails="Informe os campos a seguir para criar um novo Simulado"
         />
         <CreateMockExamForm />
       </div>

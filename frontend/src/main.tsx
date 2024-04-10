@@ -17,6 +17,9 @@ import { AdaptedQuestions } from "./pages/main-question/adapted-questions/adapte
 import { Handouts } from "./pages/handoutPage.tsx";
 import { CreateAdaptedQuestion } from "./pages/main-question/adapted-questions/createAdaptedQuestion.tsx";
 import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/editAdaptedQuestion.tsx";
+import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
+import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
+import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestion.tsx";
 
 const router = createBrowserRouter([
   {
@@ -70,23 +73,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/mock-exams/create",
-    element: <CreateMainQuestion />
+    element: <CreateMockExam />
   },
   {
     path: "/mock-exams/edit/:mockExamId",
-    element: <EditMainQuestion />
+    element: <EditMockExam />
   },
   {
     path: "/mock-exams/:mockExamId/main-questions",
-    element: <AdaptedQuestions />
-  },
-  {
-    path: "/mock-exams/:mockExamId/main-questions/add",
-    element: <CreateAdaptedQuestion />
-  },
-  {
-    path: "/mock-exams/:mockExamId/adapted-questions/edit/:adaptedQuestionId",
-    element: <EditAdaptedQuestion />
+    element: <MainQuestionsFromMockExam />
   },
 
   {

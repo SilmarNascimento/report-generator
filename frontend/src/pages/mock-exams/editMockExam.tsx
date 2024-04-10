@@ -3,7 +3,7 @@ import { Header } from "../../components/header";
 import { EditMockExamForm } from "../../components/mockExam/editMockExamForm";
 import { NavigationBar } from "../../components/navigationBar";
 
-export function EditMainQuestion() {
+export function EditMockExam() {
   return (
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
@@ -12,8 +12,8 @@ export function EditMainQuestion() {
           <NavigationBar />
         </header>
         <FormHeader
-          headerTitle="Editar Questão"
-          headerDetails="Altere os campos a seguir para atualizar a Questão"
+          headerTitle="Editar Simulado"
+          headerDetails="Altere os campos a seguir para atualizar o Simulado"
         />
         <EditMockExamForm />
       </div>
