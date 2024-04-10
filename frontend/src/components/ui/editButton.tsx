@@ -1,5 +1,5 @@
 import { ComponentProps } from "react"
-import { Button } from "./ui/button"
+import { Button } from "./button"
 import { Pencil } from "lucide-react"
 
 interface EditButtonProps extends ComponentProps<'button'> {}

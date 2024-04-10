@@ -1,164 +1,142 @@
-// import { Check, Loader2, X } from 'lucide-react'
-// import { FormProvider, useForm } from 'react-hook-form'
-// import { z } from 'zod'
-// import { zodResolver } from '@hookform/resolvers/zod'
-// import { Button } from "../ui/button";
-// import { useMutation, useQueryClient } from '@tanstack/react-query'
-// import { AlternativeForm } from '../alternative/alternativesForm';
-// import { createAlternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
-// import { CreateQuestion } from '../../interfaces/createQuestion';
-// import { CreateAlternative } from '../../interfaces/createAlternative';
-// import { useNavigate } from 'react-router-dom';
-// import { SelectLevel } from '../ui/selectLevel';
-// import { successAlert, warningAlert } from '../../utils/toastAlerts';
+import { Check, Loader2, X } from 'lucide-react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from "../ui/button";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom';
+import { SelectClass } from '../ui/selectClass';
+import { successAlert, warningAlert } from '../../utils/toastAlerts';
+import { mockExamForm, mockExamSchema } from './MockExamSchema';
 
-// type CreateMainQuestionForm = z.infer<typeof createMainQuestionSchema>
+type CreateMockExam = z.infer<typeof mockExamSchema>;
+type CreateMockExamForm = Omit<CreateMockExam, "id">;
 
-export function CreateMockExamForm() {}
-//   const queryClient = useQueryClient();
-//   const navigate = useNavigate();
+export function CreateMockExamForm() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-//   const formMethods = useForm<CreateMainQuestionForm>({
-//     resolver: zodResolver(createMainQuestionSchema),
-//   })
-//   const { register, handleSubmit, formState } = formMethods;
+  const formMethods = useForm<CreateMockExamForm>({
+    resolver: zodResolver(mockExamForm),
+  })
+  const { register, handleSubmit, formState } = formMethods;
 
 
-//   const createMainQuestion = useMutation({
-//     mutationFn: async (data: CreateMainQuestionForm) => {
-//       const formData = new FormData();
-//       let titleImage: File[] = [];
-//       const alternativeImages: File[] = [];
+  const createMainQuestion = useMutation({
+    mutationFn: async ({ name, className, releasedYear, number }: CreateMockExamForm) => {
+      const response = await fetch('http://localhost:8080/mock-exam',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            className: [className],
+            releasedYear,
+            number
+          })
+        })
 
-//       if (data.images) {
-//         titleImage = Array.from(data?.images)
-//           .filter((file): file is File => file !== undefined);
-//       }
+      if (response.status === 201) {
+        queryClient.invalidateQueries({
+          queryKey: ['get-mock-exams'],
+        });
+        successAlert('Simulado salvo com sucesso!');
+        navigate("/mock-exams");
+      }
 
-//       const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
-//       for (const alternative of alternatives) {
-//         if (alternative.images) {
-//           const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
-//           alternativeImages.push(...files);
-//         }
-//       }
+      if (response.status === 400) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
+    }
+  })
 
-//       const totalImages = titleImage.concat(alternativeImages);
-//       totalImages.forEach((file) => {
-//         formData.append('images', file);
-//       });
+  async function handleCreateMainQuestion(data: CreateMockExamForm) {
+    await createMainQuestion.mutateAsync(data)
+  }
 
-//       const createAlternatives = data.alternatives.map((alternative, index) => {
-//         const createAlternative: CreateAlternative = {
-//           description: alternative.description,
-//           questionAnswer: Number(data.questionAnswer) === index
-//         }
-//         return createAlternative
-//       })
-//       const createMainQuestion: CreateQuestion = {
-//         title: data.title,
-//         level: data.level,
-//         alternatives: createAlternatives
-//       };
-//       const json = JSON.stringify(createMainQuestion);
-//       const blob = new Blob([json], {
-//         type: 'application/json'
-//       });
+  return (
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-full space-y-6">
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="name">Descrição</label>
+          <textarea 
+            {...register('name')}
+            id="name" 
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.name ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.name ? formState.errors.name.message : '\u00A0'}
+          </p>
+        </div>
 
-//       formData.append("mainQuestionInputDto", blob);
-      
-//       const response = await fetch('http://localhost:8080/main-question',
-//         {
-//           method: 'POST',
-//           body: formData
-//         })
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="level">Turma</label>
+          <SelectClass />
+          <p className={`text-sm ${formState.errors?.className ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.className ? formState.errors.className.message : '\u00A0'}
+          </p>
+        </div>
 
-//       if (response.status === 201) {
-//         queryClient.invalidateQueries({
-//           queryKey: ['get-main-questions'],
-//         });
-//         successAlert('Questão principal salva com sucesso!');
-//         navigate("/main-questions");
-//       }
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="releasedYear">Ano de Emissão</label>
+          <textarea 
+            {...register('releasedYear')}
+            id="releasedYear" 
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.releasedYear ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.releasedYear ? formState.errors.releasedYear.message : '\u00A0'}
+          </p>
+        </div>
 
-//       if (response.status === 400) {
-//         const errorMessage = await response.text();
-//         warningAlert(errorMessage);
-//       }
-//     }
-//   })
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="number">Número do Simulado</label>
+          <textarea 
+            {...register('number')}
+            id="number" 
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.number ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.number ? formState.errors.number.message : '\u00A0'}
+          </p>
+        </div>
 
-//   async function handleCreateMainQuestion(data: CreateMainQuestionForm) {
-//     await createMainQuestion.mutateAsync(data)
-//   }
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
+            className="bg-teal-400 text-teal-950"
+            type="submit"
+          >
+            {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
+            Save
+          </Button>
+          <Button
+            onClick={() => navigate("/main-questions")}
+          >
+            <X className="size-3" />
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </FormProvider>
+  )
+}
 
-//   return (
-//     <FormProvider {...formMethods}>
-//       <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-full space-y-6">
-//         <div className="space-y-2 flex flex-col justify-center items-start">
-//           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
-//           <textarea 
-//             {...register('title')}
-//             id="enunciado" 
-//             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-//           />
-//           <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
-//             {formState.errors?.title ? formState.errors.title.message : '\u00A0'}
-//           </p>
-//         </div>
-
-//         <div className="space-y-2 flex flex-col justify-center items-start">
-//           <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
-//           <input 
-//             {...register('images')}
-//             id="images" 
-//             type="file" 
-//             multiple
-//             hidden
-//             accept="image/*,.pdf"
-//             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-//           />
-//           <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
-//             {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
-//           </p>
-//         </div>
-
-//         <div className="space-y-2 flex flex-col justify-center items-start">
-//           <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
-//           <SelectLevel />
-//           <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
-//             {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
-//           </p>
-//         </div>
-
-//         <div className="space-y-3">
-//           <span className="text-lg font-medium">
-//             Alternativas
-//           </span>
-//         </div>
-//         <div className="space-y-4">
-//           {[...Array(5)].map((_, index) => (
-//             <AlternativeForm key={index} index={index} errors={formState.errors} />
-//           ))}
-//         </div>
-
-//         <div className="flex items-center justify-center gap-2">
-//           <Button
-//             disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
-//             className="bg-teal-400 text-teal-950"
-//             type="submit"
-//           >
-//             {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
-//             Save
-//           </Button>
-//           <Button
-//             onClick={() => navigate("/main-questions")}
-//           >
-//             <X className="size-3" />
-//             Cancel
-//           </Button>
-//         </div>
-//       </form>
-//     </FormProvider>
-//   )
-// }
+/**
+ * <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
+          <input 
+            {...register('images')}
+            id="images" 
+            type="file" 
+            multiple
+            hidden
+            accept="image/*,.pdf"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
+          </p>
+        </div>
+ * 
+ */

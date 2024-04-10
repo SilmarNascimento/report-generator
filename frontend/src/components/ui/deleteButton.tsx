@@ -1,5 +1,5 @@
 import { ComponentProps } from "react"
-import { Button } from "./ui/button"
+import { Button } from "./button"
 import { X } from "lucide-react"
 
 interface DeleteButtonProps extends ComponentProps<'button'> {}

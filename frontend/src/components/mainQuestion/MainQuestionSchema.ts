@@ -26,11 +26,12 @@ export const adaptedQuestionSchema = z.object({
   alternatives: z.array(alternativeSchema)
 });
 
- export const mockExamSchema = z.object({
+export const mockExamSchema = z.object({
   id: z.string(),
   name: z.string(),
   className: z.array(z.string()),
   subjects: z.array(subjectSchema),
+  releasedYear: z.number().positive(),
   number: z.number().positive(),
 });
 

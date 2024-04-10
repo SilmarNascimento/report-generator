@@ -14,8 +14,8 @@ import { Link } from "react-router-dom";
 import { successAlert } from "../../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
 import { PageResponse } from "../../../interfaces";
-import { DeleteButton } from "../../../components/deleteButton";
-import { EditButton } from "../../../components/editButton";
+import { DeleteButton } from "../../../components/ui/deleteButton";
+import { EditButton } from "../../../components/ui/editButton";
 
 export function MainQuestionsFromMockExam() {
   const queryClient = useQueryClient();
