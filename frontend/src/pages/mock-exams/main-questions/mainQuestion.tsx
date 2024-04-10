@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { Button } from "../../../components/ui/button";
-import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
+import { FileDown, Plus, Search } from "lucide-react";
 import { Control, Input } from "../../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { MainQuestion } from "../../../interfaces";
@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 import { successAlert } from "../../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
 import { PageResponse } from "../../../interfaces";
+import { DeleteButton } from "../../../components/deleteButton";
+import { EditButton } from "../../../components/editButton";
 
 export function MainQuestionsFromMockExam() {
   const queryClient = useQueryClient();
@@ -51,7 +53,7 @@ export function MainQuestionsFromMockExam() {
   })
 
   const deleteMainQuestion = useMutation({
-    mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
+    mutationFn: async (mainQuestionId: string) => {
       try {
         await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
         {
@@ -81,8 +83,8 @@ export function MainQuestionsFromMockExam() {
     navigate(`/main-questions/edit/${mainQuestionId}`);
   }
   
-  async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question)
+  async function handleDeleteMainQuestion(mainQuestionId: string) {
+    await deleteMainQuestion.mutateAsync(mainQuestionId)
   }
 
   function handleCorrectAnswer(question: MainQuestion) {
@@ -213,12 +215,8 @@ export function MainQuestionsFromMockExam() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>
-                      <X className="size-3" color="red"/>
-                    </Button>
-                    <Button size="icon" className="mx-0.5" onClick={() => handleEditMainQuestion(question.id)}>
-                      <Pencil className="size-3" color="green"/>
-                    </Button>
+                    <DeleteButton  onClick={() => handleDeleteMainQuestion(question.id)} />
+                    <EditButton onClick={() => handleEditMainQuestion(question.id)}/>
                   </TableCell>
                 </TableRow>
               )

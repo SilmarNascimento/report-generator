@@ -22,9 +22,7 @@ const button = tv({
   },
 })
 
-export interface ButtonProps
-  extends ComponentProps<'button'>,
-    VariantProps<typeof button> {}
+export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof button> {}
 
 export function Button({ className, variant, size, ...props }: ButtonProps) {
   return <button {...props} className={button({ variant, size, className })} />
