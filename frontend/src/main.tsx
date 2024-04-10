@@ -6,18 +6,17 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Login } from './pages/Login.tsx';
 import { MainQuestions } from './pages/main-question/MainQuestionsPage.tsx';
 import { Test } from './pages/test.tsx';
-import { MockExams } from './pages/main-question/mockExams.tsx';
+import { MockExams } from './pages/mock-exams/mockExamsPage.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { Subjects } from './pages/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CreateMainQuestion } from "./pages/main-question/createMainQuestion.tsx";
 import { EditMainQuestion } from "./pages/main-question/editMainQuestion.tsx";
-import { AdaptedQuestions } from "./pages/main-question/adapted-question/adaptedQuestions.tsx";
-import { Handouts } from "./pages/main-question/handouts.tsx";
-import { CreateAdaptedQuestion } from "./pages/main-question/adapted-question/createAdaptedQuestion.tsx";
-import { EditAdaptedQuestion } from "./pages/main-question/adapted-question/editAdaptedQuestion.tsx";
-import { MockExamsPage } from "./pages/MockExamsPage.tsx";
+import { AdaptedQuestions } from "./pages/main-question/adapted-questions/adaptedQuestions.tsx";
+import { Handouts } from "./pages/handoutPage.tsx";
+import { CreateAdaptedQuestion } from "./pages/main-question/adapted-questions/createAdaptedQuestion.tsx";
+import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/editAdaptedQuestion.tsx";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +52,8 @@ const router = createBrowserRouter([
     path: "/main-questions/:mainQuestionId/adapted-questions/edit/:adaptedQuestionId",
     element: <EditAdaptedQuestion />
   },
+
+
   {
     path: "/main-questions/:mainQuestionId/mock-exams",
     element: <MockExams />
@@ -61,10 +62,33 @@ const router = createBrowserRouter([
     path: "/main-questions/:mainQuestionId/handouts",
     element: <Handouts />
   },
+
+
   {
     path: "/mock-exams",
-    element: <MockExamsPage />
+    element: <MockExams />
   },
+  {
+    path: "/mock-exams/create",
+    element: <CreateMainQuestion />
+  },
+  {
+    path: "/mock-exams/edit/:mockExamId",
+    element: <EditMainQuestion />
+  },
+  {
+    path: "/mock-exams/:mockExamId/main-questions",
+    element: <AdaptedQuestions />
+  },
+  {
+    path: "/mock-exams/:mockExamId/main-questions/add",
+    element: <CreateAdaptedQuestion />
+  },
+  {
+    path: "/mock-exams/:mockExamId/adapted-questions/edit/:adaptedQuestionId",
+    element: <EditAdaptedQuestion />
+  },
+
   {
     path: "/test",
     element: <Test />

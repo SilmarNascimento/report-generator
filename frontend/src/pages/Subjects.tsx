@@ -12,8 +12,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Control, Input } from "../components/ui/input";
 import { EditSubjectForm } from "../components/subject/editSubjectForm";
 import useDebounceValue from "../hooks/useDebounceValue";
-import { Subject, SubjectPageResponse } from "../interfaces";
+import { Subject } from "../interfaces";
 import { successAlert } from "../utils/toastAlerts";
+import { PageResponse } from "../interfaces/PageResponse";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -37,7 +38,7 @@ export function Subjects() {
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
-  const { data: subjectPageResponse, isLoading, isFetching } = useQuery<SubjectPageResponse>({
+  const { data: subjectPageResponse, isLoading, isFetching } = useQuery<PageResponse<Subject>>({
     queryKey: ['get-subjects', urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)

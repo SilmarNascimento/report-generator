@@ -9,13 +9,12 @@ import { Button } from "../../components/ui/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { MainQuestion } from "../../interfaces";
+import { MockExam } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
-import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import { PageResponse } from "../../interfaces";
 
-export function MainQuestions() {
+export function MockExams() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -38,10 +37,10 @@ export function MainQuestions() {
   const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
   const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
-  const { data: mainQuestionPageResponse, isLoading } = useQuery<PageResponse<MainQuestion>>({
-    queryKey: ['get-main-questions', urlFilter, page, pageSize],
+  const { data: mockExamPageResponse, isLoading } = useQuery<PageResponse<MockExam>>({
+    queryKey: ['get-mock-exams', urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/mock-exam?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
       const data = await response.json()
 
       return data
@@ -51,9 +50,9 @@ export function MainQuestions() {
   })
 
   const deleteMainQuestion = useMutation({
-    mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
+    mutationFn: async (mockExamId: string) => {
       try {
-        await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
+        await fetch(`http://localhost:8080/mock-exam/${mockExamId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -67,44 +66,30 @@ export function MainQuestions() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['get-main-questions'],
+        queryKey: ['get-mock-exams'],
       });
-      successAlert('Questão principal excluída com sucesso!');
+      successAlert('Simulado excluído com sucesso!');
     }
   })
 
-  function handleCreateNewMainQuestion() {
-    navigate("/main-questions/create");
+  function handleCreateNewMockExam() {
+    navigate("/mock-exams/create");
   }
   
-  function handleEditMainQuestion(mainQuestionId: string) {
-    navigate(`/main-questions/edit/${mainQuestionId}`);
+  function handleEditMockExam(mockExamId: string) {
+    navigate(`/mock-exams/edit/${mockExamId}`);
   }
   
-  async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question)
-  }
-
-  function handleCorrectAnswer(question: MainQuestion) {
-    const correctIndex = question.alternatives.findIndex(alternative => alternative.questionAnswer);
-    return getAlternativeLetter(correctIndex);
+  async function handleDeleteMockExam(mockExamId: string) {
+    await deleteMainQuestion.mutateAsync(mockExamId)
   }
 
   if (isLoading) {
     return null
   }
 
-  function getMainQuestionCode(question: MainQuestion) {
-    const hasHandout = question.handouts.length !== 0;
-    const hasMockExams = question.mockExams.length !== 0;
-    if (!hasHandout && !hasMockExams) {
-      return "Reserva";
-    } else if (hasHandout && !hasMockExams) {
-      return `${question.handouts[0].releasedYear}:A${question.handouts[0].volume}:${question.questionNumber}`;
-    } else if (!hasHandout && hasMockExams) {
-      return `${question.mockExams[0].releasedYear}:S${question.mockExams[0].number}:${question.questionNumber}`;
-    }
-    return ""
+  function getMockExamCode({ releasedYear, number}: MockExam) {
+    return `${releasedYear}:S${number}`;
   }
 
   return (
@@ -119,7 +104,7 @@ export function MainQuestions() {
           <h1 className="text-xl font-bold">Questões Principais</h1>
             <Button
               variant='primary'
-              onClick={handleCreateNewMainQuestion}
+              onClick={handleCreateNewMockExam}
             >
               <Plus className="size-3" />
               Create new
@@ -152,71 +137,74 @@ export function MainQuestions() {
                 <span>Código</span>
               </TableHead>
               <TableHead>
-                <span>Nível</span>
+                <span>Título</span>
+              </TableHead>
+              <TableHead>
+                <span>Turma</span>
+              </TableHead>
+              <TableHead>
+                <span>Ano de Emissão</span>
+              </TableHead>
+              <TableHead>
+                <span>Número</span>
+              </TableHead>
+              <TableHead>
+                <span>Questões</span>
               </TableHead>
               <TableHead>
                 <span>Gabarito</span>
-              </TableHead>
-              <TableHead>
-                <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
               </TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mainQuestionPageResponse?.data.map((question) => {
+            {mockExamPageResponse?.data.map((mockExam) => {
               return (
-                <TableRow key={question.id}>
+                <TableRow key={mockExam.id}>
                   <TableCell></TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">
-                        {getMainQuestionCode(question)}
+                        {getMockExamCode(mockExam)}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
+                    {mockExam.className.map((name: string) => (
+                      <span key={name}>
+                        {name}
+                      </span>
+                    ))}
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
                     <span>
-                      {question.level}
+                      {mockExam.releasedYear}
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <span>
-                      {handleCorrectAnswer(question)}
+                      {mockExam.number}
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-questions/${question.id}/adapted-questions`}>
+                    <Link to={`/main-question/${mockExam.id}/mock-exams`}>
                       <span>
-                        {question.adaptedQuestions.length}
+                        {mockExam.mockExamQuestions.length}
                       </span>
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/mock-exams`}>
+                    <Link to={`/main-question/${mockExam.id}/handouts`}>
                       <span>
-                        {question.mockExams.length}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/handouts`}>
-                      <span>
-                        {question.handouts.length}
+                        handleAnswers
                       </span>
                     </Link>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMainQuestion(question)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteMockExam(mockExam.id)}>
                       <X className="size-3" color="red"/>
                     </Button>
-                    <Button size="icon" className="mx-0.5" onClick={() => handleEditMainQuestion(question.id)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleEditMockExam(mockExam.id)}>
                       <Pencil className="size-3" color="green"/>
                     </Button>
                   </TableCell>
@@ -225,13 +213,13 @@ export function MainQuestions() {
             })}
           </TableBody>
         </Table>
-        { mainQuestionPageResponse
+        { mockExamPageResponse
           && 
           <Pagination
-            pages={mainQuestionPageResponse.pages}
-            items={mainQuestionPageResponse.pageItems}
+            pages={mockExamPageResponse.pages}
+            items={mockExamPageResponse.pageItems}
             page={page}
-            totalItems={mainQuestionPageResponse.totalItems}
+            totalItems={mockExamPageResponse.totalItems}
           />
         }
       </main>

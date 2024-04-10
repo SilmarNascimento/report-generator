@@ -1,21 +1,21 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Header } from "../../components/header";
-import { NavigationBar } from "../../components/navigationBar";
-import { Pagination } from "../../components/pagination";
+import { Header } from "../../../components/header";
+import { NavigationBar } from "../../../components/navigationBar";
+import { Pagination } from "../../../components/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/button";
+import useDebounceValue from "../../../hooks/useDebounceValue";
+import { Button } from "../../../components/ui/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../../components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { MainQuestion } from "../../interfaces";
+import { Control, Input } from "../../../components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
+import { MainQuestion } from "../../../interfaces";
 import { Link } from "react-router-dom";
-import { successAlert } from "../../utils/toastAlerts";
-import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
-import { PageResponse } from "../../interfaces";
+import { successAlert } from "../../../utils/toastAlerts";
+import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+import { PageResponse } from "../../../interfaces";
 
-export function MainQuestions() {
+export function MainQuestionsFromMockExam() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
