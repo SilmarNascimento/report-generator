@@ -7,10 +7,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom';
 import { SelectClass } from '../ui/selectClass';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { mockExamForm, mockExamSchema } from './MockExamSchema';
+import { mockExamForm } from './MockExamSchema';
 
-type CreateMockExam = z.infer<typeof mockExamSchema>;
-type CreateMockExamForm = Omit<CreateMockExam, "id">;
+type CreateMockExamForm = z.infer<typeof mockExamForm>;
 
 export function CreateMockExamForm() {
   const queryClient = useQueryClient();
@@ -26,6 +25,9 @@ export function CreateMockExamForm() {
     mutationFn: async ({ name, className, releasedYear, number }: CreateMockExamForm) => {
       const response = await fetch('http://localhost:8080/mock-exam',
         {
+          headers: {
+            'Content-Type': 'application/json',
+          },
           method: 'POST',
           body: JSON.stringify({
             name,
@@ -59,7 +61,8 @@ export function CreateMockExamForm() {
       <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-full space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="name">Descrição</label>
-          <textarea 
+          <input
+            type='text'  
             {...register('name')}
             id="name" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -79,7 +82,8 @@ export function CreateMockExamForm() {
 
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="releasedYear">Ano de Emissão</label>
-          <textarea 
+          <input
+            type='text' 
             {...register('releasedYear')}
             id="releasedYear" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -91,7 +95,8 @@ export function CreateMockExamForm() {
 
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="number">Número do Simulado</label>
-          <textarea 
+          <input
+            type='text' 
             {...register('number')}
             id="number" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -121,22 +126,3 @@ export function CreateMockExamForm() {
     </FormProvider>
   )
 }
-
-/**
- * <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
-          <input 
-            {...register('images')}
-            id="images" 
-            type="file" 
-            multiple
-            hidden
-            accept="image/*,.pdf"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-          />
-          <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
-            {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
-          </p>
-        </div>
- * 
- */

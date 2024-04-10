@@ -9,8 +9,8 @@ export const mockExamSchema = z.object({
   name: z.string(),
   className: z.enum(["Intensivo", "Extensivo"]),
   subjects: z.array(subjectSchema),
-  releasedYear: z.number().positive(),
-  number: z.number().positive(),
+  releasedYear: z.string(),
+  number: z.string(),
 });
 
 export const mockExamForm = z.object({
