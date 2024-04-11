@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { adaptedQuestionForm, adaptedQuestionSchema } from "./AdaptedQuestionSchema";
+import { adaptedQuestionSchema } from "./AdaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,8 +15,7 @@ import { AdaptedQuestion } from "../../interfaces";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
 
-type EditAdaptedQuestion = z.infer<typeof adaptedQuestionSchema>
-type EditAdaptedQuestionForm = Omit<EditAdaptedQuestion, "id">;
+type EditAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>
 
 export function EditAdaptedQuestionForm() {
   const queryClient = useQueryClient();
@@ -43,7 +42,7 @@ export function EditAdaptedQuestionForm() {
     .map(alternative => ({ description: alternative.description }));
 
   const formMethods = useForm<EditAdaptedQuestionForm>({
-    resolver: zodResolver(adaptedQuestionForm),
+    resolver: zodResolver(adaptedQuestionSchema),
     defaultValues: {
       title: adaptedQuestionFoundResponse?.title,
       level: adaptedQuestionFoundResponse?.level,

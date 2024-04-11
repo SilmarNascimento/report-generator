@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { adaptedQuestionForm, adaptedQuestionSchema } from "./AdaptedQuestionSchema";
+import { adaptedQuestionSchema } from "./AdaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,8 +13,7 @@ import { AlternativeForm } from "../alternative/alternativesForm";
 import { Check, Loader2, X } from "lucide-react";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 
-type CreateAdaptedQuestion = z.infer<typeof adaptedQuestionSchema>
-type CreateAdaptedQuestionForm = Omit<CreateAdaptedQuestion, "id">;
+type CreateAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>
 
 export function CreateAdaptedQuestionForm() {
   const queryClient = useQueryClient();
@@ -22,7 +21,7 @@ export function CreateAdaptedQuestionForm() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
 
   const formMethods = useForm<CreateAdaptedQuestionForm>({
-    resolver: zodResolver(adaptedQuestionForm),
+    resolver: zodResolver(adaptedQuestionSchema),
   })
   const { register, handleSubmit, formState } = formMethods;
 

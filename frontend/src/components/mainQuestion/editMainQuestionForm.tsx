@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createAlternativeSchema, editMainQuestionSchema, mainQuestionSchema } from './MainQuestionSchema';
+import { createAlternativeSchema, mainQuestionSchema } from './MainQuestionSchema';
 import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
@@ -14,8 +14,7 @@ import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect, useState } from 'react';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
-type EditMainQuestionSchema = z.infer<typeof editMainQuestionSchema>;
-type EditMainQuestionForm = Omit<EditMainQuestionSchema, 'id'>;
+type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
 export function EditMainQuestionForm() {
   const [hasChanged, setHasChanged] = useState(false);
@@ -71,7 +70,7 @@ export function EditMainQuestionForm() {
   }, [formState, hasChanged, mainQuestionFoundResponse, watch])
 
   const editMainQuestion = useMutation({
-    mutationFn: async (data: EditMainQuestionSchema) => {
+    mutationFn: async (data: EditMainQuestionForm) => {
       const formData = new FormData();
       let titleImage: File[] = [];
       const alternativeImages: File[] = [];
@@ -113,7 +112,7 @@ export function EditMainQuestionForm() {
 
       formData.append("mainQuestionInputDto", blob);
 
-      const response = await fetch(`http://localhost:8080/main-question/${data.id}`,
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
       {
         method: 'PUT',
         body: formData,
@@ -135,8 +134,7 @@ export function EditMainQuestionForm() {
   })
 
   async function handleEditMainQuestion(data: EditMainQuestionForm) {
-    const id = mainQuestionId ?? "";
-    await editMainQuestion.mutateAsync({ id, ...data})
+    await editMainQuestion.mutateAsync(data)
   }
 
   return (
