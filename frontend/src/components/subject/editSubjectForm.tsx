@@ -1,39 +1,27 @@
 import { Check, Loader2, X } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-
-const subjectSchema = z.object({
-  id: z.string(),
-  name: z.string()
-  .min(3, { message: 'Minimum 3 characters.' })
-  .transform(name => {
-    return name.trim().split(' ').map(word => {
-      return word[0].toUpperCase().concat(word.substring(1).toLowerCase())
-    }).join(' ')
-  }),
-})
-
-type SubjectSchema = z.infer<typeof subjectSchema>
+import { subjectSchema } from './SubjectSchema';
+import { Subject } from '../../interfaces';
 
 interface EditSubjectFormProps {
-  entity: SubjectSchema;
+  entity: Subject;
 }
 
 export function EditSubjectForm( { entity }: EditSubjectFormProps) {
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState } = useForm<SubjectSchema>({
+  const { register, handleSubmit, formState } = useForm<Subject>({
     resolver: zodResolver(subjectSchema),
   })
 
 
   const editSubject = useMutation({
-    mutationFn: async ({ id, name }: SubjectSchema) => {
+    mutationFn: async ({ id, name }: Subject) => {
       const response = await fetch(`http://localhost:8080/subject/${id}`,
       {
         headers: {
@@ -57,7 +45,7 @@ export function EditSubjectForm( { entity }: EditSubjectFormProps) {
     }
   })
 
-  async function handleEditSubject({ id, name }: SubjectSchema) {
+  async function handleEditSubject({ id, name }: Subject) {
     await editSubject.mutateAsync({ id, name })
   }
 
