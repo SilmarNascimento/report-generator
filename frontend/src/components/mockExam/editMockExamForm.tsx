@@ -9,15 +9,18 @@ import { MockExam } from '../../interfaces';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { mockExamSchema } from './MockExamSchema';
 import { SelectClass } from '../ui/selectClass';
+import { useEffect, useState } from 'react';
+import { DevTool } from '@hookform/devtools';
 
 type EditMockExamForm = z.infer<typeof mockExamSchema>;
 
 export function EditMockExamForm() {
+  const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
   const navigate = useNavigate();
 
-  const { data: mainQuestionFoundResponse } = useQuery<MockExam>({
+  const { data: mockExamResponse } = useQuery<MockExam>({
     queryKey: ['get-mock-exams', mockExamId],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`)
@@ -30,19 +33,36 @@ export function EditMockExamForm() {
   }); 
 
   const formMethods = useForm<EditMockExamForm>({
-    resolver: zodResolver(mockExamSchema),
-    defaultValues: {
-      name: mainQuestionFoundResponse?.name,
-      //className: mainQuestionFoundResponse?.className[0] ?? "Intensivo",
-      releasedYear: mainQuestionFoundResponse?.releasedYear.toString(),
-      number: mainQuestionFoundResponse?.number.toString(),
-    }
+    resolver: zodResolver(mockExamSchema)
   });
-  const { register, handleSubmit, formState } = formMethods;
+  const { register, handleSubmit, formState, setValue, watch, control } = formMethods;
+
+  useEffect(() => {
+    if (mockExamResponse) {
+      setValue("name", mockExamResponse.name);
+      setValue("className", mockExamResponse.className[0]);
+      setValue("releasedYear", mockExamResponse.releasedYear.toString());
+      setValue("number", mockExamResponse.number.toString());
+    }
+  }, [mockExamResponse, setValue]);
+
+  useEffect(() => {
+    function hasChangedValues(): boolean {
+      const classNameFormValues = watch("className");
+
+      if (classNameFormValues !== mockExamResponse?.className[0] || !!Object.keys(formState.dirtyFields).length) {
+        return true;
+      }
+
+      return false;
+    }
+
+    setHasChanged(hasChangedValues());
+  }, [formState, hasChanged, mockExamResponse, watch])
 
   const editMainQuestion = useMutation({
     mutationFn: async ({ name, className, releasedYear, number}: EditMockExamForm) => {
-      const response = await fetch(`http://localhost:8080/main-question/${mockExamId}`,
+      const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +125,7 @@ export function EditMockExamForm() {
             type='number' 
             {...register('releasedYear')}
             id="releasedYear" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p className={`text-sm ${formState.errors?.releasedYear ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.releasedYear ? formState.errors.releasedYear.message : '\u00A0'}
@@ -118,7 +138,7 @@ export function EditMockExamForm() {
             type='number' 
             {...register('number')}
             id="number" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p className={`text-sm ${formState.errors?.number ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.number ? formState.errors.number.message : '\u00A0'}
@@ -127,7 +147,7 @@ export function EditMockExamForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
+            disabled={formState.isSubmitting || !hasChanged}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
@@ -142,6 +162,7 @@ export function EditMockExamForm() {
           </Button>
         </div>
       </form>
+      <DevTool control={control} />
     </FormProvider>
   )
 }

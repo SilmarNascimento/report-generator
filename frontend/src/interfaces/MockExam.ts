@@ -5,7 +5,7 @@ import { Subject } from "./Subject"
 export type MockExam =  {
   id: string
   name: string
-  className: string[]
+  className: ("Intensivo" | "Extensivo")[]
   subjects: Subject[]
   releasedYear: string
   number: number

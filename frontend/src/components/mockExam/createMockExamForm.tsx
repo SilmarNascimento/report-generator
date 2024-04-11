@@ -86,8 +86,8 @@ export function CreateMockExamForm() {
           <input
             type='number' 
             {...register('releasedYear')}
-            id="releasedYear" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            id="releasedYear"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p className={`text-sm ${formState.errors?.releasedYear ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.releasedYear ? formState.errors.releasedYear.message : '\u00A0'}
@@ -99,8 +99,8 @@ export function CreateMockExamForm() {
           <input
             type='number' 
             {...register('number')}
-            id="number" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            id="number"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p className={`text-sm ${formState.errors?.number ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.number ? formState.errors.number.message : '\u00A0'}
