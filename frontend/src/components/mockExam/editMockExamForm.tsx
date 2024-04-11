@@ -6,13 +6,11 @@ import { Button } from "../ui/button";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MockExam } from '../../interfaces';
-import { DevTool } from '@hookform/devtools'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { mockExamForm, mockExamSchema } from './MockExamSchema';
+import { mockExamSchema } from './MockExamSchema';
 import { SelectClass } from '../ui/selectClass';
 
-type EditMockExam = z.infer<typeof mockExamSchema>;
-type EditMockExamForm = z.infer<typeof mockExamForm>;
+type EditMockExamForm = z.infer<typeof mockExamSchema>;
 
 export function EditMockExamForm() {
   const queryClient = useQueryClient();
@@ -32,7 +30,7 @@ export function EditMockExamForm() {
   }); 
 
   const formMethods = useForm<EditMockExamForm>({
-    resolver: zodResolver(mockExamForm),
+    resolver: zodResolver(mockExamSchema),
     defaultValues: {
       name: mainQuestionFoundResponse?.name,
       //className: mainQuestionFoundResponse?.className[0] ?? "Intensivo",
@@ -43,7 +41,7 @@ export function EditMockExamForm() {
   const { register, handleSubmit, formState } = formMethods;
 
   const editMainQuestion = useMutation({
-    mutationFn: async ({ name, className, releasedYear, number}: Omit<EditMockExam, "subjects">) => {
+    mutationFn: async ({ name, className, releasedYear, number}: EditMockExamForm) => {
       const response = await fetch(`http://localhost:8080/main-question/${mockExamId}`,
       {
         headers: {
@@ -74,8 +72,7 @@ export function EditMockExamForm() {
   })
 
   async function handleEditMockExam(data: EditMockExamForm) {
-    const id = mockExamId ?? "";
-    await editMainQuestion.mutateAsync({ id, ...data})
+    await editMainQuestion.mutateAsync(data)
   }
 
   return (

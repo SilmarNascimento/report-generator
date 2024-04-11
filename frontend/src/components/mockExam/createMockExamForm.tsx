@@ -7,16 +7,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom';
 import { SelectClass } from '../ui/selectClass';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { mockExamForm } from './MockExamSchema';
+import { mockExamSchema } from './MockExamSchema';
 
-type CreateMockExamForm = z.infer<typeof mockExamForm>;
+type CreateMockExamForm = z.infer<typeof mockExamSchema>;
 
 export function CreateMockExamForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const formMethods = useForm<CreateMockExamForm>({
-    resolver: zodResolver(mockExamForm),
+    resolver: zodResolver(mockExamSchema),
   })
   const { register, handleSubmit, formState } = formMethods;
 

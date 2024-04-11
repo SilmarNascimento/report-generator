@@ -52,18 +52,6 @@ export function EditSubjectForm( { entity }: EditSubjectFormProps) {
   return (
     <form onSubmit={handleSubmit(handleEditSubject)} className="w-full space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium block" htmlFor="title">Subject Id</label>
-        <input 
-          {...register('id')}
-          id="subjectId" 
-          type="text"
-          value={entity.id}
-          readOnly 
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-        />
-        {formState.errors?.id && <p className="text-sm text-red-400">{formState.errors.id.message}</p> }
-      </div>
-      <div className="space-y-2">
         <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
         <input 
           {...register('name')}

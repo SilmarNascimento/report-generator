@@ -5,16 +5,16 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { subjectForm } from './SubjectSchema';
-import { Subject } from '../../interfaces';
+import { subjectSchema } from './SubjectSchema';
+import { z } from 'zod';
 
-type CreateSubjectForm = Omit<Subject, 'id'>;
+type CreateSubjectForm = z.infer<typeof subjectSchema>;
 
 export function CreateSubjectForm() {
   const queryClient = useQueryClient()
 
   const { register, handleSubmit, formState } = useForm<CreateSubjectForm>({
-    resolver: zodResolver(subjectForm),
+    resolver: zodResolver(subjectSchema),
   })
 
 
