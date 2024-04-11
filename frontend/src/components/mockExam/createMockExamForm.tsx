@@ -83,7 +83,7 @@ export function CreateMockExamForm() {
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="releasedYear">Ano de Emissão</label>
           <input
-            type='text' 
+            type='number' 
             {...register('releasedYear')}
             id="releasedYear" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -96,7 +96,7 @@ export function CreateMockExamForm() {
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="number">Número do Simulado</label>
           <input
-            type='text' 
+            type='number' 
             {...register('number')}
             id="number" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"

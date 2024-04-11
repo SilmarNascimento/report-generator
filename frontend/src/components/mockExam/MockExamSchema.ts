@@ -14,7 +14,7 @@ export const mockExamSchema = z.object({
 });
 
 export const mockExamForm = z.object({
-  name: z.string(),
+  name: z.string().min(1, { message: "Descrição é obrigatória" }),
   className: z.enum(["Intensivo", "Extensivo"]),
   releasedYear: z.string(),
   number: z.string(),

@@ -170,6 +170,11 @@ export function MockExams() {
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
+                    <span>
+                      {mockExam.name}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
                     {mockExam.className.map((name: string) => (
                       <span key={name}>
                         {name}

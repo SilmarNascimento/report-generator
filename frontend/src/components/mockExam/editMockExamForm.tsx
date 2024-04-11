@@ -83,7 +83,8 @@ export function EditMockExamForm() {
       <form onSubmit={handleSubmit(handleEditMockExam)} encType='multipart/form-data' className="w-full space-y-6">
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="name">Descrição</label>
-          <textarea 
+          <input
+            type='text' 
             {...register('name')}
             id="name" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -103,7 +104,8 @@ export function EditMockExamForm() {
 
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="releasedYear">Ano de Emissão</label>
-          <textarea 
+          <input
+            type='number' 
             {...register('releasedYear')}
             id="releasedYear" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
@@ -115,7 +117,8 @@ export function EditMockExamForm() {
 
         <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="number">Número do Simulado</label>
-          <textarea 
+          <input
+            type='number' 
             {...register('number')}
             id="number" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
