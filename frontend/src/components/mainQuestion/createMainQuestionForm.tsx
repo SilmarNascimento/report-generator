@@ -5,12 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternative/alternativesForm';
-import { createAlternativeSchema, mainQuestionSchema } from './MainQuestionSchema';
+import { mainQuestionSchema } from './MainQuestionSchema';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
+import { alternativeSchema } from '../alternative/AlternativeSchema';
 
 type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>
 
@@ -35,7 +36,7 @@ export function CreateMainQuestionForm() {
           .filter((file): file is File => file !== undefined);
       }
 
-      const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
+      const alternatives: z.infer<typeof alternativeSchema>[] = data.alternatives;
       for (const alternative of alternatives) {
         if (alternative.images) {
           const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
@@ -50,11 +51,11 @@ export function CreateMainQuestionForm() {
 
       const createAlternatives = data.alternatives.map((alternative, index) => {
         const createAlternative: CreateAlternative = {
-          description: alternative.description,
+          description: alternative?.description,
           questionAnswer: Number(data.questionAnswer) === index
         }
         return createAlternative
-      })
+      });
       const createMainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,

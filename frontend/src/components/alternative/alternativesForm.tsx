@@ -1,8 +1,8 @@
 import { FieldErrors, useFormContext } from "react-hook-form";
 import { z } from 'zod';
-import { createMainQuestionSchema } from '../mainQuestion/MainQuestionSchema';
+import { mainQuestionSchema } from '../mainQuestion/MainQuestionSchema';
 
-type CreateMainQuestionSchema = z.infer<typeof createMainQuestionSchema>
+type CreateMainQuestionSchema = z.infer<typeof mainQuestionSchema>
 
 interface AlternativeFormProps {
   index: number

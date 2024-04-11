@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
-import { createAlternativeSchema } from "../alternative/AlternativeSchema";
+import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { CreateAlternative } from "../../interfaces/createAlternative";
 import { CreateQuestion } from "../../interfaces/createQuestion";
 import { SelectLevel } from "../ui/selectLevel";
@@ -14,16 +14,23 @@ import { Check, Loader2, X } from "lucide-react";
 import { AdaptedQuestion } from "../../interfaces";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
+import { useEffect, useState } from "react";
 
 type EditAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>
 
 export function EditAdaptedQuestionForm() {
+  const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
   const { adaptedQuestionId } = useParams<{ adaptedQuestionId: string }>() ?? "";
   const navigate = useNavigate();
 
-  const { data: adaptedQuestionFoundResponse } = useQuery<AdaptedQuestion>({
+  const formMethods = useForm<EditAdaptedQuestionForm>({
+    resolver: zodResolver(adaptedQuestionSchema)
+  })
+  const { register, handleSubmit, formState, setValue, control, watch } = formMethods;
+
+  const { data: adaptedQuestionResponse } = useQuery<AdaptedQuestion>({
     queryKey: ['get-adapted-questions', mainQuestionId, adaptedQuestionId],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`)
@@ -36,22 +43,35 @@ export function EditAdaptedQuestionForm() {
     staleTime: Infinity,
   });
 
-  const questionAnswerIndex = adaptedQuestionFoundResponse?.alternatives
-    .findIndex(alternative => alternative.questionAnswer) ?? '';
-  const alternativesArray = adaptedQuestionFoundResponse?.alternatives
-    .map(alternative => ({ description: alternative.description }));
-
-  const formMethods = useForm<EditAdaptedQuestionForm>({
-    resolver: zodResolver(adaptedQuestionSchema),
-    defaultValues: {
-      title: adaptedQuestionFoundResponse?.title,
-      level: adaptedQuestionFoundResponse?.level,
-      questionAnswer: questionAnswerIndex.toString(),
-      alternatives: alternativesArray,
-    }
-  })
-  const { register, handleSubmit, formState, control } = formMethods;
-
+    useEffect(() => {
+      if (adaptedQuestionResponse) {
+        setValue('title', adaptedQuestionResponse.title);
+        setValue('level', adaptedQuestionResponse.level);
+        adaptedQuestionResponse.alternatives.forEach((alternative, index) => {
+          setValue(`alternatives.${index}.description`, alternative.description);
+          if (alternative.questionAnswer) {
+            setValue('questionAnswer', index.toString());
+          }
+        });
+      }
+    }, [adaptedQuestionResponse, setValue]);
+  
+    useEffect(() => {
+      function hasChangedValues(): boolean {
+        const questionAnswerFormValues = watch("questionAnswer");
+  
+        const questionAnswerIndex = adaptedQuestionResponse?.alternatives
+          .findIndex(alternative => alternative.questionAnswer) ?? '';
+        
+        if (questionAnswerFormValues !== questionAnswerIndex.toString() || !!Object.keys(formState.dirtyFields).length) {
+          return true;
+        }
+  
+        return false;
+      }
+  
+      setHasChanged(hasChangedValues());
+    }, [formState, hasChanged, adaptedQuestionResponse, watch]);
 
   const editAdaptedQuestion = useMutation({
     mutationFn: async (data: EditAdaptedQuestionForm) => {
@@ -64,7 +84,7 @@ export function EditAdaptedQuestionForm() {
           .filter((file): file is File => file !== undefined);
       }
 
-      const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
+      const alternatives: z.infer<typeof alternativeSchema>[] = data.alternatives;
       for (const alternative of alternatives) {
         if (alternative.images) {
           const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
@@ -104,7 +124,7 @@ export function EditAdaptedQuestionForm() {
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
+          queryKey: ['get-adapted-questions'],
         });
         successAlert('Questão adaptada salva com sucesso!');
         navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
@@ -173,7 +193,7 @@ export function EditAdaptedQuestionForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting || !Object.keys(formState.dirtyFields).length}
+            disabled={formState.isSubmitting || !hasChanged}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >

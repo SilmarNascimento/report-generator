@@ -13,6 +13,7 @@ import { CreateAlternative } from '../../interfaces/createAlternative';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect, useState } from 'react';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
+import { SelectLevel } from '../ui/selectLevel';
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
@@ -67,7 +68,7 @@ export function EditMainQuestionForm() {
     }
 
     setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mainQuestionFoundResponse, watch])
+  }, [formState, hasChanged, mainQuestionFoundResponse, watch]);
 
   const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionForm) => {
@@ -140,12 +141,11 @@ export function EditMainQuestionForm() {
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(handleEditMainQuestion)} className="w-full space-y-6" encType='multipart/form-data'>
-        <div className="space-y-2">
+        <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
-          <input 
+          <textarea 
             {...register('title')}
             id="enunciado" 
-            type="text" 
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
           <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
@@ -168,17 +168,12 @@ export function EditMainQuestionForm() {
           </p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flex flex-col justify-center items-start">
           <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
-          <input 
-            {...register('level')}
-            id="level" 
-            type="text" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-          />
-          {formState.errors?.level && (
-            <p className="text-sm text-red-400">{formState.errors.level.message}</p>
-          )}
+          <SelectLevel />
+          <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
+          </p>
         </div>
 
         <div className="space-y-3">

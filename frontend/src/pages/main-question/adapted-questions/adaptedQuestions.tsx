@@ -10,6 +10,7 @@ import { Button } from "../../../components/ui/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
+import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
 
 export function AdaptedQuestions() {
   const queryClient = useQueryClient();
@@ -59,7 +60,12 @@ export function AdaptedQuestions() {
       });
       successAlert('Questão adaptada excluída com sucesso!');
     }
-  })
+  });
+
+  function handleCorrectAnswer(question: AdaptedQuestion) {
+    const correctIndex = question.alternatives.findIndex(alternative => alternative.questionAnswer);
+    return getAlternativeLetter(correctIndex);
+  }
 
   function handleCreateAdaptedQuestion() {
     navigate(`/main-questions/${mainQuestionId}/adapted-questions/create`);
@@ -125,13 +131,7 @@ export function AdaptedQuestions() {
                 <span>Nível</span>
               </TableHead>
               <TableHead>
-                <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
+                <span>Gabarito</span>
               </TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -151,6 +151,11 @@ export function AdaptedQuestions() {
                   <TableCell className="text-zinc-300">
                     <span>
                       {question.level}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <span>
+                      {handleCorrectAnswer(question)}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">

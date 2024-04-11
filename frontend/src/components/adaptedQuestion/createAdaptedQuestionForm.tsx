@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
-import { createAlternativeSchema } from "../alternative/AlternativeSchema";
+import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { CreateAlternative } from "../../interfaces/createAlternative";
 import { CreateQuestion } from "../../interfaces/createQuestion";
 import { SelectLevel } from "../ui/selectLevel";
@@ -37,7 +37,7 @@ export function CreateAdaptedQuestionForm() {
           .filter((file): file is File => file !== undefined);
       }
 
-      const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
+      const alternatives: z.infer<typeof alternativeSchema>[] = data.alternatives;
       for (const alternative of alternatives) {
         if (alternative.images) {
           const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
@@ -56,7 +56,7 @@ export function CreateAdaptedQuestionForm() {
           questionAnswer: Number(data.questionAnswer) === index
         }
         return createAlternative
-      })
+      });
       const createAdaptedQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
@@ -77,7 +77,7 @@ export function CreateAdaptedQuestionForm() {
 
       if (response.status === 201) {
         queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
+          queryKey: ['get-adapted-questions'],
         });
         successAlert('Questão adaptada salva com sucesso!');
         navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
