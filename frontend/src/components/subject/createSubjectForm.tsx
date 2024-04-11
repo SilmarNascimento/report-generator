@@ -50,7 +50,7 @@ export function CreateSubjectForm() {
   return (
     <form onSubmit={handleSubmit(handleCreateSubject)} className="w-full space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
+        <label className="text-sm font-medium block" htmlFor="title">Assunto</label>
         <input 
           {...register('name')}
           id="name" 

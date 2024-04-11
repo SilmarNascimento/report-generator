@@ -7,22 +7,26 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { subjectSchema } from './SubjectSchema';
 import { Subject } from '../../interfaces';
+import { z } from 'zod';
 
 interface EditSubjectFormProps {
   entity: Subject;
 }
 
-export function EditSubjectForm( { entity }: EditSubjectFormProps) {
-  const queryClient = useQueryClient()
+type EditSubjectForm = z.infer<typeof subjectSchema>;
 
-  const { register, handleSubmit, formState } = useForm<Subject>({
+export function EditSubjectForm({ entity }: EditSubjectFormProps) {
+  const queryClient = useQueryClient();
+  const subjectId = entity.id;
+
+  const { register, handleSubmit, formState } = useForm<EditSubjectForm>({
     resolver: zodResolver(subjectSchema),
-  })
+  });
 
 
   const editSubject = useMutation({
-    mutationFn: async ({ id, name }: Subject) => {
-      const response = await fetch(`http://localhost:8080/subject/${id}`,
+    mutationFn: async ({ name }: EditSubjectForm) => {
+      const response = await fetch(`http://localhost:8080/subject/${subjectId}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -45,14 +49,14 @@ export function EditSubjectForm( { entity }: EditSubjectFormProps) {
     }
   })
 
-  async function handleEditSubject({ id, name }: Subject) {
-    await editSubject.mutateAsync({ id, name })
+  async function handleEditSubject({ name }: EditSubjectForm) {
+    await editSubject.mutateAsync({ name })
   }
 
   return (
     <form onSubmit={handleSubmit(handleEditSubject)} className="w-full space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium block" htmlFor="title">Subject name</label>
+        <label className="text-sm font-medium block" htmlFor="title">Assunto</label>
         <input 
           {...register('name')}
           id="name" 

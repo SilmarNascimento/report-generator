@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { SelectClass } from '../ui/selectClass';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { mockExamSchema } from './MockExamSchema';
+import { DevTool } from '@hookform/devtools';
 
 type CreateMockExamForm = z.infer<typeof mockExamSchema>;
 
@@ -18,7 +19,7 @@ export function CreateMockExamForm() {
   const formMethods = useForm<CreateMockExamForm>({
     resolver: zodResolver(mockExamSchema),
   })
-  const { register, handleSubmit, formState } = formMethods;
+  const { register, handleSubmit, formState, control } = formMethods;
 
 
   const createMainQuestion = useMutation({
@@ -123,6 +124,7 @@ export function CreateMockExamForm() {
           </Button>
         </div>
       </form>
+      <DevTool control={control}/>
     </FormProvider>
   )
 }

@@ -19,9 +19,8 @@ export function Login() {
     resolver: zodResolver(createTagSchema),
   });
   
-  const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
+  const onSubmit: SubmitHandler<LoginSchema> = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log(data);
     navigate("/mock-exams");
   };
 

@@ -12,8 +12,8 @@ export function EditMainQuestion() {
           <NavigationBar />
         </header>
         <FormHeader
-          headerTitle="Editar Questão"
-          headerDetails="Altere os campos a seguir para atualizar a Questão"
+          headerTitle="Editar Questão Principal"
+          headerDetails="Altere os campos a seguir para atualizar a questão principal"
         />
         <EditMainQuestionForm />
       </div>

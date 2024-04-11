@@ -13,7 +13,7 @@ export function CreateMockExam() {
         </header>
         <FormHeader
           headerTitle="Novo Simulado"
-          headerDetails="Informe os campos a seguir para criar um novo Simulado"
+          headerDetails="Informe os campos a seguir para criar um novo simulado"
         />
         <CreateMockExamForm />
       </div>

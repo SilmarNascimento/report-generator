@@ -90,7 +90,7 @@ export function Subjects() {
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Subjects</h1>
+          <h1 className="text-xl font-bold">Assuntos</h1>
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
@@ -105,10 +105,10 @@ export function Subjects() {
               <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
-                    Create Subject
+                    Novo Assunto
                   </Dialog.Title>
                   <Dialog.Description className="text-sm text-zinc-500">
-                    Subjects can be used to group objects with similar concepts.
+                    Informe o campo a seguir para criar um novo assunto.
                   </Dialog.Description>
                 </div>
 
@@ -177,10 +177,10 @@ export function Subjects() {
                         <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
                           <div className="space-y-3">
                             <Dialog.Title className="text-xl font-bold">
-                              Edit Subject
+                              Editar Assunto
                             </Dialog.Title>
                             <Dialog.Description className="text-sm text-zinc-500">
-                              Edit the Subject's attribute.
+                              Altere o campo a seguir para atualizar o assunto.
                             </Dialog.Description>
                           </div>
                           <EditSubjectForm entity={subject} />

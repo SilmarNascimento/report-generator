@@ -13,7 +13,7 @@ export function EditMockExam() {
         </header>
         <FormHeader
           headerTitle="Editar Simulado"
-          headerDetails="Altere os campos a seguir para atualizar o Simulado"
+          headerDetails="Altere os campos a seguir para atualizar o simulado"
         />
         <EditMockExamForm />
       </div>

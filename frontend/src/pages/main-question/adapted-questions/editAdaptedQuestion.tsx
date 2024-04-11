@@ -12,8 +12,8 @@ export function EditAdaptedQuestion() {
           <NavigationBar />
         </header>
         <FormHeader
-          headerTitle="Nova Questão"
-          headerDetails="Informe os campos a seguir para criar uma nova Questão"
+          headerTitle="Editar Questão Adaptada"
+          headerDetails="Altere os campos a seguir para atualizar a questão adaptada."
         />
         <EditAdaptedQuestionForm />
       </div>
