@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createAlternativeSchema, editMainQuestionForm, editMainQuestionSchema } from './MainQuestionSchema';
+import { createAlternativeSchema, editMainQuestionSchema, mainQuestionSchema } from './MainQuestionSchema';
 import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
@@ -24,7 +24,7 @@ export function EditMainQuestionForm() {
   const navigate = useNavigate();
 
   const formMethods = useForm<EditMainQuestionForm>({
-    resolver: zodResolver(editMainQuestionForm),
+    resolver: zodResolver(mainQuestionSchema),
   });
   const { register, handleSubmit, formState, setValue, control, watch } = formMethods;
 

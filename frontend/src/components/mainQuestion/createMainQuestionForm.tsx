@@ -5,21 +5,21 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternative/alternativesForm';
-import { createAlternativeSchema, createMainQuestionSchema } from './MainQuestionSchema';
+import { createAlternativeSchema, mainQuestionSchema } from './MainQuestionSchema';
 import { CreateQuestion } from '../../interfaces/createQuestion';
 import { CreateAlternative } from '../../interfaces/createAlternative';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 
-type CreateMainQuestionForm = z.infer<typeof createMainQuestionSchema>
+type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>
 
 export function CreateMainQuestionForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const formMethods = useForm<CreateMainQuestionForm>({
-    resolver: zodResolver(createMainQuestionSchema),
+    resolver: zodResolver(mainQuestionSchema),
   })
   const { register, handleSubmit, formState } = formMethods;
 
