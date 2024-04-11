@@ -20,7 +20,7 @@ export function SelectClass ({ defaultValue }: SelectProps) {
     setValue("className", event.target.value);
   };
 
-  const watchedClassName = watch('className');
+  const watchedClassName = watch("className");
 
   useEffect(() => {
     setSelectedValue(watchedClassName);
