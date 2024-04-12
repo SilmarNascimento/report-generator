@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MockExam } from '../../interfaces';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
@@ -14,23 +14,15 @@ import { DevTool } from '@hookform/devtools';
 
 type EditMockExamForm = z.infer<typeof mockExamSchema>;
 
-export function EditMockExamForm() {
+interface EditMockExamFormProps {
+  entity: MockExam;
+}
+
+export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
   const navigate = useNavigate();
-
-  const { data: mockExamResponse } = useQuery<MockExam>({
-    queryKey: ['get-mock-exams', mockExamId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`)
-      const data = await response.json()
-
-      return data
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  }); 
 
   const formMethods = useForm<EditMockExamForm>({
     resolver: zodResolver(mockExamSchema)

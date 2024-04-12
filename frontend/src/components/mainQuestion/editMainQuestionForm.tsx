@@ -3,8 +3,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createAlternativeSchema, mainQuestionSchema } from './MainQuestionSchema';
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { mainQuestionSchema } from './MainQuestionSchema';
 import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
@@ -14,10 +14,15 @@ import { CreateQuestion } from '../../interfaces/createQuestion';
 import { useEffect, useState } from 'react';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { SelectLevel } from '../ui/selectLevel';
+import { alternativeSchema } from '../alternative/AlternativeSchema';
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
-export function EditMainQuestionForm() {
+interface EditMainQuestionFormProps {
+  entity: MainQuestion;
+}
+
+export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -26,38 +31,26 @@ export function EditMainQuestionForm() {
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   });
-  const { register, handleSubmit, formState, setValue, control, watch } = formMethods;
-
-  const { data: mainQuestionFoundResponse } = useQuery<MainQuestion>({
-    queryKey: ['get-main-questions', mainQuestionId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
-      const data = await response.json()
-
-      return data
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });  
+  const { register, handleSubmit, formState, setValue, control, watch } = formMethods; 
 
   useEffect(() => {
-    if (mainQuestionFoundResponse) {
-      setValue('title', mainQuestionFoundResponse.title);
-      setValue('level', mainQuestionFoundResponse.level);
-      mainQuestionFoundResponse.alternatives.forEach((alternative, index) => {
+    if (mainQuestionResponse) {
+      setValue('title', mainQuestionResponse.title);
+      setValue('level', mainQuestionResponse.level);
+      mainQuestionResponse.alternatives.forEach((alternative, index) => {
         setValue(`alternatives.${index}.description`, alternative.description);
         if (alternative.questionAnswer) {
           setValue('questionAnswer', index.toString());
         }
       });
     }
-  }, [mainQuestionFoundResponse, setValue]);
+  }, [mainQuestionResponse, setValue]);
 
   useEffect(() => {
     function hasChangedValues(): boolean {
       const questionAnswerFormValues = watch("questionAnswer");
 
-      const questionAnswerIndex = mainQuestionFoundResponse?.alternatives
+      const questionAnswerIndex = mainQuestionResponse?.alternatives
         .findIndex(alternative => alternative.questionAnswer) ?? '';
       
       if (questionAnswerFormValues !== questionAnswerIndex.toString() || !!Object.keys(formState.dirtyFields).length) {
@@ -68,7 +61,7 @@ export function EditMainQuestionForm() {
     }
 
     setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mainQuestionFoundResponse, watch]);
+  }, [formState, hasChanged, mainQuestionResponse, watch]);
 
   const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionForm) => {
@@ -81,7 +74,7 @@ export function EditMainQuestionForm() {
           .filter((file): file is File => file !== undefined);
       }
 
-      const alternatives: z.infer<typeof createAlternativeSchema>[] = data.alternatives;
+      const alternatives: z.infer<typeof alternativeSchema>[] = data.alternatives;
       for (const alternative of alternatives) {
         if (alternative.images) {
           const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);

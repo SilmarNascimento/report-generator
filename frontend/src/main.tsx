@@ -19,7 +19,7 @@ import { CreateAdaptedQuestion } from "./pages/main-question/adapted-questions/c
 import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/editAdaptedQuestion.tsx";
 import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
 import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
-import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestion.tsx";
+import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
 
 const router = createBrowserRouter([
   {

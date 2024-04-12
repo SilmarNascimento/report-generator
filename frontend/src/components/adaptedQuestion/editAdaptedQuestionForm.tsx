@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Button } from "../ui/button";
 import { adaptedQuestionSchema } from "./AdaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
@@ -16,9 +16,13 @@ import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
 import { useEffect, useState } from "react";
 
-type EditAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>
+type EditAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>;
 
-export function EditAdaptedQuestionForm() {
+interface EditAdaptedQuestionFormProps {
+  entity: AdaptedQuestion;
+}
+
+export function EditAdaptedQuestionForm({ entity: adaptedQuestionResponse }: EditAdaptedQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -29,19 +33,6 @@ export function EditAdaptedQuestionForm() {
     resolver: zodResolver(adaptedQuestionSchema)
   })
   const { register, handleSubmit, formState, setValue, control, watch } = formMethods;
-
-  const { data: adaptedQuestionResponse } = useQuery<AdaptedQuestion>({
-    queryKey: ['get-adapted-questions', mainQuestionId, adaptedQuestionId],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`)
-      const data = await response.json()
-
-      console.log(data);
-      return data
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
 
     useEffect(() => {
       if (adaptedQuestionResponse) {
