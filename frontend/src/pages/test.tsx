@@ -1,61 +1,59 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useNavigate, useParams } from 'react-router-dom';
+import { AddSubjectManagerTable } from '../components/subject/addSubjectManagerTable';
+import { RemoveSubjectManagerTable } from "../components/subject/removeSubjectManagerTable";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { MainQuestion } from '../interfaces';
+import { successAlert, warningAlert } from '../utils/toastAlerts';
 
 export function Test() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "bf87b8fd-210f-4d57-b772-6b02265e352d";
 
-  // const fileSchema = z
-  //   .custom<File>(val => val instanceof File, 'Please upload a file')
+  const { data: mainQuestionResponse } = useQuery<MainQuestion>({
+    queryKey: ['get-main-questions', mainQuestionId],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
+      const data = await response.json()
 
-  const fileListSchema = z
-    .instanceof(FileList)
-    .optional();
+      return data
+    },
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+  });
 
-  const formSchema = z.object({
-    inputFile: fileListSchema
+  const addSubjectToMainQuestion = useMutation({
+    mutationFn: async (subjectList: string[]) => {
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'PATCH',
+        body: JSON.stringify({
+          subjectsId: subjectList
+        }),
+      })
+
+      if (response.status === 200) {
+        queryClient.invalidateQueries({
+          queryKey: ['get-main-questions'],
+        });
+        successAlert('Questão principal alterada com sucesso!');
+        navigate("/main-questions");
+      }
+
+      if (response.status === 404) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
+    }
   })
 
-  const { register, handleSubmit, formState } = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-  })
-
-  function handleForm(data: z.infer<typeof formSchema>) {
-    console.log("Dados recebidos do form: ", data);
-  }
-
-  if (formState?.errors) {
-    console.log("formState errors: ", formState.errors);
-  }
-
-   function handleChange(event) {
-    event.preventDefault();
-    console.log("Elemento do evento: ", event.target);
-    const files = event.target.files;
-    console.log("Conteúdo do elemento file", Array.from(files));
-    console.log("Quantidade de arquivos: ", files.length);
-    console.log("Primeiro arquivo: ", files[0]);
-  }
-  
   return (
     <>
-      <form method="post" encType="multipart/form-data" onSubmit={handleSubmit(handleForm)}>
-        <div>
-          <label htmlFor="file">Choose file to upload</label>
-          <input
-            type="file"
-            {...register('inputFile')}
-            id="file"
-            name="file"
-            multiple
-            hidden 
-            accept="image/*,.pdf"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+      <AddSubjectManagerTable entity={mainQuestionResponse} handleAddSubjects={addSubjectToMainQuestion}/>
+      <RemoveSubjectManagerTable  entity={mainQuestionResponse} handleRemoveSubjects={}/>
     </>
   );
 }

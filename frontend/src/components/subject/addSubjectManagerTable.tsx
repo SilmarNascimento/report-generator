@@ -1,8 +1,8 @@
-import { FileDown, Plus, Search } from "lucide-react";
+import { FilePlus, Plus, Search } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { UseMutationResult, keepPreviousData, useQuery } from "@tanstack/react-query";
 import { MockExam, MainQuestion, PageResponse, Subject } from "../../interfaces";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -11,14 +11,13 @@ import { Pagination } from "../pagination";
 
 type AddSubjectManagerTableProps = ({
   entity: MockExam;
-  handleAddSubjects: (mockExamId: string, subjectsId: string[]) => Promise<void>;
+  handleAddSubjects: (subjectsId: string[]) => UseMutationResult<void, Error, string[], unknown>;
 } | {
   entity: MainQuestion;
-  handleAddSubjects: (mainQuestionId: string, subjectsId: string[]) => Promise<void>;
+  handleAddSubjects: (subjectsId: string[]) => UseMutationResult<void, Error, string[], unknown>;
 });
 
 export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubjectManagerTableProps) {
-  //const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const [subjectIdToAdd, setSubjectIdToAdd] = useState<string[]>([]);
 
@@ -52,12 +51,14 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
-  const filteredSubjectPageResponse = subjectPageResponse?.data.filter((subject) => entity.subjects.filter((entitySubject) => subject.id !== entitySubject.id));
+  const filteredSubjectPageResponse = subjectPageResponse?.data.filter((subject) => entity.subjects.includes(subject));
 
   function toggleCheckBox(subjectId: string) {
-    subjectIdToAdd.find((id) => id === subjectId)
-      ? setSubjectIdToAdd(subjectIdToAdd.filter((id) => id !== subjectId))
-      : setSubjectIdToAdd(prev => ([...prev, subjectId]));
+    setSubjectIdToAdd(prev => (
+      prev.includes(subjectId)
+        ? prev.filter(id => id !== subjectId)
+        : [...prev, subjectId]
+    ));
   }
 
   return (
@@ -79,9 +80,9 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
             </Input>
           </form>
 
-          <Button>
-            <FileDown className="size-3" />
-            Export
+          <Button onClick={() => handleAddSubjects(subjectIdToAdd)}>
+            <FilePlus className="size-3" />
+            Adicionar todos
           </Button>
         </div>
 
@@ -101,7 +102,7 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
                   <TableCell>
                     <input
                       type="checkbox"
-                      checked={!!subjectIdToAdd.find((subjectId: string) => subjectId === subject.id)}
+                      checked={subjectIdToAdd.includes(subject.id)}
                       onClick={() => toggleCheckBox(subject.id)}
                     />
                   </TableCell>
@@ -114,7 +115,7 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleAddSubjects(entity.id, subjectIdToAdd)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleAddSubjects([subject.id])}>
                       <Plus className="size-3" color="red"/>
                     </Button>
                   </TableCell>

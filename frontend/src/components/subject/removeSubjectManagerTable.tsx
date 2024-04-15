@@ -2,12 +2,10 @@ import { FileDown, Search, X } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MockExam, MainQuestion, PageResponse, Subject } from "../../interfaces";
+import { MockExam, MainQuestion, Subject } from "../../interfaces";
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
 import useDebounceValue from "../../hooks/useDebounceValue";
-import { Pagination } from "../pagination";
+import { PaginationFromList } from "../paginationFromList";
 
 type RemoveSubjectManagerTableProps = ({
   entity: MockExam;
@@ -17,52 +15,33 @@ type RemoveSubjectManagerTableProps = ({
   handleRemoveSubjects: (mainQuestionId: string, subjectsId: string[]) => Promise<void>;
 });
 
-export function AddSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
-  const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
-  
-  const previousSubjectsIdList = entity.subjects.map((subject: Subject) => subject.id);
-  const [subjectIdToAdd, setSubjectIdToAdd] = useState<string[]>([]);
-  const [subjectIdToDelete, setSubjectIdToDelete] = useState<string[]>([]);
-  const [subjectIdList, setSubjectIdList] = useState<string[]>(previousSubjectsIdList);
-
-
-  const urlFilter = searchParams.get('query') ?? '';
-  const [filter, setFilter] = useState(urlFilter);
+export function RemoveSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
+  const [filteredEntity, setFilteredEntity] = useState<Subject[]>(entity.subjects);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [filter, setFilter] = useState<string>("");
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+  const [subjectIdToDelete, setSubjectIdToDelete] = useState<string[]>([]);
+  const entitySubjects = entity.subjects;
 
   useEffect(() => {
-    setSearchParams(params => {
-      if (params.get('query') !== debouncedQueryFilter) {
-        params.set('page', '1');
-        params.set('query', debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
-    });
-  }, [debouncedQueryFilter, setSearchParams]);
+    if (filter !== debouncedQueryFilter) {
+      setCurrentPage(1);
+      setFilter(debouncedQueryFilter);
+      filterSubject();
+    }
+  }, [debouncedQueryFilter, currentPage, filter]);
 
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
-  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
+  function filterSubject() {
+    const filteredSubject = entitySubjects.filter((subject) => subject.name.includes(filter));
+    setFilteredEntity(filteredSubject);
 
-  const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
-    queryKey: ['get-subjects', urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
-      const data = await response.json()
-
-      return data
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
+  }
 
   function toggleCheckBox(subjectId: string) {
-    subjectIdToAdd.find((id) => id === subjectId)
-      ? setSubjectIdToAdd(subjectIdToAdd.filter((id) => id !== subjectId))
-      : setSubjectIdToAdd(prev => ([...prev, subjectId]));
+    subjectIdToDelete.find((id) => id === subjectId)
+      ? setSubjectIdToDelete(subjectIdToDelete.filter((id) => id !== subjectId))
+      : setSubjectIdToDelete(prev => ([...prev, subjectId]));
   }
 
   return (
@@ -100,7 +79,7 @@ export function AddSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveS
             </TableRow>
           </TableHeader>
           <TableBody>
-            {subjectPageResponse?.data.map((subject) => {
+            {entitySubjects.map((subject) => {
               return (
                 <TableRow key={subject.id}>
                   <TableCell>
@@ -115,7 +94,7 @@ export function AddSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveS
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveSubjects(entity.id, subjectIdToAdd)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveSubjects(entity.id, subjectIdToDelete)}>
                       <X className="size-3" color="red"/>
                     </Button>
                   </TableCell>
@@ -124,7 +103,14 @@ export function AddSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveS
             })}
           </TableBody>
         </Table>
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
+        <PaginationFromList
+          page={currentPage}
+          items={pageSize}
+          totalItems={filteredEntity.length}
+          pages={Math.ceil(filteredEntity.length / pageSize)}
+          setCurrentPage={setCurrentPage}
+          setPageSize={setPageSize}
+        />
       </div>
     </>
   );
