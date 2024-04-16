@@ -74,7 +74,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), eq(null), any(List.class)))
+        .when(subjectRepository.findAll(eq(mockPageable), eq(null)))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null, new ArrayList<>());
@@ -91,7 +91,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), eq(null), eq(new ArrayList<>()));
+        .findAll(any(Pageable.class), eq(null));
   }
 
   @Test
@@ -109,7 +109,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), eq(query), eq(new ArrayList<>())))
+        .when(subjectRepository.findAll(eq(mockPageable), eq(query)))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query, new ArrayList<>());
@@ -126,7 +126,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), any(String.class), eq(new ArrayList<>()));
+        .findAll(any(Pageable.class), any(String.class));
   }
 
   @Test

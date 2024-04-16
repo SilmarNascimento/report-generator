@@ -30,6 +30,9 @@ public class SubjectService implements SubjectServiceInterface {
   @Override
   public Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query, List<UUID> excludedSubjects) {
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    if (excludedSubjects.isEmpty()) {
+      return subjectRepository.findAll(pageable, query);
+    }
     return subjectRepository.findAll(pageable, query, excludedSubjects);
   }
 

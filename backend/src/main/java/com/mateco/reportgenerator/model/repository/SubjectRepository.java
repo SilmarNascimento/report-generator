@@ -18,7 +18,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
   @NonNull
-  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%) AND (:excludedSubjectsSize=0 OR subject.id NOT IN :excludedSubjects)")
+  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%)")
+  Page<Subject> findAll(@NonNull Pageable pageable, String query);
+  @NonNull
+  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%) AND (subject.id NOT IN :excludedSubjects)")
   Page<Subject> findAll(@NonNull Pageable pageable, String query, List<UUID> excludedSubjects);
   Optional<Subject> findByName(String name);
   List<Subject> findAllByNameIn(List<String> subjectName);
