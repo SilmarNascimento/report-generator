@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectInputDto;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
@@ -30,13 +31,14 @@ public class SubjectController {
     this.subjectService = subjectService;
   }
 
-  @GetMapping
+  @PostMapping("/filter")
   public ResponseEntity<PageOutputDto<SubjectOutputDto>> findAllSubjects(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
       @RequestParam(required = false, defaultValue = "20") int pageSize,
-      @RequestParam(required = false) String query
+      @RequestParam(required = false) String query,
+      @RequestBody(required = false) SubjectListInputDto excludedSubjects
   ) {
-    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize, query);
+    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize, query, excludedSubjects.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(

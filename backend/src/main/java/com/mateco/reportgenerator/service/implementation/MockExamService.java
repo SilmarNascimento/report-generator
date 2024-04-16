@@ -27,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MockExamService implements MockExamServiceInterface {
@@ -110,6 +111,7 @@ public class MockExamService implements MockExamServiceInterface {
   }
 
   @Override
+  @Transactional
   public MockExam addMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));

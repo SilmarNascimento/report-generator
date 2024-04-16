@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
  *                     da entidade Subject.
  */
 public interface SubjectServiceInterface {
-  Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query);
+  Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query, List<UUID> excludedSubjects);
   Subject findSubjectById(UUID subjectId);
   List<Subject> findAllByName(List<String> subjectNameList);
   Subject createSubject(Subject subject);

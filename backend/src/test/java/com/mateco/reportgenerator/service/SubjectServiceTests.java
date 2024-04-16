@@ -15,6 +15,7 @@ import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.AlreadyExistsException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,10 +74,10 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(mockPageable, null))
+        .when(subjectRepository.findAll(eq(mockPageable), eq(null), any(List.class)))
         .thenReturn(page);
 
-    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null);
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null, new ArrayList<>());
     List<String> subjectsName = serviceResponse.getContent().stream()
         .map(Subject::getName)
         .toList();
@@ -90,7 +91,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), any());
+        .findAll(any(Pageable.class), eq(null), eq(new ArrayList<>()));
   }
 
   @Test
@@ -108,10 +109,10 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(mockPageable, query))
+        .when(subjectRepository.findAll(eq(mockPageable), eq(query), eq(new ArrayList<>())))
         .thenReturn(page);
 
-    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query);
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query, new ArrayList<>());
     List<String> subjectsName = serviceResponse.getContent().stream()
         .map(Subject::getName)
         .toList();
@@ -125,7 +126,78 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), any(String.class));
+        .findAll(any(Pageable.class), any(String.class), eq(new ArrayList<>()));
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject filtradas por uma lista de Ids")
+  public void findAllSubjectsNonEmptyNullIdListFilterTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    List<UUID> excludedSubjectsId = List.of(mockSubjectId01);
+
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject01, mockSubject02));
+
+    Mockito
+        .when(subjectRepository.findAll(eq(mockPageable), any(), eq(excludedSubjectsId)))
+        .thenReturn(page);
+
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null, excludedSubjectsId);
+    List<String> subjectsName = serviceResponse.getContent().stream()
+        .map(Subject::getName)
+        .toList();
+
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
+    assertTrue(subjectsName.contains(mockSubject01.getName()));
+    assertTrue(subjectsName.contains(mockSubject02.getName()));
+
+    Mockito
+        .verify(subjectRepository)
+        .findAll(any(Pageable.class), eq(null), any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista de todas as entidades Subject filtradas por uma lista de Ids com determiando nome")
+  public void findAllSubjectsAllFiltersTest() {
+    int pageNumber = 0;
+    int pageSize = 2;
+    String query = "ome";
+    List<UUID> excludedSubjectsId = List.of(mockSubjectId01);
+
+    Pageable mockPageable = PageRequest.of(pageNumber, pageSize);
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject01, mockSubject02));
+
+    Mockito
+        .when(subjectRepository.findAll(eq(mockPageable), eq(query), eq(excludedSubjectsId)))
+        .thenReturn(page);
+
+    Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query, excludedSubjectsId);
+    List<String> subjectsName = serviceResponse.getContent().stream()
+        .map(Subject::getName)
+        .toList();
+
+    assertFalse(serviceResponse.isEmpty());
+    assertInstanceOf(Page.class, serviceResponse);
+    assertEquals(pageNumber, serviceResponse.getNumber());
+    assertEquals(pageSize, serviceResponse.getContent().size());
+    assertTrue(subjectsName.contains(mockSubject01.getName()));
+    assertTrue(subjectsName.contains(mockSubject02.getName()));
+
+    Mockito
+        .verify(subjectRepository)
+        .findAll(any(Pageable.class), any(String.class), any(List.class));
   }
 
   @Test

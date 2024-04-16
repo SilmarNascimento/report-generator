@@ -2,10 +2,13 @@ package com.mateco.reportgenerator.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
 import com.mateco.reportgenerator.service.exception.AlreadyExistsException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,6 +48,7 @@ public class SubjectControllerTests {
   private SubjectServiceInterface subjectService;
 
   private String baseUrl;
+  private ObjectMapper objectMapper;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
   private Subject mockSubject01;
@@ -54,6 +59,7 @@ public class SubjectControllerTests {
     baseUrl = "/subject";
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
+    objectMapper = new ObjectMapper();
 
     mockSubject01 = new Subject("Geometria");
     mockSubject01.setId(mockSubjectId01);
@@ -68,9 +74,10 @@ public class SubjectControllerTests {
     int pageNumber = 0;
     int pageSize = 20;
     long totalItems = 2;
+    List<UUID> excludedSubjects = List.of();
+    SubjectListInputDto requestBody = new SubjectListInputDto(excludedSubjects);
 
     Page<Subject> page = Mockito.mock(Page.class);
-
 
     Mockito
         .when(page.getNumberOfElements())
@@ -86,10 +93,13 @@ public class SubjectControllerTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(), any(List.class)))
         .thenReturn(page);
 
-    ResultActions httpResponse = mockMvc.perform(get(baseUrl));
+    String endpoint = baseUrl + "/filter";
+    ResultActions httpResponse = mockMvc.perform(post(endpoint)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestBody)));
 
     httpResponse
         .andExpect(status().is(200))
@@ -105,21 +115,31 @@ public class SubjectControllerTests {
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> subjectListCaptor = ArgumentCaptor.forClass(List.class);
+
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+        .findAllSubjects(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            subjectListCaptor.capture()
+        );
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
     assertNull(queryCaptor.getValue());
+    assertEquals(excludedSubjects, subjectListCaptor.getValue());
   }
 
   @Test
-  @DisplayName("Verifica se é retornado uma lista paginada das entidades Subject com query parameters")
-  public void findAllSubjectsQueryParametersTest() throws Exception {
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades Subject com Path parameters")
+  public void findAllSubjectsPathParametersTest() throws Exception {
     int pageNumber = 0;
     int pageSize = 2;
     long totalItems = 2;
+    List<UUID> excludedSubjects = List.of();
+    SubjectListInputDto requestBody = new SubjectListInputDto(excludedSubjects);
 
     Page<Subject> page = Mockito.mock(Page.class);
 
@@ -137,11 +157,13 @@ public class SubjectControllerTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(), any(List.class)))
         .thenReturn(page);
 
-    String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
-    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+    String endpoint = baseUrl + "/filter" + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    ResultActions httpResponse = mockMvc.perform(post(endpoint)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestBody)));
 
     httpResponse
         .andExpect(status().is(200))
@@ -157,13 +179,21 @@ public class SubjectControllerTests {
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> subjectListCaptor = ArgumentCaptor.forClass(List.class);
+
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+        .findAllSubjects(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            subjectListCaptor.capture()
+        );
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
     assertNull(queryCaptor.getValue());
+    assertEquals(excludedSubjects, subjectListCaptor.getValue());
   }
 
   @Test
@@ -173,6 +203,8 @@ public class SubjectControllerTests {
     int pageSize = 20;
     long totalItems = 2;
     String query = "ome";
+    List<UUID> excludedSubjects = List.of();
+    SubjectListInputDto requestBody = new SubjectListInputDto(excludedSubjects);
 
     Page<Subject> page = Mockito.mock(Page.class);
 
@@ -190,11 +222,13 @@ public class SubjectControllerTests {
         .thenReturn(List.of(mockSubject01));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(String.class)))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(String.class), any(List.class)))
         .thenReturn(page);
 
-    String endpoint = baseUrl + "?query=" + query;
-    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+    String endpoint = baseUrl + "/filter" + "?query=" + query;
+    ResultActions httpResponse = mockMvc.perform(post(endpoint)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestBody)));
 
     httpResponse
         .andExpect(status().is(200))
@@ -208,13 +242,84 @@ public class SubjectControllerTests {
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> subjectListCaptor = ArgumentCaptor.forClass(List.class);
+
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+        .findAllSubjects(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            subjectListCaptor.capture()
+        );
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
     assertEquals(query, queryCaptor.getValue());
+    assertEquals(excludedSubjects, subjectListCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades Subject com parâmetros de lista de Ids a ser excluída da busca")
+  public void findAllSubjectsQueryIdListFilterTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    List<UUID> excludedSubjects = new ArrayList<>();
+    excludedSubjects.add(mockSubjectId01);
+    SubjectListInputDto requestBody = new SubjectListInputDto(excludedSubjects);
+
+    Page<Subject> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockSubject02));
+
+    Mockito
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(), eq(excludedSubjects)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter";
+    ResultActions httpResponse = mockMvc.perform(post(endpoint)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestBody)));
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockSubjectId02.toString()))
+        .andExpect(jsonPath("$.data.[0].name").value(mockSubject02.getName()));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> subjectListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(subjectService, Mockito.times(1))
+        .findAllSubjects(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            subjectListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+    assertEquals(excludedSubjects, subjectListCaptor.getValue());
   }
 
   @Test
@@ -224,6 +329,8 @@ public class SubjectControllerTests {
     int pageSize = 2;
     long totalItems = 2;
     String query = "ome";
+    List<UUID> excludedSubjects = List.of(mockSubjectId01);
+    SubjectListInputDto requestBody = new SubjectListInputDto(excludedSubjects);
 
     Page<Subject> page = Mockito.mock(Page.class);
 
@@ -238,14 +345,16 @@ public class SubjectControllerTests {
         .thenReturn(1);
     Mockito
         .when(page.getContent())
-        .thenReturn(List.of(mockSubject01));
+        .thenReturn(List.of(mockSubject02));
 
     Mockito
-        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any()))
+        .when(subjectService.findAllSubjects(anyInt(), anyInt(), any(), any(List.class)))
         .thenReturn(page);
 
-    String endpoint = baseUrl + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&query=" + query;
-    ResultActions httpResponse = mockMvc.perform(get(endpoint));
+    String endpoint = baseUrl + "/filter" + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&query=" + query;
+    ResultActions httpResponse = mockMvc.perform(post(endpoint)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestBody)));
 
     httpResponse
         .andExpect(status().is(200))
@@ -253,19 +362,27 @@ public class SubjectControllerTests {
         .andExpect(jsonPath("$.totalItems").value(totalItems))
         .andExpect(jsonPath("$.pages").value(1))
         .andExpect(jsonPath("$.data", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].id").value(mockSubjectId01.toString()))
-        .andExpect(jsonPath("$.data.[0].name").value(mockSubject01.getName()));
+        .andExpect(jsonPath("$.data.[0].id").value(mockSubjectId02.toString()))
+        .andExpect(jsonPath("$.data.[0].name").value(mockSubject02.getName()));
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> subjectListCaptor = ArgumentCaptor.forClass(List.class);
+
     Mockito
         .verify(subjectService, Mockito.times(1))
-        .findAllSubjects(pageNumberCaptor.capture(), pageSizeCaptor.capture(), queryCaptor.capture());
+        .findAllSubjects(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            subjectListCaptor.capture()
+        );
 
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
     assertEquals(query, queryCaptor.getValue());
+    assertEquals(excludedSubjects, subjectListCaptor.getValue());
   }
 
   @Test
