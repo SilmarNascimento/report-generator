@@ -196,13 +196,14 @@ public class MainQuestionController {
   }
 
   @DeleteMapping("/{mainQuestionId}/subject")
-  public ResponseEntity<Void> removeSubjectFromMainQUestion(
+  public ResponseEntity<MainQuestionOutputDto> removeSubjectFromMainQUestion(
       @PathVariable UUID mainQuestionId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
-    mainQuestionService.removeSubject(mainQuestionId, subjectIdList.subjectsId());
+    MainQuestion mainQuestionUpdated = mainQuestionService
+        .removeSubject(mainQuestionId, subjectIdList.subjectsId());
     return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
+        .status(HttpStatus.OK)
+        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
   }
 }

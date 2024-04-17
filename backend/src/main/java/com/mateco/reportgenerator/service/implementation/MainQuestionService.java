@@ -125,13 +125,13 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   @Transactional
-  public void removeSubject(UUID questionId, List<UUID> subjectsId) {
+  public MainQuestion removeSubject(UUID questionId, List<UUID> subjectsId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
     mainQuestionFound.getSubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
 
-    mainQuestionRepository.save(mainQuestionFound);
+    return mainQuestionRepository.save(mainQuestionFound);
   }
 
   @Override

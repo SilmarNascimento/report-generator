@@ -23,7 +23,7 @@ public interface MainQuestionServiceInterface {
   void deleteMainQuestionById(UUID questionId);
 
   MainQuestion addSubject(UUID questionId, List<UUID> subjecstId);
-  void removeSubject(UUID questionId, List<UUID> subjectsId);
+  MainQuestion removeSubject(UUID questionId, List<UUID> subjectsId);
 
   MainQuestion addAdaptedQuestion(UUID questionId, AdaptedQuestion adaptedQuestion, List<String> questionImages);
   void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
