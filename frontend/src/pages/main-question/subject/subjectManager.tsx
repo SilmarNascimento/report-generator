@@ -35,24 +35,22 @@ export function MainQuestionSubjectManager() {
   }, [debouncedQueryFilter, setSearchParams]);
 
 
-  const { data: mainQuestionResponse  } = useQuery<MainQuestion>({
+  useQuery<MainQuestion>({
     queryKey: ['get-main-questions', mainQuestionId],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`);
-      const data = await response.json();
+      const data: MainQuestion = await response.json();
+
+      if (data) {
+        mainQuestion.current = data;
+        subjectIdList.current = data.subjects.map((subject) => subject.id);
+      }
 
       return data
     },
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
-
-  useEffect(() => {
-    if (mainQuestionResponse) {
-      mainQuestion.current = mainQuestionResponse;
-      subjectIdList.current = mainQuestionResponse.subjects.map((subject) => subject.id);
-    }
-  }, [mainQuestionResponse]);
 
   const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
     queryKey: ['get-subjects', urlFilter, page, pageSize],

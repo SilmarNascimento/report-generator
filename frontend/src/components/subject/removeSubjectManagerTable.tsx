@@ -1,4 +1,4 @@
-import { FilePlus, Search, X } from "lucide-react";
+import { FileMinus, Search, X } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -58,7 +58,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
           </form>
 
           <Button onClick={() => handleRemoveSubjects(subjectIdToDelete)}>
-            <FilePlus className="size-3" />
+            <FileMinus className="size-3" />
             Remover todos
           </Button>
         </div>
