@@ -42,7 +42,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
     <>
       <div className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Assuntos</h1>
+          <h1 className="text-xl font-bold">Assuntos já adicionados</h1>
         </div>
 
         <div className="flex items-center justify-between">

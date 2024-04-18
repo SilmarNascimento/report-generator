@@ -28,10 +28,6 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
     ));
   }
 
-  function handleAddMainQuestionFromManager(subjectIdList: string[]) {
-    handleAddMainQuestion(subjectIdList);
-  }
-
   function getMainQuestionCode(mainQuestion: MainQuestion) {
     return mainQuestion.id;
   }
@@ -60,7 +56,7 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
             </Input>
           </form>
 
-          <Button onClick={() => handleAddMainQuestionFromManager(mainQuestionIdToAdd)}>
+          <Button onClick={() => handleAddMainQuestion(mainQuestionIdToAdd)}>
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>
@@ -145,7 +141,7 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleAddMainQuestionFromManager([mainQuestion.id])}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleAddMainQuestion([mainQuestion.id])}>
                       <Plus className="size-3" color="red"/>
                     </Button>
                   </TableCell>
