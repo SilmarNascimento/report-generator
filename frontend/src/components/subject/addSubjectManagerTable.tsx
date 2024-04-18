@@ -25,6 +25,11 @@ export function AddSubjectManagerTable({ entity, filter, setFilter, page, handle
         : [...prev, subjectId]
     ));
   }
+
+  function handleClick(subjectIdList: string[]) {
+    setSubjectIdToAdd([]);
+    handleAddSubjects(subjectIdList);
+  }
   
   return (
     <>
@@ -45,7 +50,7 @@ export function AddSubjectManagerTable({ entity, filter, setFilter, page, handle
             </Input>
           </form>
 
-          <Button onClick={() => handleAddSubjects(subjectIdToAdd)}>
+          <Button onClick={() => handleClick(subjectIdToAdd)}>
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>

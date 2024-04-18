@@ -47,7 +47,6 @@ export function MainQuestions() {
       return data
     },
     placeholderData: keepPreviousData,
-    //staleTime: Infinity,
   })
 
   const deleteMainQuestion = useMutation({

@@ -38,6 +38,11 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
     ));
   }
 
+  function handleClick(subjectIdList: string[]) {
+    setSubjectIdToDelete([]);
+    handleRemoveSubjects(subjectIdList);
+  }
+
   return (
     <>
       <div className="max-w-6xl mx-auto space-y-5">
@@ -57,7 +62,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
             </Input>
           </form>
 
-          <Button onClick={() => handleRemoveSubjects(subjectIdToDelete)}>
+          <Button onClick={() => handleClick(subjectIdToDelete)}>
             <FileMinus className="size-3" />
             Remover todos
           </Button>
