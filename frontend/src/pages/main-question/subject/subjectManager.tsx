@@ -106,7 +106,7 @@ export function MainQuestionSubjectManager() {
     }
   })
 
-  const removeSubjectToMainQuestion = useMutation({
+  const removeSubjectFromMainQuestion = useMutation({
     mutationFn: async (subjectIdListToRemove: string[]) => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
       {
@@ -142,7 +142,7 @@ export function MainQuestionSubjectManager() {
   }
 
   async function handleRemoveSubject(subjectIdList: string[]) {
-    await removeSubjectToMainQuestion.mutateAsync(subjectIdList)
+    await removeSubjectFromMainQuestion.mutateAsync(subjectIdList)
   }
 
   return (

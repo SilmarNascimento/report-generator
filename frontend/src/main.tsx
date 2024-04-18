@@ -21,6 +21,7 @@ import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
 import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
 import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
 import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
+import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
   {
     path: "/mock-exams/:mockExamId/main-questions",
     element: <MainQuestionsFromMockExam />
+  },
+  {
+    path: "/mock-exams/:mockExamId/subjects",
+    element: <MockExamSubjectManager />
   },
 
   {
