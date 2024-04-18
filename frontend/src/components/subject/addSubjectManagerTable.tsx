@@ -2,56 +2,21 @@ import { FilePlus, Plus, Search } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { UseMutationResult, keepPreviousData, useQuery } from "@tanstack/react-query";
-import { MockExam, MainQuestion, PageResponse, Subject } from "../../interfaces";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import useDebounceValue from "../../hooks/useDebounceValue";
+import { UseMutateAsyncFunction } from "@tanstack/react-query";
+import { PageResponse, Subject } from "../../interfaces";
+import { useState } from "react";
 import { Pagination } from "../pagination";
 
 type AddSubjectManagerTableProps = ({
-  entity: MockExam;
-  handleAddSubjects: (subjectsId: string[]) => UseMutationResult<void, Error, string[], unknown>;
-} | {
-  entity: MainQuestion;
-  handleAddSubjects: (subjectsId: string[]) => UseMutationResult<void, Error, string[], unknown>;
-});
+  entity: PageResponse<Subject>;
+  filter: string;
+  setFilter: React.Dispatch<React.SetStateAction<string>>;
+  page: number;
+  handleAddSubjects: UseMutateAsyncFunction<void, Error, string[], unknown>;
+})
 
-export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubjectManagerTableProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+export function AddSubjectManagerTable({ entity, filter, setFilter, page, handleAddSubjects }: AddSubjectManagerTableProps) {
   const [subjectIdToAdd, setSubjectIdToAdd] = useState<string[]>([]);
-
-
-  const urlFilter = searchParams.get('query') ?? '';
-  const [filter, setFilter] = useState(urlFilter);
-  const debouncedQueryFilter = useDebounceValue(filter, 1000);
-
-  useEffect(() => {
-    setSearchParams(params => {
-      if (params.get('query') !== debouncedQueryFilter) {
-        params.set('page', '1');
-        params.set('query', debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
-    });
-  }, [debouncedQueryFilter, setSearchParams]);
-
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
-  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
-
-  const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
-    queryKey: ['get-subjects', urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
-      const data = await response.json()
-
-      return data
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
-  const filteredSubjectPageResponse = subjectPageResponse?.data.filter((subject) => entity.subjects.includes(subject));
 
   function toggleCheckBox(subjectId: string) {
     setSubjectIdToAdd(prev => (
@@ -61,11 +26,15 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
     ));
   }
 
+  function handleAddSubjectFromManager(subjectIdList: string[]) {
+    handleAddSubjects(subjectIdList);
+  }
+  
   return (
     <>
       <div className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Assuntos</h1>
+          <h1 className="text-xl font-bold">Assuntos disponíveis</h1>
         </div>
 
         <div className="flex items-center justify-between">
@@ -80,7 +49,7 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
             </Input>
           </form>
 
-          <Button onClick={() => handleAddSubjects(subjectIdToAdd)}>
+          <Button onClick={() => handleAddSubjectFromManager(subjectIdToAdd)}>
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>
@@ -96,14 +65,14 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredSubjectPageResponse?.map((subject) => {
+            {entity?.data.map((subject) => {
               return (
                 <TableRow key={subject.id}>
                   <TableCell>
                     <input
                       type="checkbox"
                       checked={subjectIdToAdd.includes(subject.id)}
-                      onClick={() => toggleCheckBox(subject.id)}
+                      onChange={() => toggleCheckBox(subject.id)}
                     />
                   </TableCell>
                   <TableCell>
@@ -115,7 +84,7 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleAddSubjects([subject.id])}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleAddSubjectFromManager([subject.id])}>
                       <Plus className="size-3" color="red"/>
                     </Button>
                   </TableCell>
@@ -124,7 +93,7 @@ export function AddSubjectManagerTable({ entity, handleAddSubjects }: AddSubject
             })}
           </TableBody>
         </Table>
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
+        {entity && <Pagination pages={entity.pages} items={entity.pageItems} page={page} totalItems={entity.totalItems}/>}
       </div>
     </>
   );

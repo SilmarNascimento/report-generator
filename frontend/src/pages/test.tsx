@@ -23,7 +23,7 @@ export function Test() {
   });
 
   const addSubjectToMainQuestion = useMutation({
-    mutationFn: async (subjectList: string[]) => {
+    mutationFn: async (subjectIdList: string[]) => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
       {
         headers: {
@@ -31,7 +31,7 @@ export function Test() {
         },
         method: 'PATCH',
         body: JSON.stringify({
-          subjectsId: subjectList
+          subjectsId: subjectIdList
         }),
       })
 
@@ -39,7 +39,7 @@ export function Test() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
-        successAlert('Questão principal alterada com sucesso!');
+        successAlert('Assuntos adicionados à questão principal com sucesso!');
         navigate("/main-questions");
       }
 
@@ -50,10 +50,47 @@ export function Test() {
     }
   })
 
+  const removeSubjectToMainQuestion = useMutation({
+    mutationFn: async (subjectIdList: string[]) => {
+      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'DELETE',
+        body: JSON.stringify({
+          subjectsId: subjectIdList
+        }),
+      })
+
+      if (response.status === 200) {
+        queryClient.invalidateQueries({
+          queryKey: ['get-main-questions'],
+        });
+        successAlert('Assuntos removidos da questão principal com sucesso!');
+        navigate("/main-questions");
+      }
+
+      if (response.status === 404) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
+    }
+  })
+
+  async function handleAddSubject(subjectIdList: string[]) {
+    await addSubjectToMainQuestion.mutateAsync(subjectIdList)
+  }
+
+  async function handleRemoveSubject(subjectIdList: string[]) {
+    await removeSubjectToMainQuestion.mutateAsync(subjectIdList)
+  }
+
   return (
     <>
-      <AddSubjectManagerTable entity={mainQuestionResponse} handleAddSubjects={addSubjectToMainQuestion}/>
-      <RemoveSubjectManagerTable  entity={mainQuestionResponse} handleRemoveSubjects={}/>
+      <h1>pagina de teste</h1>
+      {mainQuestionResponse &&  <AddSubjectManagerTable entity={mainQuestionResponse} handleAddSubjects={handleAddSubject}/>}
+      {mainQuestionResponse && <RemoveSubjectManagerTable  entity={mainQuestionResponse} handleRemoveSubjects={handleRemoveSubject}/>}
     </>
   );
 }

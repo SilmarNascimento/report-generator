@@ -20,6 +20,7 @@ import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/edi
 import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
 import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
 import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
+import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/main-questions/edit/:mainQuestionId",
     element: <EditMainQuestion />
+  },
+  {
+    path: "/main-questions/:mainQuestionId/subjects",
+    element: <MainQuestionSubjectManager />
   },
   {
     path: "/main-questions/:mainQuestionId/adapted-questions",

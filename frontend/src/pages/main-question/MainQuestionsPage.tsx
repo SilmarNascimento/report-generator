@@ -155,6 +155,9 @@ export function MainQuestions() {
                 <span>Nível</span>
               </TableHead>
               <TableHead>
+                <span>Assuntos</span>
+              </TableHead>
+              <TableHead>
                 <span>Gabarito</span>
               </TableHead>
               <TableHead>
@@ -185,6 +188,13 @@ export function MainQuestions() {
                     <span>
                       {question.level}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <Link to={`/main-questions/${question.id}/subjects`}>
+                      <span>
+                        <Pencil className="size-3" color="green"/>
+                      </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <span>

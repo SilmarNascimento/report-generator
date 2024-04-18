@@ -41,7 +41,17 @@ export function Subjects() {
   const { data: subjectPageResponse, isLoading, isFetching } = useQuery<PageResponse<Subject>>({
     queryKey: ['get-subjects', urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
+      const response = await fetch(`http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          subjectsId: []
+        })
+
+      })
       const data = await response.json()
 
       return data

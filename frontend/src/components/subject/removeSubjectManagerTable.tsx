@@ -1,47 +1,41 @@
-import { FileDown, Search, X } from "lucide-react";
+import { FilePlus, Search, X } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { MockExam, MainQuestion, Subject } from "../../interfaces";
+import { Subject } from "../../interfaces";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { PaginationFromList } from "../paginationFromList";
+import { UseMutateAsyncFunction } from "@tanstack/react-query";
 
 type RemoveSubjectManagerTableProps = ({
-  entity: MockExam;
-  handleRemoveSubjects: (mockExamId: string, subjectsId: string[]) => Promise<void>;
-} | {
-  entity: MainQuestion;
-  handleRemoveSubjects: (mainQuestionId: string, subjectsId: string[]) => Promise<void>;
+  entity: Subject[];
+  handleRemoveSubjects: UseMutateAsyncFunction<void, Error, string[], unknown>;
 });
 
-export function RemoveSubjectManagerTable({ entity, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
-  const [filteredEntity, setFilteredEntity] = useState<Subject[]>(entity.subjects);
+export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
+  const [filteredEntity, setFilteredEntity] = useState<Subject[]>(entitySubjects);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
   const [subjectIdToDelete, setSubjectIdToDelete] = useState<string[]>([]);
-  const entitySubjects = entity.subjects;
 
   useEffect(() => {
-    if (filter !== debouncedQueryFilter) {
+    if (debouncedQueryFilter) {
       setCurrentPage(1);
+      const filteredSubject = entitySubjects.filter((subject) => subject.name.includes(debouncedQueryFilter));
+      setFilteredEntity(filteredSubject);
       setFilter(debouncedQueryFilter);
-      filterSubject();
     }
   }, [debouncedQueryFilter, currentPage, filter]);
 
-  function filterSubject() {
-    const filteredSubject = entitySubjects.filter((subject) => subject.name.includes(filter));
-    setFilteredEntity(filteredSubject);
-
-  }
-
   function toggleCheckBox(subjectId: string) {
-    subjectIdToDelete.find((id) => id === subjectId)
-      ? setSubjectIdToDelete(subjectIdToDelete.filter((id) => id !== subjectId))
-      : setSubjectIdToDelete(prev => ([...prev, subjectId]));
+    setSubjectIdToDelete(prev => (
+      prev.includes(subjectId)
+        ? prev.filter(id => id !== subjectId)
+        : [...prev, subjectId]
+    ));
   }
 
   return (
@@ -63,9 +57,9 @@ export function RemoveSubjectManagerTable({ entity, handleRemoveSubjects }: Remo
             </Input>
           </form>
 
-          <Button>
-            <FileDown className="size-3" />
-            Export
+          <Button onClick={() => handleRemoveSubjects(subjectIdToDelete)}>
+            <FilePlus className="size-3" />
+            Remover todos
           </Button>
         </div>
 
@@ -94,7 +88,7 @@ export function RemoveSubjectManagerTable({ entity, handleRemoveSubjects }: Remo
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveSubjects(entity.id, subjectIdToDelete)}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveSubjects([subject.id])}>
                       <X className="size-3" color="red"/>
                     </Button>
                   </TableCell>
