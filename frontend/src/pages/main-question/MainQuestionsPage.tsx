@@ -47,7 +47,7 @@ export function MainQuestions() {
       return data
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
+    //staleTime: Infinity,
   })
 
   const deleteMainQuestion = useMutation({
@@ -192,7 +192,7 @@ export function MainQuestions() {
                   <TableCell className="text-zinc-300">
                     <Link to={`/main-questions/${question.id}/subjects`}>
                       <span>
-                        <Pencil className="size-3" color="green"/>
+                        {question.subjects.length ? question.subjects[0].name : "Sem assunto principal"}
                       </span>
                     </Link>
                   </TableCell>

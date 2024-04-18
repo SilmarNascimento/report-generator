@@ -6,6 +6,7 @@ import { AddSubjectManagerTable } from '../../../components/subject/addSubjectMa
 import { RemoveSubjectManagerTable } from '../../../components/subject/removeSubjectManagerTable';
 import { useEffect, useRef, useState } from 'react';
 import useDebounceValue from '../../../hooks/useDebounceValue';
+import { NavigationBar } from '../../../components/navigationBar';
 
 
 export function MockExamSubjectManager() {
@@ -38,7 +39,7 @@ export function MockExamSubjectManager() {
   useQuery<MockExam>({
     queryKey: ['get-mock-exams', mockExamId],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/main-question/${mockExamId}`);
+      const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`);
       const data: MockExam = await response.json();
 
       if (data) {
@@ -49,7 +50,6 @@ export function MockExamSubjectManager() {
       return data
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
   });
 
   const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
@@ -95,8 +95,10 @@ export function MockExamSubjectManager() {
         queryClient.invalidateQueries({
           queryKey: ['get-subjects'],
         });
-        
-        successAlert('Assuntos adicionados ao simulado com sucesso!');
+
+        subjectIdListToAdd.length === 1
+          ? successAlert('Assunto adicionado ao simulado com sucesso!')
+          : successAlert('Assuntos adicionados ao simulado com sucesso!');
       }
 
       if (response.status === 404) {
@@ -127,7 +129,9 @@ export function MockExamSubjectManager() {
           queryKey: ['get-subjects'],
         });
         
-        successAlert('Assuntos removidos do simulado com sucesso!');
+        subjectIdListToRemove.length === 1
+          ? successAlert('Assunto removido do simulado com sucesso!')
+          : successAlert('Assuntos removidos do simulado com sucesso!');
       }
 
       if (response.status === 404) {
@@ -147,7 +151,7 @@ export function MockExamSubjectManager() {
 
   return (
     <>
-      <h1>pagina de teste</h1>
+      <NavigationBar />
       {subjectPageResponse &&
         <AddSubjectManagerTable
           entity={subjectPageResponse}

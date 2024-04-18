@@ -149,6 +149,9 @@ export function MockExams() {
                 <span>Número</span>
               </TableHead>
               <TableHead>
+                <span>Assuntos</span>
+              </TableHead>
+              <TableHead>
                 <span>Questões</span>
               </TableHead>
               <TableHead>
@@ -190,6 +193,13 @@ export function MockExams() {
                     <span>
                       {mockExam.number}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <Link to={`/mock-exams/${mockExam.id}/subjects`}>
+                      <span>
+                        <Pencil className="size-3" />
+                      </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link to={`/mock-exams/${mockExam.id}/main-questions`}>

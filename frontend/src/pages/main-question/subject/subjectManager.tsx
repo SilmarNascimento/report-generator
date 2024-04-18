@@ -6,6 +6,7 @@ import { AddSubjectManagerTable } from '../../../components/subject/addSubjectMa
 import { RemoveSubjectManagerTable } from '../../../components/subject/removeSubjectManagerTable';
 import { useEffect, useRef, useState } from 'react';
 import useDebounceValue from '../../../hooks/useDebounceValue';
+import { NavigationBar } from '../../../components/navigationBar';
 
 
 export function MainQuestionSubjectManager() {
@@ -49,7 +50,6 @@ export function MainQuestionSubjectManager() {
       return data
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
   });
 
   const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
@@ -96,7 +96,9 @@ export function MainQuestionSubjectManager() {
           queryKey: ['get-subjects'],
         });
         
-        successAlert('Assuntos adicionados à questão principal com sucesso!');
+        subjectIdListToAdd.length === 1
+          ? successAlert('Assunto adicionado à questão principal com sucesso!')
+          : successAlert('Assuntos adicionados à questão principal com sucesso!');
       }
 
       if (response.status === 404) {
@@ -127,7 +129,9 @@ export function MainQuestionSubjectManager() {
           queryKey: ['get-subjects'],
         });
         
-        successAlert('Assuntos removidos da questão principal com sucesso!');
+        subjectIdListToRemove.length === 1
+          ? successAlert('Assunto removido da questão principal com sucesso!')
+          : successAlert('Assuntos removidos da questão principal com sucesso!');
       }
 
       if (response.status === 404) {
@@ -147,7 +151,7 @@ export function MainQuestionSubjectManager() {
 
   return (
     <>
-      <h1>pagina de teste</h1>
+      <NavigationBar />
       {subjectPageResponse &&
         <AddSubjectManagerTable
           entity={subjectPageResponse}

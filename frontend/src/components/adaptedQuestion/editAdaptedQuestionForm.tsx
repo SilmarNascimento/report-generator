@@ -117,6 +117,9 @@ export function EditAdaptedQuestionForm({ entity: adaptedQuestionResponse }: Edi
         queryClient.invalidateQueries({
           queryKey: ['get-adapted-questions'],
         });
+        queryClient.invalidateQueries({
+          queryKey: ['get-main-questions'],
+        });
         successAlert('Questão adaptada salva com sucesso!');
         navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
       }
