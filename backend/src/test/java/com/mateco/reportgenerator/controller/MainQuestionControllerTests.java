@@ -1198,7 +1198,8 @@ public class MainQuestionControllerTests {
   @DisplayName("Verifica se a entidade Subject é removida de uma MainQuestion")
   public void removeSubjectFromMainQUestionTest() throws Exception {
     Mockito
-        .doNothing().when(mainQuestionService).removeSubject(any(UUID.class), any(List.class));
+        .when(mainQuestionService.removeSubject(any(UUID.class), any(List.class)))
+        .thenReturn(mockMainQuestion02);
 
     String endpoint = baseUrl
         + "/"
@@ -1212,9 +1213,16 @@ public class MainQuestionControllerTests {
     );
 
     httpResponse
-        .andExpect(status().is(204));
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockMainQuestionId02.toString()))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.subjects.[*].id").exists())
+        .andExpect(jsonPath("$.subjects.[0].name").value(mockSubject01.getName()))
+        .andExpect(jsonPath("$.subjects.[1].name").value(mockSubject02.getName()));
 
-    Mockito.verify(mainQuestionService).removeSubject(any(UUID.class), any(List.class));
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .removeSubject(any(UUID.class), any(List.class));
   }
 
   @Test

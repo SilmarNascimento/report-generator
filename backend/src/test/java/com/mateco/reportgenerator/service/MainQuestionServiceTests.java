@@ -452,17 +452,21 @@ public class MainQuestionServiceTests {
         .when(mainQuestionRepository.save(any(MainQuestion.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    mainQuestionService.removeSubject(
+    MainQuestion serviceResponse = mainQuestionService.removeSubject(
           mockMainQuestionId,
           List.of(mockSubjectId01)
       );
 
-    List<Subject> subjectList = mockMainQuestion01.getSubjects();
-    assertEquals(0, subjectList.size());
-    assertFalse(subjectList.contains(mockSubject01));
+    assertEquals(serviceResponse, mockMainQuestion01);
+    assertEquals(0, serviceResponse.getSubjects().size());
+    assertFalse(serviceResponse.getSubjects().contains(mockSubject01));
 
-    Mockito.verify(mainQuestionRepository).findById(any(UUID.class));
-    Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
+    Mockito
+        .verify(mainQuestionRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito
+        .verify(mainQuestionRepository, Mockito.times(1))
+        .save(any(MainQuestion.class));
   }
 
   @Test
