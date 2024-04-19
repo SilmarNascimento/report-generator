@@ -474,11 +474,14 @@ public class MockExamServiceTests {
         .when(mockExamRepository.save(any(MockExam.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    mockExamService.removeSubject(mockExamId01, List.of(mockSubjectId01));
+    MockExam serviceResponse = mockExamService.removeSubject(
+        mockExamId01,
+        List.of(mockSubjectId01)
+    );
 
-    List<Subject> subjectList = mockExam02.getSubjects();
-    assertEquals(0, subjectList.size());
-    assertFalse(subjectList.contains(mockSubject01));
+    assertEquals(serviceResponse, mockExam02);
+    assertEquals(0, serviceResponse.getSubjects().size());
+    assertFalse(serviceResponse.getSubjects().contains(mockSubject01));
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));

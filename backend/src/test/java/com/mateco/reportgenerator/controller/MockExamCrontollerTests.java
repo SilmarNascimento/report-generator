@@ -575,8 +575,8 @@ public class MockExamCrontollerTests {
   @DisplayName("Verifica se a entidade Subject é removida de uma MockExam")
   public void removeSubjectFromMockExamTest() throws Exception {
     Mockito
-        .doNothing()
-        .when(mockExamService).removeSubject(any(UUID.class), any(List.class));
+        .when(mockExamService.removeSubject(any(UUID.class), any(List.class)))
+        .thenReturn(mockExam01);
 
     String endpoint = baseUrl
         + "/"
@@ -594,7 +594,16 @@ public class MockExamCrontollerTests {
     );
 
     httpResponse
-        .andExpect(status().is(204));
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockExamId01.toString()))
+        .andExpect(jsonPath("$.name").value(mockExam01.getName()))
+        .andExpect(jsonPath("$.className", isA(List.class)))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.subjects").isEmpty())
+        .andExpect(jsonPath("$.subjects.[*].id").doesNotExist())
+        .andExpect(jsonPath("$.releasedYear").value(mockExam01.getReleasedYear()))
+        .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
+        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .removeSubject(any(UUID.class), any(List.class));
@@ -752,7 +761,7 @@ public class MockExamCrontollerTests {
   @DisplayName("Verifica se a entidade MainQuestion é removida de uma MockExam")
   public void removeMainQuestionTest() throws Exception {
     Mockito
-        .when(mockExamService.addMainQuestion(any(UUID.class), any(List.class)))
+        .when(mockExamService.removeMainQuestion(any(UUID.class), any(List.class)))
         .thenReturn(mockExam01);
 
     String endpoint = baseUrl

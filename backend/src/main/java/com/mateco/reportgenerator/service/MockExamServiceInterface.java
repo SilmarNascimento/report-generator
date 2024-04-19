@@ -20,10 +20,11 @@ public interface MockExamServiceInterface {
 
   MockExam addSubject(UUID mockExamId, List<UUID> subjecstId);
 
-  void removeSubject(UUID mockExamId, List<UUID> subjectsId);
+  MockExam removeSubject(UUID mockExamId, List<UUID> subjectsId);
 
   MockExam addMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId);
-  void removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionId);
+
+  MockExam removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionId);
 
   List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses);
 }

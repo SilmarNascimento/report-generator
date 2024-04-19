@@ -111,14 +111,14 @@ public class MockExamController {
   }
 
   @DeleteMapping("/{mockExamId}/subject")
-  public ResponseEntity<Void> removeSubjectFromMockExam(
+  public ResponseEntity<MockExamOutpuDto> removeSubjectFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
-    mockExamService.removeSubject(mockExamId, subjectIdList.subjectsId());
+    MockExam mockExamUpdated = mockExamService.removeSubject(mockExamId, subjectIdList.subjectsId());
     return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
+        .status(HttpStatus.OK)
+        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
   }
 
 
@@ -135,14 +135,14 @@ public class MockExamController {
   }
 
   @DeleteMapping("/{mockExamId}/main-question")
-  public ResponseEntity<Void> removeMainQuestionsFromMockExam(
+  public ResponseEntity<MockExamOutpuDto> removeMainQuestionsFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
-    mockExamService.removeMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
+    MockExam mockExamUpdated = mockExamService.removeMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
-        .status(HttpStatus.NO_CONTENT)
-        .build();
+        .status(HttpStatus.OK)
+        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
   }
 
   @PostMapping("/{mockExamId}/responses")

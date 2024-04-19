@@ -101,13 +101,13 @@ public class MockExamService implements MockExamServiceInterface {
   }
 
   @Override
-  public void removeSubject(UUID mockExamId, List<UUID> subjectsId) {
+  public MockExam removeSubject(UUID mockExamId, List<UUID> subjectsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     mockExamFound.getSubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
 
-    mockExamRepository.save(mockExamFound);
+    return mockExamRepository.save(mockExamFound);
   }
 
   @Override
@@ -142,13 +142,13 @@ public class MockExamService implements MockExamServiceInterface {
   }
 
   @Override
-  public void removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
+  public MockExam removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
     mockExamFound.getMockExamQuestions().removeIf(mainQuestion -> mainQuestionsId.contains(mainQuestion.getId()));
 
-    mockExamRepository.save(mockExamFound);
+    return mockExamRepository.save(mockExamFound);
   }
 
   public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
