@@ -17,7 +17,7 @@ import { PageResponse } from "../../../interfaces";
 import { DeleteButton } from "../../../components/ui/deleteButton";
 import { EditButton } from "../../../components/ui/editButton";
 
-export function MainQuestionsFromMockExam() {
+export function MockExamMainQuestionManager() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();

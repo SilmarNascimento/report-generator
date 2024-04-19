@@ -19,6 +19,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
   const [filter, setFilter] = useState<string>("");
   const [filteredEntity, setFilteredEntity] = useState<Subject[]>(entitySubjects);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
   const [subjectIdToDelete, setSubjectIdToDelete] = useState<string[]>([]);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
       setFilteredEntity(filteredSubject);
       setFilter(debouncedQueryFilter);
     }
-  }, [debouncedQueryFilter, currentPage, filter]);
+  }, [debouncedQueryFilter, currentPage, filter, entitySubjects]);
 
   function toggleCheckBox(subjectId: string) {
     setSubjectIdToDelete(prev => (
@@ -82,7 +83,10 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
               return (
                 <TableRow key={subject.id}>
                   <TableCell>
-                    <input type="checkbox" onClick={() => toggleCheckBox(subject.id)}/>
+                    <input
+                      type="checkbox"
+                      checked={subjectIdToDelete.includes(subject.id)}
+                      onChange={() => toggleCheckBox(subject.id)}/>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
@@ -93,7 +97,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveSubjects([subject.id])}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleClick([subject.id])}>
                       <X className="size-3" color="red"/>
                     </Button>
                   </TableCell>

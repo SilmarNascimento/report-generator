@@ -14,12 +14,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CreateMainQuestion } from "./pages/main-question/createMainQuestion.tsx";
 import { EditMainQuestion } from "./pages/main-question/editMainQuestion.tsx";
 import { AdaptedQuestions } from "./pages/main-question/adapted-questions/adaptedQuestions.tsx";
-import { Handouts } from "./pages/handoutPage.tsx";
 import { CreateAdaptedQuestion } from "./pages/main-question/adapted-questions/createAdaptedQuestion.tsx";
 import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/editAdaptedQuestion.tsx";
 import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
 import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
-import { MainQuestionsFromMockExam } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
+import { MockExamMainQuestionManager } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
 import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
 import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
 
@@ -64,16 +63,6 @@ const router = createBrowserRouter([
 
 
   {
-    path: "/main-questions/:mainQuestionId/mock-exams",
-    element: <MockExams />
-  },
-  {
-    path: "/main-questions/:mainQuestionId/handouts",
-    element: <Handouts />
-  },
-
-
-  {
     path: "/mock-exams",
     element: <MockExams />
   },
@@ -86,12 +75,12 @@ const router = createBrowserRouter([
     element: <EditMockExam />
   },
   {
-    path: "/mock-exams/:mockExamId/main-questions",
-    element: <MainQuestionsFromMockExam />
-  },
-  {
     path: "/mock-exams/:mockExamId/subjects",
     element: <MockExamSubjectManager />
+  },
+  {
+    path: "/mock-exams/:mockExamId/main-questions",
+    element: <MockExamMainQuestionManager />
   },
 
   {

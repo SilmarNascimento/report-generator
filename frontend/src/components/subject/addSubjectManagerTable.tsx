@@ -85,8 +85,8 @@ export function AddSubjectManagerTable({ entity, filter, setFilter, page, handle
                     {subject.id}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleAddSubjects([subject.id])}>
-                      <Plus className="size-3" color="red"/>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleClick([subject.id])}>
+                      <Plus className="size-3" color="green"/>
                     </Button>
                   </TableCell>
                 </TableRow>
