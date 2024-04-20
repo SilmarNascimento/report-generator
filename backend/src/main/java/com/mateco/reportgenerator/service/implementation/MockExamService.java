@@ -114,37 +114,50 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
-    Set<MainQuestion> previousMainQuestionSet = new HashSet<>(mockExamFound.getMockExamQuestions());
-    int nextQuestionNumber = previousMainQuestionSet.size() + MockExam.INITIAL_QUESTION_NUMBER;
-
     List<MainQuestion> mainQuestionListToAdd = mainQuestionRepository.findAllById(mainQuestionsId);
     if (mainQuestionListToAdd.isEmpty()) {
       throw new NotFoundException("Nenhuma questão principal foi encontrada com os IDs fornecidos!");
     }
 
-    for (MainQuestion question : mainQuestionListToAdd) {
-      if (previousMainQuestionSet.size() >= MockExam.MAXIMUM_QUESTIONS_NUMBER) {
-        throw new ConflictDataException("Limite máximo de questões principais atingido para o Simulado!");
-      }
-
-      if (!previousMainQuestionSet.contains(question)) {
-        question.setQuestionNumber(nextQuestionNumber);
-        previousMainQuestionSet.add(question);
-        nextQuestionNumber++;
-      }
+    List<Integer> availableSlots = mockExamFound.findAllAvailableSlots();
+    if (availableSlots.isEmpty()  || availableSlots.size() < mainQuestionListToAdd.size()) {
+      throw new ConflictDataException("Limite máximo de questões principais atingido para o Simulado!");
     }
 
-    mockExamFound.setMockExamQuestions(new ArrayList<>(previousMainQuestionSet));
+    Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
+    List<Integer> duplicatedQuestions = findMainQuestionNumber(
+        mainQuestionListToAdd,
+        mainQuestionMap
+    );
+    if (!duplicatedQuestions.isEmpty()) {
+      throw new ConflictDataException("Tentativa de adicionar questões principais duplicadas");
+    }
+
+    for (int index = 0; index < mainQuestionListToAdd.size(); index ++) {
+      Integer availableQuestionNumber = availableSlots.get(index);
+      MainQuestion mainQuestionToAdd = mainQuestionListToAdd.get(index);
+
+      mainQuestionMap.put(availableQuestionNumber, mainQuestionToAdd);
+    }
+    mockExamFound.setMockExamQuestions(mainQuestionMap);
 
     return mockExamRepository.save(mockExamFound);
   }
 
   @Override
+  @Transactional
   public MockExam removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionsId) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
-    mockExamFound.getMockExamQuestions().removeIf(mainQuestion -> mainQuestionsId.contains(mainQuestion.getId()));
+    Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
+    mainQuestionMap.forEach((questionNumber, mainQuestion) -> {
+      if (!mainQuestionsId.contains(mainQuestion.getId())) {
+        throw new ConflictDataException("Questão principal com id: " + mainQuestion.getId().toString() + " não está presente no simulado");
+      }
+
+      mainQuestionMap.replace(questionNumber, null);
+    });
 
     return mockExamRepository.save(mockExamFound);
   }
@@ -190,5 +203,21 @@ public class MockExamService implements MockExamServiceInterface {
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);
+  }
+
+  private List<Integer> findMainQuestionNumber(List<MainQuestion> mainQuestions, Map<Integer, MainQuestion> questionMap) {
+    Map<MainQuestion, Integer> reverseMap = new HashMap<>();
+    for (Map.Entry<Integer, MainQuestion> entry : questionMap.entrySet()) {
+      reverseMap.put(entry.getValue(), entry.getKey());
+    }
+
+    List<Integer> duplicatedQuestions = new ArrayList<>();
+    for (MainQuestion mainQuestion : mainQuestions) {
+      if (reverseMap.containsKey(mainQuestion)) {
+        duplicatedQuestions.add(reverseMap.get(mainQuestion));
+      }
+    }
+
+    return duplicatedQuestions;
   }
 }

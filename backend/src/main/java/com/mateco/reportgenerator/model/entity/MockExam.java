@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -85,12 +88,19 @@ public class MockExam {
   private static Map<Integer, MainQuestion> mainQuestionsInitializer () {
     int initialNumber = MockExam.INITIAL_QUESTION_NUMBER;
     int lastNumber = initialNumber + MockExam.MAXIMUM_QUESTIONS_NUMBER;
-    Map<Integer, MainQuestion> mainQuestionsExam = new HashMap<>();
-    for (int index = initialNumber; index < lastNumber; index ++) {
-      mainQuestionsExam.put(index, null);
-    }
 
-    return mainQuestionsExam;
+    return IntStream.rangeClosed(initialNumber, lastNumber)
+        .boxed()
+        .collect(Collectors.toMap(
+            index -> index,
+            index -> null));
+  }
+
+  public List<Integer> findAllAvailableSlots() {
+    return this.getMockExamQuestions().entrySet().stream()
+        .filter(entry -> entry.getValue() == null)
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toList());
   }
 
 }
