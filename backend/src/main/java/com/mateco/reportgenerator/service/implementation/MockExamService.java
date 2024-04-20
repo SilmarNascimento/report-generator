@@ -71,8 +71,6 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
 
-    mockExamFound.setSubjects(mockExam.getSubjects());
-
     UpdateEntity.copyNonNullOrListProperties(mockExam, mockExamFound);
 
     return mockExamRepository.save(mockExamFound);

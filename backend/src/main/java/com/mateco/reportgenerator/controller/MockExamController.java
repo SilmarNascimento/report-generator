@@ -54,7 +54,7 @@ public class MockExamController {
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
             mockExamsPage,
-            mockExam -> MockExamOutpuDto.parseDto(mockExam)
+            MockExamOutpuDto::parseDto
         ));
   }
 

@@ -1,9 +1,12 @@
 package com.mateco.reportgenerator.controller.dto.mockExamDto;
 
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
+import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -14,7 +17,7 @@ public record MockExamOutpuDto(
     List<Subject> subjects,
     int releasedYear,
     int number,
-    List<MainQuestionOutputDto> mockExamQuestions
+    Map<Integer, MainQuestionOutputDto> mockExamQuestions
 ) {
   public static MockExamOutpuDto parseDto(MockExam mockExam) {
     return new MockExamOutpuDto(
@@ -24,7 +27,7 @@ public record MockExamOutpuDto(
         mockExam.getSubjects(),
         mockExam.getReleasedYear(),
         mockExam.getNumber(),
-        MainQuestionOutputDto.parseDto(mockExam.getMockExamQuestions())
+        MockExamOutpuDto.parseMapDto(mockExam.getMockExamQuestions())
     );
   }
 
@@ -37,8 +40,24 @@ public record MockExamOutpuDto(
               mockExam.getSubjects(),
               mockExam.getReleasedYear(),
               mockExam.getNumber(),
-              MainQuestionOutputDto.parseDto(mockExam.getMockExamQuestions())
+              MockExamOutpuDto.parseMapDto(mockExam.getMockExamQuestions())
           )
         ).collect(Collectors.toList());
+  }
+
+  private static Map<Integer, MainQuestionOutputDto> parseMapDto(Map<Integer, MainQuestion> questionsMap) {
+    Map<Integer, MainQuestionOutputDto> mainQuestionsOutputExam = new HashMap<>();
+
+    for (Map.Entry<Integer, MainQuestion> entry : questionsMap.entrySet()) {
+      Integer questionNumber = entry.getKey();
+      MainQuestion mainQuestion = entry.getValue();
+
+      if (mainQuestion != null) {
+        MainQuestionOutputDto outputDto = MainQuestionOutputDto.parseDto(mainQuestion);
+        mainQuestionsOutputExam.replace(questionNumber, outputDto);
+      }
+    }
+
+    return mainQuestionsOutputExam;
   }
 }

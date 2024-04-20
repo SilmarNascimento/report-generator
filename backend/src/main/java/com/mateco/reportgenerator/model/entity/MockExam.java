@@ -11,7 +11,9 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,24 +55,21 @@ public class MockExam {
       joinColumns = @JoinColumn(name = "main_question_id"),
       inverseJoinColumns = @JoinColumn(name = "mock_exam_id")
   )
-  @ElementCollection
-  @OrderColumn
-  private List<MainQuestion> mockExamQuestions;
+  private Map<Integer, MainQuestion> mockExamQuestions;
 
   public MockExam(
       String name,
       List<String> className,
       List<Subject> subjects,
       int releasedYear,
-      int number,
-      List<MainQuestion> mockExamQuestions
+      int number
   ) {
     this.name = name;
     this.className = className;
     this.subjects = subjects;
     this.releasedYear = releasedYear;
     this.number = number;
-    this.mockExamQuestions = mockExamQuestions;
+    this.mockExamQuestions = mainQuestionsInitializer();
   }
 
   public static MockExam parseMockExam(MockExamInputDto examInputDto) {
@@ -79,9 +78,19 @@ public class MockExam {
         examInputDto.className(),
         new ArrayList<>(),
         examInputDto.releasedYear(),
-        examInputDto.number(),
-        new ArrayList<>()
+        examInputDto.number()
     );
+  }
+
+  private static Map<Integer, MainQuestion> mainQuestionsInitializer () {
+    int initialNumber = MockExam.INITIAL_QUESTION_NUMBER;
+    int lastNumber = initialNumber + MockExam.MAXIMUM_QUESTIONS_NUMBER;
+    Map<Integer, MainQuestion> mainQuestionsExam = new HashMap<>();
+    for (int index = initialNumber; index < lastNumber; index ++) {
+      mainQuestionsExam.put(index, null);
+    }
+
+    return mainQuestionsExam;
   }
 
 }
