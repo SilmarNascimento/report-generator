@@ -166,29 +166,29 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
-    Map<Integer, String> map = new HashMap<>();
-    map.put(0, "A");
-    map.put(1, "B");
-    map.put(2, "C");
-    map.put(3, "D");
-    map.put(4, "E");
+    Map<Integer, String> answerMap = new HashMap<>();
+    answerMap.put(0, "A");
+    answerMap.put(1, "B");
+    answerMap.put(2, "C");
+    answerMap.put(3, "D");
+    answerMap.put(4, "E");
 
     for (MockExamResponse studentResponse : mockExamResponses) {
       studentResponse.setMockExam(mockExamFound);
 
-      List<MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
+      Map<Integer, MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
       List<String> studentAnswers = studentResponse.getResponses();
       List<AdaptedQuestionWrapper> reportAdaptedQuestions = new ArrayList<>();
 
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
-        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex);
+        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex + MockExam.INITIAL_QUESTION_NUMBER);
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
             .findFirst()
             .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada!"));
 
-        if (map.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
+        if (answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
         } else {
           List<AdaptedQuestion> adaptedQuestionList = mainQuestion.getAdaptedQuestions();
