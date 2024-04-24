@@ -89,11 +89,12 @@ public class MockExam {
     int initialNumber = MockExam.INITIAL_QUESTION_NUMBER;
     int lastNumber = initialNumber + MockExam.MAXIMUM_QUESTIONS_NUMBER;
 
-    return IntStream.rangeClosed(initialNumber, lastNumber)
-        .boxed()
-        .collect(Collectors.toMap(
-            index -> index,
-            index -> null));
+    Map<Integer, MainQuestion> mainQuestionsExam = new HashMap<>();
+    for (int index = initialNumber; index < lastNumber; index ++) {
+      mainQuestionsExam.put(index, null);
+    }
+
+    return mainQuestionsExam;
   }
 
   public List<Integer> findAllAvailableSlots() {

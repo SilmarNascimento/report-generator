@@ -51,7 +51,7 @@ public class Alternative {
 
   @Override
   public String toString() {
-    return "Alternative{" +
+    return "{" +
         "id: " + this.getId() +
         "description: " + this.description +
         "image: " + this.images +

@@ -46,7 +46,7 @@ public class Subject {
 
   @Override
   public String toString() {
-    return "Subject {" +
+    return "{" +
         "id: " + this.getId() +
         "name: " + this.name +
         '}';

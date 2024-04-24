@@ -68,9 +68,6 @@ public class MainQuestion extends Question {
   @JsonIgnore
   private List<Handout> handout;
 
-  @Column(name = "question_number")
-  private Integer questionNumber;
-
   public MainQuestion(
       String title,
       List<Subject> subjects,
@@ -92,7 +89,7 @@ public class MainQuestion extends Question {
 
   @Override
   public String toString() {
-    return "Subject {" +
+    return "{" +
         "id: " + this.getId() +
         "title: " + this.title +
         "level: " + this.level +

@@ -1,180 +1,89 @@
-/*
+
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
+import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
-import com.mateco.reportgenerator.model.entity.MockExamResponse;
-import com.mateco.reportgenerator.model.repository.MockExamRepository;
-import com.mateco.reportgenerator.service.FileServiceInterface;
-import com.mateco.reportgenerator.service.exception.NotFoundException;
-import java.io.IOException;
+import com.mateco.reportgenerator.model.entity.Subject;
+import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.IntStream;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/tests")
 public class TesteController {
-  private final FileServiceInterface fileService;
 
-  @Autowired
-  private MockExamRepository mockExamRepository;
+  @GetMapping
+  public ResponseEntity<MockExam> getMockExam() {
+    UUID mockExamId02 = UUID.randomUUID();
+    UUID mockSubjectId01 = UUID.randomUUID();
+    UUID mockSubjectId02 = UUID.randomUUID();
+    UUID mockMainQuestionId01 = UUID.randomUUID();
+    UUID mockMainQuestionId02 = UUID.randomUUID();
 
-  @Autowired
-  public TesteController(FileServiceInterface fileService) {
-    this.fileService = fileService;
-  }
+    Subject mockSubject01 = new Subject("Geometria");
+    mockSubject01.setId(mockSubjectId01);
+    Subject mockSubject02 = new Subject("Algebra");
+    mockSubject02.setId(mockSubjectId02);
 
-  @PostMapping("/mock-exam/{mockExamId}")
-  public ResponseEntity<Object> xlsxReader(
-      @RequestPart("studentsMockExamsAnswers") MultipartFile studentsAnswer,
-      @RequestParam UUID mockExamId
-  ) throws IOException {
-    List<MockExamResponse> mockExamResponses= fileService.xlsxReader(studentsAnswer);
-    System.out.println(mockExamResponses);
+    Alternative mockFalseAlternative = new Alternative(
+        "descrição da alternativa 01",
+        List.of("imagem alternativa 01"),
+        false
+    );
+    Alternative mockTrueAlternative = new Alternative(
+        "descrição da alternativa 02",
+        List.of("imagem alternativa 02"),
+        true
+    );
 
-    function(mockExamResponses, mockExamId);
+    MainQuestion mockMainQuestion01 = new MainQuestion(
+        "título questão 01",
+        new ArrayList<>(),
+        "difícil",
+        List.of("imagem da questão 01"),
+        List.of(mockTrueAlternative, mockFalseAlternative),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
+    );
+    mockMainQuestion01.setId(mockMainQuestionId01);
 
-    return ResponseEntity.ok().body(mockExamResponses);
-  }
+    MainQuestion mockMainQuestion02 = new MainQuestion(
+        "título questão 02",
+        List.of(mockSubject01, mockSubject02),
+        "difícil",
+        List.of("imagem da questão 02"),
+        List.of(mockFalseAlternative, mockTrueAlternative),
+        new ArrayList<>(),
+        new ArrayList<>(),
+        new ArrayList<>()
+    );
+    mockMainQuestion02.setId(mockMainQuestionId02);
 
-  public void function(List<MockExamResponse> mockExamResponses, UUID mockExamId) {
-    MockExam mockExamFound = mockExamRepository.findById(mockExamId)
-        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+    MockExam mockExam02 = new MockExam(
+        "segundo simulado",
+        List.of("extensivo"),
+        new ArrayList<>(),
+        2024,
+        1
+    );
+    mockExam02.setId(mockExamId02);
+    mockExam02.getSubjects().addAll(List.of(mockSubject01, mockSubject02));
+    System.out.println(mockExam02.getMockExamQuestions().containsKey(136));
+    System.out.println(mockExam02.getMockExamQuestions().containsKey(137));
 
-    Map<Integer, String> map = new HashMap<>();
-    map.put(0, "A");
-    map.put(1, "B");
-    map.put(2, "C");
-    map.put(3, "D");
-    map.put(4, "E");
+    mockExam02.getMockExamQuestions().put(136, mockMainQuestion01);
+    mockExam02.getMockExamQuestions().put(137, mockMainQuestion02);
 
-    for (int index = 0; index < mockExamResponses.size(); index ++) {
-      MockExamResponse studentResponse = mockExamResponses.get(index);
-      studentResponse.setMockExam(mockExamFound);
-
-      List<MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
-      List<String> studentAnswers = studentResponse.getResponses();
-      List<List<AdaptedQuestion>> reportAdaptedQuestions = new ArrayList<>();
-
-      for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
-        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex);
-
-        int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
-            .filter(
-                filterIndex -> mainQuestion.getAlternatives().get(filterIndex).isQuestionAnswer())
-            .findFirst()
-            .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada"));
-
-        if (map.get(correctAlternativeIndex).equals(studentAnswers.get(index))) {
-          studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
-        } else {
-          List<AdaptedQuestion> adaptedQuestionList = mainQuestion.getAdaptedQuestions();
-          reportAdaptedQuestions.add(adaptedQuestionList);
-        }
-      }
-
-      studentResponse.setAdaptedQuestionList(reportAdaptedQuestions);
-    }
+    System.out.println(mockExam02);
+    System.out.println(MockExamOutpuDto.parseDto(mockExam02));
+    return ResponseEntity.ok(mockExam02);
   }
 }
-
-
-  mockExamQuestions.forEach(mainQuestion -> {
-        int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
-            .filter(filterIndex -> mainQuestion.getAlternatives().get(filterIndex).isQuestionAnswer())
-            .findFirst()
-            .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada"));
-
-        if (map.get(correctAlternativeIndex).equals(studentAnswers.get(index))) {
-          correctAnswers[0]++;
-        } else {
-          List<AdaptedQuestion> adaptedQuestionList = mockExamQuestions.get(key - 136).getAdaptedQuestions();
-          reportQuestions.put(key, adaptedQuestionList);
-        }
-
-      });
-
-    mockExamResponses.stream().forEach(studentResponse -> {
-      studentResponse.setMockExam(mockExamFound);
-
-      List<MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
-      List<String> studentAnswers = studentResponse.getAnswers();
-      List<List<AdaptedQuestion>> reportAdaptedQuestions = new ArrayList<>();
-
-    mockExamQuestions.forEach(mainQuestion -> {
-      int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
-          .filter(index -> mainQuestion.getAlternatives().get(index).isQuestionAnswer())
-          .findFirst()
-          .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada"));
-
-      if (map.get(correctAlternativeIndex).equals(studentAnswers.get(key))) {
-        correctAnswers[0]++;
-      } else {
-        List<AdaptedQuestion> adaptedQuestionList = mockExamQuestions.get(key - 136).getAdaptedQuestions();
-        reportQuestions.put(key, adaptedQuestionList);
-      }
-
-    });
-
-    });
-    // List<MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
-    // Map<Integer, String> studentAnswers = studentMockExamResponse.getAnswers();
-    // Map<Integer, List<AdaptedQuestion>> reportQuestions = new HashMap<>();
-
-    final int[] correctAnswers = {0};
-
-    gabarito.keySet().forEach((Integer key) -> {
-      if (gabarito.get(key).equals(studentAnswers.get(key))) {
-        correctAnswers[0]++;
-      } else {
-        List<AdaptedQuestion> adaptedQuestionList = mockExamQuestions.get(key - 136).getAdaptedQuestions();
-        reportQuestions.put(key, adaptedQuestionList);
-      }
-    });
-
-    studentMockExamResponse.setCorrectAnswers(correctAnswers[0]);
-    studentMockExamResponse.setAdaptedQuestionList(reportQuestions);
-
-
-    public List<String> generateAnswers() {
-    List<MainQuestion> questions = this.mockExamQuestions;
-
-    return questions.stream()
-        .map(question -> generateAlternativeLetter(question))
-        .collect(Collectors.toList());
-  };
-
-  private String generateAlternativeLetter(MainQuestion question) {
-    List<Alternative> alternativeList = question.getAlternatives();
-
-    int index = 0;
-    for (Alternative alternative: alternativeList) {
-      if (alternative.isQuestionAnswer()) {
-        break;
-      }
-      index ++;
-    }
-
-    Map<Integer, String> map = new HashMap<>();
-    map.put(0, "A");
-    map.put(1, "B");
-    map.put(2, "C");
-    map.put(3, "D");
-    map.put(4, "E");
-
-    return map.getOrDefault(index, "");
-  }
- */

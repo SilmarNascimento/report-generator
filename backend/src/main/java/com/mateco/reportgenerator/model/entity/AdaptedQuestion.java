@@ -55,7 +55,7 @@ public class AdaptedQuestion extends Question {
 
   @Override
   public String toString() {
-    return "AdaptedQuestion{" +
+    return "{" +
         "id: " + this.getId() +
         "title: " + this.getTitle() +
         "level: " + this.getLevel() +

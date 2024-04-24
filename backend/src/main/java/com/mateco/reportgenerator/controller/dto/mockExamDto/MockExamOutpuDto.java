@@ -54,7 +54,9 @@ public record MockExamOutpuDto(
 
       if (mainQuestion != null) {
         MainQuestionOutputDto outputDto = MainQuestionOutputDto.parseDto(mainQuestion);
-        mainQuestionsOutputExam.replace(questionNumber, outputDto);
+        mainQuestionsOutputExam.put(questionNumber, outputDto);
+      } else {
+        mainQuestionsOutputExam.put(questionNumber, null);
       }
     }
 

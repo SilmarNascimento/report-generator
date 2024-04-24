@@ -29,7 +29,9 @@ import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -123,7 +125,6 @@ public class MockExamCrontollerTests {
         new ArrayList<>()
     );
     mockMainQuestion01.setId(mockMainQuestionId01);
-    mockMainQuestion01.setQuestionNumber(136);
 
     mockMainQuestion02 = new MainQuestion(
         "título questão 02",
@@ -136,15 +137,13 @@ public class MockExamCrontollerTests {
         new ArrayList<>()
     );
     mockMainQuestion02.setId(mockMainQuestionId02);
-    mockMainQuestion02.setQuestionNumber(137);
 
     mockExam01 = new MockExam(
         "primeiro simulado",
         List.of("intensivo", "extensivo"),
         new ArrayList<>(),
         2024,
-        1,
-        new ArrayList<>()
+        1
     );
     mockExam01.setId(mockExamId01);
 
@@ -153,12 +152,12 @@ public class MockExamCrontollerTests {
         List.of("extensivo"),
         new ArrayList<>(),
         2024,
-        1,
-        new ArrayList<>()
+        1
     );
     mockExam02.setId(mockExamId02);
     mockExam02.getSubjects().addAll(List.of(mockSubject01, mockSubject02));
-    mockExam02.getMockExamQuestions().addAll(List.of(mockMainQuestion01, mockMainQuestion02));
+    mockExam02.getMockExamQuestions().put(136, mockMainQuestion01);
+    mockExam02.getMockExamQuestions().put(137, mockMainQuestion02);
 
     mockExamResponse01 = new MockExamResponse(
         "Cainã Jucá",
@@ -246,14 +245,14 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].releasedYear").value(2024))
         .andExpect(jsonPath("$.data.[0].number").value(1))
-        .andExpect(jsonPath("$.data.[0].mockExamQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExamQuestions", isA(Map.class)))
         .andExpect(jsonPath("$.data.[1].id").value(mockExamId02.toString()))
         .andExpect(jsonPath("$.data.[1].name").value(mockExam02.getName()))
         .andExpect(jsonPath("$.data.[1].className", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].releasedYear").value(2024))
         .andExpect(jsonPath("$.data.[1].number").value(1))
-        .andExpect(jsonPath("$.data.[1].mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.data.[1].mockExamQuestions", isA(Map.class)));
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -306,14 +305,14 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].releasedYear").value(2024))
         .andExpect(jsonPath("$.data.[0].number").value(1))
-        .andExpect(jsonPath("$.data.[0].mockExamQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExamQuestions", isA(Map.class)))
         .andExpect(jsonPath("$.data.[1].id").value(mockExamId02.toString()))
         .andExpect(jsonPath("$.data.[1].name").value(mockExam02.getName()))
         .andExpect(jsonPath("$.data.[1].className", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].releasedYear").value(2024))
         .andExpect(jsonPath("$.data.[1].number").value(1))
-        .andExpect(jsonPath("$.data.[1].mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.data.[1].mockExamQuestions", isA(Map.class)));
 
     ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
     ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -345,7 +344,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.releasedYear").value(2024))
         .andExpect(jsonPath("$.number").value(1))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .findMockExamById(any(UUID.class));
@@ -400,7 +399,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.releasedYear").value(mockExam01.getReleasedYear()))
         .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .createMockExam(any(MockExam.class));
@@ -435,7 +434,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.releasedYear").value(mockExam01.getReleasedYear()))
         .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .updateMockExamById(any(UUID.class), any(MockExam.class));
@@ -505,7 +504,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.subjects.[1].name").value(mockSubject02.getName()))
         .andExpect(jsonPath("$.releasedYear").value(mockExam02.getReleasedYear()))
         .andExpect(jsonPath("$.number").value(mockExam02.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .addSubject(any(UUID.class), any(List.class));
@@ -603,7 +602,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.subjects.[*].id").doesNotExist())
         .andExpect(jsonPath("$.releasedYear").value(mockExam01.getReleasedYear()))
         .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .removeSubject(any(UUID.class), any(List.class));
@@ -668,7 +667,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.className", isA(List.class)))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.number").value(mockExam02.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)))
         .andExpect(jsonPath("$.mockExamQuestions.[*].id").exists())
         .andExpect(jsonPath("$.mockExamQuestions.[0].id").value(mockMainQuestionId01.toString()))
         .andExpect(jsonPath("$.mockExamQuestions.[0].title").value(mockMainQuestion01.getTitle()))
@@ -680,7 +679,6 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.mockExamQuestions.[0].mockExams", isA(List.class)))
         .andExpect(jsonPath("$.mockExamQuestions.[0].handouts", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].questionNumber").value(mockMainQuestion01.getQuestionNumber()))
         .andExpect(jsonPath("$.mockExamQuestions.[1].id").value(mockMainQuestionId02.toString()))
         .andExpect(jsonPath("$.mockExamQuestions.[1].title").value(mockMainQuestion02.getTitle()))
         .andExpect(jsonPath("$.mockExamQuestions.[1].level").value(mockMainQuestion02.getLevel()))
@@ -690,8 +688,7 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions.[1].alternatives.[*].id").exists())
         .andExpect(jsonPath("$.mockExamQuestions.[1].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.mockExamQuestions.[1].mockExams", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].handouts", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].questionNumber").value(mockMainQuestion02.getQuestionNumber()));
+        .andExpect(jsonPath("$.mockExamQuestions.[1].handouts", isA(List.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .addMainQuestion(any(UUID.class), any(List.class));
@@ -780,7 +777,14 @@ public class MockExamCrontollerTests {
     );
 
     httpResponse
-        .andExpect(status().is(204));
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.id").value(mockExamId01.toString()))
+        .andExpect(jsonPath("$.name").value(mockExam01.getName()))
+        .andExpect(jsonPath("$.className", isA(List.class)))
+        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)))
+        .andExpect(jsonPath("$.mockExamQuestions").isEmpty());
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .removeMainQuestion(any(UUID.class), any(List.class));

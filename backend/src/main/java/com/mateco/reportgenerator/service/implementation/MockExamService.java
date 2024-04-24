@@ -150,14 +150,20 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
 
-    Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
-    mainQuestionMap.forEach((questionNumber, mainQuestion) -> {
-      if (!mainQuestionsId.contains(mainQuestion.getId())) {
-        throw new ConflictDataException("Questão principal com id: " + mainQuestion.getId().toString() + " não está presente no simulado");
-      }
+    List<MainQuestion> mainQuestionListToDelete = mainQuestionRepository.findAllById(mainQuestionsId);
+    if (mainQuestionListToDelete.isEmpty()) {
+      throw new NotFoundException("Nenhuma questão principal foi encontrada com os IDs fornecidos!");
+    }
 
-      mainQuestionMap.replace(questionNumber, null);
-    });
+    Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
+    List<Integer> questionsNumber = findMainQuestionNumber(mainQuestionListToDelete, mainQuestionMap);
+    if (questionsNumber.size() == mainQuestionsId.size()) {
+      questionsNumber.forEach(indexKey -> {
+        mainQuestionMap.replace(indexKey, null);
+      });
+    } else {
+      throw new ConflictDataException("Questão principal não está presente no simulado");
+    }
 
     return mockExamRepository.save(mockExamFound);
   }

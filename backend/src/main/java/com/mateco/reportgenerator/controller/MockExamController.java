@@ -72,6 +72,8 @@ public class MockExamController {
   @PostMapping
   public ResponseEntity<MockExamOutpuDto> createMockExam(@RequestBody MockExamInputDto mockExamInputDto) {
     MockExam mockExam = mockExamService.createMockExam(MockExam.parseMockExam(mockExamInputDto));
+    System.out.println(mockExam);
+    System.out.println(MockExamOutpuDto.parseDto(mockExam));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(MockExamOutpuDto.parseDto(mockExam));

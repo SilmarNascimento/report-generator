@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,10 +19,14 @@ import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.MockExamRepository;
 import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
+import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
@@ -57,6 +62,7 @@ public class MockExamServiceTests {
 
   private UUID mockExamId01;
   private UUID mockExamId02;
+  private UUID mockExamId03;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
   private UUID mockMainQuestionId01;
@@ -70,6 +76,7 @@ public class MockExamServiceTests {
   private MockExamResponse mockExamResponse03;
   private MockExam mockExam01;
   private MockExam mockExam02;
+  private MockExam mockExam03;
   private Subject mockSubject01;
   private Subject mockSubject02;
 
@@ -77,6 +84,7 @@ public class MockExamServiceTests {
   public void setUp() {
     mockExamId01 = UUID.randomUUID();
     mockExamId02 = UUID.randomUUID();
+    mockExamId03 = UUID.randomUUID();
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
     UUID mockResponseId01 = UUID.randomUUID();
@@ -195,8 +203,7 @@ public class MockExamServiceTests {
         List.of("intensivo", "extensivo"),
         new ArrayList<>(),
         2024,
-        1,
-        new ArrayList<>()
+        1
     );
     mockExam01.setId(mockExamId01);
 
@@ -205,12 +212,26 @@ public class MockExamServiceTests {
         List.of("extensivo"),
         new ArrayList<>(),
         2024,
-        1,
-        new ArrayList<>()
+        1
     );
     mockExam02.getSubjects().add(mockSubject01);
-    mockExam02.getMockExamQuestions()
-        .addAll(List.of(mockMainQuestion01, mockMainQuestion02));
+    Map<Integer, MainQuestion> mockExamQuestions = new HashMap<>();
+    mockExamQuestions.put(136, mockMainQuestion01);
+    mockExamQuestions.put(137, mockMainQuestion02);
+    mockExam02.setMockExamQuestions(mockExamQuestions);
+
+    mockExam03 = new MockExam(
+        "terceiro simulado",
+        List.of("intensivo", "extensivo"),
+        new ArrayList<>(),
+        2024,
+        1
+    );
+    Map<Integer, MainQuestion> mockExamQuestions03 = new HashMap<>();
+    for (int index = 136; index <= 180; index ++) {
+      mockExamQuestions03.put(index, new MainQuestion());
+    }
+    mockExam03.setMockExamQuestions(mockExamQuestions03);
   }
 
   @Test
@@ -292,7 +313,7 @@ public class MockExamServiceTests {
     assertEquals(serviceResponse.getReleasedYear(), mockExam01.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam01.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
-    assertInstanceOf(List.class, serviceResponse.getMockExamQuestions());
+    assertInstanceOf(Map.class, serviceResponse.getMockExamQuestions());
 
     Mockito
         .verify(mockExamRepository, Mockito.times(1))
@@ -318,13 +339,17 @@ public class MockExamServiceTests {
 
     assertNotNull(serviceResponse);
     assertNotNull(serviceResponse.getId());
+    assertEquals(serviceResponse.getId(), mockExam01.getId());
     assertEquals(serviceResponse.getName(), mockExam02.getName());
     assertInstanceOf(List.class, serviceResponse.getClassName());
     assertEquals(serviceResponse.getClassName(), mockExam01.getClassName());
     assertEquals(serviceResponse.getReleasedYear(), mockExam02.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam02.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
-    assertInstanceOf(List.class, serviceResponse.getMockExamQuestions());
+    assertEquals(serviceResponse.getSubjects(), mockExam01.getSubjects());
+    assertInstanceOf(Map.class, serviceResponse.getMockExamQuestions());
+    assertEquals(serviceResponse.getMockExamQuestions(), mockExam01.getMockExamQuestions());
+
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));
@@ -529,24 +554,28 @@ public class MockExamServiceTests {
 
     assertNotNull(serviceResponse);
 
-    List<MainQuestion> mainQuestionResponseList = serviceResponse.getMockExamQuestions();
-    assertEquals(3, mainQuestionResponseList.size());
-    assertTrue(mainQuestionResponseList.contains(mockMainQuestion01));
-    assertTrue(mainQuestionResponseList.contains(mockMainQuestion02));
-    assertTrue(mainQuestionResponseList.contains(mockMainQuestion03));
+    Map<Integer, MainQuestion> mainQuestionResponseMap = serviceResponse.getMockExamQuestions();
+    assertEquals(45, mainQuestionResponseMap.size());
+    assertEquals(mainQuestionResponseMap.get(136), mockMainQuestion01);
+    assertEquals(mainQuestionResponseMap.get(137), mockMainQuestion02);
+    assertEquals(mainQuestionResponseMap.get(138), mockMainQuestion03);
 
     Assertions.assertThat(serviceResponse.getMockExamQuestions()).isNotNull()
-        .allSatisfy(question -> {
-          Assertions.assertThat(question.getId()).isNotNull();
-          Assertions.assertThat(question.getTitle()).isInstanceOf(String.class);
-          Assertions.assertThat(question.getLevel()).isInstanceOf(String.class);
-          Assertions.assertThat(question.getSubjects()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getImages()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getAlternatives()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getAdaptedQuestions()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getMockExams()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getHandout()).isInstanceOf(List.class);
-          Assertions.assertThat(question.getQuestionNumber()).isInstanceOf(Integer.class);
+        .allSatisfy((questionNumber, mainQuestion) -> {
+          Assertions.assertThat(questionNumber).isInstanceOf(Integer.class);
+          if (questionNumber >= 136 && questionNumber <= 138) {
+            Assertions.assertThat(mainQuestion.getId()).isNotNull();
+            Assertions.assertThat(mainQuestion.getTitle()).isInstanceOf(String.class);
+            Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
+            Assertions.assertThat(mainQuestion.getSubjects()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getImages()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getAlternatives()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getAdaptedQuestions()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getMockExams()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getHandout()).isInstanceOf(List.class);
+          } else {
+            Assertions.assertThat(mainQuestion).isNull();
+          }
         });
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
@@ -559,7 +588,7 @@ public class MockExamServiceTests {
 
   @Test
   @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MockExam por seu Id")
-  public void addMainQuestionTestNotFoundMockExamError() {
+  public void addMainQuestionTestMockExamNotFoundError() {
     Mockito
         .when(mockExamRepository.findById(any(UUID.class)))
         .thenReturn(Optional.empty());
@@ -603,6 +632,84 @@ public class MockExamServiceTests {
   }
 
   @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso o map de questões esteja completo")
+  public void addMainQuestionTestMainQuestionsMapFullError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam03));
+
+    Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02, mockMainQuestion03));
+
+    assertThrows(
+        ConflictDataException.class,
+        () -> mockExamService
+            .addMainQuestion(
+                mockExamId03,
+                List.of(UUID.randomUUID(), UUID.randomUUID())
+            )
+    );
+
+    Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito.verify(mainQuestionRepository, Mockito.times(1))
+        .findAllById(any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso o map de questões não suporte adicionar todas as questões solicitadas")
+  public void addMainQuestionTestMainQuestionListGraterThanFreeSlotsError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam02));
+
+    Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(Collections.nCopies(45, new MainQuestion()));
+
+    assertThrows(
+        ConflictDataException.class,
+        () -> mockExamService
+            .addMainQuestion(
+                mockExamId02,
+                Collections.nCopies(45, UUID.randomUUID())
+            )
+    );
+
+    Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito.verify(mainQuestionRepository, Mockito.times(1))
+        .findAllById(any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso o map de questões não tenha a questão a ser removida")
+  public void addMainQuestionTestMainQuestionAlreadyInMockExamError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam02));
+
+    Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
+
+    assertThrows(
+        ConflictDataException.class,
+        () -> mockExamService
+            .addMainQuestion(
+                mockExamId02,
+                List.of(mockMainQuestionId01, mockMainQuestionId02)
+            )
+    );
+
+    Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+    Mockito.verify(mainQuestionRepository, Mockito.times(1))
+        .findAllById(any(List.class));
+  }
+
+  @Test
   @DisplayName("Verifica se é removido uma entidade MainQuestion de uma MockExam")
   public void removeMainQuestionTest() {
     Mockito
@@ -610,18 +717,21 @@ public class MockExamServiceTests {
         .thenReturn(Optional.of(mockExam02));
 
     Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
         .when(mockExamRepository.save(any(MockExam.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     mockExamService.removeMainQuestion(
-        mockExamId01,
+        mockExamId02,
         List.of(mockMainQuestionId01)
     );
 
-    List<MainQuestion> mainQuestionList = mockExam02.getMockExamQuestions();
-    assertEquals(1, mainQuestionList.size());
-    assertFalse(mainQuestionList.contains(mockMainQuestion01));
-    assertTrue(mainQuestionList.contains(mockMainQuestion02));
+    Map<Integer, MainQuestion> mainQuestionMap = mockExam02.getMockExamQuestions();
+    assertNull(mainQuestionMap.get(136));
+    assertEquals(mainQuestionMap.get(137), mockMainQuestion02);
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));
@@ -631,7 +741,7 @@ public class MockExamServiceTests {
 
   @Test
   @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma entidade MockExam por seu Id")
-  public void removeMainQuestionTestNotFoundMockExamError() {
+  public void removeMainQuestionTestMockExamNotFoundError() {
     Mockito
         .when(mockExamRepository.findById(any(UUID.class)))
         .thenReturn(Optional.empty());
@@ -646,6 +756,55 @@ public class MockExamServiceTests {
     );
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre uma lista entidades MainQuestion por seu Id")
+  public void removeMainQuestionTestMainQuestionListNotFoundError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam01));
+
+    Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(new ArrayList<>());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mockExamService
+            .removeMainQuestion(
+                mockExamId01,
+                List.of(mockMainQuestionId01)
+            )
+    );
+
+    Mockito.verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre a entidade a ser deletada no map de MainQuestions")
+  public void removeMainQuestionTestMainQuestionNotPresentError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam01));
+
+    Mockito
+        .when(mainQuestionRepository.findAllById(any(List.class)))
+        .thenReturn(List.of(mockMainQuestion01));
+
+    assertThrows(
+        ConflictDataException.class,
+        () -> mockExamService
+            .removeMainQuestion(
+                mockExamId01,
+                List.of(mockMainQuestionId01)
+            )
+    );
+
+    Mockito
+        .verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));
   }
 
