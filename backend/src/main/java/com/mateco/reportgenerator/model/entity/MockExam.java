@@ -72,7 +72,7 @@ public class MockExam {
     this.subjects = subjects;
     this.releasedYear = releasedYear;
     this.number = number;
-    this.mockExamQuestions = mainQuestionsInitializer();
+    this.mockExamQuestions = new HashMap<>();
   }
 
   public static MockExam parseMockExam(MockExamInputDto examInputDto) {
@@ -83,18 +83,6 @@ public class MockExam {
         examInputDto.releasedYear(),
         examInputDto.number()
     );
-  }
-
-  private static Map<Integer, MainQuestion> mainQuestionsInitializer () {
-    int initialNumber = MockExam.INITIAL_QUESTION_NUMBER;
-    int lastNumber = initialNumber + MockExam.MAXIMUM_QUESTIONS_NUMBER;
-
-    Map<Integer, MainQuestion> mainQuestionsExam = new HashMap<>();
-    for (int index = initialNumber; index < lastNumber; index ++) {
-      mainQuestionsExam.put(index, null);
-    }
-
-    return mainQuestionsExam;
   }
 
   public List<Integer> findAllAvailableSlots() {

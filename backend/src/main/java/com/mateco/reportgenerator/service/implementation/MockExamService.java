@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,6 +64,7 @@ public class MockExamService implements MockExamServiceInterface {
 
   @Override
   public MockExam createMockExam(MockExam mockExam) {
+    System.out.println(mockExam);
     return mockExamRepository.save(mockExam);
   }
 
@@ -119,26 +121,12 @@ public class MockExamService implements MockExamServiceInterface {
       throw new NotFoundException("Nenhuma questão principal foi encontrada com os IDs fornecidos!");
     }
 
-    List<Integer> availableSlots = mockExamFound.findAllAvailableSlots();
-    if (availableSlots.isEmpty()  || availableSlots.size() < mainQuestionListToAdd.size()) {
-      throw new ConflictDataException("Limite máximo de questões principais atingido para o Simulado!");
-    }
-
     Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
-    List<Integer> duplicatedQuestions = findMainQuestionNumber(
-        mainQuestionListToAdd,
-        mainQuestionMap
-    );
-    if (!duplicatedQuestions.isEmpty()) {
-      throw new ConflictDataException("Tentativa de adicionar questões principais duplicadas");
-    }
 
-    for (int index = 0; index < mainQuestionListToAdd.size(); index ++) {
-      Integer availableQuestionNumber = availableSlots.get(index);
-      MainQuestion mainQuestionToAdd = mainQuestionListToAdd.get(index);
+    verifyAvailability(mainQuestionMap, mainQuestionListToAdd);
+    verifyDuplicity(mainQuestionListToAdd, mainQuestionMap);
 
-      mainQuestionMap.put(availableQuestionNumber, mainQuestionToAdd);
-    }
+    addMainQuestionsToMockExamMap(mainQuestionMap, mainQuestionListToAdd);
     mockExamFound.setMockExamQuestions(mainQuestionMap);
 
     return mockExamRepository.save(mockExamFound);
@@ -156,7 +144,7 @@ public class MockExamService implements MockExamServiceInterface {
     }
 
     Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
-    List<Integer> questionsNumber = findMainQuestionNumber(mainQuestionListToDelete, mainQuestionMap);
+    List<Integer> questionsNumber = findDuplicateQuestionNumber(mainQuestionListToDelete, mainQuestionMap);
     if (questionsNumber.size() == mainQuestionsId.size()) {
       questionsNumber.forEach(indexKey -> {
         mainQuestionMap.replace(indexKey, null);
@@ -211,7 +199,10 @@ public class MockExamService implements MockExamServiceInterface {
     return mockExamResponseRepository.saveAll(mockExamResponses);
   }
 
-  private List<Integer> findMainQuestionNumber(List<MainQuestion> mainQuestions, Map<Integer, MainQuestion> questionMap) {
+  private static List<Integer> findDuplicateQuestionNumber(
+      List<MainQuestion> mainQuestions,
+      Map<Integer, MainQuestion> questionMap
+  ) {
     Map<MainQuestion, Integer> reverseMap = new HashMap<>();
     for (Map.Entry<Integer, MainQuestion> entry : questionMap.entrySet()) {
       reverseMap.put(entry.getValue(), entry.getKey());
@@ -225,5 +216,49 @@ public class MockExamService implements MockExamServiceInterface {
     }
 
     return duplicatedQuestions;
+  }
+
+  private static void verifyDuplicity(
+      List<MainQuestion> mainQuestionListToAdd,
+      Map<Integer, MainQuestion> mainQuestionMap
+  ) {
+    List<Integer> duplicatedQuestions = findDuplicateQuestionNumber(
+        mainQuestionListToAdd,
+        mainQuestionMap
+    );
+    if (!duplicatedQuestions.isEmpty()) {
+      throw new ConflictDataException("Tentativa de adicionar questões principais duplicadas");
+    }
+  }
+
+  private static void verifyAvailability(
+      Map<Integer, MainQuestion> mainQuestionMap,
+      List<MainQuestion> mainQuestionListToAdd
+  ) {
+    int availableSlots = MockExam.MAXIMUM_QUESTIONS_NUMBER - mainQuestionMap.size();
+    if (availableSlots <= 0  || availableSlots < mainQuestionListToAdd.size()) {
+      throw new ConflictDataException("Limite máximo de questões principais atingido para o Simulado!");
+    }
+  }
+
+  private static void addMainQuestionsToMockExamMap(
+      Map<Integer, MainQuestion> mainQuestionMap,
+      List<MainQuestion> mainQuestionListToAdd
+  ) {
+    int start = MockExam.INITIAL_QUESTION_NUMBER;
+    int end = start + MockExam.MAXIMUM_QUESTIONS_NUMBER - 1;
+    Set<Integer> questionNumberSet = IntStream.rangeClosed(start, end)
+        .boxed()
+        .collect(Collectors.toCollection(HashSet::new));
+    Set<Integer> unavailableSlots = mainQuestionMap.keySet();
+    questionNumberSet.removeAll(unavailableSlots);
+    List<Integer> availableSlotsNumber = new ArrayList<>(questionNumberSet);
+
+    for (int index = 0; index < mainQuestionListToAdd.size(); index ++) {
+      Integer availableQuestionNumber = availableSlotsNumber.get(index);
+      MainQuestion mainQuestionToAdd = mainQuestionListToAdd.get(index);
+
+      mainQuestionMap.put(availableQuestionNumber, mainQuestionToAdd);
+    }
   }
 }

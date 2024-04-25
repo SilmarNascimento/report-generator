@@ -1,4 +1,4 @@
-
+/*
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
@@ -7,17 +7,25 @@ import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
+import com.mateco.reportgenerator.service.exception.NotFoundException;
+import com.mateco.reportgenerator.testes.MapEntity;
+import com.mateco.reportgenerator.testes.MapEntityRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/tests")
+@RequiredArgsConstructor
 public class TesteController {
+  private final MapEntityRepository entityRepository;
 
   @GetMapping
   public ResponseEntity<MockExam> getMockExam() {
@@ -86,4 +94,42 @@ public class TesteController {
     System.out.println(MockExamOutpuDto.parseDto(mockExam02));
     return ResponseEntity.ok(mockExam02);
   }
+
+  @GetMapping("map")
+  public ResponseEntity testMap() {
+    MapEntity newMapEntity = new MapEntity();
+    newMapEntity.setAttributeTest(new HashMap<Integer, Integer>());
+    newMapEntity.getAttributeTest().put(1, 54);
+    newMapEntity.getAttributeTest().put(2, 1435);
+    newMapEntity.getAttributeTest().put(3, null);
+    newMapEntity.getAttributeTest().put(4, null);
+    newMapEntity.getAttributeTest().put(5, null);
+
+    System.out.println(newMapEntity);
+
+    MapEntity savedMap = entityRepository.save(newMapEntity);
+
+    MapEntity mapEntityFound = entityRepository.findById(savedMap.getId())
+        .orElseThrow(() -> new NotFoundException("n achei"));
+
+    System.out.println(mapEntityFound);
+
+    return ResponseEntity.ok(mapEntityFound);
+  }
+
+  @GetMapping("map/get/{id}")
+  public ResponseEntity testMapRecovery(
+      @PathVariable UUID id
+  ) {
+
+    MapEntity mapEntityFound = entityRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("n achei"));
+
+    List<MapEntity> allMap = entityRepository.findAll();
+    System.out.println(allMap);
+
+    return ResponseEntity.ok(mapEntityFound);
+  }
 }
+*/
+

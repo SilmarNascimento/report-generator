@@ -555,7 +555,7 @@ public class MockExamServiceTests {
     assertNotNull(serviceResponse);
 
     Map<Integer, MainQuestion> mainQuestionResponseMap = serviceResponse.getMockExamQuestions();
-    assertEquals(45, mainQuestionResponseMap.size());
+    assertEquals(3, mainQuestionResponseMap.size());
     assertEquals(mainQuestionResponseMap.get(136), mockMainQuestion01);
     assertEquals(mainQuestionResponseMap.get(137), mockMainQuestion02);
     assertEquals(mainQuestionResponseMap.get(138), mockMainQuestion03);
@@ -563,7 +563,6 @@ public class MockExamServiceTests {
     Assertions.assertThat(serviceResponse.getMockExamQuestions()).isNotNull()
         .allSatisfy((questionNumber, mainQuestion) -> {
           Assertions.assertThat(questionNumber).isInstanceOf(Integer.class);
-          if (questionNumber >= 136 && questionNumber <= 138) {
             Assertions.assertThat(mainQuestion.getId()).isNotNull();
             Assertions.assertThat(mainQuestion.getTitle()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
@@ -573,9 +572,6 @@ public class MockExamServiceTests {
             Assertions.assertThat(mainQuestion.getAdaptedQuestions()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getMockExams()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getHandout()).isInstanceOf(List.class);
-          } else {
-            Assertions.assertThat(mainQuestion).isNull();
-          }
         });
 
     Mockito.verify(mockExamRepository, Mockito.times(1))

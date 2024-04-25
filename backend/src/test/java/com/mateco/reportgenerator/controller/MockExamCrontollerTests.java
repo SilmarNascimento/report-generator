@@ -3,6 +3,7 @@ package com.mateco.reportgenerator.controller;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -667,28 +668,22 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.className", isA(List.class)))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.number").value(mockExam02.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[*].id").exists())
-        .andExpect(jsonPath("$.mockExamQuestions.[0].id").value(mockMainQuestionId01.toString()))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].title").value(mockMainQuestion01.getTitle()))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].level").value(mockMainQuestion01.getLevel()))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.mockExamQuestions.[0].adaptedQuestions", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].mockExams", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[0].handouts", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].id").value(mockMainQuestionId02.toString()))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].title").value(mockMainQuestion02.getTitle()))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].level").value(mockMainQuestion02.getLevel()))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.mockExamQuestions.[1].adaptedQuestions", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].mockExams", isA(List.class)))
-        .andExpect(jsonPath("$.mockExamQuestions.[1].handouts", isA(List.class)));
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
+
+    for (Integer key : mockExam02.getMockExamQuestions().keySet()) {
+      httpResponse
+          .andExpect(jsonPath("$.mockExamQuestions." + key).exists())
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".id").exists())
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".title").exists())
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".level").exists())
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".subjects", isA(List.class)))
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".images", isA(List.class)))
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".alternatives", isA(List.class)))
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".alternatives.[*].id").exists())
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".adaptedQuestions", isA(List.class)))
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".mockExams", isA(List.class)))
+          .andExpect(jsonPath("$.mockExamQuestions." + key + ".handouts", isA(List.class)));
+    }
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .addMainQuestion(any(UUID.class), any(List.class));
@@ -783,8 +778,12 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.className", isA(List.class)))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
         .andExpect(jsonPath("$.number").value(mockExam01.getNumber()))
-        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)))
-        .andExpect(jsonPath("$.mockExamQuestions").isEmpty());
+        .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
+
+    for (Integer key : List.of(136, 180)) {
+      httpResponse
+          .andExpect(jsonPath("$.mockExamQuestions." + key).doesNotExist());
+    }
 
     Mockito.verify(mockExamService, Mockito.times(1))
         .removeMainQuestion(any(UUID.class), any(List.class));

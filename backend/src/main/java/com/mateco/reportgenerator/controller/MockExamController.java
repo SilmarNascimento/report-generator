@@ -50,6 +50,7 @@ public class MockExamController {
       @RequestParam(required = false, defaultValue = "20") int pageSize
   ) {
     Page<MockExam> mockExamsPage = mockExamService.findAllMockExams(pageNumber, pageSize);
+    System.out.println(mockExamsPage.getContent());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(

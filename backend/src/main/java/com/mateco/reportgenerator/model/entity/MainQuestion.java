@@ -37,8 +37,8 @@ public class MainQuestion extends Question {
   @ManyToMany
   @JoinTable(
       name = "questions_content",
-      joinColumns = @JoinColumn(name = "subject_id"),
-      inverseJoinColumns = @JoinColumn(name = "main_question_id")
+      joinColumns = @JoinColumn(name = "main_question_id"),
+      inverseJoinColumns = @JoinColumn(name = "subject_id")
   )
   private List<Subject> subjects;
 
