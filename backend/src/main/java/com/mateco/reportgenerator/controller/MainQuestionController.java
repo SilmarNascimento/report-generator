@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
@@ -11,6 +12,7 @@ import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,23 @@ public class MainQuestionController {
       @RequestParam(required = false, defaultValue = "20") int pageSize,
       @RequestParam(required = false) String query
   ) {
-    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query);
+    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query, new ArrayList<>());
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(PageOutputDto.parseDto(
+            questionsPage,
+            MainQuestionOutputDto::parseDto
+        ));
+  }
+
+  @PostMapping("filter")
+  public ResponseEntity<PageOutputDto<MainQuestionOutputDto>> findAllFilteredMainQuestions(
+      @RequestParam(required = false, defaultValue = "0") int pageNumber,
+      @RequestParam(required = false, defaultValue = "20") int pageSize,
+      @RequestParam(required = false) String query,
+      @RequestBody(required = false) MainQuestionListInputDto excludedQuestions
+  ) {
+    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query, excludedQuestions.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(

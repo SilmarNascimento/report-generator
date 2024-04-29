@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.model.repository;
 
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.Subject;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +20,7 @@ public interface MainQuestionRepository extends JpaRepository<MainQuestion, UUID
   @NonNull
   @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title LIKE %:query%)")
   Page<MainQuestion> findAll(@NonNull Pageable pageable, String query);
+  @NonNull
+  @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title LIKE %:query%) AND (mainQuestion.id NOT IN :excludedQuestions)")
+  Page<MainQuestion> findAll(@NonNull Pageable pageable, String query, List<UUID> excludedQuestions);
 }

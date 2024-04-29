@@ -203,15 +203,15 @@ public class MockExamService implements MockExamServiceInterface {
       List<MainQuestion> mainQuestions,
       Map<Integer, MainQuestion> questionMap
   ) {
-    Map<MainQuestion, Integer> reverseMap = new HashMap<>();
+    Map<UUID, Integer> reverseMap = new HashMap<>();
     for (Map.Entry<Integer, MainQuestion> entry : questionMap.entrySet()) {
-      reverseMap.put(entry.getValue(), entry.getKey());
+      reverseMap.put(entry.getValue().getId(), entry.getKey());
     }
 
     List<Integer> duplicatedQuestions = new ArrayList<>();
     for (MainQuestion mainQuestion : mainQuestions) {
-      if (reverseMap.containsKey(mainQuestion)) {
-        duplicatedQuestions.add(reverseMap.get(mainQuestion));
+      if (reverseMap.containsKey(mainQuestion.getId())) {
+        duplicatedQuestions.add(reverseMap.get(mainQuestion.getId()));
       }
     }
 
