@@ -9,5 +9,5 @@ export type MockExam =  {
   subjects: Subject[]
   releasedYear: string
   number: number
-  mockExamQuestions: MainQuestion[]
+  mockExamQuestions: { [key: number]: MainQuestion };
 }

@@ -1,4 +1,4 @@
-import { FilePlus, Pencil, Plus, Search } from "lucide-react";
+import { FilePlus, Plus, Search } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -6,7 +6,6 @@ import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { MainQuestion, PageResponse } from "../../interfaces";
 import { useState } from "react";
 import { Pagination } from "../pagination";
-import { Link } from "react-router-dom";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 
 type AddMainQuestionManagerTableProps = ({
@@ -36,6 +35,11 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
     const correctIndex = question.alternatives.findIndex(alternative => alternative.questionAnswer);
     return getAlternativeLetter(correctIndex);
   }
+
+  function handleClick(mainQuestionIdList: string[]) {
+    setMainQuestionIdToAdd([]);
+    handleAddMainQuestion(mainQuestionIdList);
+  }
   
   return (
     <>
@@ -56,7 +60,7 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
             </Input>
           </form>
 
-          <Button onClick={() => handleAddMainQuestion(mainQuestionIdToAdd)}>
+          <Button onClick={() => handleClick(mainQuestionIdToAdd)}>
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>
@@ -114,11 +118,9 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-questions/${mainQuestion.id}/subjects`}>
-                      <span>
-                        <Pencil className="size-3" color="green"/>
-                      </span>
-                    </Link>
+                    <span>
+                      {mainQuestion.subjects.length ? mainQuestion.subjects[0].name : "Sem assunto principal"}
+                    </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <span>
@@ -141,7 +143,7 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleAddMainQuestion([mainQuestion.id])}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleClick([mainQuestion.id])}>
                       <Plus className="size-3" color="red"/>
                     </Button>
                   </TableCell>

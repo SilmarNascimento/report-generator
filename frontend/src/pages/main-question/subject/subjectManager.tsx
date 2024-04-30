@@ -23,7 +23,6 @@ export function MainQuestionSubjectManager() {
   const subjectIdList = useRef<string[]>();
   const mainQuestion = useRef<MainQuestion>();
 
-
   useEffect(() => {
     setSearchParams(params => {
       if (params.get('query') !== debouncedQueryFilter) {
@@ -106,7 +105,7 @@ export function MainQuestionSubjectManager() {
         warningAlert(errorMessage);
       }
     }
-  })
+  });
 
   const removeSubjectFromMainQuestion = useMutation({
     mutationFn: async (subjectIdListToRemove: string[]) => {
@@ -139,7 +138,7 @@ export function MainQuestionSubjectManager() {
         warningAlert(errorMessage);
       }
     }
-  })
+  });
 
   async function handleAddSubject(subjectIdList: string[]) {
     await addSubjectToMainQuestion.mutateAsync(subjectIdList);

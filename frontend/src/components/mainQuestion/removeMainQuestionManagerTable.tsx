@@ -48,6 +48,11 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
     return getAlternativeLetter(correctIndex);
   }
 
+  function handleClick(subjectIdList: string[]) {
+    setMainQuestionIdToDelete([]);
+    handleRemoveMainQuestions(subjectIdList);
+  }
+
   return (
     <>
       <div className="max-w-6xl mx-auto space-y-5">
@@ -67,7 +72,7 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
             </Input>
           </form>
 
-          <Button onClick={() => handleRemoveMainQuestions(mainQuestionIdToDelete)}>
+          <Button onClick={() => handleClick(mainQuestionIdToDelete)}>
             <FileMinus className="size-3" />
             Remover todos
           </Button>
@@ -150,7 +155,7 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleRemoveMainQuestions([mainQuestion.id])}>
+                    <Button size="icon" className="mx-0.5" onClick={() => handleClick([mainQuestion.id])}>
                       <X className="size-3" color="red"/>
                     </Button>
                   </TableCell>

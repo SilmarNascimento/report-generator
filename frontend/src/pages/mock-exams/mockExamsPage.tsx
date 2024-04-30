@@ -49,6 +49,9 @@ export function MockExams() {
     staleTime: Infinity,
   })
 
+  console.log(mockExamPageResponse);
+  
+
   const deleteMainQuestion = useMutation({
     mutationFn: async (mockExamId: string) => {
       try {
@@ -88,8 +91,8 @@ export function MockExams() {
     return null
   }
 
-  function getMockExamCode({ releasedYear, number}: MockExam) {
-    return `${releasedYear}:S${number}`;
+  function getMockExamCode({ releasedYear, number, className}: MockExam) {
+    return `${releasedYear}:S${number}-${className[0]}`;
   }
 
   return (
@@ -204,7 +207,7 @@ export function MockExams() {
                   <TableCell className="text-zinc-300">
                     <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
                       <span>
-                        {mockExam.mockExamQuestions.length}
+                        {Object.keys(mockExam.mockExamQuestions).length}
                       </span>
                     </Link>
                   </TableCell>
