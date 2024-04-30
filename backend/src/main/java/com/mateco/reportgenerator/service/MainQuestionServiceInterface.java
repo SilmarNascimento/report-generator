@@ -16,7 +16,8 @@ import org.springframework.data.domain.Pageable;
  *                     da entidade MainQuestion.
  */
 public interface MainQuestionServiceInterface {
-  Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize, String query, List<UUID> excludedQuestions);
+  Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize, String query);
+  Page<MainQuestion> findAllFilteredMainQuestions(int pageNumber, int pageSize, String query, List<UUID> excludedQuestions);
   MainQuestion findMainQuestionById(UUID questionId);
   MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages);
   MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, List<String> questionImages);

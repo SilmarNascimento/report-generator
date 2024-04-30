@@ -48,7 +48,13 @@ public class MainQuestionService implements MainQuestionServiceInterface {
   }
 
   @Override
-  public Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize, String query, List<UUID> excludedQuestions) {
+  public Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize, String query) {
+    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    return mainQuestionRepository.findAll(pageable, query);
+  }
+
+  @Override
+  public Page<MainQuestion> findAllFilteredMainQuestions(int pageNumber, int pageSize, String query, List<UUID> excludedQuestions) {
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
     if (excludedQuestions.isEmpty()) {
       return mainQuestionRepository.findAll(pageable, query);

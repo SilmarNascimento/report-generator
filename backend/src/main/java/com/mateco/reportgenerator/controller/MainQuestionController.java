@@ -57,7 +57,7 @@ public class MainQuestionController {
       @RequestParam(required = false, defaultValue = "20") int pageSize,
       @RequestParam(required = false) String query
   ) {
-    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query, new ArrayList<>());
+    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query);
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
@@ -73,7 +73,8 @@ public class MainQuestionController {
       @RequestParam(required = false) String query,
       @RequestBody(required = false) MainQuestionListInputDto excludedQuestions
   ) {
-    Page<MainQuestion> questionsPage = mainQuestionService.findAllMainQuestions(pageNumber, pageSize, query, excludedQuestions.mainQuestionsId());
+    Page<MainQuestion> questionsPage = mainQuestionService
+        .findAllFilteredMainQuestions(pageNumber, pageSize, query, excludedQuestions.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(

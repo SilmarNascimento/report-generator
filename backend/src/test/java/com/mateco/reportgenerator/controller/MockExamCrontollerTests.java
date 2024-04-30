@@ -78,8 +78,6 @@ public class MockExamCrontollerTests {
   private MockExam mockExam02;
   private Subject mockSubject01;
   private Subject mockSubject02;
-  private MainQuestion mockMainQuestion01;
-  private MainQuestion mockMainQuestion02;
   private MockExamResponse mockExamResponse01;
   private MockExamResponse mockExamResponse02;
   private MockExamResponse updatedMockExamResponse01;
@@ -115,7 +113,7 @@ public class MockExamCrontollerTests {
     mockSubject02 = new Subject("Algebra");
     mockSubject02.setId(mockSubjectId02);
 
-    mockMainQuestion01 = new MainQuestion(
+    MainQuestion mockMainQuestion01 = new MainQuestion(
         "título questão 01",
         new ArrayList<>(),
         "difícil",
@@ -127,7 +125,7 @@ public class MockExamCrontollerTests {
     );
     mockMainQuestion01.setId(mockMainQuestionId01);
 
-    mockMainQuestion02 = new MainQuestion(
+    MainQuestion mockMainQuestion02 = new MainQuestion(
         "título questão 02",
         List.of(mockSubject01, mockSubject02),
         "difícil",

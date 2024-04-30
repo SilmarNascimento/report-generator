@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.hamcrest.Matchers.isA;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -9,7 +10,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
@@ -55,6 +60,7 @@ public class MainQuestionControllerTests {
   private ImageServiceInterface imageService;
 
   private String baseUrl;
+  private ObjectMapper objectMapper;
   private UUID mockMainQuestionId01;
   private UUID mockMainQuestionId02;
   private UUID mockAdaptedQuestionId01;
@@ -72,8 +78,10 @@ public class MainQuestionControllerTests {
   private Subject mockSubject02;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws JsonProcessingException {
     baseUrl = "/main-question";
+    objectMapper = new ObjectMapper();
+
     mockMainQuestionId01 = UUID.randomUUID();
     mockMainQuestionId02 = UUID.randomUUID();
     mockAdaptedQuestionId01 = UUID.randomUUID();
@@ -87,20 +95,9 @@ public class MainQuestionControllerTests {
         "image_example_03".getBytes());
     multipartFiles = List.of(mockFile01, mockFile02, mockFile03);
 
-    mainQuestionInput = "{\n"
-        + "\t\"title\": \"titulo da questao\",\n"
-        + "\t\"level\": \"nivel da questao\",\n"
-        + "\t\"alternatives\": [\n"
-        + "\t\t{\n"
-        + "\t\t\t\"description\": \"descricao da alternativa\",\n"
-        + "\t\t\t\"questionAnswer\": false\n"
-        + "\t\t},\n"
-        + "\t\t{\n"
-        + "\t\t\t\"description\": \"descricao da alternativa\",\n"
-        + "\t\t\t\"questionAnswer\": false\n"
-        + "\t\t}\n"
-        + "\t]\n"
-        + "}";
+    MainQuestionInputDto mainQuestionInputDto = getMockMainQuestionInputDto();
+
+    mainQuestionInput = objectMapper.writeValueAsString(mainQuestionInputDto);
 
     subjectIdListinput = new SubjectListInputDto(
         List.of(UUID.randomUUID(), UUID.randomUUID())
@@ -160,6 +157,25 @@ public class MainQuestionControllerTests {
         List.of(mockAlternative01, mockAlternative02)
     );
     mockAdaptedQuestion02.setId(mockAdaptedQuestionId02);
+  }
+
+  private static MainQuestionInputDto getMockMainQuestionInputDto() {
+    AlternativeInputDto alternativeInputDto01 = new AlternativeInputDto(
+        "descrição da alternativa01",
+        false
+    );
+    AlternativeInputDto alternativeInputDto02 = new AlternativeInputDto(
+        "descrição da alternativa02",
+        true
+    );
+
+    return new MainQuestionInputDto(
+        "titulo da questão",
+        new ArrayList<>(),
+        "Fácil",
+        new ArrayList<>(),
+        List.of(alternativeInputDto01, alternativeInputDto02)
+    );
   }
 
   @Test
@@ -455,6 +471,437 @@ public class MainQuestionControllerTests {
     assertEquals(pageNumber, pageNumberCaptor.getValue());
     assertEquals(pageSize, pageSizeCaptor.getValue());
     assertEquals(query, queryCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades MainQuestion filtradas com default parameters")
+  public void findAllFilteredMainQuestionsDefaultParametersTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    List<UUID> excludedQuestions = new ArrayList<>();
+    MainQuestionListInputDto listInputDto = new MainQuestionListInputDto(excludedQuestions);
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
+
+    Mockito
+        .when(mainQuestionService.findAllFilteredMainQuestions(anyInt(), anyInt(), any(), any(List.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter" + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    ResultActions httpResponse = mockMvc.perform(
+        post(endpoint)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(listInputDto))
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].id").value(mockMainQuestionId02.toString()))
+        .andExpect(jsonPath("$.data.[1].title").value("título questão 02"))
+        .andExpect(jsonPath("$.data.[1].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images.[0]").value("imagem da questão 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> questionIdListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllFilteredMainQuestions(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            questionIdListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+    assertTrue(questionIdListCaptor.getValue().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades filtradas MainQuestion com query parameters")
+  public void findAllFilteredMainQuestionsQueryParametersTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    long totalItems = 2;
+    List<UUID> excludedQuestions = new ArrayList<>();
+    MainQuestionListInputDto listInputDto = new MainQuestionListInputDto(excludedQuestions);
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01, mockMainQuestion02));
+
+    Mockito
+        .when(mainQuestionService.findAllFilteredMainQuestions(anyInt(), anyInt(), any(), any(List.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter" + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    ResultActions httpResponse = mockMvc.perform(
+        post(endpoint)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(listInputDto))
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].id").value(mockMainQuestionId02.toString()))
+        .andExpect(jsonPath("$.data.[1].title").value("título questão 02"))
+        .andExpect(jsonPath("$.data.[1].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].images.[0]").value("imagem da questão 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[1].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> questionIdListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllFilteredMainQuestions(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            questionIdListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+    assertTrue(questionIdListCaptor.getValue().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades filtradas MainQuestion com parâmetros de paginação default e filtro por query")
+  public void findAllFiltereddMainQuestionsQueryFilterTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    String query = "ome";
+    List<UUID> excludedQuestions = new ArrayList<>();
+    MainQuestionListInputDto listInputDto = new MainQuestionListInputDto(excludedQuestions);
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionService.findAllFilteredMainQuestions(anyInt(), anyInt(), any(), any(List.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter" + "?query=" + query;
+    ResultActions httpResponse = mockMvc.perform(
+        post(endpoint)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(listInputDto))
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> questionIdListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllFilteredMainQuestions(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            questionIdListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
+    assertTrue(questionIdListCaptor.getValue().isEmpty());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades filtradas MainQuestion com parâmetros de paginação default e filtro por query")
+  public void findAllFiltereddMainQuestionsExcludedIdListFilterTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 20;
+    long totalItems = 2;
+    List<UUID> excludedQuestions = List.of(mockMainQuestionId02);
+    MainQuestionListInputDto listInputDto = new MainQuestionListInputDto(excludedQuestions);
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionService.findAllFilteredMainQuestions(anyInt(), anyInt(), any(), any(List.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter";
+    ResultActions httpResponse = mockMvc.perform(
+        post(endpoint)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(listInputDto))
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> questionIdListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllFilteredMainQuestions(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            questionIdListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertNull(queryCaptor.getValue());
+    assertEquals(excludedQuestions, questionIdListCaptor.getValue());
+  }
+
+  @Test
+  @DisplayName("Verifica se é retornado uma lista paginada das entidades filtradas MainQuestion com parâmetros de paginação e filtro por query")
+  public void findAllFilteredMainQuestionsAllParametersAndFiltersTest() throws Exception {
+    int pageNumber = 0;
+    int pageSize = 2;
+    long totalItems = 2;
+    String query = "ome";
+    List<UUID> excludedQuestions = List.of(mockMainQuestionId02);
+    MainQuestionListInputDto listInputDto = new MainQuestionListInputDto(excludedQuestions);
+
+    Page<MainQuestion> page = Mockito.mock(Page.class);
+
+    Mockito
+        .when(page.getNumberOfElements())
+        .thenReturn(pageSize);
+    Mockito
+        .when(page.getTotalElements())
+        .thenReturn(totalItems);
+    Mockito
+        .when(page.getTotalPages())
+        .thenReturn(1);
+    Mockito
+        .when(page.getContent())
+        .thenReturn(List.of(mockMainQuestion01));
+
+    Mockito
+        .when(mainQuestionService.findAllFilteredMainQuestions(anyInt(), anyInt(), any(), any(List.class)))
+        .thenReturn(page);
+
+    String endpoint = baseUrl + "/filter" + "?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&query=" + query;
+    ResultActions httpResponse = mockMvc.perform(
+        post(endpoint)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(listInputDto))
+    );
+
+    httpResponse
+        .andExpect(status().is(200))
+        .andExpect(jsonPath("$.pageItems").value(pageSize))
+        .andExpect(jsonPath("$.totalItems").value(totalItems))
+        .andExpect(jsonPath("$.pages").value(1))
+        .andExpect(jsonPath("$.data", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].id").value(mockMainQuestionId01.toString()))
+        .andExpect(jsonPath("$.data.[0].title").value("título questão 01"))
+        .andExpect(jsonPath("$.data.[0].level").value("difícil"))
+        .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].images.[0]").value("imagem da questão 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value("descrição da alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value("imagem alternativa 01"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value("descrição da alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value("imagem alternativa 02"))
+        .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].mockExams", isA(List.class)))
+        .andExpect(jsonPath("$.data.[0].handouts", isA(List.class)));
+
+    ArgumentCaptor<Integer> pageNumberCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<Integer> pageSizeCaptor = ArgumentCaptor.forClass(Integer.class);
+    ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<List<UUID>> questionIdListCaptor = ArgumentCaptor.forClass(List.class);
+
+    Mockito
+        .verify(mainQuestionService, Mockito.times(1))
+        .findAllFilteredMainQuestions(
+            pageNumberCaptor.capture(),
+            pageSizeCaptor.capture(),
+            queryCaptor.capture(),
+            questionIdListCaptor.capture()
+        );
+
+    assertEquals(pageNumber, pageNumberCaptor.getValue());
+    assertEquals(pageSize, pageSizeCaptor.getValue());
+    assertEquals(query, queryCaptor.getValue());
+    assertEquals(excludedQuestions, questionIdListCaptor.getValue());
   }
 
   @Test
@@ -1130,7 +1577,7 @@ public class MainQuestionControllerTests {
     ResultActions httpResponse = mockMvc.perform(
         patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
+            .content(objectMapper.writeValueAsString(subjectIdListinput))
     );
 
     httpResponse
@@ -1159,7 +1606,7 @@ public class MainQuestionControllerTests {
     ResultActions httpResponse = mockMvc.perform(
         patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
+            .content(objectMapper.writeValueAsString(subjectIdListinput))
     );
 
     httpResponse
@@ -1184,7 +1631,7 @@ public class MainQuestionControllerTests {
     ResultActions httpResponse = mockMvc.perform(
         patch(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
+            .content(objectMapper.writeValueAsString(subjectIdListinput))
     );
 
     httpResponse
@@ -1209,7 +1656,7 @@ public class MainQuestionControllerTests {
     ResultActions httpResponse = mockMvc.perform(
         delete(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
+            .content(objectMapper.writeValueAsString(subjectIdListinput))
     );
 
     httpResponse
@@ -1240,7 +1687,7 @@ public class MainQuestionControllerTests {
     ResultActions httpResponse = mockMvc.perform(
         delete(endpoint)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(new ObjectMapper().writeValueAsString(subjectIdListinput))
+            .content(objectMapper.writeValueAsString(subjectIdListinput))
     );
 
     httpResponse
