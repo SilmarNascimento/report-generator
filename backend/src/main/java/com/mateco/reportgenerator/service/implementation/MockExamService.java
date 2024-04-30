@@ -146,9 +146,7 @@ public class MockExamService implements MockExamServiceInterface {
     Map<Integer, MainQuestion> mainQuestionMap = mockExamFound.getMockExamQuestions();
     List<Integer> questionsNumber = findDuplicateQuestionNumber(mainQuestionListToDelete, mainQuestionMap);
     if (questionsNumber.size() == mainQuestionsId.size()) {
-      questionsNumber.forEach(indexKey -> {
-        mainQuestionMap.replace(indexKey, null);
-      });
+      questionsNumber.forEach(mainQuestionMap::remove);
     } else {
       throw new ConflictDataException("Questão principal não está presente no simulado");
     }
@@ -261,4 +259,5 @@ public class MockExamService implements MockExamServiceInterface {
       mainQuestionMap.put(availableQuestionNumber, mainQuestionToAdd);
     }
   }
+
 }
