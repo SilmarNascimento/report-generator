@@ -8,7 +8,7 @@ import { MainQuestions } from './pages/main-question/MainQuestionsPage.tsx';
 import { Test } from './pages/test.tsx';
 import { MockExams } from './pages/mock-exams/mockExamsPage.tsx';
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
-import { Subjects } from './pages/Subjects.tsx';
+import { Subjects } from './pages/subject/Subjects.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CreateMainQuestion } from "./pages/main-question/createMainQuestion.tsx";
@@ -21,6 +21,7 @@ import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
 import { MockExamMainQuestionManager } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
 import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
 import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
+import { Diagnosis } from "./pages/diagnosis/diagnosisPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -60,8 +61,6 @@ const router = createBrowserRouter([
     path: "/main-questions/:mainQuestionId/adapted-questions/edit/:adaptedQuestionId",
     element: <EditAdaptedQuestion />
   },
-
-
   {
     path: "/mock-exams",
     element: <MockExams />
@@ -82,6 +81,12 @@ const router = createBrowserRouter([
     path: "/mock-exams/:mockExamId/main-questions",
     element: <MockExamMainQuestionManager />
   },
+
+  {
+    path: "/diagnosis",
+    element: <Diagnosis />
+  },
+
 
   {
     path: "/test",

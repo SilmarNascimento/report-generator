@@ -29,7 +29,7 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
       setFilteredEntity(filteredSubject);
       setFilter(debouncedQueryFilter);
     }
-  }, [debouncedQueryFilter, currentPage, filter]);
+  }, [debouncedQueryFilter, currentPage, filter, mainQuestionList]);
 
   function toggleCheckBox(subjectId: string) {
     setMainQuestionIdToDelete(prev => (

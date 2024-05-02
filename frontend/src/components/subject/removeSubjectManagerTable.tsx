@@ -13,11 +13,11 @@ type RemoveSubjectManagerTableProps = ({
   handleRemoveSubjects: UseMutateAsyncFunction<void, Error, string[], unknown>;
 });
 
-export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
+export function RemoveSubjectManagerTable({ entity: subjectList, handleRemoveSubjects }: RemoveSubjectManagerTableProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
-  const [filteredEntity, setFilteredEntity] = useState<Subject[]>(entitySubjects);
+  const [filteredEntity, setFilteredEntity] = useState<Subject[]>(subjectList);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   const [subjectIdToDelete, setSubjectIdToDelete] = useState<string[]>([]);
@@ -25,11 +25,11 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
   useEffect(() => {
     if (debouncedQueryFilter) {
       setCurrentPage(1);
-      const filteredSubject = entitySubjects.filter((subject) => subject.name.includes(debouncedQueryFilter));
+      const filteredSubject = subjectList.filter((subject) => subject.name.includes(debouncedQueryFilter));
       setFilteredEntity(filteredSubject);
       setFilter(debouncedQueryFilter);
     }
-  }, [debouncedQueryFilter, currentPage, filter, entitySubjects]);
+  }, [debouncedQueryFilter, currentPage, filter, subjectList]);
 
   function toggleCheckBox(subjectId: string) {
     setSubjectIdToDelete(prev => (
@@ -79,7 +79,7 @@ export function RemoveSubjectManagerTable({ entity: entitySubjects, handleRemove
             </TableRow>
           </TableHeader>
           <TableBody>
-            {entitySubjects.map((subject) => {
+            {subjectList.map((subject) => {
               return (
                 <TableRow key={subject.id}>
                   <TableCell>
