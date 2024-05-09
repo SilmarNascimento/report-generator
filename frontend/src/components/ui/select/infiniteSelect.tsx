@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useListenForOutsideClicks } from '../../../hooks/useListenForOutsideClicks'
 import { ChevronRight } from 'lucide-react'
+import { Loader } from '../loader/loader'
 
 type SelectOptionProps = {
   label: string
@@ -12,9 +13,10 @@ type SelectProps = {
   selected?: SelectOptionProps
   handleSelect: (option: SelectOptionProps) => void
   placeholder?: string
+  isFetchingOptions?: boolean
 }
 
-export function InfiniteSelect({ options, selected = { label: '', value: '' }, placeholder = 'Select', handleSelect }: SelectProps) {
+export function InfiniteSelect({ options, selected = { label: '', value: '' }, placeholder = 'Select', handleSelect, isFetchingOptions }: SelectProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   function openDropdown() {
@@ -45,6 +47,16 @@ export function InfiniteSelect({ options, selected = { label: '', value: '' }, p
 
   const { elementRef } = useListenForOutsideClicks(closeDropdown)
 
+  function renderNoOptions() {
+    if (isFetchingOptions) return <Loader />
+
+    return (
+      <div className='relative cursor-default select-none py-2 pl-3 pr-9'>
+        <span className='font-normal block truncate text-sm text-black'>No options here</span>
+      </div>
+    )
+  }
+
   function renderOptions(options: SelectOptionProps[]) {
     return options?.length > 0 ? (
       options?.map((option, index) => {
@@ -71,11 +83,7 @@ export function InfiniteSelect({ options, selected = { label: '', value: '' }, p
           </button>
         )
       })
-    ) : (
-      <div className='relative cursor-default select-none py-2 pl-3 pr-9'>
-        <span className='font-normal block truncate text-sm text-zinc-100'>No options here</span>
-      </div>
-    )
+    ) : renderNoOptions()
   }
 
   return (

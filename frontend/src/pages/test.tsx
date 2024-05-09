@@ -19,7 +19,7 @@ type SelectOptionProps = {
 
 export function Test() {
   const [selectedOption, setSelectedOption] = useState<SelectOptionProps>({ label: '', value: '' });
-  const [subjectList, setSubjectList] = useState<SelectOptionProps[]>([]);
+  const [subjectOptionsList, setSubjectOptionsList] = useState<SelectOptionProps[]>([]);
 
 
   const handleSelect = (option: SelectOptionProps) => {
@@ -56,7 +56,7 @@ export function Test() {
   
     console.log(options);
 
-    setSubjectList((prev) => [...prev, ...options])
+    setSubjectOptionsList((prev) => [...prev, ...options])
     
     return requestData
   }
@@ -87,10 +87,11 @@ export function Test() {
       <div className='block w-52'>
         <span className='block mb-2 text-sm'>Selecione um Assunto</span>
         <InfiniteSelect
-          options={subjectList}
+          options={subjectOptionsList}
           selected={selectedOption}
           placeholder='Selecione um Assunto'
           handleSelect={handleSelect}
+          isFetchingOptions={isFetchingNextPage}
         />
       </div>
     </>
