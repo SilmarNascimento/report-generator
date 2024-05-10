@@ -4,6 +4,7 @@ import { QueryKey, useInfiniteQuery } from '@tanstack/react-query';
 import { PageResponse, Subject } from '../interfaces';
 import { useState } from 'react';
 import { InfiniteSelect } from '../components/ui/select/infiniteSelect';
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
 interface QueryFunctionContext {
   queryKey: QueryKey;
@@ -25,13 +26,9 @@ export function Test() {
   const handleSelect = (option: SelectOptionProps) => {
     setSelectedOption(option)
   }
-  console.log(selectedOption);
-  
 
   async function fetchData(context: QueryFunctionContext) {
     const { pageParam } = context;
-    console.log(pageParam);
-    
     const pageNumber = typeof pageParam === 'number' ? pageParam : 0;
 
     const response = await fetch(`http://localhost:8080/subject/filter?pageNumber=${pageNumber}`,
@@ -53,21 +50,25 @@ export function Test() {
         value: id
       };
     }) ?? [];
-  
-    console.log(options);
-
     setSubjectOptionsList((prev) => [...prev, ...options])
     
     return requestData
   }
 
-  const { data, fetchNextPage, isFetchingNextPage } =
-    useInfiniteQuery<PageResponse<Subject>>({
-      queryKey: ['items'],
-      queryFn: fetchData,
-      initialPageParam: 0,
-      getNextPageParam: (lastPage) =>  lastPage.currentPage < (lastPage.pages - 1) ? lastPage.currentPage + 1 : undefined 
-    });
+  const {
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isFetching
+  } = useInfiniteQuery<PageResponse<Subject>>({
+    queryKey: ['items'],
+    queryFn: fetchData,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>  lastPage.currentPage < (lastPage.pages - 1) ? lastPage.currentPage + 1 : undefined 
+  });
+
+  const { lastEntryRef } = useIntersectionObserver<Subject>({isFetching, hasNextPage, fetchNextPage});
+
 
   function handleClick() {
     
@@ -76,8 +77,6 @@ export function Test() {
           fetchNextPage();
         }
   }
-
-  console.log(data);
 
   return (
     <>
@@ -92,6 +91,7 @@ export function Test() {
           placeholder='Selecione um Assunto'
           handleSelect={handleSelect}
           isFetchingOptions={isFetchingNextPage}
+          lastOptionRef={lastEntryRef}
         />
       </div>
     </>

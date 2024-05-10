@@ -14,9 +14,17 @@ type SelectProps = {
   handleSelect: (option: SelectOptionProps) => void
   placeholder?: string
   isFetchingOptions?: boolean
+  lastOptionRef: (node: Element | null) => void
 }
 
-export function InfiniteSelect({ options, selected = { label: '', value: '' }, placeholder = 'Select', handleSelect, isFetchingOptions }: SelectProps) {
+export function InfiniteSelect({
+  options,
+  selected = { label: '', value: '' },
+  placeholder = 'Select',
+  handleSelect,
+  isFetchingOptions,
+  lastOptionRef
+}: SelectProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   function openDropdown() {
@@ -71,6 +79,7 @@ export function InfiniteSelect({ options, selected = { label: '', value: '' }, p
               handleSelect(option)
               closeDropdown()
             }}
+            ref={options?.length - 1 === index ? lastOptionRef : null}
           >
             <span
               title={option.label}
