@@ -1,82 +1,139 @@
-import { UIEvent, useState } from "react"
+import { useState } from "react"
 import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable"
 import { NavigationBar } from "../../components/navigationBar"
 import { DragDropFIleUploader } from "../../components/ui/dragDropFIle"
 import { MockExamResponse } from "../../interfaces/MockExamResponse";
 import { MockExam, PageResponse } from "../../interfaces";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { QueryKey, useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
+import { InfiniteSelect } from "../../components/ui/select/infiniteSelect";
+import { successAlert, warningAlert } from "../../utils/toastAlerts";
+
+interface QueryFunctionContext {
+  queryKey: QueryKey;
+  pageParam?: unknown;
+  signal: AbortSignal;
+  meta?: Record<string, unknown>;
+}
+
+type SelectOptionProps = {
+  label: string
+  value: string
+}
 
 export function Diagnosis() {
-  const [selectedMockExam, setSelectedMockExam] = useState<MockExam | undefined>();
-  const [studentResponses, setStudentResponses] = useState<MockExamResponse[]>([]);
+  const [selectedOption, setSelectedOption] = useState<SelectOptionProps>({ label: '', value: '' });
+  const [subjectOptionsList, setSubjectOptionsList] = useState<SelectOptionProps[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [studentResponseList, setStudentResponseList] = useState<MockExamResponse[]>([]);
 
-  const [selectedItem, setSelectedItem] = useState<string>();
+  async function fetchMockExamList(context: QueryFunctionContext) {
+    const { pageParam } = context;
+    const pageNumber = typeof pageParam === 'number' ? pageParam : 0;
 
-  const [searchParams] = useSearchParams();
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
-  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
-
-  const pageRef = useRef<number>(0);
-
-  async function fetchData({ pageParam }) {
-    const response = await fetch(`http://localhost:8080/subject/filter?pageNumber=${pageParam}`,
+    const response = await fetch(`http://localhost:8080/mock-exam?pageNumber=${pageNumber}`,
       {
         headers: {
           'Content-Type': 'application/json',
         },
       }
     )
-    const requestData = await response.json();
+    const requestData: PageResponse<MockExam> = await response.json();
+    const options = requestData?.data.map((mockExam) => {
+      const  { id, releasedYear, number, className } = mockExam;
+      const code = `${releasedYear}:S${number} - ${className[0]}`;
+      return {
+        label: code,
+        value: id
+      };
+    }) ?? [];
+    setSubjectOptionsList((prev) => [...prev, ...options])
     
-    return requestData;
+    return requestData
   }
 
-  const { data, fetchNextPage, isFetchingNextPage } =
-    useInfiniteQuery<PageResponse<MockExam>>({
-      queryKey: ['items'],
-      queryFn: fetchData,
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, allPages, lastPageParam: number) => {
-        if (pageRef.current >= lastPage.pages - 1) {
-          return null;
-        }
-        return lastPageParam + 1;
-      },
-    });
+  const {
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+    isFetching
+  } = useInfiniteQuery<PageResponse<MockExam>>({
+    queryKey: ['items'],
+    queryFn: fetchMockExamList,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>  lastPage.currentPage < (lastPage.pages - 1) ? lastPage.currentPage + 1 : undefined 
+  });
 
-  function handleScroll(event: UIEvent<HTMLDivElement>) {
-    const { currentTarget } = event;
-    const target = currentTarget as HTMLDivElement;
+  const { lastEntryRef } = useIntersectionObserver<MockExam>({isFetching, hasNextPage, fetchNextPage});
 
-    if (target.scrollHeight - target.scrollTop === target.clientHeight && !isFetchingNextPage) {
-      fetchNextPage();
+  
+  const generateStudentsResponse = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('studentsMockExamsAnswers', file);
+     
+      // const json = JSON.stringify(createMainQuestion);
+      // const blob = new Blob([json], {
+      //   type: 'application/json'
+      // });
+
+      // formData.append("mainQuestionInputDto", blob);
+      
+      const response = await fetch(`http://localhost:8080/mock-exam/${selectedOption.value}/responses`,
+        {
+          method: 'POST',
+          body: formData
+        })
+
+      if (response.status === 200) {
+        const responseList: MockExamResponse[] = await response.json();
+        setStudentResponseList(responseList);
+        successAlert('Questão principal salva com sucesso!');
+      }
+
+      if (response.status === 400) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
     }
+  })
+
+
+  const handleSelect = (option: SelectOptionProps) => {
+    setSelectedOption(option)
+
   }
 
-  const options = data?.pages.flatMap(page => page.data) ?? [];
-
-  const handleChange = (newValue: string) => {
-    setSelectedItem(newValue);
-  };
+  async function handleUploadFile(files: File[]) {
+    const file = files[0];
+    await generateStudentsResponse.mutateAsync(file);
+  }
 
   return (
     <>
       <NavigationBar />
       <main>
-        <DragDropFIleUploader />
-        {studentResponses
-          ? <DiagnosisTable entity={studentResponses} />
-          : <span className="text-violet-300">Faça o Upload do Arquivo de respostas</span>
-        }
-        {studentResponses
-          && 
-          <Pagination
-            pages={mainQuestionPageResponse.pages}
-            items={mainQuestionPageResponse.pageItems}
-            page={page}
-            totalItems={mainQuestionPageResponse.totalItems}
+        <div className='block w-52'>
+          <span className='block mb-2 text-sm'>
+            Selecione um Simulado
+          </span>
+          <InfiniteSelect
+            options={subjectOptionsList}
+            selected={selectedOption}
+            placeholder='Selecione um Simulado'
+            handleSelect={handleSelect}
+            isFetchingOptions={isFetchingNextPage}
+            lastOptionRef={lastEntryRef}
           />
-        }
+        </div>
+        <div>
+          <DragDropFIleUploader
+            files={files}
+            setFiles={setFiles}
+            handleUploadFile={handleUploadFile}
+            dependency={!!selectedOption.value}
+          />
+        </div>
       </main>
     </>
   )

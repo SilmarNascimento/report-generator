@@ -1,7 +1,13 @@
 import { ChangeEvent, DragEvent, useRef, useState } from "react"
 
-export function DragDropFIleUploader() {
-  const [files, setFiles] = useState<File[]>([]);
+type DragDropFileUploaderProps = {
+  files: File[]
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>
+  dependency: boolean
+  handleUploadFile: 
+}
+
+export function DragDropFIleUploader({ files, setFiles, dependency }: DragDropFileUploaderProps) {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,6 +109,7 @@ export function DragDropFIleUploader() {
         <button
           className="bg-violet-600 w-full px-2 py-3 font-normal cursor-pointer rounded text-zinc-200 outline-none"
           type="button"
+          disabled={!files.length && !dependency}
           onClick={handleUploadFile}
         >
           Upload

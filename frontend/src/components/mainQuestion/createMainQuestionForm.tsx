@@ -24,7 +24,6 @@ export function CreateMainQuestionForm() {
   })
   const { register, handleSubmit, formState } = formMethods;
 
-
   const createMainQuestion = useMutation({
     mutationFn: async (data: CreateMainQuestionForm) => {
       const formData = new FormData();
