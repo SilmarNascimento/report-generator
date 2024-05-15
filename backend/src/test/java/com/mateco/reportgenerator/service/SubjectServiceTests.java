@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -74,7 +75,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), eq(null)))
+        .when(subjectRepository.findAllOrderByName(eq(mockPageable), eq(null)))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null, new ArrayList<>());
@@ -91,7 +92,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), eq(null));
+        .findAllOrderByName(any(Pageable.class), eq(null));
   }
 
   @Test
@@ -109,7 +110,7 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), eq(query)))
+        .when(subjectRepository.findAllOrderByName(eq(mockPageable), eq(query)))
         .thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query, new ArrayList<>());
@@ -126,7 +127,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), any(String.class));
+        .findAllOrderByName(any(Pageable.class), any(String.class));
   }
 
   @Test
@@ -144,8 +145,11 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), any(), eq(excludedSubjectsId)))
-        .thenReturn(page);
+        .when(subjectRepository.findAllOrderByName(
+            eq(mockPageable),
+            eq(null),
+            any(List.class)
+        )).thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, null, excludedSubjectsId);
     List<String> subjectsName = serviceResponse.getContent().stream()
@@ -161,7 +165,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), eq(null), any(List.class));
+        .findAllOrderByName(any(Pageable.class), eq(null), any(List.class));
   }
 
   @Test
@@ -180,8 +184,11 @@ public class SubjectServiceTests {
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     Mockito
-        .when(subjectRepository.findAll(eq(mockPageable), eq(query), eq(excludedSubjectsId)))
-        .thenReturn(page);
+        .when(subjectRepository.findAllOrderByName(
+            eq(mockPageable),
+            eq(query),
+            any(List.class)
+        )).thenReturn(page);
 
     Page<Subject> serviceResponse = subjectService.findAllSubjects(pageNumber, pageSize, query, excludedSubjectsId);
     List<String> subjectsName = serviceResponse.getContent().stream()
@@ -197,7 +204,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findAll(any(Pageable.class), any(String.class), any(List.class));
+        .findAllOrderByName(any(Pageable.class), any(String.class), any(List.class));
   }
 
   @Test

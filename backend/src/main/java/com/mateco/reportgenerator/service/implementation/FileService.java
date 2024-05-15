@@ -1,7 +1,6 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
-import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,4 +1,4 @@
-import { FileMinus, Pencil, Search, X } from "lucide-react";
+import { FileMinus, Search, X } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -10,11 +10,12 @@ import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 
 type RemoveMainQuestionManagerTableProps = ({
-  entity: MainQuestion[];
+  entity: { [key: number]: MainQuestion };
   handleRemoveMainQuestions: UseMutateAsyncFunction<void, Error, string[], unknown>;
 });
 
-export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handleRemoveMainQuestions }: RemoveMainQuestionManagerTableProps) {
+export function RemoveMainQuestionManagerTable({ entity, handleRemoveMainQuestions }: RemoveMainQuestionManagerTableProps) {
+  const mainQuestionList = Object.values(entity);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [filter, setFilter] = useState<string>("");
@@ -41,6 +42,13 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
 
   function getMainQuestionCode(mainQuestion: MainQuestion) {
     return mainQuestion.id;
+  }
+
+  function getMainQuestionNumber(questionIndex: number) {
+    const questionsNumber = Object.keys(entity);
+    console.log(questionsNumber);
+    
+    return Number(questionsNumber[questionIndex]) + 136;
   }
 
   function handleCorrectAnswer(question: MainQuestion) {
@@ -86,28 +94,25 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
                 <span>Código</span>
               </TableHead>
               <TableHead>
+                <span>Número da Questão</span>
+              </TableHead>
+              <TableHead>
+                <span>Gabarito</span>
+              </TableHead>
+              <TableHead>
                 <span>Nível</span>
               </TableHead>
               <TableHead>
                 <span>Assuntos</span>
               </TableHead>
               <TableHead>
-                <span>Gabarito</span>
-              </TableHead>
-              <TableHead>
                 <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
               </TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mainQuestionList.map((mainQuestion) => {
+            {mainQuestionList.map((mainQuestion, questionIndex) => {
               return (
                 <TableRow key={mainQuestion.id}>
                   <TableCell>
@@ -124,15 +129,12 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <span>
-                      {mainQuestion.level}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-zinc-300">
-                      <span>
-                        <Pencil className="size-3" color="green"/>
+                  <TableCell>
+                    <div className="flex flex-col gap-0.5 justify-center items-center">
+                      <span className="font-medium">
+                        {getMainQuestionNumber(questionIndex)}
                       </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <span>
@@ -141,17 +143,18 @@ export function RemoveMainQuestionManagerTable({ entity: mainQuestionList, handl
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <span>
+                      {mainQuestion.level}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                      <span>
+                        {mainQuestion.subjects[0].name}
+                      </span>
+                  </TableCell>
+                  
+                  <TableCell className="text-zinc-300">
+                    <span>
                       {mainQuestion.adaptedQuestions.length}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <span>
-                      {mainQuestion.mockExams.length}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <span>
-                      {mainQuestion.handouts.length}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">

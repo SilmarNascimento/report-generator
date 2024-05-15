@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 public record PageOutputDto<Type>(
     int pageItems,
     long totalItems,
+    int currentPage,
     int pages,
     List<Type> data
 ) {
@@ -21,6 +22,7 @@ public record PageOutputDto<Type>(
     return new PageOutputDto<>(
         page.getNumberOfElements(),
         page.getTotalElements(),
+        page.getNumber(),
         page.getTotalPages(),
         page.getContent().stream()
             .map(dtoConverter)

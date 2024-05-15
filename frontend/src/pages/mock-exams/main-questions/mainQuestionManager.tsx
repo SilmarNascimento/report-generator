@@ -23,9 +23,6 @@ export function MockExamMainQuestionManager() {
   const mainQuestionIdList = useRef<string[]>();
   const mockExam = useRef<MockExam>();
 
-  console.log(mockExam.current);
-  console.log(mainQuestionIdList.current);
-
   useEffect(() => {
     setSearchParams(params => {
       if (params.get('query') !== debouncedQueryFilter) {
@@ -106,6 +103,11 @@ export function MockExamMainQuestionManager() {
       }
 
       if (response.status === 404) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
+
+      if (response.status === 409) {
         const errorMessage = await response.text();
         warningAlert(errorMessage);
       }

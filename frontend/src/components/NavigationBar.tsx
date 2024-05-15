@@ -41,11 +41,11 @@ export function NavigationBar() {
         </NavLink>
 
         <NavLink
-          to={"/settings"}
+          to={"/diagnosis"}
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
         >
           <BarChartBig className="size-4" />
-          Resultados
+          Diagnósticos
         </NavLink>
       </nav>
     </div>

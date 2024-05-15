@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,9 +32,9 @@ public class SubjectService implements SubjectServiceInterface {
   public Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query, List<UUID> excludedSubjects) {
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
     if (excludedSubjects.isEmpty()) {
-      return subjectRepository.findAll(pageable, query);
+      return subjectRepository.findAllOrderByName(pageable, query);
     }
-    return subjectRepository.findAll(pageable, query, excludedSubjects);
+    return subjectRepository.findAllOrderByName(pageable, query, excludedSubjects);
   }
 
   @Override

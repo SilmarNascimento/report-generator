@@ -1,6 +1,7 @@
 import { FieldErrors, useFormContext } from "react-hook-form";
 import { z } from 'zod';
 import { mainQuestionSchema } from '../mainQuestion/MainQuestionSchema';
+import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 
 type CreateMainQuestionSchema = z.infer<typeof mainQuestionSchema>
 
@@ -28,14 +29,14 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
       </div>
      
       <div className="space-y-1 flex flex-col justify-center items-start">
-        <label htmlFor={`questionAnswer${index}`} className="font-extralight">Escolha uma imagem</label>
+        <label htmlFor={`alternatives.${index}.images`} className="font-extralight">Escolha uma imagem</label>
         <input
           {...register(`alternatives.${index}.images`)}
           type="file"
           multiple
           hidden
           accept="image/*,.pdf"
-          id={`questionAnswer${index}`}
+          id={`alternatives.${index}.images`}
         />
         <p className={`text-xs ${errors?.alternatives?.[index]?.images ? 'text-red-400' : 'text-transparent'}`}>
           {errors?.alternatives?.[index]?.images?.message ? errors?.alternatives?.[index]?.images?.message : '\u00A0'}
@@ -52,7 +53,7 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
             checked={watch(`questionAnswer`) === index.toString()}
             onChange={() => setValue(`questionAnswer` , index.toString())}
           />
-          <label htmlFor={`questionAnswer${index}` }><span className="bg-red-700">Resposta</span></label>
+          <label htmlFor={`questionAnswer${index}` }><span className="text-xs font-extralight italic">Resposta correta letra {getAlternativeLetter(index)}</span></label>
         </div>
         <p className={`text-xs ${errors?.questionAnswer ? 'text-red-400' : 'text-transparent'}`}>
           {errors?.questionAnswer?.message ? <span>Defina uma resposta correta</span> : '\u00A0'}

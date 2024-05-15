@@ -134,6 +134,13 @@ export function Diagnosis() {
             dependency={!!selectedOption.value}
           />
         </div>
+        <section>
+          { !!studentResponseList.length && 
+            <DiagnosisTable
+              entity={studentResponseList}
+            />
+          }
+        </section>
       </main>
     </>
   )

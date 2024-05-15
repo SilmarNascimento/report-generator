@@ -1,5 +1,4 @@
 //import { UIEvent } from 'react';
-import { DragDropFIleUploader } from '../components/ui/dragDropFIle';
 import { QueryKey, useInfiniteQuery } from '@tanstack/react-query';
 import { PageResponse, Subject } from '../interfaces';
 import { useState } from 'react';
@@ -80,7 +79,6 @@ export function Test() {
 
   return (
     <>
-      <DragDropFIleUploader />
       <button type='button' onClick={handleClick}>Load Next</button>
 
       <div className='block w-52'>
