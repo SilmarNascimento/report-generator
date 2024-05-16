@@ -12,6 +12,7 @@ import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
+import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import java.util.ArrayList;
@@ -157,6 +158,10 @@ public class MockExamService implements MockExamServiceInterface {
   public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
+
+    if (mockExamFound.getMockExamQuestions().size() != 45) {
+      throw new InvalidDataException("O simulado não contém 45 questões");
+    }
 
     Map<Integer, String> answerMap = new HashMap<>();
     answerMap.put(0, "A");
