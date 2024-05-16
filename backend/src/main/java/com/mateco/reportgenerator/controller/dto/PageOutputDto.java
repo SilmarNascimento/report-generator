@@ -1,11 +1,5 @@
 package com.mateco.reportgenerator.controller.dto;
 
-import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
-import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
-import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
-import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;

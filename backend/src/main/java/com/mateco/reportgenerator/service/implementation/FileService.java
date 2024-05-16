@@ -28,6 +28,7 @@ public class FileService implements FileServiceInterface {
         }
         List<String> studentRecord = new ArrayList<>();
         row.forEach(cell -> {
+          System.out.println(dataFormatter.formatCellValue(cell));
           studentRecord.add(dataFormatter.formatCellValue(cell));
         });
         allResponses.add(studentRecord);

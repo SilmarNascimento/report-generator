@@ -2,10 +2,9 @@ package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutputDto;
 import com.mateco.reportgenerator.controller.dto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
-import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -45,7 +44,7 @@ public class MockExamController {
   }
 
   @GetMapping
-  public ResponseEntity<PageOutputDto<MockExamOutpuDto>> findAllMockExams(
+  public ResponseEntity<PageOutputDto<MockExamOutputDto>> findAllMockExams(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
       @RequestParam(required = false, defaultValue = "20") int pageSize
   ) {
@@ -54,31 +53,31 @@ public class MockExamController {
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
             mockExamsPage,
-            MockExamOutpuDto::parseDto
+            MockExamOutputDto::parseDto
         ));
   }
 
   @GetMapping("/{mockExamId}")
-  public ResponseEntity<MockExamOutpuDto> findMockExambyId(
+  public ResponseEntity<MockExamOutputDto> findMockExambyId(
       @PathVariable UUID mockExamId
   ) {
     MockExam mockExams = mockExamService.findMockExamById(mockExamId);
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto
+        .body(MockExamOutputDto
             .parseDto(mockExams));
   }
 
   @PostMapping
-  public ResponseEntity<MockExamOutpuDto> createMockExam(@RequestBody MockExamInputDto mockExamInputDto) {
+  public ResponseEntity<MockExamOutputDto> createMockExam(@RequestBody MockExamInputDto mockExamInputDto) {
     MockExam mockExam = mockExamService.createMockExam(MockExam.parseMockExam(mockExamInputDto));
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(MockExamOutpuDto.parseDto(mockExam));
+        .body(MockExamOutputDto.parseDto(mockExam));
   }
 
   @PutMapping("/{mockExamId}")
-  public ResponseEntity<MockExamOutpuDto> updateMockExamById(
+  public ResponseEntity<MockExamOutputDto> updateMockExamById(
       @PathVariable UUID mockExamId,
       @RequestBody MockExamInputDto examInputDto
   ){
@@ -87,7 +86,7 @@ public class MockExamController {
 
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(updatedMockExam));
+        .body(MockExamOutputDto.parseDto(updatedMockExam));
   }
 
   @DeleteMapping("/{mockExamId}")
@@ -99,7 +98,7 @@ public class MockExamController {
   }
 
   @PatchMapping("/{mockExamId}/subject")
-  public ResponseEntity<MockExamOutpuDto> addSubjectToMockExam(
+  public ResponseEntity<MockExamOutputDto> addSubjectToMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
@@ -107,23 +106,23 @@ public class MockExamController {
         .addSubject(mockExamId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
   @DeleteMapping("/{mockExamId}/subject")
-  public ResponseEntity<MockExamOutpuDto> removeSubjectFromMockExam(
+  public ResponseEntity<MockExamOutputDto> removeSubjectFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
     MockExam mockExamUpdated = mockExamService.removeSubject(mockExamId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
 
   @PatchMapping("/{mockExamId}/main-question")
-  public ResponseEntity<MockExamOutpuDto> addMainQuestionsToMockExam(
+  public ResponseEntity<MockExamOutputDto> addMainQuestionsToMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
@@ -131,18 +130,18 @@ public class MockExamController {
         .addMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
   @DeleteMapping("/{mockExamId}/main-question")
-  public ResponseEntity<MockExamOutpuDto> removeMainQuestionsFromMockExam(
+  public ResponseEntity<MockExamOutputDto> removeMainQuestionsFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
     MockExam mockExamUpdated = mockExamService.removeMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
   @PostMapping("/{mockExamId}/responses")
