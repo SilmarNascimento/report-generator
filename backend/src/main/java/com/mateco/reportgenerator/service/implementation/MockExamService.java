@@ -1,7 +1,5 @@
 package com.mateco.reportgenerator.service.implementation;
 
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.AdaptedQuestionWrapper;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -155,6 +153,8 @@ public class MockExamService implements MockExamServiceInterface {
     return mockExamRepository.save(mockExamFound);
   }
 
+  @Override
+  @Transactional
   public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
@@ -175,10 +175,11 @@ public class MockExamService implements MockExamServiceInterface {
 
       Map<Integer, MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
       List<String> studentAnswers = studentResponse.getResponses();
-      List<AdaptedQuestionWrapper> reportAdaptedQuestions = new ArrayList<>();
 
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
-        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex + MockExam.INITIAL_QUESTION_NUMBER);
+        int questionNumber = questionIndex + MockExam.INITIAL_QUESTION_NUMBER;
+
+        MainQuestion mainQuestion = mockExamQuestions.get(questionNumber);
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
@@ -188,15 +189,9 @@ public class MockExamService implements MockExamServiceInterface {
         if (answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
         } else {
-          List<AdaptedQuestion> adaptedQuestionList = mainQuestion.getAdaptedQuestions();
-          reportAdaptedQuestions.add(new AdaptedQuestionWrapper(
-              mainQuestion.getId(),
-              adaptedQuestionList
-          ));
+          studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
         }
       }
-
-      studentResponse.setAdaptedQuestionList(reportAdaptedQuestions);
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);

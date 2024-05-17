@@ -29,8 +29,9 @@ public class TesteController {
       @PathVariable UUID mockExamId
   ) throws IOException {
     List<MockExamResponse> mockExamResponses= fileService.xlsxReader(studentsAnswer);
+
     List<MockExamResponse> examResponses = mockExamService.registerAllMockExamResponses(mockExamId, mockExamResponses);
-    return ResponseEntity.ok().body(mockExamResponses);
+    return ResponseEntity.ok().body(examResponses);
   }
 }
 
