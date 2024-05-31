@@ -837,22 +837,22 @@ public class MockExamServiceTests {
           assertEquals(2, examResponse.getTotalQuestions());
           Assertions.assertThat(examResponse.getResponses()).isInstanceOf(List.class);
           assertEquals(2, examResponse.getResponses().size());
-          Assertions.assertThat(examResponse.getAdaptedQuestionList()).isInstanceOf(List.class);
+          Assertions.assertThat(examResponse.getMissedMainQuestionNumbers()).isInstanceOf(List.class);
           Assertions.assertThat(examResponse.getComment()).isInstanceOf(String.class);
           Assertions.assertThat(examResponse.getCreatedAt()).isInstanceOf(LocalDateTime.class);
         });
 
     MockExamResponse studentResponse01 = serviceResponse.get(0);
     assertEquals(2, studentResponse01.getCorrectAnswers());
-    assertEquals(0, studentResponse01.getAdaptedQuestionList().size());
+    assertEquals(0, studentResponse01.getMissedMainQuestionNumbers().size());
 
     MockExamResponse studentResponse02 = serviceResponse.get(1);
     assertEquals(1, studentResponse02.getCorrectAnswers());
-    assertEquals(1, studentResponse02.getAdaptedQuestionList().size());
+    assertEquals(1, studentResponse02.getMissedMainQuestionNumbers().size());
 
     MockExamResponse studentResponse03 = serviceResponse.get(2);
     assertEquals(0, studentResponse03.getCorrectAnswers());
-    assertEquals(2, studentResponse03.getAdaptedQuestionList().size());
+    assertEquals(2, studentResponse03.getMissedMainQuestionNumbers().size());
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));

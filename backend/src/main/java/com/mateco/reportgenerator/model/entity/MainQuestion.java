@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.io.IOException;
@@ -52,6 +53,8 @@ public class MainQuestion extends Question {
   @OrderColumn
   private List<Alternative> alternatives;
 
+  private String videoResolutionUrl;
+
   @Column(name = "adapted_questions")
   @OneToMany(
       mappedBy = "mainQuestion",
@@ -59,6 +62,10 @@ public class MainQuestion extends Question {
       orphanRemoval = true
   )
   private List<AdaptedQuestion> adaptedQuestions;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "adapted_questions_file_id")
+  private FileEntity adaptedQuestionsPdfFile;
 
   @ManyToMany(mappedBy = "mockExamQuestions")
   @JsonIgnore

@@ -85,7 +85,7 @@ public class FileServiceTests {
           Assertions.assertThat(response.getCorrectAnswers()).isInstanceOf(Integer.class);
           Assertions.assertThat(response.getTotalQuestions()).isInstanceOf(Integer.class);
           Assertions.assertThat(response.getResponses()).isInstanceOf(List.class);
-          Assertions.assertThat(response.getAdaptedQuestionList()).isInstanceOf(List.class);
+          Assertions.assertThat(response.getMissedMainQuestionNumbers()).isInstanceOf(List.class);
           Assertions.assertThat(response.getComment()).isInstanceOf(String.class);
           Assertions.assertThat(response.getCreatedAt()).isInstanceOf(LocalDateTime.class);
         });

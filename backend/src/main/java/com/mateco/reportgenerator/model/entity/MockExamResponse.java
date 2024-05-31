@@ -49,6 +49,7 @@ public class MockExamResponse {
 
   private List<Integer> missedMainQuestionNumbers;
 
+  @Column(columnDefinition = "VARCHAR(1000)")
   private String comment;
 
   private LocalDateTime createdAt;
