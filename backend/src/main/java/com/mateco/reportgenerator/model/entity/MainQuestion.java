@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "main_questions")
@@ -81,15 +82,19 @@ public class MainQuestion extends Question {
       String level,
       List<String> images,
       List<Alternative> alternatives,
+      String videoResolutionUrl,
       List<AdaptedQuestion> adaptedQuestions,
+      MultipartFile adaptedQuestionsPdfFile,
       List<MockExam> mockExams,
       List<Handout> handout
-  ) {
+  ) throws IOException {
     super(title, level);
     this.images = images;
     this.subjects = subjects;
     this.alternatives = alternatives;
+    this.videoResolutionUrl = videoResolutionUrl;
     this.adaptedQuestions = adaptedQuestions;
+    this.adaptedQuestionsPdfFile = new FileEntity(adaptedQuestionsPdfFile);
     this.mockExams = mockExams;
     this.handout = handout;
   }
@@ -103,34 +108,69 @@ public class MainQuestion extends Question {
         "image: " + this.images +
         "subjects: " + this.subjects +
         "alternatives: " + this.alternatives +
+        "video resolution: " + this.videoResolutionUrl +
         '}';
   }
 
   public static MainQuestion parseMainQuestion(
-      QuestionInputDto mainQuestionInputDto
+      QuestionInputDto mainQuestionInputDto,
+      MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      return new MainQuestion(
+          mainQuestionInputDto.title(),
+          new ArrayList<>(),
+          mainQuestionInputDto.level(),
+          new ArrayList<>(),
+          Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+          mainQuestionInputDto.videoResolutionUrl(),
+          new ArrayList<>(),
+          null,
+          new ArrayList<>(),
+          new ArrayList<>()
+      );
+    }
     return new MainQuestion(
         mainQuestionInputDto.title(),
         new ArrayList<>(),
         mainQuestionInputDto.level(),
         new ArrayList<>(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
+        adaptedQuestionPdfFile,
         new ArrayList<>(),
         new ArrayList<>()
     );
   }
 
   public static MainQuestion parseMainQuestion(
-      MainQuestionInputDto mainQuestionInputDto
+      MainQuestionInputDto mainQuestionInputDto,
+      MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      return new MainQuestion(
+          mainQuestionInputDto.title(),
+          Subject.parseSubject(mainQuestionInputDto.subjects()),
+          mainQuestionInputDto.level(),
+          mainQuestionInputDto.images(),
+          Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+          mainQuestionInputDto.videoResolutionUrl(),
+          new ArrayList<>(),
+          null,
+          new ArrayList<>(),
+          new ArrayList<>()
+      );
+    }
     return new MainQuestion(
         mainQuestionInputDto.title(),
         Subject.parseSubject(mainQuestionInputDto.subjects()),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.images(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
+        adaptedQuestionPdfFile,
         new ArrayList<>(),
         new ArrayList<>()
     );

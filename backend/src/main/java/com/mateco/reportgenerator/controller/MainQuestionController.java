@@ -94,12 +94,14 @@ public class MainQuestionController {
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
       @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
-      @RequestPart(value = "images", required = false) List<MultipartFile> images
+      @RequestPart(value = "images", required = false) List<MultipartFile> images,
+      @RequestPart(value = "adaptedQuestionPdfFile") MultipartFile adaptedQuestionPdfFile
+
   ) throws IOException {
     List<String> questionImages = imageService.uploadImages(images);
 
     MainQuestion mainQuestionCreated = mainQuestionService
-        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto), questionImages);
+        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile), questionImages);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -110,12 +112,18 @@ public class MainQuestionController {
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
       @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
-      @RequestPart(value = "images", required = false) List<MultipartFile> images
+      @RequestPart(value = "images", required = false) List<MultipartFile> images,
+      @RequestPart(value = "adaptedQuestionPdfFile", required = false) MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
     List<String> questionImages = imageService.uploadImages(images);
 
     MainQuestion updatedMainQuestion = mainQuestionService
-        .updateMainQuestionById(mainQuestionId, MainQuestion.parseMainQuestion(mainQuestionInputDto), questionImages);
+        .updateMainQuestionById(
+            mainQuestionId,
+            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile),
+            questionImages
+        );
+
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(MainQuestionOutputDto.parseDto(updatedMainQuestion));

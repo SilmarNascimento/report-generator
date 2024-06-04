@@ -37,6 +37,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     // seedMainQuestions();
   }
 
+  /*
   private void seedMainQuestions() {
     Alternative alternativeA = new Alternative(
         "3,5%.",
@@ -77,6 +78,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     );
     mainQuestionRepository.save(mainQuestion);
   }
+  */
 
   private void seedSubjects() {
     Subject subject = new Subject("Conjuntos");

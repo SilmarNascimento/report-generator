@@ -6,7 +6,8 @@ import java.util.List;
 public record QuestionInputDto(
     String title,
     String level,
-    List<AlternativeInputDto> alternatives
+    List<AlternativeInputDto> alternatives,
+    String videoResolutionUrl
 ) {
 
 }

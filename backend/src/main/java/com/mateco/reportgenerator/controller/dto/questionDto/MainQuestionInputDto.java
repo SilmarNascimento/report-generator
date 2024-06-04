@@ -9,7 +9,8 @@ public record MainQuestionInputDto(
     List<SubjectInputDto> subjects,
     String level,
     List<String> images,
-    List<AlternativeInputDto> alternatives
+    List<AlternativeInputDto> alternatives,
+    String videoResolutionUrl
 ) {
 
 }

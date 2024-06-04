@@ -91,7 +91,13 @@ public class MockExamController {
       @RequestPart(value = "answersPdfFile", required = false) MultipartFile answersPdfFile
   ) throws IOException {
     MockExam updatedMockExam = mockExamService
-        .updateMockExamById(mockExamId, MockExam.parseMockExam(mockExamInputDto));
+        .updateMockExamById(
+            mockExamId,
+            MockExam.parseMockExam(mockExamInputDto),
+            coverPdfFile,
+            matrixPdfFile,
+            answersPdfFile
+        );
 
     return ResponseEntity
         .status(HttpStatus.OK)

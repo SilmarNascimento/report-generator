@@ -60,7 +60,7 @@ public class MockExamService implements MockExamServiceInterface {
       MultipartFile asnwersPdfFile
   ) throws IOException {
     System.out.println(mockExam);
-    addFileEntityIfExists(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
     System.out.println(mockExam);
 
     return mockExamRepository.save(mockExam);
@@ -77,7 +77,7 @@ public class MockExamService implements MockExamServiceInterface {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
 
-    addFileEntityIfExists(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
 
     UpdateEntity.copyNonNullOrListProperties(mockExam, mockExamFound);
 
@@ -86,7 +86,10 @@ public class MockExamService implements MockExamServiceInterface {
 
   @Override
   public void deleteMockExamById(UUID mockExamId) {
-    // acho melhor deixar em estado de desativado!
+    mockExamRepository.findById(mockExamId)
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+
+    mockExamRepository.deleteById(mockExamId);
   }
 
   @Override
@@ -204,7 +207,7 @@ public class MockExamService implements MockExamServiceInterface {
     return mockExamResponseRepository.saveAll(mockExamResponses);
   }
 
-  private static void addFileEntityIfExists(
+  private static void addFileEntityIfPresent(
       MockExam mockExam,
       MultipartFile coverPdfFile,
       MultipartFile matrixPdfFile,
