@@ -6,8 +6,8 @@ import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternative/alternativesForm';
 import { mainQuestionSchema } from './MainQuestionSchema';
-import { CreateQuestion } from '../../interfaces/createQuestion';
-import { CreateAlternative } from '../../interfaces/createAlternative';
+import { CreateQuestion } from '../../interfaces/MainQuestion';
+import { CreateAlternative } from '../../interfaces/Alternative';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
@@ -55,12 +55,12 @@ export function CreateMainQuestionForm() {
         }
         return createAlternative
       });
-      const createMainQuestion: CreateQuestion = {
+      const mainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives
       };
-      const json = JSON.stringify(createMainQuestion);
+      const json = JSON.stringify(mainQuestion);
       const blob = new Blob([json], {
         type: 'application/json'
       });

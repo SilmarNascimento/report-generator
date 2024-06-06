@@ -1,13 +1,16 @@
 import { ChangeEvent, DragEvent, useRef, useState } from "react"
+import { useFormContext } from "react-hook-form";
+import { PdfPreview } from "./pdfPreview";
 
 type DragDropFileUploaderProps = {
-  files: File[]
-  setFiles: React.Dispatch<React.SetStateAction<File[]>>
-  dependency: boolean
-  handleUploadFile: (files: File[]) => Promise<void>
+  formVariable: string
+  message: string
 }
 
-export function DragDropFIleUploader({ files, setFiles, dependency, handleUploadFile }: DragDropFileUploaderProps) {
+export function DragDropFileUploader({ message, formVariable }: DragDropFileUploaderProps) {
+  const { register, setValue, getValues } = useFormContext();
+  const variableValue: File = getValues(formVariable);
+  
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -19,12 +22,12 @@ export function DragDropFIleUploader({ files, setFiles, dependency, handleUpload
     const filesSelected = event.target.files;
     if (!filesSelected || filesSelected?.length === 0) return;
     
-    const newFiles: File[] = Array.from(filesSelected);
-    setFiles(prev => [...prev, ...newFiles]);
+    const newFile = filesSelected.item(0);
+    setValue(formVariable, newFile, { shouldDirty: true});
   }
 
-  function deleteImage(index: number) {
-    setFiles(prev => prev.filter((_, indexArray) => indexArray !== index));
+  function deleteImage() {
+    setValue(formVariable, undefined, { shouldDirty: true});
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -43,78 +46,54 @@ export function DragDropFIleUploader({ files, setFiles, dependency, handleUpload
     setIsDragging(false);
     const filesDropped = event.dataTransfer.files;
 
-    const newFiles: File[] = Array.from(filesDropped);
-    setFiles(prev => [...prev, ...newFiles]);
-  }
-
-  async function handleClick() {
-    console.log("files: ", files);
-    await handleUploadFile(files)
+    const newFile = filesDropped.item(0);
+    setValue(formVariable, newFile, { shouldDirty: true});
   }
 
   return (
     <div className="p-2.5 shadow-[0_0_5px_rgb(255,223,223)] border rounded overflow-hidden flex flex-col justify-between items-center">
       <div className="font-bold text-zinc-200">
-        <p>Upload Image</p>
+        <p>{message}</p>
       </div>
+
       <div
-        className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDragDrop}
+        className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5"
       >
-        {isDragging ? (
-          <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
-            Drop files here
-          </span>
-        ) : (
-          <>
-            Drag and Drop file here or {" "}
-            <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60" role="button" onClick={selectFiles}>
-              Browse
-            </span>
-          </>
-        )}
-        <input
-          name="file"
-          type="file"
-          className="file"
-          multiple
-          ref={fileInputRef}
-          hidden
-          onChange={handleFileSelect}
-        />
-      </div>
-      <div
-        className="w-full h-auto flex justify-start items-start flex-wrap max-h-52 overflow-y-auto mt-2.5"
-      >
-        {files.map((image, index) => (
-          <div
-            key={index}
-            className="w-20 mr-1 h-20 relative mb-2"
-          >
-            <span
-              className="absolute -top-1 right-2 text-xl cursor-pointer"
-              onClick={() => deleteImage(index)}
+        {variableValue
+          ? <PdfPreview url={URL.createObjectURL(variableValue)} handleDelete={deleteImage}/>
+          : (
+            <div
+              className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDragDrop}
             >
-              &times;
-            </span>
-            <img
-              className="w-full h-full rounded"
-              src={URL.createObjectURL(image)}
-              alt={image.name}
-            />
-          </div>
-        ))}
+              {isDragging ? (
+                <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
+                  Drop files here
+                </span>
+              ) : (
+                <>
+                  Drag and Drop file here or {" "}
+                  <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60" role="button" onClick={selectFiles}>
+                    Browse
+                  </span>
+                </>
+              )}
+              <input
+                {...register(formVariable)}
+                name={formVariable}
+                type="file"
+                className="file"
+                ref={fileInputRef}
+                hidden
+                accept="image/*,.pdf"
+                onChange={handleFileSelect}
+              />
+            </div>
+          )
+        }
       </div>
-        <button
-          className="bg-violet-600 w-full px-2 py-3 font-normal cursor-pointer rounded text-zinc-200 outline-none"
-          type="button"
-          disabled={!files.length && !dependency}
-          onClick={handleClick}
-        >
-          Upload
-        </button>
     </div>
   )
 }

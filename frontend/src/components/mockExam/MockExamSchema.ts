@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const fileListSchema = z.instanceof(FileList)
+  .refine((file) => file.length >= 1,
+  { 
+    message: "Arquivo pdf obrigatório" 
+  });
+
 export const mockExamSchema = z.object({
   name: z.string().min(1, { message: "Descrição é obrigatória" }),
   className: z.enum(["Intensivo", "Extensivo"], { 
@@ -18,4 +24,7 @@ export const mockExamSchema = z.object({
   { 
     message: "O número do simulado deve ser superior a zero" 
   }),
+  coverPdfFile: fileListSchema,
+  matrixPdfFile: fileListSchema,
+  answersPdfFile: fileListSchema,
 });

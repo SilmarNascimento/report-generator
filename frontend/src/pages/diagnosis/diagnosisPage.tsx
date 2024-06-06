@@ -1,146 +1,124 @@
-import { useState } from "react"
-import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable"
-import { NavigationBar } from "../../components/navigationBar"
-import { DragDropFIleUploader } from "../../components/ui/dragDropFIle"
-import { MockExamResponse } from "../../interfaces/MockExamResponse";
-import { MockExam, PageResponse } from "../../interfaces";
-import { QueryKey, useInfiniteQuery, useMutation } from "@tanstack/react-query";
-import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
-import { InfiniteSelect } from "../../components/ui/select/infiniteSelect";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Header } from "../../components/header";
+import { NavigationBar } from "../../components/navigationBar";
+import { Pagination } from "../../components/pagination";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import useDebounceValue from "../../hooks/useDebounceValue";
+import { Button } from "../../components/ui/button";
+import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
+import { Control, Input } from "../../components/ui/input";
+import { Link } from "react-router-dom";
+import { successAlert } from "../../utils/toastAlerts";
+import { PageResponse } from "../../interfaces";
+import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
+import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
 
-interface QueryFunctionContext {
-  queryKey: QueryKey;
-  pageParam?: unknown;
-  signal: AbortSignal;
-  meta?: Record<string, unknown>;
-}
+export function StudentsResponses() {
+  //const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  //const navigate = useNavigate();
 
-type SelectOptionProps = {
-  label: string
-  value: string
-}
+  const urlFilter = searchParams.get('query') ?? '';
+  const [filter, setFilter] = useState(urlFilter);
+  const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
-export function Diagnosis() {
-  const [selectedOption, setSelectedOption] = useState<SelectOptionProps>({ label: '', value: '' });
-  const [subjectOptionsList, setSubjectOptionsList] = useState<SelectOptionProps[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [studentResponseList, setStudentResponseList] = useState<MockExamResponse[]>([]);
-
-  async function fetchMockExamList(context: QueryFunctionContext) {
-    const { pageParam } = context;
-    const pageNumber = typeof pageParam === 'number' ? pageParam : 0;
-
-    const response = await fetch(`http://localhost:8080/mock-exam?pageNumber=${pageNumber}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+  useEffect(() => {
+    setSearchParams(params => {
+      if (params.get('query') !== debouncedQueryFilter) {
+        params.set('page', '1');
+        params.set('query', debouncedQueryFilter);
+        return new URLSearchParams(params);
       }
-    )
-    const requestData: PageResponse<MockExam> = await response.json();
-    const options = requestData?.data.map((mockExam) => {
-      const  { id, releasedYear, number, className } = mockExam;
-      const code = `${releasedYear}:S${number} - ${className[0]}`;
-      return {
-        label: code,
-        value: id
-      };
-    }) ?? [];
-    setSubjectOptionsList((prev) => [...prev, ...options])
-    
-    return requestData
-  }
+      return params;
+    });
+  }, [debouncedQueryFilter, setSearchParams]);
 
-  const {
-    fetchNextPage,
-    isFetchingNextPage,
-    hasNextPage,
-    isFetching
-  } = useInfiniteQuery<PageResponse<MockExam>>({
-    queryKey: ['items'],
-    queryFn: fetchMockExamList,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) =>  lastPage.currentPage < (lastPage.pages - 1) ? lastPage.currentPage + 1 : undefined 
-  });
+  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
+  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
 
-  const { lastEntryRef } = useIntersectionObserver<MockExam>({isFetching, hasNextPage, fetchNextPage});
+  const { data: studentsResponsePage, isLoading } = useQuery<PageResponse<MockExamDiagnosisResponse>>({
+    queryKey: ['get-responses', urlFilter, page, pageSize],
+    queryFn: async () => {
+      const response = await fetch(`http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`)
+      const data = await response.json()
 
-  
-  const generateStudentsResponse = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append('studentsMockExamsAnswers', file);
-     
-      // const json = JSON.stringify(createMainQuestion);
-      // const blob = new Blob([json], {
-      //   type: 'application/json'
-      // });
-
-      // formData.append("mainQuestionInputDto", blob);
-      
-      const response = await fetch(`http://localhost:8080/mock-exam/${selectedOption.value}/responses`,
-        {
-          method: 'POST',
-          body: formData
-        })
-
-      if (response.status === 200) {
-        const responseList: MockExamResponse[] = await response.json();
-        setStudentResponseList(responseList);
-        successAlert('Questão principal salva com sucesso!');
-      }
-
-      if (response.status === 400) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    }
+      return data
+    },
+    placeholderData: keepPreviousData,
   })
 
+  // const deleteMainQuestion = useMutation({
+  //   mutationFn: async (studentResponseId: string) => {
+  //     try {
+  //       await fetch(`http://localhost:8080/students-response/${studentResponseId}`,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         method: 'DELETE',
+  //       })
+      
+  //     } catch (error) {
+  //       console.error('Erro na requisição:', error);
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ['get-main-questions'],
+  //     });
+  //     successAlert('Resposta do aluno para o simulado excluído com sucesso!');
+  //   }
+  // })
+  
+  // async function handleDeleteMainQuestion(studentResponseId: string) {
+  //   await deleteMainQuestion.mutateAsync(studentResponseId)
+  // }
 
-  const handleSelect = (option: SelectOptionProps) => {
-    setSelectedOption(option)
-
-  }
-
-  async function handleUploadFile(files: File[]) {
-    const file = files[0];
-    await generateStudentsResponse.mutateAsync(file);
+  if (isLoading) {
+    return null
   }
 
   return (
     <>
-      <NavigationBar />
-      <main>
-        <div className='block w-52'>
-          <span className='block mb-2 text-sm'>
-            Selecione um Simulado
-          </span>
-          <InfiniteSelect
-            options={subjectOptionsList}
-            selected={selectedOption}
-            placeholder='Selecione um Simulado'
-            handleSelect={handleSelect}
-            isFetchingOptions={isFetchingNextPage}
-            lastOptionRef={lastEntryRef}
-          />
+      <header>
+        <Header />
+        <NavigationBar />
+      </header>
+
+      <main className="max-w-6xl mx-auto space-y-5">
+        <div className="flex items-center gap-3 mt-3">
+          <h1 className="text-xl font-bold">Respostas de Simulados</h1>
         </div>
-        <div>
-          <DragDropFIleUploader
-            files={files}
-            setFiles={setFiles}
-            handleUploadFile={handleUploadFile}
-            dependency={!!selectedOption.value}
-          />
+
+        <div className="flex items-center justify-between">
+          <form className="flex items-center gap-2">
+            <Input variant='filter'>
+              <Search className="size-3" />
+              <Control 
+                placeholder="Procurar..." 
+                onChange={event => setFilter(event.target.value)}
+                value={filter}
+              />
+            </Input>
+          </form>
+
+          <Button>
+            <FileDown className="size-3" />
+            Export
+          </Button>
         </div>
-        <section>
-          { !!studentResponseList.length && 
-            <DiagnosisTable
-              entity={studentResponseList}
-            />
-          }
-        </section>
+
+        {studentsResponsePage && <DiagnosisTable entity={studentsResponsePage?.data}/>}
+        { studentsResponsePage
+          && 
+          <Pagination
+            pages={studentsResponsePage.pages}
+            items={studentsResponsePage.pageItems}
+            page={page}
+            totalItems={studentsResponsePage.totalItems}
+          />
+        }
       </main>
     </>
   )

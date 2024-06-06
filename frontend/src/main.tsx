@@ -21,7 +21,8 @@ import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
 import { MockExamMainQuestionManager } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
 import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
 import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
-import { Diagnosis } from "./pages/diagnosis/diagnosisPage.tsx";
+import { GenerateDiagnosis } from "./pages/diagnosis/generateDiagnosisPage.tsx";
+import { StudentsResponses } from "./pages/diagnosis/diagnosisPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -83,8 +84,12 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/diagnosis",
-    element: <Diagnosis />
+    path: "/diagnosis/generate",
+    element: <GenerateDiagnosis />
+  },
+  {
+    path: "/students-response",
+    element: <StudentsResponses />
   },
 
 

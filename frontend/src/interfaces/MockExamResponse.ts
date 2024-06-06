@@ -1,13 +1,12 @@
-import { AdaptedQuestionWrapper } from "./AdaptedQuestionWrapper"
-
-export type MockExamResponse =  {
+export type MockExamDiagnosisResponse =  {
   id: string
   name: string
   email: string
   mockExamId: string
+  examCode: string
+  className: string
   correctAnswers: number
   response: string[]
-  adaptedQuestions: AdaptedQuestionWrapper[]
   comment: string
   createdAt: string
 }

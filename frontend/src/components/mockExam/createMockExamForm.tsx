@@ -9,6 +9,8 @@ import { SelectClass } from '../ui/selectClass';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { mockExamSchema } from './MockExamSchema';
 import { DevTool } from '@hookform/devtools';
+import { CreateMockExam } from '../../interfaces/MockExam';
+import { DragDropFileUploader } from '../ui/dragDropFile';
 
 type CreateMockExamForm = z.infer<typeof mockExamSchema>;
 
@@ -21,21 +23,32 @@ export function CreateMockExamForm() {
   })
   const { register, handleSubmit, formState, control } = formMethods;
 
+  const createMockExam = useMutation({
+    mutationFn: async (data: CreateMockExamForm) => {
+      const formData = new FormData();
+      const { name, className, releasedYear, number, coverPdfFile, matrixPdfFile, answersPdfFile } = data;
 
-  const createMainQuestion = useMutation({
-    mutationFn: async ({ name, className, releasedYear, number }: CreateMockExamForm) => {
+      formData.append("coverPdfFile", coverPdfFile.item(0)!);
+      formData.append("matrixPdfFile", matrixPdfFile.item(0)!);
+      formData.append("answersPdfFile", answersPdfFile.item(0)!);
+
+      const mockExam: CreateMockExam = {
+        name,
+        className: [className],
+        releasedYear,
+        number: Number(number)
+      };
+      const json = JSON.stringify(mockExam);
+      const blob = new Blob([json], {
+        type: 'application/json'
+      });
+
+      formData.append("mockExamInputDto", blob);
+
       const response = await fetch('http://localhost:8080/mock-exam',
         {
-          headers: {
-            'Content-Type': 'application/json',
-          },
           method: 'POST',
-          body: JSON.stringify({
-            name,
-            className: [className],
-            releasedYear,
-            number
-          })
+          body: formData
         })
 
       if (response.status === 201) {
@@ -54,7 +67,7 @@ export function CreateMockExamForm() {
   })
 
   async function handleCreateMainQuestion(data: CreateMockExamForm) {
-    await createMainQuestion.mutateAsync(data)
+    await createMockExam.mutateAsync(data)
   }
 
   return (
@@ -79,6 +92,38 @@ export function CreateMockExamForm() {
           <p className={`text-sm ${formState.errors?.className ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.className ? formState.errors.className.message : '\u00A0'}
           </p>
+        </div>
+
+        <div className='flex flex-row gap-1 justify-around align-middle'>
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='coverPdfFile'
+              message="Escolha o arquivo para a capa do simulado"
+            />
+            <p className={`text-sm ${formState.errors?.coverPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.coverPdfFile ? formState.errors.coverPdfFile.message : '\u00A0'}
+            </p>
+          </div>
+
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='matrixPdfFile'
+              message="Escolha o arquivo para a matrix Lericucas do simulado"
+            />
+            <p className={`text-sm ${formState.errors?.matrixPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.matrixPdfFile ? formState.errors.matrixPdfFile.message : '\u00A0'}
+            </p>
+          </div>
+
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='answersPdfFile'
+              message="Escolha o arquivo de respostas do simulado"
+            />
+            <p className={`text-sm ${formState.errors?.answersPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.answersPdfFile ? formState.errors.answersPdfFile.message : '\u00A0'}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">
