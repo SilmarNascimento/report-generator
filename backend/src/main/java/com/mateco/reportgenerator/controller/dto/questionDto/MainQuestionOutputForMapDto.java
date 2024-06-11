@@ -5,7 +5,6 @@ import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamListOutputD
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
 import java.util.List;
 import java.util.UUID;
 

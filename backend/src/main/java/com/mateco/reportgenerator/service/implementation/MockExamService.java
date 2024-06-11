@@ -59,9 +59,7 @@ public class MockExamService implements MockExamServiceInterface {
       MultipartFile matrixPdfFile,
       MultipartFile asnwersPdfFile
   ) throws IOException {
-    System.out.println(mockExam);
     addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
-    System.out.println(mockExam);
 
     return mockExamRepository.save(mockExam);
   }

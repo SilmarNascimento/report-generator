@@ -22,7 +22,6 @@ public class FileContent {
   @GeneratedValue(generator = "UUID")
   private UUID id;
 
-  @Lob
   @Column(columnDefinition = "BYTEA")
   private byte[] content;
 

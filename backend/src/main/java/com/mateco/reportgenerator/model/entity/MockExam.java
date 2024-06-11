@@ -50,15 +50,15 @@ public class MockExam {
 
   private int number;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "cover_file_id")
   private FileEntity coverPdfFile;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "matrix_file_id")
   private FileEntity matrixPdfFile;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "answers_file_id")
   private FileEntity answersPdfFile;
 

@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamWithFileOutputDto;
 import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
@@ -14,10 +15,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -53,14 +59,13 @@ public class MockExamController {
   }
 
   @GetMapping("/{mockExamId}")
-  public ResponseEntity<MockExamOutputDto> findMockExambyId(
-      @PathVariable UUID mockExamId
-  ) {
-    MockExam mockExams = mockExamService.findMockExamById(mockExamId);
+  public ResponseEntity<MockExamWithFileOutputDto> findCompleteMockExamById(@PathVariable UUID mockExamId) {
+    MockExam mockExam = mockExamService.findMockExamById(mockExamId);
+
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutputDto
-            .parseDto(mockExams));
+        .body(MockExamWithFileOutputDto
+            .parseDto(mockExam));
   }
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

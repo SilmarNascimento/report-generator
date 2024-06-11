@@ -84,7 +84,7 @@ public class MainQuestion extends Question {
       List<Alternative> alternatives,
       String videoResolutionUrl,
       List<AdaptedQuestion> adaptedQuestions,
-      MultipartFile adaptedQuestionsPdfFile,
+      FileEntity adaptedQuestionsPdfFile,
       List<MockExam> mockExams,
       List<Handout> handout
   ) throws IOException {
@@ -94,7 +94,7 @@ public class MainQuestion extends Question {
     this.alternatives = alternatives;
     this.videoResolutionUrl = videoResolutionUrl;
     this.adaptedQuestions = adaptedQuestions;
-    this.adaptedQuestionsPdfFile = new FileEntity(adaptedQuestionsPdfFile);
+    this.adaptedQuestionsPdfFile = adaptedQuestionsPdfFile;
     this.mockExams = mockExams;
     this.handout = handout;
   }
@@ -130,6 +130,7 @@ public class MainQuestion extends Question {
           new ArrayList<>()
       );
     }
+    FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
     return new MainQuestion(
         mainQuestionInputDto.title(),
         new ArrayList<>(),
@@ -138,7 +139,7 @@ public class MainQuestion extends Question {
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
         mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
-        adaptedQuestionPdfFile,
+        pdfEntity,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -162,6 +163,7 @@ public class MainQuestion extends Question {
           new ArrayList<>()
       );
     }
+    FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
     return new MainQuestion(
         mainQuestionInputDto.title(),
         Subject.parseSubject(mainQuestionInputDto.subjects()),
@@ -170,7 +172,7 @@ public class MainQuestion extends Question {
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
         mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
-        adaptedQuestionPdfFile,
+        pdfEntity,
         new ArrayList<>(),
         new ArrayList<>()
     );
