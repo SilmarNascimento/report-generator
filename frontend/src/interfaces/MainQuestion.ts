@@ -19,6 +19,20 @@ export type MainQuestion =  {
   questionNumber: number
 }
 
+export type PartialMainQuestion =  {
+  id: string
+  title: string
+  subjects: Subject[]
+  level: "Fácil" | "Médio" | "Difícil"
+  images: string[]
+  alternatives: Alternative[]
+  videoResolutionUrl: string
+  adaptedQuestions: AdaptedQuestion[]
+  mockExams: MockExam[]
+  handouts: Handout[]
+  questionNumber: number
+}
+
 export type CreateQuestion = {
   title: string
   level: string

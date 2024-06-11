@@ -96,6 +96,9 @@ export function MockExamMainQuestionManager() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
+        queryClient.invalidateQueries({
+          queryKey: ['get-mock-exams'],
+        });
         
         mainQuestionIdListToAdd.length === 1
           ? successAlert('Questão principal adicionada ao simulado com sucesso!')
@@ -134,6 +137,9 @@ export function MockExamMainQuestionManager() {
           .map((question: MainQuestion) => question.id);
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-mock-exams'],
         });
         
         mainQuestionIdListToRemove.length === 1

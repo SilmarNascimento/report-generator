@@ -5,9 +5,10 @@ import { PdfPreview } from "./pdfPreview";
 type DragDropFileUploaderProps = {
   formVariable: string
   message: string
+  url: string
 }
 
-export function DragDropFileUploader({ message, formVariable }: DragDropFileUploaderProps) {
+export function DragDropFileUploader({ formVariable, message, url }: DragDropFileUploaderProps) {
   const { register, setValue, getValues } = useFormContext();
   const variableValue: File = getValues(formVariable);
   
@@ -27,7 +28,7 @@ export function DragDropFileUploader({ message, formVariable }: DragDropFileUplo
   }
 
   function deleteImage() {
-    setValue(formVariable, undefined, { shouldDirty: true});
+    setValue(formVariable, undefined, { shouldDirty: true, shouldTouch: true });
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -60,7 +61,7 @@ export function DragDropFileUploader({ message, formVariable }: DragDropFileUplo
         className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5"
       >
         {variableValue
-          ? <PdfPreview url={URL.createObjectURL(variableValue)} handleDelete={deleteImage}/>
+          ? <PdfPreview url={url} handleDelete={deleteImage}/>
           : (
             <div
               className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"

@@ -21,16 +21,16 @@ export function CreateMockExamForm() {
   const formMethods = useForm<CreateMockExamForm>({
     resolver: zodResolver(mockExamSchema),
   })
-  const { register, handleSubmit, formState, control } = formMethods;
+  const { register, handleSubmit, formState, control, getValues } = formMethods;
 
   const createMockExam = useMutation({
     mutationFn: async (data: CreateMockExamForm) => {
       const formData = new FormData();
       const { name, className, releasedYear, number, coverPdfFile, matrixPdfFile, answersPdfFile } = data;
 
-      formData.append("coverPdfFile", coverPdfFile.item(0)!);
-      formData.append("matrixPdfFile", matrixPdfFile.item(0)!);
-      formData.append("answersPdfFile", answersPdfFile.item(0)!);
+      formData.append("coverPdfFile", coverPdfFile);
+      formData.append("matrixPdfFile", matrixPdfFile);
+      formData.append("answersPdfFile", answersPdfFile);
 
       const mockExam: CreateMockExam = {
         name,
@@ -70,6 +70,11 @@ export function CreateMockExamForm() {
     await createMockExam.mutateAsync(data)
   }
 
+  console.log(getValues());
+  console.log(getValues('coverPdfFile'));
+  console.log(getValues("matrixPdfFile"));
+  
+
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(handleCreateMainQuestion)} encType='multipart/form-data' className="w-full space-y-6">
@@ -99,6 +104,7 @@ export function CreateMockExamForm() {
             <DragDropFileUploader
               formVariable='coverPdfFile'
               message="Escolha o arquivo para a capa do simulado"
+              url={getValues('coverPdfFile') ? window.URL.createObjectURL(getValues('coverPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.coverPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.coverPdfFile ? formState.errors.coverPdfFile.message : '\u00A0'}
@@ -109,6 +115,7 @@ export function CreateMockExamForm() {
             <DragDropFileUploader
               formVariable='matrixPdfFile'
               message="Escolha o arquivo para a matrix Lericucas do simulado"
+              url={getValues('matrixPdfFile') ? window.URL.createObjectURL(getValues('matrixPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.matrixPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.matrixPdfFile ? formState.errors.matrixPdfFile.message : '\u00A0'}
@@ -119,6 +126,7 @@ export function CreateMockExamForm() {
             <DragDropFileUploader
               formVariable='answersPdfFile'
               message="Escolha o arquivo de respostas do simulado"
+              url={getValues('answersPdfFile') ? window.URL.createObjectURL(getValues('answersPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.answersPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.answersPdfFile ? formState.errors.answersPdfFile.message : '\u00A0'}

@@ -11,6 +11,8 @@ import { mockExamSchema } from './MockExamSchema';
 import { SelectClass } from '../ui/selectClass';
 import { useEffect, useState } from 'react';
 import { DevTool } from '@hookform/devtools';
+import { CreateMockExam } from '../../interfaces/MockExam';
+import { DragDropFileUploader } from '../ui/dragDropFile';
 
 type EditMockExamForm = z.infer<typeof mockExamSchema>;
 
@@ -18,7 +20,7 @@ interface EditMockExamFormProps {
   entity: MockExam;
 }
 
-export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormProps) {
+export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
@@ -30,19 +32,22 @@ export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormP
   const { register, handleSubmit, formState, setValue, watch, control } = formMethods;
 
   useEffect(() => {
-    if (mockExamResponse) {
-      setValue("name", mockExamResponse.name);
-      setValue("className", mockExamResponse.className[0]);
-      setValue("releasedYear", mockExamResponse.releasedYear.toString());
-      setValue("number", mockExamResponse.number.toString());
+    if (mockExam) {
+      setValue("name", mockExam.name);
+      setValue("className", mockExam.className[0]);
+      setValue("releasedYear", mockExam.releasedYear.toString());
+      setValue("coverPdfFile", mockExam.coverPdfFile.file);
+      setValue("matrixPdfFile", mockExam.matrixPdfFile.file);
+      setValue("answersPdfFile", mockExam.answersPdfFile.file);
+      setValue("number", mockExam.number.toString());
     }
-  }, [mockExamResponse, setValue]);
+  }, [mockExam, setValue]);
 
   useEffect(() => {
     function hasChangedValues(): boolean {
       const classNameFormValues = watch("className");
 
-      if (classNameFormValues !== mockExamResponse?.className[0] || !!Object.keys(formState.dirtyFields).length) {
+      if (classNameFormValues !== mockExam?.className[0] || !!Object.keys(formState.dirtyFields).length) {
         return true;
       }
 
@@ -50,22 +55,42 @@ export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormP
     }
 
     setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mockExamResponse, watch])
+  }, [formState, hasChanged, mockExam, watch])
 
   const editMainQuestion = useMutation({
-    mutationFn: async ({ name, className, releasedYear, number}: EditMockExamForm) => {
+    mutationFn: async (data: EditMockExamForm) => {
+      const formData = new FormData();
+      const { name, className, releasedYear, number, coverPdfFile, matrixPdfFile, answersPdfFile } = data;
+
+      if (coverPdfFile) {
+        formData.append("coverPdfFile", coverPdfFile);
+      }
+
+      if (matrixPdfFile) {
+        formData.append("matrixPdfFile", matrixPdfFile);
+      }
+
+      if (answersPdfFile) {
+        formData.append("answersPdfFile", answersPdfFile);
+      }
+
+      const mockExam: CreateMockExam = {
+        name,
+        className: [className],
+        releasedYear,
+        number: Number(number)
+      };
+      const json = JSON.stringify(mockExam);
+      const blob = new Blob([json], {
+        type: 'application/json'
+      });
+
+      formData.append("mockExamInputDto", blob);
+
       const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`,
       {
-        headers: {
-          'Content-Type': 'application/json',
-        },
         method: 'PUT',
-        body: JSON.stringify({
-          name,
-          className: [className],
-          releasedYear,
-          number
-        }),
+        body: formData
       })
 
       if (response.status === 200) {
@@ -86,6 +111,8 @@ export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormP
   async function handleEditMockExam(data: EditMockExamForm) {
     await editMainQuestion.mutateAsync(data)
   }
+
+  //console.log(watch());
 
   return (
     <FormProvider {...formMethods}>
@@ -109,6 +136,41 @@ export function EditMockExamForm({ entity: mockExamResponse }: EditMockExamFormP
           <p className={`text-sm ${formState.errors?.className ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.className ? formState.errors.className.message : '\u00A0'}
           </p>
+        </div>
+
+        <div className='flex flex-row gap-1 justify-around align-middle'>
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='coverPdfFile'
+              message="Escolha o arquivo para a capa do simulado"
+              url={mockExam.coverPdfFile.url}
+            />
+            <p className={`text-sm ${formState.errors?.coverPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.coverPdfFile ? formState.errors.coverPdfFile.message : '\u00A0'}
+            </p>
+          </div>
+
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='matrixPdfFile'
+              message="Escolha o arquivo para a matrix Lericucas do simulado"
+              url={mockExam.matrixPdfFile.url}
+            />
+            <p className={`text-sm ${formState.errors?.matrixPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.matrixPdfFile ? formState.errors.matrixPdfFile.message : '\u00A0'}
+            </p>
+          </div>
+
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='answersPdfFile'
+              message="Escolha o arquivo de respostas do simulado"
+              url={mockExam.answersPdfFile.url}
+            />
+            <p className={`text-sm ${formState.errors?.answersPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.answersPdfFile ? formState.errors.answersPdfFile.message : '\u00A0'}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">

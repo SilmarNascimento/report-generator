@@ -9,7 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 type PdfPreviewProps = {
-  url: string
+  url: string | File
   handleDelete: () => void
 }
 

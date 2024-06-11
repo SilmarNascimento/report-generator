@@ -1,6 +1,20 @@
 import { MainQuestion } from "."
+import { FileEntity, FileHandle } from "./FileEntity"
 import { Subject } from "./Subject"
 
+
+export type MockExamReceived = {
+  id: string
+  name: string
+  className: ("Intensivo" | "Extensivo")[]
+  subjects: Subject[]
+  releasedYear: string
+  number: number
+  coverPdfFile: FileEntity
+  matrixPdfFile: FileEntity
+  answersPdfFile: FileEntity
+  mockExamQuestions: { [key: number]: MainQuestion };
+}
 
 export type MockExam = {
   id: string
@@ -9,9 +23,19 @@ export type MockExam = {
   subjects: Subject[]
   releasedYear: string
   number: number
-  coverPdfFile: FileList
-  matrixPdfFile: FileList
-  answersPdfFile: FileList
+  coverPdfFile: FileHandle
+  matrixPdfFile: FileHandle
+  answersPdfFile: FileHandle
+  mockExamQuestions: { [key: number]: MainQuestion };
+}
+
+export type PartialMockExam = {
+  id: string
+  name: string
+  className: ("Intensivo" | "Extensivo")[]
+  subjects: Subject[]
+  releasedYear: string
+  number: number
   mockExamQuestions: { [key: number]: MainQuestion };
 }
 

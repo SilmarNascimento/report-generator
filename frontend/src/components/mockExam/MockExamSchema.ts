@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-const fileListSchema = z.instanceof(FileList)
-  .refine((file) => file.length >= 1,
+const fileListSchema = z.instanceof(File)
+  .refine((file) => !!file,
   { 
     message: "Arquivo pdf obrigatório" 
   });
