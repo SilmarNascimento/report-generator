@@ -9,12 +9,13 @@ import { AlternativeForm } from '../alternative/alternativesForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MainQuestion } from '../../interfaces';
 import { DevTool } from '@hookform/devtools'
-import { CreateAlternative } from '../../interfaces/createAlternative';
-import { CreateQuestion } from '../../interfaces/createQuestion';
+import { CreateAlternative } from '../../interfaces/Alternative';
+import { CreateQuestion } from '../../interfaces/MainQuestion';
 import { useEffect, useState } from 'react';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { SelectLevel } from '../ui/selectLevel';
 import { alternativeSchema } from '../alternative/AlternativeSchema';
+import { DragDropFileUploader } from '../ui/dragDropFile';
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
@@ -22,7 +23,7 @@ interface EditMainQuestionFormProps {
   entity: MainQuestion;
 }
 
-export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQuestionFormProps) {
+export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -31,26 +32,28 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   });
-  const { register, handleSubmit, formState, setValue, control, watch } = formMethods; 
+  const { register, handleSubmit, formState, setValue, getValues, control, watch } = formMethods; 
 
   useEffect(() => {
-    if (mainQuestionResponse) {
-      setValue('title', mainQuestionResponse.title);
-      setValue('level', mainQuestionResponse.level);
-      mainQuestionResponse.alternatives.forEach((alternative, index) => {
+    if (mainQuestion) {
+      setValue('title', mainQuestion.title);
+      setValue('level', mainQuestion.level);
+      setValue('videoResolutionUrl', mainQuestion.videoResolutionUrl);
+      setValue('adaptedQuestionsPdfFile', mainQuestion.adaptedQuestionPdfFile.file);
+      mainQuestion.alternatives.forEach((alternative, index) => {
         setValue(`alternatives.${index}.description`, alternative.description);
         if (alternative.questionAnswer) {
           setValue('questionAnswer', index.toString());
         }
       });
     }
-  }, [mainQuestionResponse, setValue]);
+  }, [mainQuestion, setValue]);
 
   useEffect(() => {
     function hasChangedValues(): boolean {
       const questionAnswerFormValues = watch("questionAnswer");
 
-      const questionAnswerIndex = mainQuestionResponse?.alternatives
+      const questionAnswerIndex = mainQuestion?.alternatives
         .findIndex(alternative => alternative.questionAnswer) ?? '';
       
       if (questionAnswerFormValues !== questionAnswerIndex.toString() || !!Object.keys(formState.dirtyFields).length) {
@@ -61,7 +64,7 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
     }
 
     setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mainQuestionResponse, watch]);
+  }, [formState, hasChanged, mainQuestion, watch]);
 
   const editMainQuestion = useMutation({
     mutationFn: async (data: EditMainQuestionForm) => {
@@ -97,7 +100,8 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
       const createMainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
-        alternatives: createAlternatives
+        alternatives: createAlternatives,
+        videoResolutionUrl: data.videoResolutionUrl
       };
       const json = JSON.stringify(createMainQuestion);
       const blob = new Blob([json], {
@@ -105,12 +109,13 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
       });
 
       formData.append("mainQuestionInputDto", blob);
+      formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
 
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
-      {
-        method: 'PUT',
-        body: formData,
-      })
+        {
+          method: 'PUT',
+          body: formData,
+        })
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
@@ -147,7 +152,7 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium block" htmlFor="images">Imagem do enunciado</label>
+          <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
           <input 
             {...register('images')}
             id="images" 
@@ -169,6 +174,19 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
           </p>
         </div>
 
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="videoResolutionUrl">Url da Resolução da Questão</label>
+          <input
+            {...register('videoResolutionUrl')}
+            type='text'
+            id="videoResolutionUrl" 
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.videoResolutionUrl ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.videoResolutionUrl ? formState.errors.videoResolutionUrl.message : '\u00A0'}
+          </p>
+        </div>
+
         <div className="space-y-3">
           <span className="text-lg font-medium">
             Alternativas
@@ -178,6 +196,19 @@ export function EditMainQuestionForm({ entity: mainQuestionResponse }: EditMainQ
           {[...Array(5)].map((_, index) => (
             <AlternativeForm key={index} index={index} errors={formState.errors} />
           ))}
+        </div>
+
+        <div className='flex flex-row gap-1 justify-around align-middle'>
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropFileUploader
+              formVariable='adaptedQuestionsPdfFile'
+              message="Escolha o arquivo de questões adaptadas"
+              url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}
+            />
+            <p className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.adaptedQuestionsPdfFile ? formState.errors.adaptedQuestionsPdfFile.message : '\u00A0'}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center justify-center gap-2">

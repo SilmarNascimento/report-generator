@@ -29,16 +29,6 @@ export type MockExam = {
   mockExamQuestions: { [key: number]: MainQuestion };
 }
 
-export type PartialMockExam = {
-  id: string
-  name: string
-  className: ("Intensivo" | "Extensivo")[]
-  subjects: Subject[]
-  releasedYear: string
-  number: number
-  mockExamQuestions: { [key: number]: MainQuestion };
-}
-
 export type CreateMockExam = {
   name: string
   className: ("Intensivo" | "Extensivo")[]

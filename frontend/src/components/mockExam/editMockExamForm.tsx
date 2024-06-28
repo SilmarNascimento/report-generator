@@ -62,17 +62,9 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
       const formData = new FormData();
       const { name, className, releasedYear, number, coverPdfFile, matrixPdfFile, answersPdfFile } = data;
 
-      if (coverPdfFile) {
-        formData.append("coverPdfFile", coverPdfFile);
-      }
-
-      if (matrixPdfFile) {
-        formData.append("matrixPdfFile", matrixPdfFile);
-      }
-
-      if (answersPdfFile) {
-        formData.append("answersPdfFile", answersPdfFile);
-      }
+      formData.append("coverPdfFile", coverPdfFile);
+      formData.append("matrixPdfFile", matrixPdfFile);
+      formData.append("answersPdfFile", answersPdfFile);
 
       const mockExam: CreateMockExam = {
         name,

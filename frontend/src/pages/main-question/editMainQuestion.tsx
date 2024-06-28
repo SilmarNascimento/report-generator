@@ -5,6 +5,8 @@ import { EditMainQuestionForm } from "../../components/mainQuestion/editMainQues
 import { NavigationBar } from "../../components/navigationBar";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { MainQuestion } from "../../interfaces";
+import { MainQuestionReceived } from "../../interfaces/MainQuestion";
+import { convertMainQuestionData } from "../../utils/convertMainQuestiondata";
 
 export function EditMainQuestion() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -13,14 +15,16 @@ export function EditMainQuestion() {
     queryKey: ['get-main-questions', mainQuestionId],
     queryFn: async () => {
       const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
-      const data = await response.json()
+      const data: MainQuestionReceived = await response.json();
+      console.log(data);
 
-      return data
+      return convertMainQuestionData(data);
     },
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
   const mainQuestionCode = ``;
+  
 
   return (
     <>

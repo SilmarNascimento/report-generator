@@ -68,12 +68,7 @@ export function CreateMockExamForm() {
 
   async function handleCreateMainQuestion(data: CreateMockExamForm) {
     await createMockExam.mutateAsync(data)
-  }
-
-  console.log(getValues());
-  console.log(getValues('coverPdfFile'));
-  console.log(getValues("matrixPdfFile"));
-  
+  }  
 
   return (
     <FormProvider {...formMethods}>
