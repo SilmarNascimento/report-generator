@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -49,6 +50,10 @@ public class MockExamResponse {
 
   private List<Integer> missedMainQuestionNumbers;
 
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "diagnosis_file_id")
+  private FileEntity diagnosisPdfFile;
+
   @Column(columnDefinition = "VARCHAR(1000)")
   private String comment;
 
@@ -68,6 +73,7 @@ public class MockExamResponse {
     this.totalQuestions = totalQuestions;
     this.responses = responses;
     this.missedMainQuestionNumbers = new ArrayList<>();
+    this.diagnosisPdfFile = null;
     this.comment = comment;
     this.createdAt = createdAt;
   }

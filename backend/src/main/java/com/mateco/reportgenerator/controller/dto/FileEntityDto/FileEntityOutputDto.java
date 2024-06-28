@@ -14,6 +14,9 @@ public record FileEntityOutputDto(
     byte[] fileEntityBytes
 ) {
   public static FileEntityOutputDto parseDto(FileEntity fileEntity) {
+    if (fileEntity == null) {
+      return null;
+    }
     return new FileEntityOutputDto(
         fileEntity.getId(),
         fileEntity.getFileName(),

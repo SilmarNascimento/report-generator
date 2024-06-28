@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
 import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -11,10 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/students-response")
@@ -37,7 +42,7 @@ public class MockExamResponseController {
   }
 
   @GetMapping("/{mockExamResponseId}")
-  public ResponseEntity<MockExamResponseOutputDto> findMockExambyId(
+  public ResponseEntity<MockExamResponseOutputDto> findMockExamById(
       @PathVariable UUID mockExamResponseId
   ) {
     MockExamResponse mockExamResponse = mockExamResponseService.findMockExamResponseById(mockExamResponseId);
@@ -45,6 +50,18 @@ public class MockExamResponseController {
         .status(HttpStatus.OK)
         .body(MockExamResponseOutputDto
             .parseDto(mockExamResponse));
+  }
+
+  @PatchMapping("/{mockExamResponseId}")
+  public ResponseEntity<> generateCompleteDiagnosisById(
+      @PathVariable UUID mockExamResponseId,
+      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalInsightPdfFile
+  ) {
+
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body();
   }
 
   @DeleteMapping("/{mockExamResponseId}")

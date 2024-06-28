@@ -44,6 +44,8 @@ public class MainQuestion extends Question {
   )
   private List<Subject> subjects;
 
+  private String videoResolutionUrl;
+
   @OneToMany(
       mappedBy = "mainQuestion",
       cascade = CascadeType.ALL,
@@ -54,8 +56,6 @@ public class MainQuestion extends Question {
   @OrderColumn
   private List<Alternative> alternatives;
 
-  private String videoResolutionUrl;
-
   @Column(name = "adapted_questions")
   @OneToMany(
       mappedBy = "mainQuestion",
@@ -64,7 +64,7 @@ public class MainQuestion extends Question {
   )
   private List<AdaptedQuestion> adaptedQuestions;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "adapted_questions_file_id")
   private FileEntity adaptedQuestionsPdfFile;
 

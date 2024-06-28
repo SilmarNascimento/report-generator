@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller.dto.questionDto;
 
+import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileEntityOutputDto;
 import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeOutputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamListOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
@@ -15,6 +16,8 @@ public record MainQuestionOutputDto(
     List<SubjectOutputDto> subjects,
     String level,
     List<String> images,
+    String videoResolutionUrl,
+    FileEntityOutputDto adaptedQuestionsPdfFile,
     List<AlternativeOutputDto> alternatives,
     List<AdaptedQuestionOutputDto> adaptedQuestions,
     List<MockExamListOutputDto> mockExams,
@@ -27,6 +30,8 @@ public record MainQuestionOutputDto(
         SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
         mainQuestion.getLevel(),
         mainQuestion.getImages(),
+        mainQuestion.getVideoResolutionUrl(),
+        FileEntityOutputDto.parseDto(mainQuestion.getAdaptedQuestionsPdfFile()),
         AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
         AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
         MockExamListOutputDto.parseDto(mainQuestion.getMockExams()),
@@ -42,9 +47,11 @@ public record MainQuestionOutputDto(
           SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
           mainQuestion.getLevel(),
           mainQuestion.getImages(),
+          mainQuestion.getVideoResolutionUrl(),
+          FileEntityOutputDto.parseDto(mainQuestion.getAdaptedQuestionsPdfFile()),
           AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
           AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
-            MockExamListOutputDto.parseDto(mainQuestion.getMockExams()),
+          MockExamListOutputDto.parseDto(mainQuestion.getMockExams()),
           mainQuestion.getHandout()
         )).toList();
   }
