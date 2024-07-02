@@ -16,7 +16,7 @@ public record MockExamResponseOutputDto(
     String className,
     int correctAnswers,
     List<String> response,
-    FileEntityOutputDto diagnosisPdfFile,
+    boolean hasDiagnosisPdfFile,
     String comment,
     LocalDateTime createdAt
 ) {
@@ -30,7 +30,7 @@ public record MockExamResponseOutputDto(
       examResponse.getMockExam().getClassName().get(0),
       examResponse.getCorrectAnswers(),
       examResponse.getResponses(),
-      FileEntityOutputDto.parseDto(examResponse.getDiagnosisPdfFile()),
+      !(examResponse.getDiagnosisPdfFile() == null),
       examResponse.getComment(),
       examResponse.getCreatedAt()
     );
@@ -47,7 +47,7 @@ public record MockExamResponseOutputDto(
           examResponse.getMockExam().getClassName().get(0),
           examResponse.getCorrectAnswers(),
           examResponse.getResponses(),
-          FileEntityOutputDto.parseDto(examResponse.getDiagnosisPdfFile()),
+          !(examResponse.getDiagnosisPdfFile() == null),
           examResponse.getComment(),
           examResponse.getCreatedAt()
         )
