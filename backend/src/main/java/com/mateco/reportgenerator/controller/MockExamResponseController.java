@@ -53,15 +53,18 @@ public class MockExamResponseController {
   }
 
   @PatchMapping("/{mockExamResponseId}")
-  public ResponseEntity<> generateCompleteDiagnosisById(
+  public ResponseEntity<Void> generateCompleteDiagnosisById(
       @PathVariable UUID mockExamResponseId,
-      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalInsightPdfFile
+      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalRecordPdfFile
   ) {
-
+    mockExamResponseService.generateCompleteDiagnosisById(
+        mockExamResponseId,
+        personalRecordPdfFile
+    );
 
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body();
+        .build();
   }
 
   @DeleteMapping("/{mockExamResponseId}")

@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller.dto.responseDto;
 
+import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileEntityOutputDto;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ public record MockExamResponseOutputDto(
     String className,
     int correctAnswers,
     List<String> response,
+    FileEntityOutputDto diagnosisPdfFile,
     String comment,
     LocalDateTime createdAt
 ) {
@@ -28,6 +30,7 @@ public record MockExamResponseOutputDto(
       examResponse.getMockExam().getClassName().get(0),
       examResponse.getCorrectAnswers(),
       examResponse.getResponses(),
+      FileEntityOutputDto.parseDto(examResponse.getDiagnosisPdfFile()),
       examResponse.getComment(),
       examResponse.getCreatedAt()
     );
@@ -44,6 +47,7 @@ public record MockExamResponseOutputDto(
           examResponse.getMockExam().getClassName().get(0),
           examResponse.getCorrectAnswers(),
           examResponse.getResponses(),
+          FileEntityOutputDto.parseDto(examResponse.getDiagnosisPdfFile()),
           examResponse.getComment(),
           examResponse.getCreatedAt()
         )

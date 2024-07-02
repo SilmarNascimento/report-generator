@@ -10,7 +10,7 @@ public interface MockExamResponseServiceInterface {
 
   MockExamResponse findMockExamResponseById(UUID mockExamResponseId);
 
-  MockExamResponse generateCompleteDiagnosisById(UUID mockExamResponseId, MultipartFile personalInsightPdfFile);
+  void generateCompleteDiagnosisById(UUID mockExamResponseId, MultipartFile personalInsightPdfFile);
 
   void deleteMockExamResponseById(UUID mockExamResponseId);
 }

@@ -28,13 +28,17 @@ public record FileEntityOutputDto(
 
   public static List<FileEntityOutputDto> parseDto(List<FileEntity> fileEntities) {
     return fileEntities.stream()
-        .map(fileEntity -> new FileEntityOutputDto(
+        .map(fileEntity -> {
+          if (fileEntity == null) {
+            return null;
+          }
+          return new FileEntityOutputDto(
             fileEntity.getId(),
             fileEntity.getFileName(),
             fileEntity.getFileType(),
             fileEntity.getFileSize(),
             fileEntity.getFileContent().getContent()
-            )
-        ).collect(Collectors.toList());
+            );
+        }).collect(Collectors.toList());
   }
 }

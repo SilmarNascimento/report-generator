@@ -9,7 +9,6 @@ import com.mateco.reportgenerator.service.MockExamResponseServiceInterface;
 import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +41,11 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
   }
 
   @Override
-  public MockExamResponse generateCompleteDiagnosisById(
+  public void generateCompleteDiagnosisById(
       UUID mockExamResponseId,
       MultipartFile personalRecordPdfFile
   ) {
-    if (!("\"application/pdf\"").equals(personalRecordPdfFile.getContentType())) {
+    if (!("application/pdf").equals(personalRecordPdfFile.getContentType())) {
       throw new InvalidDataException("Formato de arquivo inválido");
     }
     MockExamResponse examResponseFound = mockExamResponseRepository.findById(mockExamResponseId)
@@ -63,25 +62,24 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         })
         .toList();
 
-
     try {
-      List<FileEntity> pdfFiles = new ArrayList<>();
+      List<FileEntity> pdfFilesToMerge = new ArrayList<>();
       FileEntity personalRecordPdfFileEntity = new FileEntity(personalRecordPdfFile);
 
-      pdfFiles.add(mockExam.getCoverPdfFile());
-      pdfFiles.add(personalRecordPdfFileEntity);
-      pdfFiles.add(mockExam.getMatrixPdfFile());
-      pdfFiles.addAll(personalAdaptedQuestionPdfFile);
-      pdfFiles.add(mockExam.getAnswersPdfFile());
+      pdfFilesToMerge.add(mockExam.getCoverPdfFile());
+      pdfFilesToMerge.add(personalRecordPdfFileEntity);
+      pdfFilesToMerge.add(mockExam.getMatrixPdfFile());
+      pdfFilesToMerge.addAll(personalAdaptedQuestionPdfFile);
+      pdfFilesToMerge.add(mockExam.getAnswersPdfFile());
 
-      PDDocument mergedPDFDocument = mergePDFs(pdfFiles);
+      PDDocument mergedPDFDocument = mergePDFs(pdfFilesToMerge);
       mergedPDFDocument.save("C:\\Users\\USUARIO\\Desktop\\teste.pdf");
 
       FileEntity diagnosisPdfEntity = new FileEntity(mergedPDFDocument, "PersonalDiagnosis");
       mergedPDFDocument.close();
 
       examResponseFound.setDiagnosisPdfFile(diagnosisPdfEntity);
-      return mockExamResponseRepository.save(examResponseFound);
+      mockExamResponseRepository.save(examResponseFound);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
