@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom';
 import { SelectClass } from '../ui/selectClass';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { mockExamSchema } from './MockExamSchema';
+import { mockExamSchema } from './mockExamSchema';
 import { DevTool } from '@hookform/devtools';
 import { CreateMockExam } from '../../interfaces/MockExam';
 import { DragDropFileUploader } from '../ui/dragDropFile';

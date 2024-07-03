@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { subjectSchema } from './SubjectSchema';
+import { subjectSchema } from './subjectSchema';
 import { Subject } from '../../interfaces';
 import { z } from 'zod';
 

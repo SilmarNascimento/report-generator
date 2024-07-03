@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternative/alternativesForm';
-import { mainQuestionSchema } from './MainQuestionSchema';
+import { mainQuestionSchema } from './mainQuestionSchema';
 import { CreateQuestion } from '../../interfaces/MainQuestion';
 import { CreateAlternative } from '../../interfaces/Alternative';
 import { useNavigate } from 'react-router-dom';

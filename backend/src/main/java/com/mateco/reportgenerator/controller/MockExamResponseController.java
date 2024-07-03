@@ -59,6 +59,18 @@ public class MockExamResponseController {
             .parseDto(mockExamResponse));
   }
 
+  @PatchMapping("/{mockExamResponseId}")
+  public ResponseEntity<Void> generateCompleteDiagnosisById(
+      @PathVariable UUID mockExamResponseId,
+      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalRecordPdfFile
+  ) {
+    mockExamResponseService.generateCompleteDiagnosisById(mockExamResponseId, personalRecordPdfFile);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .build();
+  }
+
   @GetMapping("/{mockExamResponseId}/download")
   public ResponseEntity<byte[]> downloadStudentDiagnosisByResponseId(
       @PathVariable UUID mockExamResponseId
@@ -72,18 +84,6 @@ public class MockExamResponseController {
         .contentType(MediaType.APPLICATION_PDF)
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + mockExamResponse.getDiagnosisPdfFile().getFileName() + "\"")
         .body(pdfContent);
-  }
-
-  @PatchMapping("/{mockExamResponseId}")
-  public ResponseEntity<Void> generateCompleteDiagnosisById(
-      @PathVariable UUID mockExamResponseId,
-      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalRecordPdfFile
-  ) {
-    mockExamResponseService.generateCompleteDiagnosisById(mockExamResponseId, personalRecordPdfFile);
-
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .build();
   }
 
   @DeleteMapping("/{mockExamResponseId}")

@@ -88,7 +88,7 @@ export function DragDropFileUploader({ formVariable, message, url }: DragDropFil
                 className="file"
                 ref={fileInputRef}
                 hidden
-                accept="image/*,.pdf"
+                accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 onChange={handleFileSelect}
               />
             </div>

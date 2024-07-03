@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom';
 import { MockExam } from '../../interfaces';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { mockExamSchema } from './MockExamSchema';
+import { mockExamSchema } from './mockExamSchema';
 import { SelectClass } from '../ui/selectClass';
 import { useEffect, useState } from 'react';
 import { DevTool } from '@hookform/devtools';

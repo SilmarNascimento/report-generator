@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { adaptedQuestionSchema } from "./AdaptedQuestionSchema";
+import { adaptedQuestionSchema } from "./adaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";

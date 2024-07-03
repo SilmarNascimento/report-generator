@@ -164,7 +164,7 @@ public class MockExamController {
         .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
-  @PostMapping("/{mockExamId}/responses")
+  @PostMapping(value = "/{mockExamId}/responses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<List<MockExamResponseOutputDto>> registerMockExamResponses(
       @RequestPart("studentsMockExamsAnswers") MultipartFile studentsAnswer,
       @PathVariable UUID mockExamId
