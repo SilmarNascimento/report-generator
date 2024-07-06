@@ -2,6 +2,7 @@ import { Eye } from "lucide-react";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Link } from "react-router-dom";
+import { StudentDiagnosisStatus } from "./StudentDiagnosisStatus";
 
 interface DiagnosisTableProps {
   entity: MockExamDiagnosisResponse[];
@@ -46,6 +47,9 @@ export function DiagnosisTable({ entity }: DiagnosisTableProps) {
               <span>Data de entrega</span>
             </TableHead>
             <TableHead>
+              <span>Diagnóstico</span>
+            </TableHead>
+            <TableHead>
               <span>Lista de Respostas</span>
             </TableHead>
             <TableHead></TableHead>
@@ -77,6 +81,9 @@ export function DiagnosisTable({ entity }: DiagnosisTableProps) {
                 </TableCell>
                 <TableCell className="text-zinc-300">
                   {handleDateTime(studentResponse.createdAt)}
+                </TableCell>
+                <TableCell className="text-zinc-300">
+                  <StudentDiagnosisStatus studentResponse={studentResponse}/>
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">

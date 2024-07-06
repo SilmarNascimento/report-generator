@@ -50,6 +50,7 @@ export function MockExamMainQuestionManager() {
       return data
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 10
   });
 
   const { data: mainQuestionPageResponse } = useQuery<PageResponse<MainQuestion>>({
@@ -71,7 +72,7 @@ export function MockExamMainQuestionManager() {
       return requestData
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
+    staleTime: 1000 * 10,
     enabled: !!mainQuestionIdList.current
   });
 

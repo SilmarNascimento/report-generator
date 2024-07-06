@@ -50,6 +50,7 @@ export function MockExamSubjectManager() {
       return data
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 10
   });
 
   const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
@@ -71,7 +72,7 @@ export function MockExamSubjectManager() {
       return requestData
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
+    staleTime: 1000 * 10,
     enabled: !!subjectIdList.current
   });
 

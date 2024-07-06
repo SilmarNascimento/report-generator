@@ -7,6 +7,7 @@ export type MockExamDiagnosisResponse =  {
   className: string
   correctAnswers: number
   response: string[]
+  hasDiagnosisPdfFile: boolean
   comment: string
   createdAt: string
 }

@@ -6,7 +6,7 @@ import { NavigationBar } from "../../components/navigationBar";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { MainQuestion } from "../../interfaces";
 import { MainQuestionReceived } from "../../interfaces/MainQuestion";
-import { convertMainQuestionData } from "../../utils/convertMainQuestiondata";
+import { convertMainQuestionData } from "../../utils/convertMainQuestionData";
 
 export function EditMainQuestion() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
