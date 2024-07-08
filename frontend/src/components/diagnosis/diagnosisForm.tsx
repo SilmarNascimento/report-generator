@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { DevTool } from '@hookform/devtools';
-import { DragDropFileUploader } from '../ui/dragDropFile';
+import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
 import { studentRecordsSchema } from './diagnosisSchema';
 import { InfiniteSelect } from '../ui/select/infiniteSelect';
 import { MockExam, PageResponse } from '../../interfaces';
@@ -142,7 +142,7 @@ export function GenerateResponsesForm({ setStudentResponseList, selectPlaceholde
             </div>
           </div>
           <div className="space-y-2 flex flex-col justify-center items-center">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='studentRecordsExcelFile'
               message={ dragAndDropPlaceholder }
               url={getValues('studentRecordsExcelFile') ? window.URL.createObjectURL(getValues('studentRecordsExcelFile')) : ''}

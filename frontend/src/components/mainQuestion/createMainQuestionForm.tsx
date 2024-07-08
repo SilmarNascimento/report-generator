@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { alternativeSchema } from '../alternative/AlternativeSchema';
-import { DragDropFileUploader } from '../ui/dragDropFile';
+import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
 
 type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>
 
@@ -160,7 +160,7 @@ export function CreateMainQuestionForm() {
 
         <div className='flex flex-row gap-1 justify-around align-middle'>
           <div className="space-y-2 flex flex-col justify-center items-start">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='adaptedQuestionsPdfFile'
               message="Escolha o arquivo de questões adaptadas"
               url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}

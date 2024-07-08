@@ -1,14 +1,16 @@
-import { Eye } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Link } from "react-router-dom";
 import { StudentDiagnosisStatus } from "./StudentDiagnosisStatus";
+import { Button } from "../ui/button";
 
 interface DiagnosisTableProps {
-  entity: MockExamDiagnosisResponse[];
+  entity: MockExamDiagnosisResponse[]
+  deleteFunction: (studentResponseId: string) => Promise<void>
 }
 
-export function DiagnosisTable({ entity }: DiagnosisTableProps) {
+export function DiagnosisTable({ entity, deleteFunction }: DiagnosisTableProps) {
   function handleDateTime(createdAt: string) {
     const dateAndTime = createdAt.split("T");
     const date = dateAndTime[0].split("-").reverse().join("/");
@@ -91,6 +93,11 @@ export function DiagnosisTable({ entity }: DiagnosisTableProps) {
                       <Eye className="size-4"/>
                     </Link>
                   </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button size="icon" className="mx-0.5" onClick={() => deleteFunction(studentResponse.id)}>
+                    <X className="size-3" color="red"/>
+                  </Button>
                 </TableCell>
               </TableRow>
             )

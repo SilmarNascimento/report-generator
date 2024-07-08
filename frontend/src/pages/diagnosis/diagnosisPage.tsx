@@ -2,20 +2,19 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { Header } from "../../components/header";
 import { NavigationBar } from "../../components/navigationBar";
 import { Pagination } from "../../components/pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/button";
-import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
+import { FileDown, Search } from "lucide-react";
 import { Control, Input } from "../../components/ui/input";
-import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
 import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
 
 export function StudentsResponses() {
-  //const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   //const navigate = useNavigate();
 
@@ -48,32 +47,32 @@ export function StudentsResponses() {
     placeholderData: keepPreviousData,
   })
 
-  // const deleteMainQuestion = useMutation({
-  //   mutationFn: async (studentResponseId: string) => {
-  //     try {
-  //       await fetch(`http://localhost:8080/students-response/${studentResponseId}`,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         method: 'DELETE',
-  //       })
+  const deleteResponse = useMutation({
+    mutationFn: async (studentResponseId: string) => {
+      try {
+        await fetch(`http://localhost:8080/students-response/${studentResponseId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'DELETE',
+        })
       
-  //     } catch (error) {
-  //       console.error('Erro na requisição:', error);
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['get-main-questions'],
-  //     });
-  //     successAlert('Resposta do aluno para o simulado excluído com sucesso!');
-  //   }
-  // })
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['get-responses'],
+      });
+      successAlert('Resposta do aluno para o simulado excluída com sucesso!');
+    }
+  })
   
-  // async function handleDeleteMainQuestion(studentResponseId: string) {
-  //   await deleteMainQuestion.mutateAsync(studentResponseId)
-  // }
+  async function handleDeleteStudentResponse(studentResponseId: string) {
+    await deleteResponse.mutateAsync(studentResponseId)
+  }
 
   if (isLoading) {
     return null
@@ -109,7 +108,7 @@ export function StudentsResponses() {
           </Button>
         </div>
 
-        {studentsResponsePage && <DiagnosisTable entity={studentsResponsePage?.data}/>}
+        {studentsResponsePage && <DiagnosisTable entity={studentsResponsePage?.data} deleteFunction={handleDeleteStudentResponse}/>}
         { studentsResponsePage
           && 
           <Pagination

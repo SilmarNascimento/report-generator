@@ -1,14 +1,14 @@
 import { ChangeEvent, DragEvent, useRef, useState } from "react"
 import { useFormContext } from "react-hook-form";
-import { PdfPreview } from "./pdfPreview";
+import { PdfPreview } from "../pdfPreview";
 
-type DragDropFileUploaderProps = {
+type DragDropPreviewFileUploaderProps = {
   formVariable: string
   message: string
   url: string
 }
 
-export function DragDropFileUploader({ formVariable, message, url }: DragDropFileUploaderProps) {
+export function DragDropPreviewFileUploader({ formVariable, message, url }: DragDropPreviewFileUploaderProps) {
   const { register, setValue, getValues } = useFormContext();
   const variableValue: File = getValues(formVariable);
   
@@ -24,7 +24,7 @@ export function DragDropFileUploader({ formVariable, message, url }: DragDropFil
     if (!filesSelected || filesSelected?.length === 0) return;
     
     const newFile = filesSelected.item(0);
-    setValue(formVariable, newFile, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true});
   }
 
   function deleteImage() {
@@ -48,7 +48,7 @@ export function DragDropFileUploader({ formVariable, message, url }: DragDropFil
     const filesDropped = event.dataTransfer.files;
 
     const newFile = filesDropped.item(0);
-    setValue(formVariable, newFile, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true});
   }
 
   return (

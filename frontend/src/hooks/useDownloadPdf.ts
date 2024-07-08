@@ -14,9 +14,11 @@ export function useDownloadPdf(url: string) {
 
       if (!response.ok) {
         warningAlert('Erro ao fazer download do arquivo');
+        return;
       }
 
       const contentDisposition = response.headers.get('Content-Disposition');
+      
       let fileName = 'diagnosis.pdf'; // Nome padrão
 
       if (contentDisposition) {

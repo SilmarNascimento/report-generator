@@ -10,7 +10,7 @@ import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { mockExamSchema } from './mockExamSchema';
 import { DevTool } from '@hookform/devtools';
 import { CreateMockExam } from '../../interfaces/MockExam';
-import { DragDropFileUploader } from '../ui/dragDropFile';
+import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
 
 type CreateMockExamForm = z.infer<typeof mockExamSchema>;
 
@@ -96,7 +96,7 @@ export function CreateMockExamForm() {
 
         <div className='flex flex-row gap-1 justify-around align-middle'>
           <div className="space-y-2 flex flex-col justify-center items-start">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='coverPdfFile'
               message="Escolha o arquivo para a capa do simulado"
               url={getValues('coverPdfFile') ? window.URL.createObjectURL(getValues('coverPdfFile')) : ''}
@@ -107,7 +107,7 @@ export function CreateMockExamForm() {
           </div>
 
           <div className="space-y-2 flex flex-col justify-center items-start">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='matrixPdfFile'
               message="Escolha o arquivo para a matrix Lericucas do simulado"
               url={getValues('matrixPdfFile') ? window.URL.createObjectURL(getValues('matrixPdfFile')) : ''}
@@ -118,7 +118,7 @@ export function CreateMockExamForm() {
           </div>
 
           <div className="space-y-2 flex flex-col justify-center items-start">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='answersPdfFile'
               message="Escolha o arquivo de respostas do simulado"
               url={getValues('answersPdfFile') ? window.URL.createObjectURL(getValues('answersPdfFile')) : ''}

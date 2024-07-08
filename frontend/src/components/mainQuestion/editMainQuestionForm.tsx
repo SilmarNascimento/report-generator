@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { SelectLevel } from '../ui/selectLevel';
 import { alternativeSchema } from '../alternative/AlternativeSchema';
-import { DragDropFileUploader } from '../ui/dragDropFile';
+import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
@@ -200,7 +200,7 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
 
         <div className='flex flex-row gap-1 justify-around align-middle'>
           <div className="space-y-2 flex flex-col justify-center items-start">
-            <DragDropFileUploader
+            <DragDropPreviewFileUploader
               formVariable='adaptedQuestionsPdfFile'
               message="Escolha o arquivo de questões adaptadas"
               url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}
