@@ -1,11 +1,11 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
-import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseWithFileOutputDto;
+import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
+import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import com.mateco.reportgenerator.service.MockExamResponseServiceInterface;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -33,10 +32,12 @@ public class MockExamResponseController {
   @GetMapping
   public ResponseEntity<PageOutputDto<MockExamResponseOutputDto>> findAllMockExams(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
-      @RequestParam(required = false, defaultValue = "20") int pageSize
+      @RequestParam(required = false, defaultValue = "20") int pageSize,
+      @RequestParam(required = false) String query,
+      @RequestParam(required = false) List<String> sort
   ) {
     Page<MockExamResponse> mockExamResponsePage = mockExamResponseService
-        .findAllMockExamResponses(pageNumber, pageSize);
+        .findAllMockExamResponses(pageNumber, pageSize, query, SortCriteriaDto.parseSortCriteria(sort));
 
     return ResponseEntity
         .status(HttpStatus.OK)
@@ -62,7 +63,7 @@ public class MockExamResponseController {
   @PatchMapping("/{mockExamResponseId}")
   public ResponseEntity<Void> generateCompleteDiagnosisById(
       @PathVariable UUID mockExamResponseId,
-      @RequestPart(value = "personalInsightPdfFile") MultipartFile personalRecordPdfFile
+      @RequestPart(value = "personalRecordPdfFile") MultipartFile personalRecordPdfFile
   ) {
     mockExamResponseService.generateCompleteDiagnosisById(mockExamResponseId, personalRecordPdfFile);
 
@@ -83,11 +84,12 @@ public class MockExamResponseController {
         .status(HttpStatus.OK)
         .contentType(MediaType.APPLICATION_PDF)
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + mockExamResponse.getDiagnosisPdfFile().getFileName() + "\"")
+        .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
         .body(pdfContent);
   }
 
   @DeleteMapping("/{mockExamResponseId}")
-  public ResponseEntity<Void> deleteMockExamById(@PathVariable UUID mockExamResponseId) {
+  public ResponseEntity<Void> deleteMockExamResponseById(@PathVariable UUID mockExamResponseId) {
     mockExamResponseService.deleteMockExamResponseById(mockExamResponseId);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)

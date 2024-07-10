@@ -34,6 +34,7 @@ public class SubjectService implements SubjectServiceInterface {
     if (excludedSubjects.isEmpty()) {
       return subjectRepository.findAllOrderByName(pageable, query);
     }
+
     return subjectRepository.findAllOrderByName(pageable, query, excludedSubjects);
   }
 

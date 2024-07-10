@@ -85,6 +85,19 @@ public class MockExam {
     this.mockExamQuestions = new HashMap<>();
   }
 
+  @Override
+  public String toString() {
+    return "{" +
+        "id: " + this.getId() +
+        "name: " + this.name +
+        "className: " + this.className +
+        "subjects: " + this.subjects +
+        "releasedYear: " + this.releasedYear +
+        "number: " + this.number +
+        "mockExamQuestions: " + this.mockExamQuestions +
+        '}';
+  }
+
   public String generateCode() {
     return this.releasedYear + ":S" + this.number + "-" + this.className.get(0);
   }

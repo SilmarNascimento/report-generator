@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.service.implementation;
 
+import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
@@ -14,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,8 +32,19 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
   private final MockExamResponseRepository mockExamResponseRepository;
 
   @Override
-  public Page<MockExamResponse> findAllMockExamResponses(int pageNumber, int pageSize) {
-    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+  public Page<MockExamResponse> findAllMockExamResponses(
+      int pageNumber,
+      int pageSize,
+      String query,
+      List<SortCriteriaDto> sort
+  ) {
+    Sort sortOrder = getSort(sort);
+    Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOrder);
+
+    if (query != null && !query.isEmpty()) {
+      return mockExamResponseRepository.findByQuery(query, pageable);
+    }
+
     return mockExamResponseRepository.findAll(pageable);
   }
 
@@ -73,9 +87,8 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
       pdfFilesToMerge.add(mockExam.getAnswersPdfFile());
 
       PDDocument mergedPDFDocument = mergePDFs(pdfFilesToMerge);
-      mergedPDFDocument.save("C:\\Users\\USUARIO\\Desktop\\teste.pdf");
-
-      FileEntity diagnosisPdfEntity = new FileEntity(mergedPDFDocument, "PersonalDiagnosis");
+      String diagnosisFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + examResponseFound.getName().toUpperCase();
+      FileEntity diagnosisPdfEntity = new FileEntity(mergedPDFDocument, diagnosisFileName);
       mergedPDFDocument.close();
 
       examResponseFound.setDiagnosisPdfFile(diagnosisPdfEntity);
@@ -104,5 +117,17 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
     }
 
     return mergedDocument;
+  }
+
+  private Sort getSort(List<SortCriteriaDto> sortCriteria) {
+    if (sortCriteria == null || sortCriteria.isEmpty()) {
+      return Sort.unsorted();
+    }
+
+    List<Sort.Order> orders = sortCriteria.stream()
+        .map(criteria -> new Sort.Order(criteria.direction(), criteria.property()))
+        .collect(Collectors.toList());
+
+    return Sort.by(orders);
   }
 }
