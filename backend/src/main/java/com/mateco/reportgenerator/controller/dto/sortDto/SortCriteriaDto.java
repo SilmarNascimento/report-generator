@@ -10,7 +10,13 @@ public record SortCriteriaDto(
 ) {
   public static List<SortCriteriaDto> parseSortCriteria(List<String> sort) {
     List<SortCriteriaDto> sortCriteria = new ArrayList<>();
-    if (sort != null) {
+    if (sort != null && !sort.isEmpty()) {
+      if (!sort.get(0).contains(",")) {
+        String newSort = String.join(",", sort);
+        sort = new ArrayList<>();
+        sort.add(newSort);
+      }
+
       for (String sortParam : sort) {
         String[] parts = sortParam.split(",");
         if (parts.length == 2) {

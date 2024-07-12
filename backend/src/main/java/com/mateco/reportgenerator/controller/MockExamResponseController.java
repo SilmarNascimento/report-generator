@@ -5,6 +5,7 @@ import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOut
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import com.mateco.reportgenerator.service.MockExamResponseServiceInterface;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,10 @@ public class MockExamResponseController {
       @RequestParam(required = false) String query,
       @RequestParam(required = false) List<String> sort
   ) {
+    List<String> sortParams = (sort == null) ? new ArrayList<>() : sort;
+
     Page<MockExamResponse> mockExamResponsePage = mockExamResponseService
-        .findAllMockExamResponses(pageNumber, pageSize, query, SortCriteriaDto.parseSortCriteria(sort));
+        .findAllMockExamResponses(pageNumber, pageSize, query, SortCriteriaDto.parseSortCriteria(sortParams));
 
     return ResponseEntity
         .status(HttpStatus.OK)
