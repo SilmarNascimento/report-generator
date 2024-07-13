@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -21,6 +22,7 @@ import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +44,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -68,12 +71,21 @@ public class MockExamServiceTests {
   private UUID mockMainQuestionId01;
   private UUID mockMainQuestionId02;
   private UUID mockMainQuestionId03;
+  private FileEntity mockMainQuestionFile01;
+  private FileEntity mockMainQuestionFile02;
+  private FileEntity mockMainQuestionFile03;
   private MainQuestion mockMainQuestion01;
   private MainQuestion mockMainQuestion02;
   private MainQuestion mockMainQuestion03;
   private MockExamResponse mockExamResponse01;
   private MockExamResponse mockExamResponse02;
   private MockExamResponse mockExamResponse03;
+  private MockMultipartFile coverFile01;
+  private MockMultipartFile matrixFile01;
+  private MockMultipartFile answersFile01;
+  private MockMultipartFile coverFile02;
+  private MockMultipartFile matrixFile02;
+  private MockMultipartFile answersFile02;
   private MockExam mockExam01;
   private MockExam mockExam02;
   private MockExam mockExam03;
@@ -81,7 +93,7 @@ public class MockExamServiceTests {
   private Subject mockSubject02;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws IOException {
     mockExamId01 = UUID.randomUUID();
     mockExamId02 = UUID.randomUUID();
     mockExamId03 = UUID.randomUUID();
@@ -124,13 +136,23 @@ public class MockExamServiceTests {
         List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative)
     );
 
+    MockMultipartFile multipartFile01 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(multipartFile01);
+
     mockMainQuestion01 = new MainQuestion(
         "título questão 01",
         new ArrayList<>(),
         "difícil",
         List.of("imagem 01 da questão"),
         List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative),
+        "URL da questão 01",
         new ArrayList<>(),
+        mockMainQuestionFile01,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -139,13 +161,23 @@ public class MockExamServiceTests {
     mockMainQuestion01.getAdaptedQuestions()
         .addAll(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
 
+    MockMultipartFile multipartFile02 = new MockMultipartFile(
+        "adaptedQuestionPdfFile02",
+        "adaptedQuestionPdfFile02.pdf",
+        "application/pdf",
+        "adaptedQuestion02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(multipartFile02);
+
     mockMainQuestion02 = new MainQuestion(
         "título questão 02",
         new ArrayList<>(),
         "difícil",
         List.of("imagem 01 da questão"),
         List.of(mockFalseAlternative, mockTrueAlternative, mockFalseAlternative),
+        "URL da questão 02",
         new ArrayList<>(),
+        mockMainQuestionFile02,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -154,13 +186,23 @@ public class MockExamServiceTests {
     mockMainQuestion02.getAdaptedQuestions()
         .addAll(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
 
+    MockMultipartFile multipartFile03 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile03 = new FileEntity(multipartFile03);
+
     mockMainQuestion03 = new MainQuestion(
         "título questão 02",
         new ArrayList<>(),
         "difícil",
         List.of("imagem 01 da questão"),
         List.of(mockFalseAlternative, mockTrueAlternative),
+        "URL da questão 03",
         new ArrayList<>(),
+        mockMainQuestionFile03,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -198,6 +240,27 @@ public class MockExamServiceTests {
     );
     mockExamResponse03.setId(mockResponseId03);
 
+    coverFile01 = new MockMultipartFile(
+        "coverPdfFile01",
+        "coverPdfFile01.pdf",
+        "application/pdf",
+        "coverPdfFile01".getBytes()
+    );
+
+    matrixFile01 = new MockMultipartFile(
+        "matrixPdfFile01",
+        "matrixPdfFile01.pdf",
+        "application/pdf",
+        "matrixPdfFile01".getBytes()
+    );
+
+    answersFile01 = new MockMultipartFile(
+        "answerPdfFile01",
+        "answerPdfFile01.pdf",
+        "application/pdf",
+        "answerPdfFile01".getBytes()
+    );
+
     mockExam01 = new MockExam(
         "primeiro simulado",
         List.of("intensivo", "extensivo"),
@@ -206,6 +269,27 @@ public class MockExamServiceTests {
         1
     );
     mockExam01.setId(mockExamId01);
+
+    coverFile02 = new MockMultipartFile(
+        "coverPdfFile02",
+        "coverPdfFile02.pdf",
+        "application/pdf",
+        "coverPdfFile02".getBytes()
+    );
+
+    matrixFile02 = new MockMultipartFile(
+        "matrixPdfFile02",
+        "matrixPdfFile02.pdf",
+        "application/pdf",
+        "matrixPdfFile02".getBytes()
+    );
+
+    answersFile02 = new MockMultipartFile(
+        "answerPdfFile02",
+        "answerPdfFile02.pdf",
+        "application/pdf",
+        "answerPdfFile02".getBytes()
+    );
 
     mockExam02 = new MockExam(
         "segundo simulado",
@@ -298,12 +382,17 @@ public class MockExamServiceTests {
 
   @Test
   @DisplayName("Verifica se é criada uma entidade MockExam")
-  public void createMockExamTest() {
+  public void createMockExamTest() throws IOException {
     Mockito
         .when(mockExamRepository.save(any(MockExam.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    MockExam serviceResponse = mockExamService.createMockExam(mockExam01);
+    MockExam serviceResponse = mockExamService.createMockExam(
+        mockExam01,
+        coverFile01,
+        matrixFile01,
+        answersFile01
+    );
 
     assertNotNull(serviceResponse);
     assertNotNull(serviceResponse.getId());
@@ -322,7 +411,7 @@ public class MockExamServiceTests {
 
   @Test
   @DisplayName("Verifica se é retornado a entidade MockExam atualizada por seu Id")
-  public void updateMockExamByIdTest() {
+  public void updateMockExamByIdTest() throws IOException {
     Mockito
         .when(mockExamRepository.findById(any(UUID.class)))
         .thenReturn(Optional.of(mockExam01));
@@ -334,7 +423,10 @@ public class MockExamServiceTests {
     MockExam serviceResponse = mockExamService
         .updateMockExamById(
             mockExamId01,
-            mockExam02
+            mockExam02,
+            coverFile02,
+            matrixFile02,
+            answersFile02
         );
 
     assertNotNull(serviceResponse);
@@ -368,7 +460,10 @@ public class MockExamServiceTests {
         NotFoundException.class,
         () -> mockExamService.updateMockExamById(
             mockExamId01,
-            mockExam02
+            mockExam02,
+            coverFile02,
+            matrixFile02,
+            answersFile02
         )
     );
 

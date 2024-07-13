@@ -21,6 +21,7 @@ import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInp
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -28,6 +29,7 @@ import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,6 +72,8 @@ public class MockExamCrontollerTests {
   private UUID mockExamId02;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
+  private FileEntity mockMainQuestionFile01;
+  private FileEntity mockMainQuestionFile02;
   private UUID mockMainQuestionId01;
   private UUID mockMainQuestionId02;
   private UUID mockResponseId01;
@@ -84,7 +88,7 @@ public class MockExamCrontollerTests {
   private MockExamResponse updatedMockExamResponse02;
 
   @BeforeEach
-  public void setUp() throws JsonProcessingException {
+  public void setUp() throws IOException {
     baseUrl = "/mock-exam";
     objectMapper = new ObjectMapper();
 
@@ -113,13 +117,31 @@ public class MockExamCrontollerTests {
     mockSubject02 = new Subject("Algebra");
     mockSubject02.setId(mockSubjectId02);
 
+    MockMultipartFile multipartFile01 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(multipartFile01);
+
+    MockMultipartFile multipartFile02 = new MockMultipartFile(
+        "adaptedQuestionPdfFile02",
+        "adaptedQuestionPdfFile02.pdf",
+        "application/pdf",
+        "adaptedQuestion02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(multipartFile02);
+
     MainQuestion mockMainQuestion01 = new MainQuestion(
         "título questão 01",
         new ArrayList<>(),
         "difícil",
         List.of("imagem da questão 01"),
         List.of(mockTrueAlternative, mockFalseAlternative),
+        "URL da questão 01",
         new ArrayList<>(),
+        mockMainQuestionFile01,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -131,7 +153,9 @@ public class MockExamCrontollerTests {
         "difícil",
         List.of("imagem da questão 02"),
         List.of(mockFalseAlternative, mockTrueAlternative),
+        "URL da questão 02",
         new ArrayList<>(),
+        mockMainQuestionFile02,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -166,6 +190,15 @@ public class MockExamCrontollerTests {
         "easy",
         LocalDateTime.now()
     );
+
+    MockMultipartFile responseMultipartFile01 = new MockMultipartFile(
+        "diagnosisPdfFile01",
+        "diagnosisPdfFile01.pdf",
+        "application/pdf",
+        "diagnosisPdfFile01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(responseMultipartFile01);
+
     updatedMockExamResponse01 = new MockExamResponse(
         mockResponseId01,
         mockExamResponse01.getName(),
@@ -175,6 +208,7 @@ public class MockExamCrontollerTests {
         mockExamResponse01.getTotalQuestions(),
         mockExamResponse01.getResponses(),
         new ArrayList<>(),
+        mockMainQuestionFile01,
         mockExamResponse01.getComment(),
         mockExamResponse01.getCreatedAt()
     );
@@ -187,6 +221,15 @@ public class MockExamCrontollerTests {
         "puts",
         LocalDateTime.now()
     );
+
+    MockMultipartFile responseMultipartFile02 = new MockMultipartFile(
+        "diagnosisPdfFile02",
+        "diagnosisPdfFile02.pdf",
+        "application/pdf",
+        "diagnosisPdfFile02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(responseMultipartFile02);
+
     updatedMockExamResponse02 = new MockExamResponse(
         mockResponseId02,
         mockExamResponse02.getName(),
@@ -196,6 +239,7 @@ public class MockExamCrontollerTests {
         mockExamResponse02.getTotalQuestions(),
         mockExamResponse02.getResponses(),
         new ArrayList<>(),
+        mockMainQuestionFile02,
         mockExamResponse02.getComment(),
         mockExamResponse02.getCreatedAt()
     );
@@ -374,7 +418,10 @@ public class MockExamCrontollerTests {
   public void createMockExamTest() throws Exception {
     Mockito
         .when(mockExamService.createMockExam(
-            any(MockExam.class)
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
         )).thenReturn(mockExam01);
 
     MockExamInputDto mockExamInputDto = new MockExamInputDto(
@@ -401,14 +448,25 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .createMockExam(any(MockExam.class));
+        .createMockExam(
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test
   @DisplayName("Verifica se uma entidade MockExam é atualizada pelo seu id")
   public void updateMockExamByIdTest() throws Exception {
     Mockito
-        .when(mockExamService.updateMockExamById(any(UUID.class), any(MockExam.class)))
+        .when(mockExamService.updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        ))
         .thenReturn(mockExam01);
 
     MockExamInputDto mockExamInputDto = new MockExamInputDto(
@@ -436,14 +494,26 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .updateMockExamById(any(UUID.class), any(MockExam.class));
+        .updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test
   @DisplayName("Verifica se é disparado uma exceção quando uma entidade MockExam não é encontrada pelo seu id")
   public void updateMockExamByIdTestNotFoundError() throws Exception {
     Mockito
-        .when(mockExamService.updateMockExamById(any(UUID.class), any(MockExam.class)))
+        .when(mockExamService.updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        ))
         .thenThrow(new NotFoundException("Simulado não encontrado!"));
 
     MockExamInputDto mockExamInputDto = new MockExamInputDto(
@@ -465,7 +535,13 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$").value("Simulado não encontrado!"));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .updateMockExamById(any(UUID.class), any(MockExam.class));
+        .updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test

@@ -18,6 +18,7 @@ import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInp
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
@@ -25,6 +26,7 @@ import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.service.implementation.AdaptedQuestionService;
 import com.mateco.reportgenerator.service.implementation.MainQuestionService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -66,6 +68,8 @@ public class MainQuestionControllerTests {
   private UUID mockAdaptedQuestionId01;
   private UUID mockAdaptedQuestionId02;
   private List<MockMultipartFile> multipartFiles;
+  private FileEntity mockMainQuestionFile01;
+  private FileEntity mockMainQuestionFile02;
   private Alternative mockAlternative01;
   private Alternative mockAlternative02;
   private String mainQuestionInput;
@@ -78,7 +82,7 @@ public class MainQuestionControllerTests {
   private Subject mockSubject02;
 
   @BeforeEach
-  public void setUp() throws JsonProcessingException {
+  public void setUp() throws IOException {
     baseUrl = "/main-question";
     objectMapper = new ObjectMapper();
 
@@ -103,6 +107,22 @@ public class MainQuestionControllerTests {
         List.of(UUID.randomUUID(), UUID.randomUUID())
     );
 
+    MockMultipartFile multipartFile01 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(multipartFile01);
+
+    MockMultipartFile multipartFile02 = new MockMultipartFile(
+        "adaptedQuestionPdfFile02",
+        "adaptedQuestionPdfFile02.pdf",
+        "application/pdf",
+        "adaptedQuestion02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(multipartFile02);
+
     mockAlternative01 = new Alternative(
         "descrição da alternativa 01",
         List.of("imagem alternativa 01"),
@@ -122,7 +142,9 @@ public class MainQuestionControllerTests {
         "difícil",
         List.of("imagem da questão 01"),
         List.of(mockAlternative01, mockAlternative02),
+        "URL da questão 01",
         new ArrayList<>(),
+        mockMainQuestionFile01,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -134,7 +156,9 @@ public class MainQuestionControllerTests {
         "difícil",
         List.of("imagem da questão 02"),
         List.of(mockAlternative01, mockAlternative02),
+        "URL da questão 02",
         new ArrayList<>(),
+        mockMainQuestionFile02,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -174,7 +198,8 @@ public class MainQuestionControllerTests {
         new ArrayList<>(),
         "Fácil",
         new ArrayList<>(),
-        List.of(alternativeInputDto01, alternativeInputDto02)
+        List.of(alternativeInputDto01, alternativeInputDto02),
+        "URL video resolution"
     );
   }
 
