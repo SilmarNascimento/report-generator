@@ -21,6 +21,7 @@ import com.mateco.reportgenerator.model.repository.MockExamRepository;
 import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
+import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -149,7 +150,7 @@ public class MockExamServiceTests {
         new ArrayList<>(),
         "difícil",
         List.of("imagem 01 da questão"),
-        List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative),
+        List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative),
         "URL da questão 01",
         new ArrayList<>(),
         mockMainQuestionFile01,
@@ -213,32 +214,49 @@ public class MockExamServiceTests {
     mockExamResponse01 = new MockExamResponse(
         "Cainã",
         "caina.juca@gmail.com",
-        2,
-        List.of("A", "B"),
+        45,
+        new ArrayList<>(),
         "achei muito fácil",
         LocalDateTime.now()
     );
     mockExamResponse01.setId(mockResponseId01);
+    List<String> response01 = new ArrayList<>();
+    for (int index = 0; index < 45; index ++) {
+      response01.add("A");
+    }
+    mockExamResponse01.setResponses(response01);
 
     mockExamResponse02 = new MockExamResponse(
         "Igor",
         "igor.santos@gmail.com",
-        2,
-        List.of("B", "B"),
+        45,
+        new ArrayList<>(),
         "sem comentários",
         LocalDateTime.now()
     );
     mockExamResponse02.setId(mockResponseId02);
+    List<String> response02 = new ArrayList<>();
+    response02.add("B");
+    for (int index = 0; index < 44; index ++) {
+      response02.add("A");
+    }
+    mockExamResponse02.setResponses(response02);
 
     mockExamResponse03 = new MockExamResponse(
         "Charles",
         "charles.alcantara@gmail.com",
-        2,
-        List.of("B", "A"),
+        45,
+        new ArrayList<>(),
         "sangue de cristo",
         LocalDateTime.now()
     );
     mockExamResponse03.setId(mockResponseId03);
+    List<String> response03 = new ArrayList<>();
+    response03.add("A");
+    for (int index = 0; index < 44; index ++) {
+      response03.add("C");
+    }
+    mockExamResponse03.setResponses(response03);
 
     coverFile01 = new MockMultipartFile(
         "coverPdfFile01",
@@ -269,6 +287,9 @@ public class MockExamServiceTests {
         1
     );
     mockExam01.setId(mockExamId01);
+    mockExam01.setCoverPdfFile(new FileEntity(coverFile01));
+    mockExam01.setMatrixPdfFile(new FileEntity(matrixFile01));
+    mockExam01.setAnswersPdfFile(new FileEntity(answersFile01));
 
     coverFile02 = new MockMultipartFile(
         "coverPdfFile02",
@@ -299,6 +320,9 @@ public class MockExamServiceTests {
         1
     );
     mockExam02.getSubjects().add(mockSubject01);
+    mockExam02.setCoverPdfFile(new FileEntity(coverFile02));
+    mockExam02.setMatrixPdfFile(new FileEntity(matrixFile02));
+    mockExam02.setAnswersPdfFile(new FileEntity(answersFile02));
     Map<Integer, MainQuestion> mockExamQuestions = new HashMap<>();
     mockExamQuestions.put(136, mockMainQuestion01);
     mockExamQuestions.put(137, mockMainQuestion02);
@@ -313,7 +337,7 @@ public class MockExamServiceTests {
     );
     Map<Integer, MainQuestion> mockExamQuestions03 = new HashMap<>();
     for (int index = 136; index <= 180; index ++) {
-      mockExamQuestions03.put(index, new MainQuestion());
+      mockExamQuestions03.put(index, mockMainQuestion01);
     }
     mockExam03.setMockExamQuestions(mockExamQuestions03);
   }
@@ -402,6 +426,9 @@ public class MockExamServiceTests {
     assertEquals(serviceResponse.getReleasedYear(), mockExam01.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam01.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
+    assertInstanceOf(FileEntity.class, serviceResponse.getCoverPdfFile());
+    assertInstanceOf(FileEntity.class, serviceResponse.getMatrixPdfFile());
+    assertInstanceOf(FileEntity.class, serviceResponse.getAnswersPdfFile());
     assertInstanceOf(Map.class, serviceResponse.getMockExamQuestions());
 
     Mockito
@@ -438,6 +465,9 @@ public class MockExamServiceTests {
     assertEquals(serviceResponse.getReleasedYear(), mockExam02.getReleasedYear());
     assertEquals(serviceResponse.getNumber(), mockExam02.getNumber());
     assertInstanceOf(List.class, serviceResponse.getSubjects());
+    assertInstanceOf(FileEntity.class, serviceResponse.getCoverPdfFile());
+    assertInstanceOf(FileEntity.class, serviceResponse.getMatrixPdfFile());
+    assertInstanceOf(FileEntity.class, serviceResponse.getAnswersPdfFile());
     assertEquals(serviceResponse.getSubjects(), mockExam01.getSubjects());
     assertInstanceOf(Map.class, serviceResponse.getMockExamQuestions());
     assertEquals(serviceResponse.getMockExamQuestions(), mockExam01.getMockExamQuestions());
@@ -660,11 +690,13 @@ public class MockExamServiceTests {
           Assertions.assertThat(questionNumber).isInstanceOf(Integer.class);
             Assertions.assertThat(mainQuestion.getId()).isNotNull();
             Assertions.assertThat(mainQuestion.getTitle()).isInstanceOf(String.class);
-            Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getSubjects()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getImages()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getAlternatives()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getVideoResolutionUrl()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getAdaptedQuestions()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getAdaptedQuestionsPdfFile()).isInstanceOf(FileEntity.class);
             Assertions.assertThat(mainQuestion.getMockExams()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getHandout()).isInstanceOf(List.class);
         });
@@ -904,7 +936,7 @@ public class MockExamServiceTests {
   public void registerAllMockExamResponsesTest() {
     Mockito
         .when(mockExamRepository.findById(any(UUID.class)))
-        .thenReturn(Optional.of(mockExam02));
+        .thenReturn(Optional.of(mockExam03));
 
     Mockito
         .when(mockExamResponseRepository.saveAll(any(List.class)))
@@ -919,39 +951,80 @@ public class MockExamServiceTests {
     assertNotNull(serviceResponse);
     assertInstanceOf(List.class, serviceResponse);
     assertEquals(3, serviceResponse.size());
-
     Assertions.assertThat(serviceResponse)
         .allSatisfy(examResponse -> {
           Assertions.assertThat(examResponse.getId()).isNotNull();
           Assertions.assertThat(examResponse.getName()).isInstanceOf(String.class);
           Assertions.assertThat(examResponse.getEmail()).isInstanceOf(String.class);
           Assertions.assertThat(examResponse.getMockExam()).isInstanceOf(MockExam.class);
-          assertEquals(examResponse.getMockExam(), mockExam02);
           Assertions.assertThat(examResponse.getCorrectAnswers()).isInstanceOf(Integer.class);
           Assertions.assertThat(examResponse.getTotalQuestions()).isInstanceOf(Integer.class);
-          assertEquals(2, examResponse.getTotalQuestions());
+          assertEquals(45, examResponse.getTotalQuestions());
           Assertions.assertThat(examResponse.getResponses()).isInstanceOf(List.class);
-          assertEquals(2, examResponse.getResponses().size());
+          assertEquals(45, examResponse.getResponses().size());
           Assertions.assertThat(examResponse.getMissedMainQuestionNumbers()).isInstanceOf(List.class);
+          Assertions.assertThat(examResponse.getDiagnosisPdfFile()).isNull();
           Assertions.assertThat(examResponse.getComment()).isInstanceOf(String.class);
           Assertions.assertThat(examResponse.getCreatedAt()).isInstanceOf(LocalDateTime.class);
         });
 
     MockExamResponse studentResponse01 = serviceResponse.get(0);
-    assertEquals(2, studentResponse01.getCorrectAnswers());
+    assertEquals(45, studentResponse01.getCorrectAnswers());
     assertEquals(0, studentResponse01.getMissedMainQuestionNumbers().size());
 
     MockExamResponse studentResponse02 = serviceResponse.get(1);
-    assertEquals(1, studentResponse02.getCorrectAnswers());
+    assertEquals(44, studentResponse02.getCorrectAnswers());
     assertEquals(1, studentResponse02.getMissedMainQuestionNumbers().size());
 
     MockExamResponse studentResponse03 = serviceResponse.get(2);
-    assertEquals(0, studentResponse03.getCorrectAnswers());
-    assertEquals(2, studentResponse03.getMissedMainQuestionNumbers().size());
+    assertEquals(1, studentResponse03.getCorrectAnswers());
+    assertEquals(44, studentResponse03.getMissedMainQuestionNumbers().size());
 
     Mockito.verify(mockExamRepository, Mockito.times(1))
         .findById(any(UUID.class));
     Mockito.verify(mockExamResponseRepository, Mockito.times(1))
         .saveAll(any(List.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre a entidade MockExam para registrar as respostas")
+  public void registerAllMockExamResponsesTestMockExamNotFoundError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.empty());
+
+    assertThrows(
+        NotFoundException.class,
+        () -> mockExamService
+            .registerAllMockExamResponses(
+                mockExamId02,
+                List.of(mockExamResponse01, mockExamResponse02, mockExamResponse03)
+            )
+    );
+
+    Mockito
+        .verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
+  }
+
+  @Test
+  @DisplayName("Verifica se ocorre o disparo de uma exceção caso não se encontre a entidade MockExam não esteja completa com as 45 questões")
+  public void registerAllMockExamResponsesTestImcompleteMockExamError() {
+    Mockito
+        .when(mockExamRepository.findById(any(UUID.class)))
+        .thenReturn(Optional.of(mockExam01));
+
+    assertThrows(
+        InvalidDataException.class,
+        () -> mockExamService
+            .registerAllMockExamResponses(
+                mockExamId02,
+                List.of(mockExamResponse01, mockExamResponse02, mockExamResponse03)
+            )
+    );
+
+    Mockito
+        .verify(mockExamRepository, Mockito.times(1))
+        .findById(any(UUID.class));
   }
 }
