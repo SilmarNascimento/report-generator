@@ -1,11 +1,11 @@
 package com.mateco.reportgenerator.controller;
 
-import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
-import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutpuDto;
-import com.mateco.reportgenerator.controller.dto.MockExamResponseOutputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamWithFileOutputDto;
+import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
-import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamOutputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -14,10 +14,16 @@ import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,19 +39,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/mock-exam")
+@RequiredArgsConstructor
 public class MockExamController {
   private final MockExamServiceInterface mockExamService;
   private final FileServiceInterface fileService;
 
-  @Autowired
-  public MockExamController(MockExamServiceInterface mockExamService,
-      FileServiceInterface fileService) {
-    this.mockExamService = mockExamService;
-    this.fileService = fileService;
-  }
-
   @GetMapping
-  public ResponseEntity<PageOutputDto<MockExamOutpuDto>> findAllMockExams(
+  public ResponseEntity<PageOutputDto<MockExamOutputDto>> findAllMockExams(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
       @RequestParam(required = false, defaultValue = "20") int pageSize
   ) {
@@ -54,40 +54,59 @@ public class MockExamController {
         .status(HttpStatus.OK)
         .body(PageOutputDto.parseDto(
             mockExamsPage,
-            MockExamOutpuDto::parseDto
+            MockExamOutputDto::parseDto
         ));
   }
 
   @GetMapping("/{mockExamId}")
-  public ResponseEntity<MockExamOutpuDto> findMockExambyId(
-      @PathVariable UUID mockExamId
-  ) {
-    MockExam mockExams = mockExamService.findMockExamById(mockExamId);
+  public ResponseEntity<MockExamWithFileOutputDto> findCompleteMockExamById(@PathVariable UUID mockExamId) {
+    MockExam mockExam = mockExamService.findMockExamById(mockExamId);
+
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto
-            .parseDto(mockExams));
+        .body(MockExamWithFileOutputDto
+            .parseDto(mockExam));
   }
 
-  @PostMapping
-  public ResponseEntity<MockExamOutpuDto> createMockExam(@RequestBody MockExamInputDto mockExamInputDto) {
-    MockExam mockExam = mockExamService.createMockExam(MockExam.parseMockExam(mockExamInputDto));
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<MockExamOutputDto> createMockExam(
+      @RequestPart(value = "mockExamInputDto") MockExamInputDto mockExamInputDto,
+      @RequestPart(value = "coverPdfFile") MultipartFile coverPdfFile,
+      @RequestPart(value = "matrixPdfFile") MultipartFile matrixPdfFile,
+      @RequestPart(value = "answersPdfFile") MultipartFile answersPdfFile
+  ) throws IOException {
+    MockExam mockExam = mockExamService.createMockExam(
+        MockExam.parseMockExam(mockExamInputDto),
+        coverPdfFile,
+        matrixPdfFile,
+        answersPdfFile
+    );
+
     return ResponseEntity
         .status(HttpStatus.CREATED)
-        .body(MockExamOutpuDto.parseDto(mockExam));
+        .body(MockExamOutputDto.parseDto(mockExam));
   }
 
-  @PutMapping("/{mockExamId}")
-  public ResponseEntity<MockExamOutpuDto> updateMockExamById(
+  @PutMapping(value = "/{mockExamId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<MockExamOutputDto> updateMockExamById(
       @PathVariable UUID mockExamId,
-      @RequestBody MockExamInputDto examInputDto
-  ){
+      @RequestPart(value = "mockExamInputDto") MockExamInputDto mockExamInputDto,
+      @RequestPart(value = "coverPdfFile", required = false) MultipartFile coverPdfFile,
+      @RequestPart(value = "matrixPdfFile", required = false) MultipartFile matrixPdfFile,
+      @RequestPart(value = "answersPdfFile", required = false) MultipartFile answersPdfFile
+  ) throws IOException {
     MockExam updatedMockExam = mockExamService
-        .updateMockExamById(mockExamId, MockExam.parseMockExam(examInputDto));
+        .updateMockExamById(
+            mockExamId,
+            MockExam.parseMockExam(mockExamInputDto),
+            coverPdfFile,
+            matrixPdfFile,
+            answersPdfFile
+        );
 
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(updatedMockExam));
+        .body(MockExamOutputDto.parseDto(updatedMockExam));
   }
 
   @DeleteMapping("/{mockExamId}")
@@ -99,7 +118,7 @@ public class MockExamController {
   }
 
   @PatchMapping("/{mockExamId}/subject")
-  public ResponseEntity<MockExamOutpuDto> addSubjectToMockExam(
+  public ResponseEntity<MockExamOutputDto> addSubjectToMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
@@ -107,23 +126,23 @@ public class MockExamController {
         .addSubject(mockExamId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
   @DeleteMapping("/{mockExamId}/subject")
-  public ResponseEntity<MockExamOutpuDto> removeSubjectFromMockExam(
+  public ResponseEntity<MockExamOutputDto> removeSubjectFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody SubjectListInputDto subjectIdList
   ) {
     MockExam mockExamUpdated = mockExamService.removeSubject(mockExamId, subjectIdList.subjectsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
 
   @PatchMapping("/{mockExamId}/main-question")
-  public ResponseEntity<MockExamOutpuDto> addMainQuestionsToMockExam(
+  public ResponseEntity<MockExamOutputDto> addMainQuestionsToMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
@@ -131,21 +150,21 @@ public class MockExamController {
         .addMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
   @DeleteMapping("/{mockExamId}/main-question")
-  public ResponseEntity<MockExamOutpuDto> removeMainQuestionsFromMockExam(
+  public ResponseEntity<MockExamOutputDto> removeMainQuestionsFromMockExam(
       @PathVariable UUID mockExamId,
       @RequestBody MainQuestionListInputDto mainQuestionList
   ) {
     MockExam mockExamUpdated = mockExamService.removeMainQuestion(mockExamId, mainQuestionList.mainQuestionsId());
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(MockExamOutpuDto.parseDto(mockExamUpdated));
+        .body(MockExamOutputDto.parseDto(mockExamUpdated));
   }
 
-  @PostMapping("/{mockExamId}/responses")
+  @PostMapping(value = "/{mockExamId}/responses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<List<MockExamResponseOutputDto>> registerMockExamResponses(
       @RequestPart("studentsMockExamsAnswers") MultipartFile studentsAnswer,
       @PathVariable UUID mockExamId

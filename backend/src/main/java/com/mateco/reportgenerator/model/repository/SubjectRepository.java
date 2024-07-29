@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
@@ -18,11 +19,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
   @NonNull
-  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%)")
-  Page<Subject> findAll(@NonNull Pageable pageable, String query);
+  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%) ORDER BY subject.name ASC")
+  Page<Subject> findAllOrderByName(@NonNull Pageable pageable, String query);
+
   @NonNull
-  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%) AND (subject.id NOT IN :excludedSubjects)")
-  Page<Subject> findAll(@NonNull Pageable pageable, String query, List<UUID> excludedSubjects);
+  @Query("SELECT subject FROM Subject subject WHERE (:query IS NULL OR subject.name LIKE %:query%) AND (subject.id NOT IN :excludedSubjects) ORDER BY subject.name ASC")
+  Page<Subject> findAllOrderByName(@NonNull Pageable pageable, String query, List<UUID> excludedSubjects);
+
   Optional<Subject> findByName(String name);
+
   List<Subject> findAllByNameIn(List<String> subjectName);
 }

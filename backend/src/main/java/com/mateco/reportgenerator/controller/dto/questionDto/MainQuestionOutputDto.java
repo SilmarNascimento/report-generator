@@ -1,6 +1,8 @@
 package com.mateco.reportgenerator.controller.dto.questionDto;
 
+import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileEntityOutputDto;
 import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeOutputDto;
+import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamListOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
@@ -14,9 +16,11 @@ public record MainQuestionOutputDto(
     List<SubjectOutputDto> subjects,
     String level,
     List<String> images,
+    String videoResolutionUrl,
+    FileEntityOutputDto adaptedQuestionsPdfFile,
     List<AlternativeOutputDto> alternatives,
     List<AdaptedQuestionOutputDto> adaptedQuestions,
-    List<MockExam> mockExams,
+    List<MockExamListOutputDto> mockExams,
     List<Handout> handouts
 ) {
   public static MainQuestionOutputDto parseDto (MainQuestion mainQuestion) {
@@ -26,9 +30,11 @@ public record MainQuestionOutputDto(
         SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
         mainQuestion.getLevel(),
         mainQuestion.getImages(),
+        mainQuestion.getVideoResolutionUrl(),
+        FileEntityOutputDto.parseDto(mainQuestion.getAdaptedQuestionsPdfFile()),
         AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
         AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
-        mainQuestion.getMockExams(),
+        MockExamListOutputDto.parseDto(mainQuestion.getMockExams()),
         mainQuestion.getHandout()
     );
   }
@@ -41,9 +47,11 @@ public record MainQuestionOutputDto(
           SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
           mainQuestion.getLevel(),
           mainQuestion.getImages(),
+          mainQuestion.getVideoResolutionUrl(),
+          FileEntityOutputDto.parseDto(mainQuestion.getAdaptedQuestionsPdfFile()),
           AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),
           AdaptedQuestionOutputDto.parseDto(mainQuestion.getAdaptedQuestions()),
-          mainQuestion.getMockExams(),
+          MockExamListOutputDto.parseDto(mainQuestion.getMockExams()),
           mainQuestion.getHandout()
         )).toList();
   }

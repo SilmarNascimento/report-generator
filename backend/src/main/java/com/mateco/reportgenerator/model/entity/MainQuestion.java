@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "main_questions")
@@ -42,6 +44,8 @@ public class MainQuestion extends Question {
   )
   private List<Subject> subjects;
 
+  private String videoResolutionUrl;
+
   @OneToMany(
       mappedBy = "mainQuestion",
       cascade = CascadeType.ALL,
@@ -60,6 +64,10 @@ public class MainQuestion extends Question {
   )
   private List<AdaptedQuestion> adaptedQuestions;
 
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "adapted_questions_file_id")
+  private FileEntity adaptedQuestionsPdfFile;
+
   @ManyToMany(mappedBy = "mockExamQuestions")
   @JsonIgnore
   private List<MockExam> mockExams;
@@ -74,15 +82,19 @@ public class MainQuestion extends Question {
       String level,
       List<String> images,
       List<Alternative> alternatives,
+      String videoResolutionUrl,
       List<AdaptedQuestion> adaptedQuestions,
+      FileEntity adaptedQuestionsPdfFile,
       List<MockExam> mockExams,
       List<Handout> handout
-  ) {
+  ) throws IOException {
     super(title, level);
     this.images = images;
     this.subjects = subjects;
     this.alternatives = alternatives;
+    this.videoResolutionUrl = videoResolutionUrl;
     this.adaptedQuestions = adaptedQuestions;
+    this.adaptedQuestionsPdfFile = adaptedQuestionsPdfFile;
     this.mockExams = mockExams;
     this.handout = handout;
   }
@@ -96,34 +108,71 @@ public class MainQuestion extends Question {
         "image: " + this.images +
         "subjects: " + this.subjects +
         "alternatives: " + this.alternatives +
+        "video resolution: " + this.videoResolutionUrl +
         '}';
   }
 
   public static MainQuestion parseMainQuestion(
-      QuestionInputDto mainQuestionInputDto
+      QuestionInputDto mainQuestionInputDto,
+      MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      return new MainQuestion(
+          mainQuestionInputDto.title(),
+          new ArrayList<>(),
+          mainQuestionInputDto.level(),
+          new ArrayList<>(),
+          Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+          mainQuestionInputDto.videoResolutionUrl(),
+          new ArrayList<>(),
+          null,
+          new ArrayList<>(),
+          new ArrayList<>()
+      );
+    }
+    FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
     return new MainQuestion(
         mainQuestionInputDto.title(),
         new ArrayList<>(),
         mainQuestionInputDto.level(),
         new ArrayList<>(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
+        pdfEntity,
         new ArrayList<>(),
         new ArrayList<>()
     );
   }
 
   public static MainQuestion parseMainQuestion(
-      MainQuestionInputDto mainQuestionInputDto
+      MainQuestionInputDto mainQuestionInputDto,
+      MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      return new MainQuestion(
+          mainQuestionInputDto.title(),
+          Subject.parseSubject(mainQuestionInputDto.subjects()),
+          mainQuestionInputDto.level(),
+          mainQuestionInputDto.images(),
+          Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+          mainQuestionInputDto.videoResolutionUrl(),
+          new ArrayList<>(),
+          null,
+          new ArrayList<>(),
+          new ArrayList<>()
+      );
+    }
+    FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
     return new MainQuestion(
         mainQuestionInputDto.title(),
         Subject.parseSubject(mainQuestionInputDto.subjects()),
         mainQuestionInputDto.level(),
         mainQuestionInputDto.images(),
         Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+        mainQuestionInputDto.videoResolutionUrl(),
         new ArrayList<>(),
+        pdfEntity,
         new ArrayList<>(),
         new ArrayList<>()
     );

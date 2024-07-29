@@ -1,4 +1,4 @@
-import { Book, ScrollText, Tags, Presentation, BarChartBig} from 'lucide-react'
+import { Book, ScrollText, Tags, Presentation, BarChartBig, FilePlus} from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 export function NavigationBar() {
@@ -41,11 +41,19 @@ export function NavigationBar() {
         </NavLink>
 
         <NavLink
-          to={"/settings"}
+          to={"/diagnosis/generate"}
+          className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
+        >
+          <FilePlus className="size-4" />
+          Adicionar Diagnósticos
+        </NavLink>
+
+        <NavLink
+          to={"/students-response"}
           className={({ isActive }) => isActive ? activatedLink : deactivatedLink }
         >
           <BarChartBig className="size-4" />
-          Resultados
+          Diagnósticos
         </NavLink>
       </nav>
     </div>

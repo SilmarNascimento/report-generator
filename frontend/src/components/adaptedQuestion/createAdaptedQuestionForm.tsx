@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { Button } from "../ui/button";
-import { adaptedQuestionSchema } from "./AdaptedQuestionSchema";
+import { adaptedQuestionSchema } from "./adaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
-import { CreateAlternative } from "../../interfaces/createAlternative";
-import { CreateQuestion } from "../../interfaces/createQuestion";
+import { CreateAlternative } from "../../interfaces/Alternative";
+import { CreateQuestion } from "../../interfaces/MainQuestion";
 import { SelectLevel } from "../ui/selectLevel";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { Check, Loader2, X } from "lucide-react";

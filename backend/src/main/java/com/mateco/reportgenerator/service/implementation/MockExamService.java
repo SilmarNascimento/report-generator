@@ -1,7 +1,6 @@
 package com.mateco.reportgenerator.service.implementation;
 
-import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.AdaptedQuestionWrapper;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -12,8 +11,10 @@ import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
+import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,32 +24,21 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@RequiredArgsConstructor
 public class MockExamService implements MockExamServiceInterface {
   private final MockExamRepository mockExamRepository;
   private final MainQuestionRepository mainQuestionRepository;
   private final SubjectRepository subjectRepository;
   private final MockExamResponseRepository mockExamResponseRepository;
-
-  @Autowired
-  public MockExamService(
-      MockExamRepository mockExamRepository,
-      MainQuestionRepository mainQuestionRepository,
-      SubjectRepository subjectRepository,
-      MockExamResponseRepository mockExamResponseRepository
-  ) {
-    this.mockExamRepository = mockExamRepository;
-    this.mainQuestionRepository = mainQuestionRepository;
-    this.subjectRepository = subjectRepository;
-    this.mockExamResponseRepository = mockExamResponseRepository;
-  }
 
   @Override
   public Page<MockExam> findAllMockExams(int pageNumber, int pageSize) {
@@ -63,15 +53,29 @@ public class MockExamService implements MockExamServiceInterface {
   }
 
   @Override
-  public MockExam createMockExam(MockExam mockExam) {
-    System.out.println(mockExam);
+  public MockExam createMockExam(
+      MockExam mockExam,
+      MultipartFile coverPdfFile,
+      MultipartFile matrixPdfFile,
+      MultipartFile asnwersPdfFile
+  ) throws IOException {
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
+
     return mockExamRepository.save(mockExam);
   }
 
   @Override
-  public MockExam updateMockExamById(UUID mockExamId, MockExam mockExam) {
+  public MockExam updateMockExamById(
+      UUID mockExamId,
+      MockExam mockExam,
+      MultipartFile coverPdfFile,
+      MultipartFile matrixPdfFile,
+      MultipartFile asnwersPdfFile
+  ) throws IOException {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
 
     UpdateEntity.copyNonNullOrListProperties(mockExam, mockExamFound);
 
@@ -80,7 +84,10 @@ public class MockExamService implements MockExamServiceInterface {
 
   @Override
   public void deleteMockExamById(UUID mockExamId) {
-    // acho melhor deixar em estado de desativado!
+    mockExamRepository.findById(mockExamId)
+        .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+
+    mockExamRepository.deleteById(mockExamId);
   }
 
   @Override
@@ -154,9 +161,15 @@ public class MockExamService implements MockExamServiceInterface {
     return mockExamRepository.save(mockExamFound);
   }
 
+  @Override
+  @Transactional
   public List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses) {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
+
+    if (mockExamFound.getMockExamQuestions().size() != 45) {
+      throw new InvalidDataException("O simulado não contém 45 questões");
+    }
 
     Map<Integer, String> answerMap = new HashMap<>();
     answerMap.put(0, "A");
@@ -170,10 +183,11 @@ public class MockExamService implements MockExamServiceInterface {
 
       Map<Integer, MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
       List<String> studentAnswers = studentResponse.getResponses();
-      List<AdaptedQuestionWrapper> reportAdaptedQuestions = new ArrayList<>();
 
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
-        MainQuestion mainQuestion = mockExamQuestions.get(questionIndex + MockExam.INITIAL_QUESTION_NUMBER);
+        int questionNumber = questionIndex + MockExam.INITIAL_QUESTION_NUMBER;
+
+        MainQuestion mainQuestion = mockExamQuestions.get(questionNumber);
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
@@ -183,18 +197,29 @@ public class MockExamService implements MockExamServiceInterface {
         if (answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
         } else {
-          List<AdaptedQuestion> adaptedQuestionList = mainQuestion.getAdaptedQuestions();
-          reportAdaptedQuestions.add(new AdaptedQuestionWrapper(
-              mainQuestion.getId(),
-              adaptedQuestionList
-          ));
+          studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
         }
       }
-
-      studentResponse.setAdaptedQuestionList(reportAdaptedQuestions);
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);
+  }
+
+  private static void addFileEntityIfPresent(
+      MockExam mockExam,
+      MultipartFile coverPdfFile,
+      MultipartFile matrixPdfFile,
+      MultipartFile asnwersPdfFile
+  ) throws IOException {
+    if (coverPdfFile != null) {
+      mockExam.setCoverPdfFile(new FileEntity(coverPdfFile));
+    }
+    if (matrixPdfFile != null) {
+      mockExam.setMatrixPdfFile(new FileEntity(matrixPdfFile));
+    }
+    if (asnwersPdfFile != null) {
+      mockExam.setAnswersPdfFile(new FileEntity(asnwersPdfFile));
+    }
   }
 
   private static List<Integer> findDuplicateQuestionNumber(

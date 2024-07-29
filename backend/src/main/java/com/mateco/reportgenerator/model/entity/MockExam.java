@@ -1,15 +1,14 @@
 package com.mateco.reportgenerator.model.entity;
 
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
-import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OrderColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,6 +50,18 @@ public class MockExam {
 
   private int number;
 
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "cover_file_id")
+  private FileEntity coverPdfFile;
+
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "matrix_file_id")
+  private FileEntity matrixPdfFile;
+
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "answers_file_id")
+  private FileEntity answersPdfFile;
+
   @ManyToMany
   @JoinTable(
       name = "mock_exams_questions",
@@ -73,6 +83,23 @@ public class MockExam {
     this.releasedYear = releasedYear;
     this.number = number;
     this.mockExamQuestions = new HashMap<>();
+  }
+
+  @Override
+  public String toString() {
+    return "{" +
+        "id: " + this.getId() +
+        "name: " + this.name +
+        "className: " + this.className +
+        "subjects: " + this.subjects +
+        "releasedYear: " + this.releasedYear +
+        "number: " + this.number +
+        "mockExamQuestions: " + this.mockExamQuestions +
+        '}';
+  }
+
+  public String generateCode() {
+    return this.releasedYear + ":S" + this.number + "-" + this.className.get(0);
   }
 
   public static MockExam parseMockExam(MockExamInputDto examInputDto) {

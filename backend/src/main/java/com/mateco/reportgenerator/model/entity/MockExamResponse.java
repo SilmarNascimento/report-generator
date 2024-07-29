@@ -1,11 +1,15 @@
 package com.mateco.reportgenerator.model.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -44,10 +48,13 @@ public class MockExamResponse {
   @OrderColumn
   private List<String> responses;
 
-  @ElementCollection
-  @OrderColumn
-  private List<AdaptedQuestionWrapper> adaptedQuestionList;
+  private List<Integer> missedMainQuestionNumbers;
 
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "diagnosis_file_id")
+  private FileEntity diagnosisPdfFile;
+
+  @Column(columnDefinition = "VARCHAR(1000)")
   private String comment;
 
   private LocalDateTime createdAt;
@@ -65,7 +72,8 @@ public class MockExamResponse {
     this.mockExam = null;
     this.totalQuestions = totalQuestions;
     this.responses = responses;
-    this.adaptedQuestionList = new ArrayList<>();
+    this.missedMainQuestionNumbers = new ArrayList<>();
+    this.diagnosisPdfFile = null;
     this.comment = comment;
     this.createdAt = createdAt;
   }
@@ -78,11 +86,11 @@ public class MockExamResponse {
           String name = studentResponse.get(3);
           String email = studentResponse.get(1);
           String createdAt = studentResponse.get(0);
-          String comment = studentResponse.get(studentResponse.size() - 1);
-          List<String> studentAnswers = studentResponse.subList(4, studentResponse.size() - 1);
+          String comment = studentResponse.get(49);
+          List<String> studentAnswers = studentResponse.subList(4, 49);
 
           List<String> responses = studentAnswers.stream()
-              .map(answer -> answer)
+              .map(String::toUpperCase)
               .collect(Collectors.toList());
 
           return new MockExamResponse(

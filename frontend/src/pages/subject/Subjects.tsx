@@ -1,20 +1,20 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Header } from "../components/header";
-import { NavigationBar } from "../components/navigationBar";
-import { Pagination } from "../components/pagination";
+import { Header } from "../../components/header";
+import { NavigationBar } from "../../components/navigationBar";
+import { Pagination } from "../../components/pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
-import { CreateSubjectForm } from "../components/subject/createSubjectForm";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
-import { Control, Input } from "../components/ui/input";
-import { EditSubjectForm } from "../components/subject/editSubjectForm";
-import useDebounceValue from "../hooks/useDebounceValue";
-import { Subject } from "../interfaces";
-import { successAlert } from "../utils/toastAlerts";
-import { PageResponse } from "../interfaces/PageResponse";
+import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import { Control, Input } from "../../components/ui/input";
+import { EditSubjectForm } from "../../components/subject/editSubjectForm";
+import useDebounceValue from "../../hooks/useDebounceValue";
+import { Subject } from "../../interfaces";
+import { successAlert } from "../../utils/toastAlerts";
+import { PageResponse } from "../../interfaces/PageResponse";
 
 export function Subjects() {
   const queryClient = useQueryClient();

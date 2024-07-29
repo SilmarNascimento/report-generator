@@ -5,13 +5,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AlternativeForm } from '../alternative/alternativesForm';
-import { mainQuestionSchema } from './MainQuestionSchema';
-import { CreateQuestion } from '../../interfaces/createQuestion';
-import { CreateAlternative } from '../../interfaces/createAlternative';
+import { mainQuestionSchema } from './mainQuestionSchema';
+import { CreateQuestion } from '../../interfaces/MainQuestion';
+import { CreateAlternative } from '../../interfaces/Alternative';
 import { useNavigate } from 'react-router-dom';
 import { SelectLevel } from '../ui/selectLevel';
 import { successAlert, warningAlert } from '../../utils/toastAlerts';
 import { alternativeSchema } from '../alternative/AlternativeSchema';
+import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
 
 type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>
 
@@ -22,8 +23,7 @@ export function CreateMainQuestionForm() {
   const formMethods = useForm<CreateMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   })
-  const { register, handleSubmit, formState } = formMethods;
-
+  const { register, handleSubmit, formState, getValues } = formMethods;
 
   const createMainQuestion = useMutation({
     mutationFn: async (data: CreateMainQuestionForm) => {
@@ -56,17 +56,19 @@ export function CreateMainQuestionForm() {
         }
         return createAlternative
       });
-      const createMainQuestion: CreateQuestion = {
+      const mainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
-        alternatives: createAlternatives
+        alternatives: createAlternatives,
+        videoResolutionUrl: data.videoResolutionUrl
       };
-      const json = JSON.stringify(createMainQuestion);
+      const json = JSON.stringify(mainQuestion);
       const blob = new Blob([json], {
         type: 'application/json'
       });
 
       formData.append("mainQuestionInputDto", blob);
+      formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
       
       const response = await fetch('http://localhost:8080/main-question',
         {
@@ -101,7 +103,7 @@ export function CreateMainQuestionForm() {
           <textarea 
             {...register('title')}
             id="enunciado" 
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm h-auto"
           />
           <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
             {formState.errors?.title ? formState.errors.title.message : '\u00A0'}
@@ -132,6 +134,19 @@ export function CreateMainQuestionForm() {
           </p>
         </div>
 
+        <div className="space-y-2 flex flex-col justify-center items-start">
+          <label className="text-sm font-medium block" htmlFor="videoResolutionUrl">Url da Resolução da Questão</label>
+          <input
+            {...register('videoResolutionUrl')}
+            type='text'
+            id="videoResolutionUrl" 
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          />
+          <p className={`text-sm ${formState.errors?.videoResolutionUrl ? 'text-red-400' : 'text-transparent'}`}>
+            {formState.errors?.videoResolutionUrl ? formState.errors.videoResolutionUrl.message : '\u00A0'}
+          </p>
+        </div>
+
         <div className="space-y-3">
           <span className="text-lg font-medium">
             Alternativas
@@ -141,6 +156,19 @@ export function CreateMainQuestionForm() {
           {[...Array(5)].map((_, index) => (
             <AlternativeForm key={index} index={index} errors={formState.errors} />
           ))}
+        </div>
+
+        <div className='flex flex-row gap-1 justify-around align-middle'>
+          <div className="space-y-2 flex flex-col justify-center items-start">
+            <DragDropPreviewFileUploader
+              formVariable='adaptedQuestionsPdfFile'
+              message="Escolha o arquivo de questões adaptadas"
+              url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}
+            />
+            <p className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? 'text-red-400' : 'text-transparent'}`}>
+              {formState.errors?.adaptedQuestionsPdfFile ? formState.errors.adaptedQuestionsPdfFile.message : '\u00A0'}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center justify-center gap-2">

@@ -144,7 +144,7 @@ export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, h
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="icon" className="mx-0.5" onClick={() => handleClick([mainQuestion.id])}>
-                      <Plus className="size-3" color="red"/>
+                      <Plus className="size-3" color="green"/>
                     </Button>
                   </TableCell>
                 </TableRow>

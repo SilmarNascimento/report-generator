@@ -4,3 +4,8 @@ export type Alternative = {
   images: string[]
   questionAnswer: boolean
 }
+
+export type CreateAlternative = {
+  description: string
+  questionAnswer: boolean
+}

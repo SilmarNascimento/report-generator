@@ -23,9 +23,6 @@ export function MockExamMainQuestionManager() {
   const mainQuestionIdList = useRef<string[]>();
   const mockExam = useRef<MockExam>();
 
-  console.log(mockExam.current);
-  console.log(mainQuestionIdList.current);
-
   useEffect(() => {
     setSearchParams(params => {
       if (params.get('query') !== debouncedQueryFilter) {
@@ -53,6 +50,7 @@ export function MockExamMainQuestionManager() {
       return data
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 10
   });
 
   const { data: mainQuestionPageResponse } = useQuery<PageResponse<MainQuestion>>({
@@ -74,7 +72,7 @@ export function MockExamMainQuestionManager() {
       return requestData
     },
     placeholderData: keepPreviousData,
-    staleTime: Infinity,
+    staleTime: 1000 * 10,
     enabled: !!mainQuestionIdList.current
   });
 
@@ -99,6 +97,9 @@ export function MockExamMainQuestionManager() {
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
         });
+        queryClient.invalidateQueries({
+          queryKey: ['get-mock-exams'],
+        });
         
         mainQuestionIdListToAdd.length === 1
           ? successAlert('Questão principal adicionada ao simulado com sucesso!')
@@ -106,6 +107,11 @@ export function MockExamMainQuestionManager() {
       }
 
       if (response.status === 404) {
+        const errorMessage = await response.text();
+        warningAlert(errorMessage);
+      }
+
+      if (response.status === 409) {
         const errorMessage = await response.text();
         warningAlert(errorMessage);
       }
@@ -132,6 +138,9 @@ export function MockExamMainQuestionManager() {
           .map((question: MainQuestion) => question.id);
         queryClient.invalidateQueries({
           queryKey: ['get-main-questions'],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['get-mock-exams'],
         });
         
         mainQuestionIdListToRemove.length === 1

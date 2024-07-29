@@ -21,6 +21,7 @@ import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInp
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
@@ -28,6 +29,7 @@ import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.FileServiceInterface;
 import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,10 +72,19 @@ public class MockExamCrontollerTests {
   private UUID mockExamId02;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
+  private FileEntity mockMainQuestionFile01;
+  private FileEntity mockMainQuestionFile02;
   private UUID mockMainQuestionId01;
   private UUID mockMainQuestionId02;
   private UUID mockResponseId01;
   private UUID mockResponseId02;
+  private String mockExamInput;
+  private MockMultipartFile coverFile01;
+  private MockMultipartFile matrixFile01;
+  private MockMultipartFile answersFile01;
+  private MockMultipartFile coverFile02;
+  private MockMultipartFile matrixFile02;
+  private MockMultipartFile answersFile02;
   private MockExam mockExam01;
   private MockExam mockExam02;
   private Subject mockSubject01;
@@ -84,7 +95,7 @@ public class MockExamCrontollerTests {
   private MockExamResponse updatedMockExamResponse02;
 
   @BeforeEach
-  public void setUp() throws JsonProcessingException {
+  public void setUp() throws IOException {
     baseUrl = "/mock-exam";
     objectMapper = new ObjectMapper();
 
@@ -113,13 +124,31 @@ public class MockExamCrontollerTests {
     mockSubject02 = new Subject("Algebra");
     mockSubject02.setId(mockSubjectId02);
 
+    MockMultipartFile multipartFile01 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(multipartFile01);
+
+    MockMultipartFile multipartFile02 = new MockMultipartFile(
+        "adaptedQuestionPdfFile02",
+        "adaptedQuestionPdfFile02.pdf",
+        "application/pdf",
+        "adaptedQuestion02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(multipartFile02);
+
     MainQuestion mockMainQuestion01 = new MainQuestion(
         "título questão 01",
         new ArrayList<>(),
         "difícil",
         List.of("imagem da questão 01"),
         List.of(mockTrueAlternative, mockFalseAlternative),
+        "URL da questão 01",
         new ArrayList<>(),
+        mockMainQuestionFile01,
         new ArrayList<>(),
         new ArrayList<>()
     );
@@ -131,11 +160,43 @@ public class MockExamCrontollerTests {
         "difícil",
         List.of("imagem da questão 02"),
         List.of(mockFalseAlternative, mockTrueAlternative),
+        "URL da questão 02",
         new ArrayList<>(),
+        mockMainQuestionFile02,
         new ArrayList<>(),
         new ArrayList<>()
     );
     mockMainQuestion02.setId(mockMainQuestionId02);
+
+    MockExamInputDto mockExamInputDto = new MockExamInputDto(
+        "nome do simulado",
+        List.of("intensivo"),
+        2024,
+        1
+    );
+
+    mockExamInput = objectMapper.writeValueAsString(mockExamInputDto);
+
+    coverFile01 = new MockMultipartFile(
+        "coverPdfFile",
+        "coverPdfFile01.pdf",
+        "application/pdf",
+        "coverPdfFile01".getBytes()
+    );
+
+    matrixFile01 = new MockMultipartFile(
+        "matrixPdfFile",
+        "matrixPdfFile01.pdf",
+        "application/pdf",
+        "matrixPdfFile01".getBytes()
+    );
+
+    answersFile01 = new MockMultipartFile(
+        "answersPdfFile",
+        "answersPdfFile01.pdf",
+        "application/pdf",
+        "abswersPdfFile01".getBytes()
+    );
 
     mockExam01 = new MockExam(
         "primeiro simulado",
@@ -145,6 +206,27 @@ public class MockExamCrontollerTests {
         1
     );
     mockExam01.setId(mockExamId01);
+
+    coverFile02 = new MockMultipartFile(
+        "coverPdfFile",
+        "coverPdfFile02.pdf",
+        "application/pdf",
+        "coverPdfFile02".getBytes()
+    );
+
+    matrixFile02 = new MockMultipartFile(
+        "matrixPdfFile",
+        "matrixPdfFile02.pdf",
+        "application/pdf",
+        "matrixPdfFile02".getBytes()
+    );
+
+    answersFile02 = new MockMultipartFile(
+        "answersPdfFile",
+        "answersPdfFile02.pdf",
+        "application/pdf",
+        "abswersPdfFile02".getBytes()
+    );
 
     mockExam02 = new MockExam(
         "segundo simulado",
@@ -166,6 +248,15 @@ public class MockExamCrontollerTests {
         "easy",
         LocalDateTime.now()
     );
+
+    MockMultipartFile responseMultipartFile01 = new MockMultipartFile(
+        "diagnosisPdfFile01",
+        "diagnosisPdfFile01.pdf",
+        "application/pdf",
+        "diagnosisPdfFile01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(responseMultipartFile01);
+
     updatedMockExamResponse01 = new MockExamResponse(
         mockResponseId01,
         mockExamResponse01.getName(),
@@ -175,6 +266,7 @@ public class MockExamCrontollerTests {
         mockExamResponse01.getTotalQuestions(),
         mockExamResponse01.getResponses(),
         new ArrayList<>(),
+        mockMainQuestionFile01,
         mockExamResponse01.getComment(),
         mockExamResponse01.getCreatedAt()
     );
@@ -187,6 +279,15 @@ public class MockExamCrontollerTests {
         "puts",
         LocalDateTime.now()
     );
+
+    MockMultipartFile responseMultipartFile02 = new MockMultipartFile(
+        "diagnosisPdfFile02",
+        "diagnosisPdfFile02.pdf",
+        "application/pdf",
+        "diagnosisPdfFile02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(responseMultipartFile02);
+
     updatedMockExamResponse02 = new MockExamResponse(
         mockResponseId02,
         mockExamResponse02.getName(),
@@ -196,6 +297,7 @@ public class MockExamCrontollerTests {
         mockExamResponse02.getTotalQuestions(),
         mockExamResponse02.getResponses(),
         new ArrayList<>(),
+        mockMainQuestionFile02,
         mockExamResponse02.getComment(),
         mockExamResponse02.getCreatedAt()
     );
@@ -374,20 +476,21 @@ public class MockExamCrontollerTests {
   public void createMockExamTest() throws Exception {
     Mockito
         .when(mockExamService.createMockExam(
-            any(MockExam.class)
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
         )).thenReturn(mockExam01);
 
-    MockExamInputDto mockExamInputDto = new MockExamInputDto(
-        "nome do simulado",
-        List.of("intensivo"),
-        2024,
-        1
-    );
+    MockMultipartFile inputJsonPart = createInputJsonPart("mockExamInputDto");
 
-    ResultActions httpResponse = mockMvc
-        .perform(post(baseUrl)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(mockExamInputDto))
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.POST, baseUrl)
+            .file(coverFile01)
+            .file(matrixFile01)
+            .file(answersFile01)
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
         );
 
     httpResponse
@@ -401,29 +504,39 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .createMockExam(any(MockExam.class));
+        .createMockExam(
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test
   @DisplayName("Verifica se uma entidade MockExam é atualizada pelo seu id")
   public void updateMockExamByIdTest() throws Exception {
     Mockito
-        .when(mockExamService.updateMockExamById(any(UUID.class), any(MockExam.class)))
+        .when(mockExamService.updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        ))
         .thenReturn(mockExam01);
-
-    MockExamInputDto mockExamInputDto = new MockExamInputDto(
-        "nomde do simulado alterado",
-        new ArrayList<>(),
-        2024,
-        1
-    );
 
     String endpoint = baseUrl + "/" + mockExamId01.toString();
 
-    ResultActions httpResponse = mockMvc
-        .perform(put(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(mockExamInputDto)));
+    MockMultipartFile inputJsonPart = createInputJsonPart("mockExamInputDto");
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.PUT, endpoint)
+            .file(coverFile01)
+            .file(matrixFile01)
+            .file(answersFile01)
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+    );
 
     httpResponse
         .andExpect(status().is(200))
@@ -436,14 +549,26 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.mockExamQuestions", isA(Map.class)));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .updateMockExamById(any(UUID.class), any(MockExam.class));
+        .updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test
   @DisplayName("Verifica se é disparado uma exceção quando uma entidade MockExam não é encontrada pelo seu id")
   public void updateMockExamByIdTestNotFoundError() throws Exception {
     Mockito
-        .when(mockExamService.updateMockExamById(any(UUID.class), any(MockExam.class)))
+        .when(mockExamService.updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        ))
         .thenThrow(new NotFoundException("Simulado não encontrado!"));
 
     MockExamInputDto mockExamInputDto = new MockExamInputDto(
@@ -455,17 +580,29 @@ public class MockExamCrontollerTests {
 
     String endpoint = baseUrl + "/" + mockExamId01.toString();
 
-    ResultActions httpResponse = mockMvc
-        .perform(put(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(mockExamInputDto)));
+    MockMultipartFile inputJsonPart = createInputJsonPart("mockExamInputDto");
+
+    ResultActions httpResponse = mockMvc.perform(
+        multipart(HttpMethod.PUT, endpoint)
+            .file(coverFile01)
+            .file(matrixFile01)
+            .file(answersFile01)
+            .file(inputJsonPart)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+    );
 
     httpResponse
         .andExpect(status().is(404))
         .andExpect(jsonPath("$").value("Simulado não encontrado!"));
 
     Mockito.verify(mockExamService, Mockito.times(1))
-        .updateMockExamById(any(UUID.class), any(MockExam.class));
+        .updateMockExamById(
+            any(UUID.class),
+            any(MockExam.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class),
+            any(MultipartFile.class)
+        );
   }
 
   @Test
@@ -833,12 +970,7 @@ public class MockExamCrontollerTests {
         + mockExamId01.toString()
         + "/responses";
 
-    MockMultipartFile inputPartFile = new MockMultipartFile(
-        "studentsMockExamsAnswers",
-        "studentsAnswer",
-        MediaType.APPLICATION_JSON_VALUE,
-        "studentsAnswer".getBytes()
-    );
+    MockMultipartFile inputPartFile = createInputJsonPart("studentsMockExamsAnswers");
 
     ResultActions httpResponse = mockMvc.perform(
         multipart(HttpMethod.POST, endpoint)
@@ -855,22 +987,26 @@ public class MockExamCrontollerTests {
         .andExpect(jsonPath("$.[0].name").value(updatedMockExamResponse01.getName()))
         .andExpect(jsonPath("$.[0].email").value(updatedMockExamResponse01.getEmail()))
         .andExpect(jsonPath("$.[0].mockExamId").value(mockExam01.getId().toString()))
+        .andExpect(jsonPath("$.[0].examCode").value(updatedMockExamResponse01.getMockExam().generateCode()))
+        .andExpect(jsonPath("$.[0].className").value(updatedMockExamResponse01.getMockExam().getClassName().get(0)))
         .andExpect(jsonPath("$.[0].correctAnswers").value(2))
         .andExpect(jsonPath("$.[0].response", isA(List.class)))
         .andExpect(jsonPath("$.[0].response.[0]").value("A"))
         .andExpect(jsonPath("$.[0].response.[1]").value("B"))
-        .andExpect(jsonPath("$.[0].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.[0].hasDiagnosisPdfFile").value(!(updatedMockExamResponse01.getDiagnosisPdfFile() == null)))
         .andExpect(jsonPath("$.[0].comment").value(updatedMockExamResponse01.getComment()))
         .andExpect(jsonPath("$.[0].createdAt", isA(String.class)))
         .andExpect(jsonPath("$.[1].id").value(mockResponseId02.toString()))
         .andExpect(jsonPath("$.[1].name").value(updatedMockExamResponse02.getName()))
         .andExpect(jsonPath("$.[1].email").value(updatedMockExamResponse02.getEmail()))
         .andExpect(jsonPath("$.[1].mockExamId").value(mockExam01.getId().toString()))
+        .andExpect(jsonPath("$.[1].examCode").value(updatedMockExamResponse02.getMockExam().generateCode()))
+        .andExpect(jsonPath("$.[1].className").value(updatedMockExamResponse02.getMockExam().getClassName().get(0)))
         .andExpect(jsonPath("$.[1].correctAnswers").value(0))
         .andExpect(jsonPath("$.[1].response", isA(List.class)))
         .andExpect(jsonPath("$.[1].response.[0]").value("B"))
         .andExpect(jsonPath("$.[1].response.[1]").value("A"))
-        .andExpect(jsonPath("$.[1].adaptedQuestions", isA(List.class)))
+        .andExpect(jsonPath("$.[1].hasDiagnosisPdfFile").value(!(updatedMockExamResponse02.getDiagnosisPdfFile() == null)))
         .andExpect(jsonPath("$.[1].comment").value(updatedMockExamResponse02.getComment()))
         .andExpect(jsonPath("$.[1].createdAt", isA(String.class)));
 
@@ -960,4 +1096,12 @@ public class MockExamCrontollerTests {
         .registerAllMockExamResponses(any(UUID.class), any(List.class));
   }
 
+  private MockMultipartFile createInputJsonPart(String name) {
+    return new MockMultipartFile(
+        name,
+        "jsonBody.json",
+        MediaType.APPLICATION_JSON_VALUE,
+        mockExamInput.getBytes()
+    );
+  }
 }

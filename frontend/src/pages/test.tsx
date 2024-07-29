@@ -1,96 +1,46 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { AddSubjectManagerTable } from '../components/subject/addSubjectManagerTable';
-import { RemoveSubjectManagerTable } from "../components/subject/removeSubjectManagerTable";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { MainQuestion } from '../interfaces';
-import { successAlert, warningAlert } from '../utils/toastAlerts';
+//import { UIEvent } from 'react';
+
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { MockExamReceived } from "../interfaces/MockExam";
+import { convertMockExamData } from "../utils/convertMockExamData";
 
 export function Test() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "bf87b8fd-210f-4d57-b772-6b02265e352d";
-
-  const { data: mainQuestionResponse } = useQuery<MainQuestion>({
-    queryKey: ['get-main-questions', mainQuestionId],
+  const mainQuestionId = "1c513462-bb6e-4334-bb61-2902e930536c"
+  const { data: mainQuestionResponse } = useQuery({
+    queryKey: ['get-main-questions'],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`)
-      const data = await response.json()
-
-      return data
+      const response = await fetch(`http://localhost:8080/tests/${mainQuestionId}/complete`);
+      const data: MockExamReceived = await response.json();
+      
+      return convertMockExamData(data);
     },
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
 
-  const addSubjectToMainQuestion = useMutation({
-    mutationFn: async (subjectIdList: string[]) => {
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'PATCH',
-        body: JSON.stringify({
-          subjectsId: subjectIdList
-        }),
-      })
+  console.log(mainQuestionResponse);
 
-      if (response.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
-        });
-        successAlert('Assuntos adicionados à questão principal com sucesso!');
-        navigate("/main-questions");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    }
-  })
-
-  const removeSubjectToMainQuestion = useMutation({
-    mutationFn: async (subjectIdList: string[]) => {
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}/subject`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'DELETE',
-        body: JSON.stringify({
-          subjectsId: subjectIdList
-        }),
-      })
-
-      if (response.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
-        });
-        successAlert('Assuntos removidos da questão principal com sucesso!');
-        navigate("/main-questions");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    }
-  })
-
-  async function handleAddSubject(subjectIdList: string[]) {
-    await addSubjectToMainQuestion.mutateAsync(subjectIdList)
-  }
-
-  async function handleRemoveSubject(subjectIdList: string[]) {
-    await removeSubjectToMainQuestion.mutateAsync(subjectIdList)
-  }
-
+  // try {
+  //   const url = window.URL.createObjectURL(mainQuestionResponse?.coverPdfFile as File);
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = 'file.pdf'; // Nome do arquivo para download
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+    
+  //   // Limpa a URL criada
+  //   window.URL.revokeObjectURL(url);
+  // } catch (error) {
+  //   console.error('There was a problem with the fetch operation:', error);
+  // }
+  
   return (
     <>
-      <h1>pagina de teste</h1>
-      {mainQuestionResponse &&  <AddSubjectManagerTable entity={mainQuestionResponse} handleAddSubjects={handleAddSubject}/>}
-      {mainQuestionResponse && <RemoveSubjectManagerTable  entity={mainQuestionResponse} handleRemoveSubjects={handleRemoveSubject}/>}
+      <div className='block w-52'>
+        <h1>test</h1>
+      </div>
     </>
   );
 }
+
