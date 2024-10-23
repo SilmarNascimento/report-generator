@@ -57,9 +57,9 @@ public class MockExamService implements MockExamServiceInterface {
       MockExam mockExam,
       MultipartFile coverPdfFile,
       MultipartFile matrixPdfFile,
-      MultipartFile asnwersPdfFile
+      MultipartFile answersPdfFile
   ) throws IOException {
-    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, answersPdfFile);
 
     return mockExamRepository.save(mockExam);
   }
@@ -70,12 +70,12 @@ public class MockExamService implements MockExamServiceInterface {
       MockExam mockExam,
       MultipartFile coverPdfFile,
       MultipartFile matrixPdfFile,
-      MultipartFile asnwersPdfFile
+      MultipartFile answersPdfFile
   ) throws IOException {
     MockExam mockExamFound = mockExamRepository.findById(mockExamId)
         .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
 
-    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, asnwersPdfFile);
+    addFileEntityIfPresent(mockExam, coverPdfFile, matrixPdfFile, answersPdfFile);
 
     UpdateEntity.copyNonNullOrListProperties(mockExam, mockExamFound);
 
