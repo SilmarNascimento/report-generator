@@ -23,6 +23,7 @@ import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjec
 import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
 import { GenerateDiagnosis } from "./pages/diagnosis/generateDiagnosisPage.tsx";
 import { StudentsResponses } from "./pages/diagnosis/diagnosisPage.tsx";
+import { MockExamAnswers } from "./pages/mock-exams/answers/answers.tsx";
 
 const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
   {
     path: "/mock-exams/:mockExamId/main-questions",
     element: <MockExamMainQuestionManager />
+  },
+  {
+    path: "/mock-exams/:mockExamId/mock-exam-answers",
+    element: <MockExamAnswers />
   },
 
   {

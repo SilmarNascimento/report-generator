@@ -1,19 +1,26 @@
-import { ChangeEvent, DragEvent, useRef, useState } from "react"
+import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react"
 import { useFormContext } from "react-hook-form";
 import { PdfPreview } from "../pdfPreview";
 
 type DragDropPreviewFileUploaderProps = {
   formVariable: string
   message: string
-  url: string
 }
 
-export function DragDropPreviewFileUploader({ formVariable, message, url }: DragDropPreviewFileUploaderProps) {
+export function DragDropPreviewFileUploader({ formVariable, message }: DragDropPreviewFileUploaderProps) {
   const { register, setValue, getValues } = useFormContext();
   const variableValue: File = getValues(formVariable);
   
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const previewUrl = useMemo(() => {
+    if (!variableValue) {
+      return ''
+    }
+  
+    return URL.createObjectURL(variableValue)
+  }, [variableValue])
 
   function selectFiles() {
     fileInputRef.current?.click();
@@ -61,7 +68,7 @@ export function DragDropPreviewFileUploader({ formVariable, message, url }: Drag
         className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5"
       >
         {variableValue
-          ? <PdfPreview url={url} handleDelete={deleteImage}/>
+          ? <PdfPreview url={previewUrl} handleDelete={deleteImage}/>
           : (
             <div
               className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"

@@ -46,8 +46,6 @@ export function RemoveMainQuestionManagerTable({ entity, handleRemoveMainQuestio
 
   function getMainQuestionNumber(questionIndex: number) {
     const questionsNumber = Object.keys(entity);
-    console.log(questionsNumber);
-    
     return Number(questionsNumber[questionIndex]) + 136;
   }
 

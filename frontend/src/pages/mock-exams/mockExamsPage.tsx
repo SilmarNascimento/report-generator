@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/button";
-import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
+import { EyeIcon, FileDown, Pencil, Plus, Search, X } from "lucide-react";
 import { Control, Input } from "../../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { MockExam } from "../../interfaces";
@@ -198,7 +198,7 @@ export function MockExams() {
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/mock-exams/${mockExam.id}/subjects`}>
+                    <Link to={`/mock-exams/${mockExam.id}/subjects`} className="flex align-middle justify-center">
                       <span>
                         <Pencil className="size-3" />
                       </span>
@@ -212,9 +212,9 @@ export function MockExams() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${mockExam.id}/handouts`}>
+                    <Link to={`/mock-exams/${mockExam.id}/mock-exam-answers`} className="flex align-middle justify-center">
                       <span>
-                        handleAnswers
+                        <EyeIcon className="size-4" />
                       </span>
                     </Link>
                   </TableCell>

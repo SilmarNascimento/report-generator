@@ -44,7 +44,7 @@ export function GenerateResponsesForm({ setStudentResponseList, selectPlaceholde
       studentRecordsExcelFile: undefined
     }
   });
-  const { handleSubmit, setValue, watch, formState, control, getValues } = formMethods;
+  const { handleSubmit, setValue, watch, formState, control } = formMethods;
 
   const watchedSelectedOption = watch('mockExamSelected');
 
@@ -145,7 +145,6 @@ export function GenerateResponsesForm({ setStudentResponseList, selectPlaceholde
             <DragDropPreviewFileUploader
               formVariable='studentRecordsExcelFile'
               message={ dragAndDropPlaceholder }
-              url={getValues('studentRecordsExcelFile') ? window.URL.createObjectURL(getValues('studentRecordsExcelFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.studentRecordsExcelFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.studentRecordsExcelFile ? formState.errors.studentRecordsExcelFile.message : '\u00A0'}

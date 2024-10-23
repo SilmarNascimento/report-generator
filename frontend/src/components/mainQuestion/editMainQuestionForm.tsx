@@ -32,7 +32,7 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   });
-  const { register, handleSubmit, formState, setValue, getValues, control, watch } = formMethods; 
+  const { register, handleSubmit, formState, setValue, control, watch } = formMethods; 
 
   useEffect(() => {
     if (mainQuestion) {
@@ -203,7 +203,6 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
             <DragDropPreviewFileUploader
               formVariable='adaptedQuestionsPdfFile'
               message="Escolha o arquivo de questões adaptadas"
-              url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.adaptedQuestionsPdfFile ? formState.errors.adaptedQuestionsPdfFile.message : '\u00A0'}

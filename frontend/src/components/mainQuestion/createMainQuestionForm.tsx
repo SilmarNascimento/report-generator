@@ -23,7 +23,7 @@ export function CreateMainQuestionForm() {
   const formMethods = useForm<CreateMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   })
-  const { register, handleSubmit, formState, getValues } = formMethods;
+  const { register, handleSubmit, formState } = formMethods;
 
   const createMainQuestion = useMutation({
     mutationFn: async (data: CreateMainQuestionForm) => {
@@ -163,7 +163,6 @@ export function CreateMainQuestionForm() {
             <DragDropPreviewFileUploader
               formVariable='adaptedQuestionsPdfFile'
               message="Escolha o arquivo de questões adaptadas"
-              url={getValues('adaptedQuestionsPdfFile') ? window.URL.createObjectURL(getValues('adaptedQuestionsPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.adaptedQuestionsPdfFile ? formState.errors.adaptedQuestionsPdfFile.message : '\u00A0'}

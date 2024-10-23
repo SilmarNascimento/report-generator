@@ -21,7 +21,7 @@ export function CreateMockExamForm() {
   const formMethods = useForm<CreateMockExamForm>({
     resolver: zodResolver(mockExamSchema),
   })
-  const { register, handleSubmit, formState, control, getValues } = formMethods;
+  const { register, handleSubmit, formState, control } = formMethods;
 
   const createMockExam = useMutation({
     mutationFn: async (data: CreateMockExamForm) => {
@@ -99,7 +99,6 @@ export function CreateMockExamForm() {
             <DragDropPreviewFileUploader
               formVariable='coverPdfFile'
               message="Escolha o arquivo para a capa do simulado"
-              url={getValues('coverPdfFile') ? window.URL.createObjectURL(getValues('coverPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.coverPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.coverPdfFile ? formState.errors.coverPdfFile.message : '\u00A0'}
@@ -110,7 +109,6 @@ export function CreateMockExamForm() {
             <DragDropPreviewFileUploader
               formVariable='matrixPdfFile'
               message="Escolha o arquivo para a matrix Lericucas do simulado"
-              url={getValues('matrixPdfFile') ? window.URL.createObjectURL(getValues('matrixPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.matrixPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.matrixPdfFile ? formState.errors.matrixPdfFile.message : '\u00A0'}
@@ -121,7 +119,6 @@ export function CreateMockExamForm() {
             <DragDropPreviewFileUploader
               formVariable='answersPdfFile'
               message="Escolha o arquivo de respostas do simulado"
-              url={getValues('answersPdfFile') ? window.URL.createObjectURL(getValues('answersPdfFile')) : ''}
             />
             <p className={`text-sm ${formState.errors?.answersPdfFile ? 'text-red-400' : 'text-transparent'}`}>
               {formState.errors?.answersPdfFile ? formState.errors.answersPdfFile.message : '\u00A0'}
