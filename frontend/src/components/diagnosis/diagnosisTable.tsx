@@ -1,28 +1,34 @@
 import { Eye, X } from "lucide-react";
-import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
+import { MockExamDiagnosisResponse } from "../../types/MockExamResponse";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 import { Link } from "react-router-dom";
 import { StudentDiagnosisStatus } from "./StudentDiagnosisStatus";
 import { Button } from "../ui/button";
 
 interface DiagnosisTableProps {
-  entity: MockExamDiagnosisResponse[]
-  deleteFunction: (studentResponseId: string) => Promise<void>
+  entity: MockExamDiagnosisResponse[];
+  deleteFunction: (studentResponseId: string) => Promise<void>;
 }
 
-export function DiagnosisTable({ entity, deleteFunction }: DiagnosisTableProps) {
+export function DiagnosisTable({
+  entity,
+  deleteFunction,
+}: DiagnosisTableProps) {
   function handleDateTime(createdAt: string) {
     const dateAndTime = createdAt.split("T");
     const date = dateAndTime[0].split("-").reverse().join("/");
-    const time = dateAndTime[1].split(":").slice(0,2).join(":");
+    const time = dateAndTime[1].split(":").slice(0, 2).join(":");
     return (
       <div className="flex flex-col gap-1">
-        <span className="font-normal text-zinc-300">
-          {time}
-        </span>
-        <span className="font-light text-zinc-300/70">
-          {date}
-        </span>
+        <span className="font-normal text-zinc-300">{time}</span>
+        <span className="font-light text-zinc-300/70">{date}</span>
       </div>
     );
   }
@@ -85,25 +91,29 @@ export function DiagnosisTable({ entity, deleteFunction }: DiagnosisTableProps) 
                   {handleDateTime(studentResponse.createdAt)}
                 </TableCell>
                 <TableCell className="text-zinc-300">
-                  <StudentDiagnosisStatus studentResponse={studentResponse}/>
+                  <StudentDiagnosisStatus studentResponse={studentResponse} />
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
                     <Link to={`/mock-exam/response/${studentResponse.id}`}>
-                      <Eye className="size-4"/>
+                      <Eye className="size-4" />
                     </Link>
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button size="icon" className="mx-0.5" onClick={() => deleteFunction(studentResponse.id)}>
-                    <X className="size-3" color="red"/>
+                  <Button
+                    size="icon"
+                    className="mx-0.5"
+                    onClick={() => deleteFunction(studentResponse.id)}
+                  >
+                    <X className="size-3" color="red" />
                   </Button>
                 </TableCell>
               </TableRow>
-            )
+            );
           })}
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

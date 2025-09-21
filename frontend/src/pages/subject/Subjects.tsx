@@ -1,6 +1,10 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Header } from "../../components/header";
-import { NavigationBar } from "../../components/navigationBar";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { NavigationBar } from "../../components/NavigationBar";
 import { Pagination } from "../../components/pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -8,93 +12,104 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../../components/ui/button";
 import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
 import { Control, Input } from "../../components/ui/input";
 import { EditSubjectForm } from "../../components/subject/editSubjectForm";
 import useDebounceValue from "../../hooks/useDebounceValue";
-import { Subject } from "../../interfaces";
+import { Subject } from "../../types";
 import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../interfaces/PageResponse";
+import { PageResponse } from "../../types/PageResponse";
 
 export function Subjects() {
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const urlFilter = searchParams.get('query') ?? '';
+  const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams(params => {
-      if (params.get('query') !== debouncedQueryFilter) {
-        params.set('page', '1');
-        params.set('query', debouncedQueryFilter);
+    setSearchParams((params) => {
+      if (params.get("query") !== debouncedQueryFilter) {
+        params.set("page", "1");
+        params.set("query", debouncedQueryFilter);
         return new URLSearchParams(params);
       }
       return params;
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
-  const pageSize = searchParams.get('pageSize') ? Number(searchParams.get('pageSize')) : 10;
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const pageSize = searchParams.get("pageSize")
+    ? Number(searchParams.get("pageSize"))
+    : 10;
 
-  const { data: subjectPageResponse, isLoading, isFetching } = useQuery<PageResponse<Subject>>({
-    queryKey: ['get-subjects', urlFilter, page, pageSize],
+  const {
+    data: subjectPageResponse,
+    isLoading,
+    isFetching,
+  } = useQuery<PageResponse<Subject>>({
+    queryKey: ["get-subjects", urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({
-          subjectsId: []
-        })
+      const response = await fetch(
+        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({
+            subjectsId: [],
+          }),
+        }
+      );
+      const data = await response.json();
 
-      })
-      const data = await response.json()
-
-      return data
+      return data;
     },
     placeholderData: keepPreviousData,
     staleTime: Infinity,
-  })
+  });
 
   const deleteSubject = useMutation({
     mutationFn: async ({ id: subjectId }: Subject) => {
       try {
-        await fetch(`http://localhost:8080/subject/${subjectId}`,
-        {
+        await fetch(`http://localhost:8080/subject/${subjectId}`, {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          method: 'DELETE',
-        })
-      
+          method: "DELETE",
+        });
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        console.error("Erro na requisição:", error);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['get-subjects'],
+        queryKey: ["get-subjects"],
       });
-      successAlert('Assunto excluído com sucesso!');
-    }
-  })
+      successAlert("Assunto excluído com sucesso!");
+    },
+  });
 
   async function handleDeleteSubject(subject: Subject) {
-    await deleteSubject.mutateAsync(subject)
+    await deleteSubject.mutateAsync(subject);
   }
 
   if (isLoading) {
-    return null
+    return null;
   }
 
   return (
     <>
       <div>
-        <Header />
         <NavigationBar />
       </div>
 
@@ -104,7 +119,7 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant='primary'>
+              <Button variant="primary">
                 <Plus className="size-3" />
                 Create new
               </Button>
@@ -127,16 +142,18 @@ export function Subjects() {
             </Dialog.Portal>
           </Dialog.Root>
 
-          {isFetching && <Loader2 className="size-4 animate-spin text-zinc-500" />}
+          {isFetching && (
+            <Loader2 className="size-4 animate-spin text-zinc-500" />
+          )}
         </div>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant='filter'>
+            <Input variant="filter">
               <Search className="size-3" />
-              <Control 
-                placeholder="Search tags..." 
-                onChange={event => setFilter(event.target.value)}
+              <Control
+                placeholder="Search tags..."
+                onChange={(event) => setFilter(event.target.value)}
                 value={filter}
               />
             </Input>
@@ -167,18 +184,20 @@ export function Subjects() {
                       <span className="font-medium">{subject.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
-                    {subject.id}
-                  </TableCell>
+                  <TableCell className="text-zinc-300">{subject.id}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" className="mx-0.5" onClick={() => handleDeleteSubject(subject)}>
-                      <X className="size-3" color="red"/>
+                    <Button
+                      size="icon"
+                      className="mx-0.5"
+                      onClick={() => handleDeleteSubject(subject)}
+                    >
+                      <X className="size-3" color="red" />
                     </Button>
-                
+
                     <Dialog.Root>
                       <Dialog.Trigger asChild>
                         <Button size="icon" className="mx-0.5">
-                          <Pencil className="size-3" color="green"/>
+                          <Pencil className="size-3" color="green" />
                         </Button>
                       </Dialog.Trigger>
 
@@ -199,12 +218,19 @@ export function Subjects() {
                     </Dialog.Root>
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
-        {subjectPageResponse && <Pagination pages={subjectPageResponse.pages} items={subjectPageResponse.pageItems} page={page} totalItems={subjectPageResponse.totalItems}/>}
+        {subjectPageResponse && (
+          <Pagination
+            pages={subjectPageResponse.pages}
+            items={subjectPageResponse.pageItems}
+            page={page}
+            totalItems={subjectPageResponse.totalItems}
+          />
+        )}
       </main>
     </>
-  )
+  );
 }

@@ -1,10 +1,12 @@
-import { MainQuestion, MainQuestionReceived } from "../interfaces/MainQuestion";
+import { MainQuestion, MainQuestionReceived } from "../types/MainQuestion";
 import { parseFile } from "./parseFile";
 
-export function convertMainQuestionData(data: MainQuestionReceived): MainQuestion {
+export function convertMainQuestionData(
+  data: MainQuestionReceived
+): MainQuestion {
   const { adaptedQuestionsPdfFile } = data;
   let answerIndex;
-  const [ adaptedQuestionFileHandle ] = parseFile([adaptedQuestionsPdfFile]);
+  const [adaptedQuestionFileHandle] = parseFile([adaptedQuestionsPdfFile]);
 
   data.alternatives.forEach((alternative, index) => {
     if (alternative.questionAnswer) {

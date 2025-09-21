@@ -1,16 +1,16 @@
-import { FileEntity, FileHandle } from "../interfaces/FileEntity";
+import { FileEntity, FileHandle } from "../types/FileEntity";
 
 export function parseFile(imageList: FileEntity[]) {
-  const fileHandleList: FileHandle[] =  imageList.map((fileData) => {
+  const fileHandleList: FileHandle[] = imageList.map((fileData) => {
     const { fileName, fileType, fileEntityBytes } = fileData;
     const fileBlob = dataURLtoBlob(fileEntityBytes, fileType);
     const fileEntity = new File([fileBlob], fileName, { type: fileType });
     const fileHandle: FileHandle = {
       file: fileEntity,
-      url: window.URL.createObjectURL(fileEntity)
-    }
+      url: window.URL.createObjectURL(fileEntity),
+    };
 
-    return fileHandle
+    return fileHandle;
   });
 
   return fileHandleList;

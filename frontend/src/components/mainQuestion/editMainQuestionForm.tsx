@@ -1,21 +1,21 @@
-import { Check, Loader2, X } from 'lucide-react'
-import { FormProvider, useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { Check, Loader2, X } from "lucide-react";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { mainQuestionSchema } from './mainQuestionSchema';
-import { AlternativeForm } from '../alternative/alternativesForm';
-import { useNavigate, useParams } from 'react-router-dom';
-import { MainQuestion } from '../../interfaces';
-import { DevTool } from '@hookform/devtools'
-import { CreateAlternative } from '../../interfaces/Alternative';
-import { CreateQuestion } from '../../interfaces/MainQuestion';
-import { useEffect, useState } from 'react';
-import { successAlert, warningAlert } from '../../utils/toastAlerts';
-import { SelectLevel } from '../ui/selectLevel';
-import { alternativeSchema } from '../alternative/AlternativeSchema';
-import { DragDropPreviewFileUploader } from '../ui/drag-drop/dragDropPreviewFile';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { mainQuestionSchema } from "./mainQuestionSchema";
+import { AlternativeForm } from "../alternative/alternativesForm";
+import { useNavigate, useParams } from "react-router-dom";
+import { MainQuestion } from "../../types";
+import { DevTool } from "@hookform/devtools";
+import { CreateAlternative } from "../../types/Alternative";
+import { CreateQuestion } from "../../types/MainQuestion";
+import { useEffect, useState } from "react";
+import { successAlert, warningAlert } from "../../utils/toastAlerts";
+import { SelectLevel } from "../ui/selectLevel";
+import { alternativeSchema } from "../alternative/AlternativeSchema";
+import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
@@ -23,7 +23,9 @@ interface EditMainQuestionFormProps {
   entity: MainQuestion;
 }
 
-export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionFormProps) {
+export function EditMainQuestionForm({
+  entity: mainQuestion,
+}: EditMainQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -32,18 +34,22 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
   });
-  const { register, handleSubmit, formState, setValue, control, watch } = formMethods; 
+  const { register, handleSubmit, formState, setValue, control, watch } =
+    formMethods;
 
   useEffect(() => {
     if (mainQuestion) {
-      setValue('title', mainQuestion.title);
-      setValue('level', mainQuestion.level);
-      setValue('videoResolutionUrl', mainQuestion.videoResolutionUrl);
-      setValue('adaptedQuestionsPdfFile', mainQuestion.adaptedQuestionPdfFile.file);
+      setValue("title", mainQuestion.title);
+      setValue("level", mainQuestion.level);
+      setValue("videoResolutionUrl", mainQuestion.videoResolutionUrl);
+      setValue(
+        "adaptedQuestionsPdfFile",
+        mainQuestion.adaptedQuestionPdfFile.file
+      );
       mainQuestion.alternatives.forEach((alternative, index) => {
         setValue(`alternatives.${index}.description`, alternative.description);
         if (alternative.questionAnswer) {
-          setValue('questionAnswer', index.toString());
+          setValue("questionAnswer", index.toString());
         }
       });
     }
@@ -53,10 +59,15 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
     function hasChangedValues(): boolean {
       const questionAnswerFormValues = watch("questionAnswer");
 
-      const questionAnswerIndex = mainQuestion?.alternatives
-        .findIndex(alternative => alternative.questionAnswer) ?? '';
-      
-      if (questionAnswerFormValues !== questionAnswerIndex.toString() || !!Object.keys(formState.dirtyFields).length) {
+      const questionAnswerIndex =
+        mainQuestion?.alternatives.findIndex(
+          (alternative) => alternative.questionAnswer
+        ) ?? "";
+
+      if (
+        questionAnswerFormValues !== questionAnswerIndex.toString() ||
+        !!Object.keys(formState.dirtyFields).length
+      ) {
         return true;
       }
 
@@ -73,55 +84,61 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
       const alternativeImages: File[] = [];
 
       if (data.images) {
-        titleImage = Array.from(data?.images)
-          .filter((file): file is File => file !== undefined);
+        titleImage = Array.from(data?.images).filter(
+          (file): file is File => file !== undefined
+        );
       }
 
-      const alternatives: z.infer<typeof alternativeSchema>[] = data.alternatives;
+      const alternatives: z.infer<typeof alternativeSchema>[] =
+        data.alternatives;
       for (const alternative of alternatives) {
         if (alternative.images) {
-          const files = Array.from(alternative.images).filter((file): file is File => file !== undefined);
+          const files = Array.from(alternative.images).filter(
+            (file): file is File => file !== undefined
+          );
           alternativeImages.push(...files);
         }
       }
 
       const totalImages = titleImage.concat(alternativeImages);
       totalImages.forEach((file) => {
-        formData.append('images', file);
+        formData.append("images", file);
       });
 
       const createAlternatives = data.alternatives.map((alternative, index) => {
         const createAlternative: CreateAlternative = {
           description: alternative.description,
-          questionAnswer: Number(data.questionAnswer) === index
-        }
-        return createAlternative
-      })
+          questionAnswer: Number(data.questionAnswer) === index,
+        };
+        return createAlternative;
+      });
       const createMainQuestion: CreateQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives,
-        videoResolutionUrl: data.videoResolutionUrl
+        videoResolutionUrl: data.videoResolutionUrl,
       };
       const json = JSON.stringify(createMainQuestion);
       const blob = new Blob([json], {
-        type: 'application/json'
+        type: "application/json",
       });
 
       formData.append("mainQuestionInputDto", blob);
       formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
 
-      const response = await fetch(`http://localhost:8080/main-question/${mainQuestionId}`,
+      const response = await fetch(
+        `http://localhost:8080/main-question/${mainQuestionId}`,
         {
-          method: 'PUT',
+          method: "PUT",
           body: formData,
-        })
+        }
+      );
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
-          queryKey: ['get-main-questions'],
+          queryKey: ["get-main-questions"],
         });
-        successAlert('Questão principal alterada com sucesso!');
+        successAlert("Questão principal alterada com sucesso!");
         navigate("/main-questions");
       }
 
@@ -129,94 +146,135 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
         const errorMessage = await response.text();
         warningAlert(errorMessage);
       }
-    }
-  })
+    },
+  });
 
   async function handleEditMainQuestion(data: EditMainQuestionForm) {
-    await editMainQuestion.mutateAsync(data)
+    await editMainQuestion.mutateAsync(data);
   }
 
   return (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(handleEditMainQuestion)} className="w-full space-y-6" encType='multipart/form-data'>
+      <form
+        onSubmit={handleSubmit(handleEditMainQuestion)}
+        className="w-full space-y-6"
+        encType="multipart/form-data"
+      >
         <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="enunciado">Enunciado</label>
-          <textarea 
-            {...register('title')}
-            id="enunciado" 
+          <label className="text-sm font-medium block" htmlFor="enunciado">
+            Enunciado
+          </label>
+          <textarea
+            {...register("title")}
+            id="enunciado"
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
-          <p className={`text-sm ${formState.errors?.title ? 'text-red-400' : 'text-transparent'}`}>
-            {formState.errors?.title ? formState.errors.title.message : '\u00A0'}
+          <p
+            className={`text-sm ${formState.errors?.title ? "text-red-400" : "text-transparent"}`}
+          >
+            {formState.errors?.title
+              ? formState.errors.title.message
+              : "\u00A0"}
           </p>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium block" htmlFor="images">Escolha imagens para o enunciado</label>
-          <input 
-            {...register('images')}
-            id="images" 
-            type="file" 
+          <label className="text-sm font-medium block" htmlFor="images">
+            Escolha imagens para o enunciado
+          </label>
+          <input
+            {...register("images")}
+            id="images"
+            type="file"
             multiple
             hidden
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
-          <p className={`text-sm ${formState.errors?.images ? 'text-red-400' : 'text-transparent'}`}>
-            {formState.errors?.images ? formState.errors.images.message : '\u00A0'}
+          <p
+            className={`text-sm ${formState.errors?.images ? "text-red-400" : "text-transparent"}`}
+          >
+            {formState.errors?.images
+              ? formState.errors.images.message
+              : "\u00A0"}
           </p>
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">Nível da questão</label>
+          <label className="text-sm font-medium block" htmlFor="level">
+            Nível da questão
+          </label>
           <SelectLevel />
-          <p className={`text-sm ${formState.errors?.level ? 'text-red-400' : 'text-transparent'}`}>
-            {formState.errors?.level ? formState.errors.level.message : '\u00A0'}
+          <p
+            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
+          >
+            {formState.errors?.level
+              ? formState.errors.level.message
+              : "\u00A0"}
           </p>
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="videoResolutionUrl">Url da Resolução da Questão</label>
+          <label
+            className="text-sm font-medium block"
+            htmlFor="videoResolutionUrl"
+          >
+            Url da Resolução da Questão
+          </label>
           <input
-            {...register('videoResolutionUrl')}
-            type='text'
-            id="videoResolutionUrl" 
+            {...register("videoResolutionUrl")}
+            type="text"
+            id="videoResolutionUrl"
             className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
           />
-          <p className={`text-sm ${formState.errors?.videoResolutionUrl ? 'text-red-400' : 'text-transparent'}`}>
-            {formState.errors?.videoResolutionUrl ? formState.errors.videoResolutionUrl.message : '\u00A0'}
+          <p
+            className={`text-sm ${formState.errors?.videoResolutionUrl ? "text-red-400" : "text-transparent"}`}
+          >
+            {formState.errors?.videoResolutionUrl
+              ? formState.errors.videoResolutionUrl.message
+              : "\u00A0"}
           </p>
         </div>
 
         <div className="space-y-3">
-          <span className="text-lg font-medium">
-            Alternativas
-          </span>
+          <span className="text-lg font-medium">Alternativas</span>
         </div>
         <div className="space-y-2">
           {[...Array(5)].map((_, index) => (
-            <AlternativeForm key={index} index={index} errors={formState.errors} />
+            <AlternativeForm
+              key={index}
+              index={index}
+              errors={formState.errors}
+            />
           ))}
         </div>
 
-        <div className='flex flex-row gap-1 justify-around align-middle'>
+        <div className="flex flex-row gap-1 justify-around align-middle">
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
-              formVariable='adaptedQuestionsPdfFile'
+              formVariable="adaptedQuestionsPdfFile"
               message="Escolha o arquivo de questões adaptadas"
             />
-            <p className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? 'text-red-400' : 'text-transparent'}`}>
-              {formState.errors?.adaptedQuestionsPdfFile ? formState.errors.adaptedQuestionsPdfFile.message : '\u00A0'}
+            <p
+              className={`text-sm ${formState.errors?.adaptedQuestionsPdfFile ? "text-red-400" : "text-transparent"}`}
+            >
+              {formState.errors?.adaptedQuestionsPdfFile
+                ? formState.errors.adaptedQuestionsPdfFile.message
+                : "\u00A0"}
             </p>
           </div>
         </div>
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting  || !hasChanged}
+            disabled={formState.isSubmitting || !hasChanged}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
-            {formState.isSubmitting ? <Loader2 className="size-3 animate-spin" /> : <Check className="size-3" />}
+            {formState.isSubmitting ? (
+              <Loader2 className="size-3 animate-spin" />
+            ) : (
+              <Check className="size-3" />
+            )}
             Save
           </Button>
           <Button onClick={() => navigate("/main-questions")}>
@@ -225,7 +283,7 @@ export function EditMainQuestionForm({ entity: mainQuestion }: EditMainQuestionF
           </Button>
         </div>
       </form>
-      <DevTool control={control}/>
+      <DevTool control={control} />
     </FormProvider>
-  )
+  );
 }

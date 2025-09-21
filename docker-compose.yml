@@ -1,54 +1,57 @@
-version: '3.9'
-
 services:
+  backend:
+    container_name: backend
+    image: backend-image:latest
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    environment:
+      - DEBUG_PORT=9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${POSTGRES_DB_HOST}:5432/${POSTGRES_DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app/code
+      - ./generated-scripts:/app/generated
+    depends_on:
+      - postgres
+
   frontend:
-    container_name: app_frontend
-    build: ./frontend
+    container_name: app-frontend
+    image: app-frontend-image:latest
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
     ports:
       - 5173:5173
     working_dir: /app-frontend
-    networks:
-      - app-network
-    healthcheck:
-      test: [ "CMD", "lsof", "-t", "-i:3030" ]
-      timeout: 10s
-      retries: 5
-
-  backend:
-    container_name: app_backend
-    build: ./backend
-    ports:
-      - 8080:8080
-    working_dir: /app-backend
-    command: dev
     volumes:
-      - ./backend/src:/app-backend/src
-    depends_on:
-      - db
+      - ./frontend:/app-frontend
+      - /app-frontend/node_modules
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/db
-      - DATABASE_USERNAME=mateco
-      - DATABASE_PASSWORD=1234
-    networks:
-      - app-network
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "lsof", "-t", "-i:8080" ]
-      timeout: 10s
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
 
-  db:
-    image: postgres
-    hostname: postgres
-    container_name: postgres-db
-    ports:
-      - '5432:5432'
-    networks:
-      - app-network
-    environment:
-      POSTGRES_USER: mateco
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: db
-
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  postgres_data:
