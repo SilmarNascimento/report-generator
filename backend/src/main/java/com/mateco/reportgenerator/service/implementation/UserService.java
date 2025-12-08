@@ -4,6 +4,7 @@ import com.mateco.reportgenerator.controller.dto.user.UserCreateDto;
 import com.mateco.reportgenerator.controller.dto.user.UserResponseDto;
 import com.mateco.reportgenerator.model.entity.User;
 import com.mateco.reportgenerator.model.repository.UserRepository;
+import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,10 @@ public class UserService {
     @Transactional
     public UserResponseDto createUser(UserCreateDto dto) {
         if (userRepository.existsByUsername(dto.username())) {
-            throw new IllegalArgumentException("Username já existe");
+            throw new ConflictDataException("Username já existe");
         }
         if (userRepository.existsByEmail(dto.email())) {
-            throw new IllegalArgumentException("Email já existe");
+            throw new ConflictDataException("Email já existe");
         }
 
         User user = User.builder()
@@ -34,7 +35,6 @@ public class UserService {
                 .email(dto.email())
                 .password(passwordEncoder.encode(dto.password()))
                 .build();
-
 
         User savedUser = userRepository.save(user);
         return mapToResponseDTO(savedUser);

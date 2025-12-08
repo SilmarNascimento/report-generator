@@ -14,48 +14,49 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  /**
-   * Method - Método para tratar a exceção NotFound lançada
-   *          pela aplicação.
-   *
-   * @param exception - exceção capturada pela aplicação.
-   * @return - retorna um status HTTP baseado no tipo de
-   *           exceção lançada.
-   */
-  @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
-    return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(exception.getMessage());
-  }
+    /**
+     * Method - Método para tratar a exceção NotFound lançada
+     * pela aplicação.
+     *
+     * @param exception - exceção capturada pela aplicação.
+     * @return - retorna um status HTTP baseado no tipo de
+     * exceção lançada.
+     */
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
 
-  /**
-   * Method - Método para tratar a exceção ConflictData lançada
-   *          pela aplicação.
-   *
-   * @param exception - exceção capturada pela aplicação.
-   * @return - retorna um status HTTP baseado no tipo de
-   *           exceção lançada.
-   */
-  @ExceptionHandler(AlreadyExistsException.class)
-  public ResponseEntity<String> handleAlreadyExistsException(RuntimeException exception) {
-    return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(exception.getMessage());
-  }
+    /**
+     * Method - Método para tratar a exceção ConflictData lançada
+     * pela aplicação.
+     *
+     * @param exception - exceção capturada pela aplicação.
+     * @return - retorna um status HTTP baseado no tipo de
+     * exceção lançada.
+     */
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<String> handleAlreadyExistsException(RuntimeException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
 
-  /**
-   * Method - Método para tratar a exceção ConflictData lançada
-   *          pela aplicação.
-   *
-   * @param exception - exceção capturada pela aplicação.
-   * @return - retorna um status HTTP baseado no tipo de
-   *           exceção lançada.
-   */
-  @ExceptionHandler(ConflictDataException.class)
-  public ResponseEntity<String> handleConflictDataException(ConflictDataException exception) {
-    return ResponseEntity
-        .status(HttpStatus.CONFLICT)
-        .body(exception.getMessage());
-  }
+    /**
+     * Method - Método para tratar a exceção ConflictData lançada
+     * pela aplicação.
+     *
+     * @param exception - exceção capturada pela aplicação.
+     * @return - retorna um status HTTP baseado no tipo de
+     * exceção lançada.
+     */
+    @ExceptionHandler(ConflictDataException.class)
+    public ResponseEntity<String> handleConflictDataException(ConflictDataException exception) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(exception.getMessage());
+    }
+
 }
