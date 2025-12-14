@@ -8,7 +8,7 @@ const GenerateDiagnosis = lazyRouteComponent(
   () => import("@/pages/diagnosis/generateDiagnosisPage")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/diagnosis/generate/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: GenerateDiagnosis,
   pendingComponent: () => <FullScreenLoader />,

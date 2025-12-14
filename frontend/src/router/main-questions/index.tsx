@@ -8,7 +8,7 @@ const MainQuestionPage = lazyRouteComponent(
   () => import("@/pages/main-question/MainQuestionsPage")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/main-questions/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: MainQuestionPage,
   pendingComponent: () => <FullScreenLoader />,

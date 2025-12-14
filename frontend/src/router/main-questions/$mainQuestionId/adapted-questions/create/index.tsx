@@ -8,7 +8,7 @@ const CreateAdaptedQuestion = lazyRouteComponent(
   () => import("@/pages/main-question/adapted-questions/createAdaptedQuestion")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/main-questions/$mainQuestionId/adapted-questions/create/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: CreateAdaptedQuestion,
   pendingComponent: () => <FullScreenLoader />,

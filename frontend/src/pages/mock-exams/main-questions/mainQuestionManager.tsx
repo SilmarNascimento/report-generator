@@ -5,7 +5,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { NavigationBar } from "../../../components/NavigationBar";
-import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { MainQuestion, MockExam } from "../../../types";
@@ -13,33 +12,33 @@ import { successAlert, warningAlert } from "../../../utils/toastAlerts";
 import { PageResponse } from "../../../types";
 import { RemoveMainQuestionManagerTable } from "../../../components/mainQuestion/removeMainQuestionManagerTable";
 import { AddMainQuestionManagerTable } from "../../../components/mainQuestion/addMainQuestionManagerTable";
+import { Route } from "@/router/mock-exams/$mockExamId/main-questions";
 
 export function MockExamMainQuestionManager() {
   const queryClient = useQueryClient();
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
-  const urlFilter = searchParams.get("query") ?? "";
-  const [filter, setFilter] = useState(urlFilter);
+  const { mockExamId } = Route.useParams();
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+
+  const { page, pageSize, query } = search;
+
+  const [filter, setFilter] = useState(query);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   const mainQuestionIdList = useRef<string[]>();
   const mockExam = useRef<MockExam>();
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: 1,
+        query: debouncedQueryFilter,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
+  }, [debouncedQueryFilter, navigate]);
 
   useQuery<MockExam>({
     queryKey: ["get-mock-exams", mockExamId],
@@ -65,10 +64,10 @@ export function MockExamMainQuestionManager() {
   const { data: mainQuestionPageResponse } = useQuery<
     PageResponse<MainQuestion>
   >({
-    queryKey: ["get-main-questions", urlFilter, page, pageSize],
+    queryKey: ["get-main-questions", query, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `http://localhost:8080/main-question/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${query}`,
         {
           headers: {
             "Content-Type": "application/json",

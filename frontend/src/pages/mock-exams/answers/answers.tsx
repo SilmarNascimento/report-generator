@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { NavigationBar } from "../../../components/NavigationBar";
-import { useParams } from "react-router-dom";
 import { useRef } from "react";
 import { MainQuestion, MockExam } from "../../../types";
 import {
@@ -12,9 +11,10 @@ import {
   TableRow,
 } from "../../../components/ui/table";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+import { Route } from "@/router/mock-exams/$mockExamId/mock-exam-answers";
 
 export function MockExamAnswers() {
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
+  const { mockExamId } = Route.useParams();
   const mockExam = useRef<MockExam>();
 
   useQuery<MockExam>({

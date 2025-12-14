@@ -2,26 +2,23 @@ import {
   formularioUsuarioSchema,
   FormularioUsuarioType,
 } from "./formularioUsuarioSchema";
-import { FormProvider, useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DropdownType } from "@/types/general";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { InputTextWrapper } from "@/components/features/formularioInput/InputTextWrapper";
 import SessaoBotoesFormulario from "@/components/shared/SessaoBotoesFormulario";
 import { InputDropdownWrapper } from "@/components/features/formularioInput/InputDropdownWrapper";
-import TabelaOrgaosUsuario from "@/components/shared/tabela/TabelaOrgaoUsuario";
 import { InputSelectDropdownWrapper } from "@/components/features/formularioInput/InputSelectDropdownWrapper";
-import { OrgaoDropdownType } from "@/types/orgao";
 
 export type FormularioUsuarioProps = {
   titulo: string;
-  modo: "edicao" | "visualizacao";
+  modo: "criacao" | "edicao" | "visualizacao";
   defaultValues?: FormularioUsuarioType;
   perfilDefaultValue: string;
   handleSubmitRequest?: (data: FormularioUsuarioType) => Promise<void>;
-  orgaosDropdown?: OrgaoDropdownType[];
-  queryOrgao?: string;
-  setQueryOrgao?: (query: string) => void;
+  turmaDropdown?: DropdownType[];
+  anoMatriculaDropdown?: DropdownType[];
   opcoesPerfil?: DropdownType[];
 };
 
@@ -31,11 +28,13 @@ const FormularioUsuario = ({
   defaultValues,
   perfilDefaultValue,
   handleSubmitRequest,
-  orgaosDropdown,
-  queryOrgao,
-  setQueryOrgao,
+  turmaDropdown,
+  anoMatriculaDropdown,
   opcoesPerfil,
 }: FormularioUsuarioProps) => {
+  const [queryTurma, setQueryTurma] = useState<string>("");
+  const [queryAnoMatricula, setQueryAnoMatricula] = useState<string>("");
+
   const isReadOnly = modo === "visualizacao";
 
   const memoizedDefaultValues = useMemo(() => {
@@ -43,10 +42,14 @@ const FormularioUsuario = ({
       ? formularioUsuarioSchema.parse(defaultValues)
       : {
           nomeUsuario: "",
-          orgaos: [],
-          slugOrgaoPadrao: "",
+          turma: "",
+          anoMatricula: undefined,
           emailUsuario: "",
+          cpf: "",
+          dataAtivacao: "",
           perfilId: "",
+          foto: "",
+          endereco: "",
         };
   }, [defaultValues]);
 
@@ -60,22 +63,6 @@ const FormularioUsuario = ({
     handleSubmit,
     formState: { errors, isDirty },
   } = methods;
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "orgaos",
-  });
-
-  const handleRemoveOrgao = (index: number) => {
-    const orgaoToRemove = fields[index];
-    const currentPadraoId = methods.getValues("slugOrgaoPadrao");
-
-    if (currentPadraoId === orgaoToRemove.slugOrgao) {
-      methods.setValue("slugOrgaoPadrao", "");
-    }
-
-    remove(index);
-  };
 
   return (
     <FormProvider {...methods}>
@@ -105,46 +92,58 @@ const FormularioUsuario = ({
                 />
               </div>
 
-              <div className="flex w-full flex-col xl:max-w-182">
-                <InputTextWrapper
-                  name={`emailUsuario`}
-                  control={control}
-                  errors={errors}
-                  label="E-mail*"
-                  placeholder="Digite o E-mail do usuário"
-                  isReadOnly={isReadOnly}
-                />
-              </div>
-
-              {!isReadOnly && (
+              <div className="flex w-full flex-row gap-4 flex-wrap">
                 <div className="flex w-full flex-col xl:max-w-182">
-                  <InputSelectDropdownWrapper
-                    name="orgaos"
+                  <InputTextWrapper
+                    name={`cpf`}
                     control={control}
                     errors={errors}
-                    label="Atribuir Órgão(s)*"
-                    placeholder="Selecione um Órgão"
+                    label="CPF*"
+                    placeholder="Digite o CPF do usuário"
                     isReadOnly={isReadOnly}
-                    queryValue={queryOrgao ?? ""}
-                    options={orgaosDropdown ?? []}
-                    defaultValue={"Selecione um Órgão"}
-                    onQueryChange={(query) => setQueryOrgao?.(query)}
-                    handleChange={(item: OrgaoDropdownType) => {
-                      const { value, label } = item;
-
-                      const orgaoAdicionado = fields.find(
-                        (orgao) => orgao.slugOrgao === value,
-                      );
-                      if (!orgaoAdicionado) {
-                        append({
-                          slugOrgao: item.slug,
-                          nomeOrgao: label,
-                        });
-                      }
-                    }}
                   />
                 </div>
-              )}
+                <div className="flex w-full flex-col xl:max-w-182">
+                  <InputTextWrapper
+                    name={`emailUsuario`}
+                    control={control}
+                    errors={errors}
+                    label="E-mail*"
+                    placeholder="Digite o E-mail do usuário"
+                    isReadOnly={isReadOnly}
+                  />
+                </div>
+              </div>
+
+              <div className="flex w-full flex-row gap-4 flex-wrap">
+                <div className="flex w-full flex-col xl:max-w-182">
+                  <InputSelectDropdownWrapper
+                    name="anoMatricula"
+                    control={control}
+                    errors={errors}
+                    label="Ano de Matrícula*"
+                    placeholder="Selecione um Ano de Matrícula"
+                    isReadOnly={isReadOnly}
+                    queryValue={queryAnoMatricula ?? ""}
+                    options={anoMatriculaDropdown ?? []}
+                    onQueryChange={(query) => setQueryAnoMatricula?.(query)}
+                  />
+                </div>
+
+                <div className="flex w-full flex-col xl:max-w-182">
+                  <InputSelectDropdownWrapper
+                    name="turma"
+                    control={control}
+                    errors={errors}
+                    label="Turma*"
+                    placeholder="Selecione uma Turma"
+                    isReadOnly={isReadOnly}
+                    queryValue={queryTurma ?? ""}
+                    options={turmaDropdown ?? []}
+                    onQueryChange={(query) => setQueryTurma?.(query)}
+                  />
+                </div>
+              </div>
 
               <div className="flex w-full flex-col xl:max-w-182">
                 <InputDropdownWrapper
@@ -159,23 +158,6 @@ const FormularioUsuario = ({
                   className="text-base"
                 />
               </div>
-            </div>
-          </section>
-
-          <section className="flex flex-col">
-            <h1 className="border-t-1 border-t-gray-400 py-4 text-lg font-bold">
-              Órgãos atribuídos ao Usuário
-            </h1>
-
-            <div className="pb-4">
-              <TabelaOrgaosUsuario
-                fields={fields}
-                remove={handleRemoveOrgao}
-                modo={modo}
-                control={control}
-                errors={errors}
-                isReadOnly={isReadOnly}
-              />
             </div>
           </section>
         </div>

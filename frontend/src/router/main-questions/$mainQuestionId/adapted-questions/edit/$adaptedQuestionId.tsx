@@ -8,7 +8,9 @@ const EditAdaptedQuestion = lazyRouteComponent(
   () => import("@/pages/main-question/editMainQuestion")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute(
+  "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId"
+)({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: EditAdaptedQuestion,
   pendingComponent: () => <FullScreenLoader />,

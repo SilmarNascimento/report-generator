@@ -8,7 +8,7 @@ const MainQuestionIdSubjects = lazyRouteComponent(
   () => import("@/pages/main-question/subject/subjectManager")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/main-questions/$mainQuestionId/subjects/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: MainQuestionIdSubjects,
   pendingComponent: () => <FullScreenLoader />,

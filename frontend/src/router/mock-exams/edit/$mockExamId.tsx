@@ -8,7 +8,7 @@ const EditMockExam = lazyRouteComponent(
   () => import("@/pages/mock-exams/editMockExam")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/mock-exams/edit/$mockExamId")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: EditMockExam,
   pendingComponent: () => <FullScreenLoader />,

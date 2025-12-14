@@ -1,4 +1,4 @@
-FROM node:22
+FROM node:20-alpine
 
 # Diretório de trabalho
 WORKDIR /app-frontend
@@ -17,6 +17,7 @@ EXPOSE 5173
 
 # Ativar live reload em ambiente Docker
 ENV CHOKIDAR_USEPOLLING=true
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 # Rodar o app em modo dev
 CMD ["npm", "run", "dev"]

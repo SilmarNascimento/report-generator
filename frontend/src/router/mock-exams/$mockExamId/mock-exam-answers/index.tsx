@@ -12,5 +12,5 @@ export const Route = createFileRoute()({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: MockeExamAnswers,
   pendingComponent: () => <FullScreenLoader />,
-  errorComponent: () => <NotFoundPage />,
+  notFoundComponent: () => <NotFoundPage />,
 });

@@ -8,7 +8,7 @@ const CreateMockExam = lazyRouteComponent(
   () => import("@/pages/mock-exams/createMockExam")
 );
 
-export const Route = createFileRoute()({
+export const Route = createFileRoute("/mock-exams/create/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: CreateMockExam,
   pendingComponent: () => <FullScreenLoader />,

@@ -1,6 +1,5 @@
 import { Control, Controller, FieldErrors, FieldPath } from "react-hook-form";
 import { FormTypes } from "@/types/general";
-import { obterValorAninhadoComArray } from "@/util/errorParser";
 import { Input } from "@/components/ui/shadcn/input";
 import { Label } from "@/components/ui/shadcn/label";
 import {
@@ -9,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import { obterValorAninhadoComArray } from "@/utils/errorParser";
 
 type InputTextWrapperProps<T extends FormTypes> = Readonly<{
   name: FieldPath<T>;

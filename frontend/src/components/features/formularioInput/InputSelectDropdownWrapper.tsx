@@ -1,10 +1,10 @@
 import { Control, Controller, FieldErrors, FieldPath } from "react-hook-form";
 import { DropdownType, FormTypes } from "@/types/general";
-import { obterValorAninhadoComArray } from "@/util/errorParser";
 import { Label } from "@/components/ui/shadcn/label";
 import { Input } from "@/components/ui/shadcn/input";
 import UnifiedDropdown from "@/components/features/UnifiedDropdown";
 import { cn } from "@/lib/utils";
+import { obterValorAninhadoComArray } from "@/utils/errorParser";
 
 type InputSelectDropdownWrapperProps<
   T extends FormTypes,
@@ -84,7 +84,7 @@ export function InputSelectDropdownWrapper<
               disabled
               className={cn(
                 "h-10 w-full rounded-lg border border-[#B4BAC4] px-4 text-base font-normal text-[#7F86A0]",
-                inputClassName,
+                inputClassName
               )}
             />
           ) : (
@@ -114,7 +114,7 @@ export function InputSelectDropdownWrapper<
         <p
           className={cn(
             "min-h-5 text-sm",
-            errorMessage ? "text-red-400" : "invisible",
+            errorMessage ? "text-red-400" : "invisible"
           )}
         >
           {errorMessage ?? "\u00A0"}

@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-query";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Pagination } from "../../components/pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/button";
@@ -22,33 +21,33 @@ import {
 } from "../../components/ui/table";
 import { MockExam } from "../../types";
 import { Link } from "react-router-dom";
-import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../types";
+import { successAlert } from "@/utils/toastAlerts";
+import { PageResponse } from "@/types";
+import { Route } from "@/router/mock-exams";
 
 export function MockExams() {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
-  const urlFilter = searchParams.get("query") ?? "";
+  const navigate = Route.useNavigate();
+  const search = Route.useSearch();
+
+  const page = search.page ?? 1;
+  const pageSize = search.pageSize ?? 10;
+  const urlFilter = search.query ?? "";
+
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: 1,
+        query: debouncedQueryFilter || undefined,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
-
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  }, [debouncedQueryFilter, navigate]);
 
   const { data: mockExamPageResponse, isLoading } = useQuery<
     PageResponse<MockExam>
@@ -65,8 +64,6 @@ export function MockExams() {
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
-
-  console.log(mockExamPageResponse);
 
   const deleteMainQuestion = useMutation({
     mutationFn: async (mockExamId: string) => {
@@ -90,11 +87,14 @@ export function MockExams() {
   });
 
   function handleCreateNewMockExam() {
-    navigate("/mock-exams/create");
+    navigate({ to: "/mock-exams/create" });
   }
 
   function handleEditMockExam(mockExamId: string) {
-    navigate(`/mock-exams/edit/${mockExamId}`);
+    navigate({
+      to: "/mock-exams/edit/$mockExamId",
+      params: { mockExamId },
+    });
   }
 
   async function handleDeleteMockExam(mockExamId: string) {

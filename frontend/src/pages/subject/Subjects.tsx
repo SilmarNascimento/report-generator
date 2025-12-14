@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-query";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Pagination } from "../../components/pagination";
-import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../../components/ui/button";
@@ -26,30 +25,31 @@ import useDebounceValue from "../../hooks/useDebounceValue";
 import { Subject } from "../../types";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../types/PageResponse";
+import { useSearch } from "@tanstack/react-router";
+import { Route } from "@/router/subjects";
 
 export function Subjects() {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = Route.useNavigate();
+  const search = useSearch({ strict: false });
 
-  const urlFilter = searchParams.get("query") ?? "";
+  const page = Number(search.page ?? 1);
+  const pageSize = Number(search.pageSize ?? 10);
+
+  const urlFilter = search.query ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: 1,
+        query: debouncedQueryFilter,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
-
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  }, [debouncedQueryFilter, navigate]);
 
   const {
     data: subjectPageResponse,
