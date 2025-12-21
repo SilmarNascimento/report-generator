@@ -6,7 +6,6 @@ import {
 } from "@tanstack/react-query";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Pagination } from "../../components/pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/button";
@@ -21,43 +20,39 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { MainQuestion } from "../../types";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import { successAlert } from "../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import { PageResponse } from "../../types";
+import { Route } from "@/router/main-questions";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
-  const urlFilter = searchParams.get("query") ?? "";
-  const [filter, setFilter] = useState(urlFilter);
+  const { query, page, pageSize } = Route.useSearch();
+  const navigate = Route.useNavigate();
+
+  const [filter, setFilter] = useState(query);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        query: debouncedQueryFilter,
+        page: 1,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
-
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  }, [debouncedQueryFilter, navigate]);
 
   const { data: mainQuestionPageResponse, isLoading } = useQuery<
     PageResponse<MainQuestion>
   >({
-    queryKey: ["get-main-questions", urlFilter, page, pageSize],
+    queryKey: ["get-main-questions", query, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`
+        `http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${query}`
       );
       const data = await response.json();
 
@@ -88,11 +83,14 @@ export function MainQuestions() {
   });
 
   function handleCreateNewMainQuestion() {
-    navigate("/main-questions/create");
+    navigate({ to: "/main-questions/create" });
   }
 
   function handleEditMainQuestion(mainQuestionId: string) {
-    navigate(`/main-questions/edit/${mainQuestionId}`);
+    navigate({
+      to: "/main-questions/edit/$mainQuestionId",
+      params: { mainQuestionId },
+    });
   }
 
   async function handleDeleteMainQuestion(question: MainQuestion) {
@@ -200,7 +198,15 @@ export function MainQuestions() {
                     <span>{question.level}</span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-questions/${question.id}/subjects`}>
+                    <Link
+                      to="/main-questions/$mainQuestionId/subjects"
+                      params={{ mainQuestionId: question.id }}
+                      search={{
+                        query: "",
+                        page: 1,
+                        pageSize: 10,
+                      }}
+                    >
                       <span>
                         {question.subjects.length
                           ? question.subjects[0].name
@@ -213,18 +219,25 @@ export function MainQuestions() {
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link
-                      to={`/main-questions/${question.id}/adapted-questions`}
+                      to="/main-questions/$mainQuestionId/adapted-questions"
+                      params={{ mainQuestionId: question.id }}
+                      search={{
+                        query: "",
+                      }}
                     >
                       <span>{question.adaptedQuestions.length}</span>
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/mock-exams`}>
+                    <Link
+                      to="/main-questions/$mainQuestionId/mock-exams"
+                      params={{ mainQuestionId: question.id }}
+                    >
                       <span>{question.mockExams.length}</span>
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/handouts`}>
+                    <Link to={`/main-questions/${question.id}/handouts`}>
                       <span>{question.handouts.length}</span>
                     </Link>
                   </TableCell>

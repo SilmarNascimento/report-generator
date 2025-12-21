@@ -8,18 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Link } from "react-router-dom";
 import { StudentDiagnosisStatus } from "./StudentDiagnosisStatus";
 import { Button } from "../ui/button";
 
 interface DiagnosisTableProps {
   entity: MockExamDiagnosisResponse[];
   deleteFunction: (studentResponseId: string) => Promise<void>;
+  onViewResponse: (studentResponseId: string) => void;
 }
 
 export function DiagnosisTable({
   entity,
   deleteFunction,
+  onViewResponse,
 }: DiagnosisTableProps) {
   function handleDateTime(createdAt: string) {
     const dateAndTime = createdAt.split("T");
@@ -95,9 +96,12 @@ export function DiagnosisTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-center">
-                    <Link to={`/mock-exam/response/${studentResponse.id}`}>
+                    <Button
+                      size="icon"
+                      onClick={() => onViewResponse(studentResponse.id)}
+                    >
                       <Eye className="size-4" />
-                    </Link>
+                    </Button>
                   </div>
                 </TableCell>
                 <TableCell className="text-right">

@@ -3,7 +3,6 @@ import { Button } from "../ui/button";
 import { adaptedQuestionSchema } from "./adaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { CreateAlternative } from "../../types/Alternative";
@@ -12,13 +11,20 @@ import { SelectLevel } from "../ui/selectLevel";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { Check, Loader2, X } from "lucide-react";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
+import { Route as AdaptedQuestionsRoute } from "@/router/main-questions/$mainQuestionId/adapted-questions";
+import { Route as MainQuestionsRoute } from "@/router/main-questions";
 
 type CreateAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>;
 
-export function CreateAdaptedQuestionForm() {
+type CreateAdaptedQuestionFormProps = {
+  mainQuestionId: string;
+};
+
+export function CreateAdaptedQuestionForm({
+  mainQuestionId,
+}: CreateAdaptedQuestionFormProps) {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
+  const navigate = AdaptedQuestionsRoute.useNavigate();
 
   const formMethods = useForm<CreateAdaptedQuestionForm>({
     resolver: zodResolver(adaptedQuestionSchema),
@@ -88,7 +94,11 @@ export function CreateAdaptedQuestionForm() {
           queryKey: ["get-main-questions"],
         });
         successAlert("Questão adaptada salva com sucesso!");
-        navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
+        navigate({
+          to: AdaptedQuestionsRoute.to,
+          params: { mainQuestionId },
+          search: { query: "" },
+        });
       }
 
       if (response.status === 400) {
@@ -192,7 +202,14 @@ export function CreateAdaptedQuestionForm() {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: MainQuestionsRoute.to,
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>

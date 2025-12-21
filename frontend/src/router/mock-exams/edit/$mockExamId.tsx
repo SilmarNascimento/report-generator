@@ -12,5 +12,5 @@ export const Route = createFileRoute("/mock-exams/edit/$mockExamId")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: EditMockExam,
   pendingComponent: () => <FullScreenLoader />,
-  errorComponent: () => <NotFoundPage />,
+  notFoundComponent: () => <NotFoundPage />,
 });

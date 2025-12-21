@@ -5,7 +5,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { AdaptedQuestion } from "../../../types";
 import { successAlert } from "../../../utils/toastAlerts";
@@ -21,32 +20,32 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
+import { Route } from "@/router/main-questions/$mainQuestionId/adapted-questions";
 
 export function AdaptedQuestions() {
   const queryClient = useQueryClient();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const { mainQuestionId } = Route.useParams();
+  const { query } = Route.useSearch();
+  const navigate = Route.useNavigate();
 
-  const urlFilter = searchParams.get("query") ?? "";
-  const [filter, setFilter] = useState(urlFilter);
+  const [filter, setFilter] = useState(query ?? "");
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        query: debouncedQueryFilter,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
+  }, [debouncedQueryFilter, navigate]);
 
   const { data: adaptedQuestionsPageResponse, isLoading } = useQuery<
     AdaptedQuestion[]
   >({
-    queryKey: ["get-adapted-questions", urlFilter],
+    queryKey: ["get-adapted-questions", query],
     queryFn: async () => {
       const response = await fetch(
         `http://localhost:8080/main-question/${mainQuestionId}/adapted-question`
@@ -90,13 +89,17 @@ export function AdaptedQuestions() {
   }
 
   function handleCreateAdaptedQuestion() {
-    navigate(`/main-questions/${mainQuestionId}/adapted-questions/create`);
+    navigate({
+      to: "/main-questions/$mainQuestionId/adapted-questions/create",
+      params: { mainQuestionId },
+    });
   }
 
   function handleEditAdaptedQuestion(adaptedQuestionId: string) {
-    navigate(
-      `/main-questions/${mainQuestionId}/adapted-questions/edit/${adaptedQuestionId}`
-    );
+    navigate({
+      to: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId",
+      params: { mainQuestionId, adaptedQuestionId },
+    });
   }
 
   async function handleDeleteAdaptedQuestion(adaptedQuestionId: string) {

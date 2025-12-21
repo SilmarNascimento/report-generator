@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { FormHeader } from "../../components/formHeader";
 import { EditMainQuestionForm } from "../../components/mainQuestion/editMainQuestionForm";
 import { NavigationBar } from "../../components/NavigationBar";
@@ -6,9 +5,10 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { MainQuestion } from "../../types";
 import { MainQuestionReceived } from "../../types/MainQuestion";
 import { convertMainQuestionData } from "../../utils/convertMainQuestionData";
+import { Route } from "@/router/main-questions/edit/$mainQuestionId";
 
 export function EditMainQuestion() {
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
+  const { mainQuestionId } = Route.useParams();
 
   const { data: mainQuestionResponse } = useQuery<MainQuestion>({
     queryKey: ["get-main-questions", mainQuestionId],
@@ -37,7 +37,10 @@ export function EditMainQuestion() {
           headerDetails="Altere os campos a seguir para atualizar a questão principal"
         />
         {mainQuestionResponse && (
-          <EditMainQuestionForm entity={mainQuestionResponse} />
+          <EditMainQuestionForm
+            entity={mainQuestionResponse}
+            mainQuestionId={mainQuestionId}
+          />
         )}
       </div>
     </>

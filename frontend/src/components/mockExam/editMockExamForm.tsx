@@ -4,7 +4,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
 import { MockExam } from "../../types";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { mockExamSchema } from "./mockExamSchema";
@@ -13,6 +12,7 @@ import { useEffect, useState } from "react";
 import { DevTool } from "@hookform/devtools";
 import { CreateMockExam } from "../../types/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
+import { Route } from "@/router/mock-exams/edit/$mockExamId";
 
 type EditMockExamForm = z.infer<typeof mockExamSchema>;
 
@@ -23,8 +23,9 @@ interface EditMockExamFormProps {
 export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
-  const navigate = useNavigate();
+
+  const { mockExamId } = Route.useParams();
+  const navigate = Route.useNavigate();
 
   const formMethods = useForm<EditMockExamForm>({
     resolver: zodResolver(mockExamSchema),
@@ -104,7 +105,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
           queryKey: ["get-mock-exams"],
         });
         successAlert("Simulado alterado com sucesso!");
-        navigate("/mock-exams");
+        navigate({ to: "/mock-exams" });
       }
 
       if (response.status === 404) {
@@ -256,7 +257,14 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/main-questions",
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>

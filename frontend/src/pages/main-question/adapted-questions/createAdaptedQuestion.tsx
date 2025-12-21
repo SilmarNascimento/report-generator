@@ -1,8 +1,11 @@
 import { CreateAdaptedQuestionForm } from "../../../components/adaptedQuestion/createAdaptedQuestionForm";
 import { FormHeader } from "../../../components/formHeader";
 import { NavigationBar } from "../../../components/NavigationBar";
+import { Route } from "@/router/main-questions/$mainQuestionId/adapted-questions/create";
 
 export function CreateAdaptedQuestion() {
+  const { mainQuestionId } = Route.useParams();
+
   return (
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
@@ -13,8 +16,8 @@ export function CreateAdaptedQuestion() {
           headerTitle="Nova Questão Adaptada"
           headerDetails="Informe os campos a seguir para criar uma nova questão adaptada"
         />
-        <CreateAdaptedQuestionForm />
+        <CreateAdaptedQuestionForm mainQuestionId={mainQuestionId} />
       </div>
     </>
-  )
+  );
 }

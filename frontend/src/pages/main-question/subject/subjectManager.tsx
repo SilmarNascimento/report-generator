@@ -4,7 +4,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useParams, useSearchParams } from "react-router-dom";
 import { MainQuestion, PageResponse, Subject } from "../../../types";
 import { successAlert, warningAlert } from "../../../utils/toastAlerts";
 import { AddSubjectManagerTable } from "../../../components/subject/addSubjectManagerTable";
@@ -12,17 +11,20 @@ import { RemoveSubjectManagerTable } from "../../../components/subject/removeSub
 import { useEffect, useRef, useState } from "react";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { NavigationBar } from "../../../components/NavigationBar";
+import { Route } from "@/router/main-questions/$mainQuestionId/subjects";
 
 export function MainQuestionSubjectManager() {
   const queryClient = useQueryClient();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
-  const urlFilter = searchParams.get("query") ?? "";
+  const { mainQuestionId } = Route.useParams();
+
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+
+  const page = search.page ?? 1;
+  const pageSize = search.pageSize ?? 10;
+  const urlFilter = search.query ?? "";
+
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
@@ -30,15 +32,15 @@ export function MainQuestionSubjectManager() {
   const mainQuestion = useRef<MainQuestion>();
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: 1,
+        query: debouncedQueryFilter,
+      }),
+      replace: true,
     });
-  }, [debouncedQueryFilter, setSearchParams]);
+  }, [debouncedQueryFilter, navigate]);
 
   useQuery<MainQuestion>({
     queryKey: ["get-main-questions", mainQuestionId],

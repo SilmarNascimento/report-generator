@@ -20,10 +20,10 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { MockExam } from "../../types";
-import { Link } from "react-router-dom";
 import { successAlert } from "@/utils/toastAlerts";
 import { PageResponse } from "@/types";
 import { Route } from "@/router/mock-exams";
+import { Link } from "@tanstack/react-router";
 
 export function MockExams() {
   const queryClient = useQueryClient();
@@ -201,8 +201,8 @@ export function MockExams() {
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link
-                      to={`/mock-exams/${mockExam.id}/subjects`}
-                      className="flex align-middle justify-center"
+                      to="/mock-exams/$mockExamId/subjects"
+                      params={{ mockExamId: mockExam.id }}
                     >
                       <span>
                         <Pencil className="size-3" />
@@ -210,7 +210,10 @@ export function MockExams() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
+                    <Link
+                      to="/mock-exams/$mockExamId/main-questions"
+                      params={{ mockExamId: mockExam.id }}
+                    >
                       <span>
                         {Object.keys(mockExam.mockExamQuestions).length}
                       </span>
@@ -218,8 +221,8 @@ export function MockExams() {
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link
-                      to={`/mock-exams/${mockExam.id}/mock-exam-answers`}
-                      className="flex align-middle justify-center"
+                      to="/mock-exams/$mockExamId/mock-exam-answers"
+                      params={{ mockExamId: mockExam.id }}
                     >
                       <span>
                         <EyeIcon className="size-4" />

@@ -3,7 +3,6 @@ import { Button } from "../ui/button";
 import { adaptedQuestionSchema } from "./adaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { CreateAlternative } from "../../types/Alternative";
@@ -15,22 +14,25 @@ import { AdaptedQuestion } from "../../types";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
 import { useEffect, useState } from "react";
+import { Route as EditAdaptedQuestionRoute } from "@/router/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
 
 type EditAdaptedQuestionForm = z.infer<typeof adaptedQuestionSchema>;
 
 interface EditAdaptedQuestionFormProps {
   entity: AdaptedQuestion;
+  mainQuestionId: string;
+  adaptedQuestionId: string;
 }
 
 export function EditAdaptedQuestionForm({
   entity: adaptedQuestionResponse,
+  mainQuestionId,
+  adaptedQuestionId,
 }: EditAdaptedQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
-  const { adaptedQuestionId } =
-    useParams<{ adaptedQuestionId: string }>() ?? "";
-  const navigate = useNavigate();
+
+  const navigate = EditAdaptedQuestionRoute.useNavigate();
 
   const formMethods = useForm<EditAdaptedQuestionForm>({
     resolver: zodResolver(adaptedQuestionSchema),
@@ -136,7 +138,11 @@ export function EditAdaptedQuestionForm({
           queryKey: ["get-main-questions"],
         });
         successAlert("Questão adaptada salva com sucesso!");
-        navigate(`/main-questions/${mainQuestionId}/adapted-questions`);
+        navigate({
+          to: "/main-questions/$mainQuestionId/adapted-questions",
+          params: { mainQuestionId },
+          search: { query: "" },
+        });
       }
 
       if (response.status === 400) {
@@ -237,7 +243,14 @@ export function EditAdaptedQuestionForm({
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/main-questions",
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>

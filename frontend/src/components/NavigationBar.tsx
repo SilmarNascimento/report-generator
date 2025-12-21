@@ -8,96 +8,84 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Link, useMatchRoute } from "@tanstack/react-router";
 
 export function NavigationBar() {
+  const matchRoute = useMatchRoute();
+
   const activatedLink =
     "py-1.5 px-3 text-zinc-100 inline-flex items-center text-sm gap-1.5 font-medium rounded-full border border-transparent bg-zinc-800";
   const deactivatedLink =
     "py-1.5 px-3 text-zinc-100 inline-flex items-center text-sm gap-1.5 font-medium rounded-full border border-transparent transition-colors duration-500 hover:bg-zinc-800";
 
+  function linkClass(to: string) {
+    return matchRoute({ to }) ? activatedLink : deactivatedLink;
+  }
+
   return (
     <div className="border-b border-zinc-800 py-4">
       <nav className="flex items-center gap-2 max-w-[1200px] mx-auto">
-        <NavLink
-          to={"/dash-board"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
-        >
+        <Link to="/" className={linkClass("/")}>
           <Presentation className="size-4" />
           Dashboard
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/mock-exams"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
-        >
+        <Link to="/mock-exams" className={linkClass("/mock-exams")}>
           <Book className="size-4" />
           Simulados
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/main-questions"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
+        <Link
+          to="/main-questions"
+          className={linkClass("/main-questions")}
+          search={{
+            query: "",
+            page: 1,
+            pageSize: 10,
+          }}
         >
           <ScrollText className="size-4" />
           Questões
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/subjects"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
+        <Link
+          to="/subjects"
+          className={linkClass("/subjects")}
+          search={{
+            query: "",
+            page: 1,
+            pageSize: 10,
+          }}
         >
           <Tags className="size-4" />
           Assuntos
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/diagnosis/generate"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
+        <Link
+          to="/diagnosis/generate"
+          className={linkClass("/diagnosis/generate")}
         >
           <FilePlus className="size-4" />
           Adicionar Diagnósticos
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/students-response"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
-        >
+        <Link to="/diagnosis" className={linkClass("/diagnosis")}>
           <BarChartBig className="size-4" />
           Diagnósticos
-        </NavLink>
+        </Link>
 
-        <NavLink
-          to={"/usuarios"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
-        >
+        {/* <Link to="/usuarios" className={linkClass("/usuarios")}>
           <User className="size-4" />
-          Diagnósticos
-        </NavLink>
+          Usuários
+        </Link>
 
-        <NavLink
+        <Link
           to={"/students-response"}
-          className={({ isActive }) =>
-            isActive ? activatedLink : deactivatedLink
-          }
+          className={linkClass("/students-response")}
         >
           <Users className="size-4" />
-          Diagnósticos
-        </NavLink>
+          Perfil
+        </Link> */}
       </nav>
     </div>
   );

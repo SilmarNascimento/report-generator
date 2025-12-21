@@ -4,19 +4,19 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { SelectClass } from "../ui/selectClass";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { mockExamSchema } from "./mockExamSchema";
 import { DevTool } from "@hookform/devtools";
 import { CreateMockExam } from "../../types/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
+import { Route } from "@/router/mock-exams/create";
 
 type CreateMockExamForm = z.infer<typeof mockExamSchema>;
 
 export function CreateMockExamForm() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   const formMethods = useForm<CreateMockExamForm>({
     resolver: zodResolver(mockExamSchema),
@@ -63,7 +63,7 @@ export function CreateMockExamForm() {
           queryKey: ["get-mock-exams"],
         });
         successAlert("Simulado salvo com sucesso!");
-        navigate("/mock-exams");
+        navigate({ to: "/mock-exams" });
       }
 
       if (response.status === 400) {
@@ -213,7 +213,14 @@ export function CreateMockExamForm() {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/main-questions",
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>

@@ -3,12 +3,12 @@ import { FormHeader } from "../../components/formHeader";
 import { EditMockExamForm } from "../../components/mockExam/editMockExamForm";
 import { NavigationBar } from "../../components/NavigationBar";
 import { MockExam } from "../../types";
-import { useParams } from "react-router-dom";
 import { MockExamReceived } from "../../types/MockExam";
-import { convertMockExamData } from "../../utils/convertMockExamData";
+import { convertMockExamData } from "@/utils/convertMockExamData";
+import { Route } from "@/router/mock-exams/edit/$mockExamId";
 
 export function EditMockExam() {
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
+  const { mockExamId } = Route.useParams();
 
   const { data: mockExamResponse } = useQuery<MockExam>({
     queryKey: ["get-mock-exams", mockExamId],
@@ -23,9 +23,8 @@ export function EditMockExam() {
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
-  const mockExamCode = `${mockExamResponse?.releasedYear}:S${mockExamResponse?.number}-${mockExamResponse?.className}`;
 
-  console.log(mockExamResponse);
+  const mockExamCode = `${mockExamResponse?.releasedYear}:S${mockExamResponse?.number}-${mockExamResponse?.className}`;
 
   return (
     <>

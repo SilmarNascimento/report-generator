@@ -8,9 +8,21 @@ const AdaptedQuestions = lazyRouteComponent(
   () => import("@/pages/main-question/adapted-questions/adaptedQuestions")
 );
 
-export const Route = createFileRoute("/main-questions/$mainQuestionId/adapted-questions/")({
+export const Route = createFileRoute(
+  "/main-questions/$mainQuestionId/adapted-questions/"
+)({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: AdaptedQuestions,
   pendingComponent: () => <FullScreenLoader />,
-  errorComponent: () => <NotFoundPage />,
+  notFoundComponent: () => <NotFoundPage />,
+
+  params: {
+    parse: (params) => ({
+      mainQuestionId: params.mainQuestionId,
+    }),
+  },
+
+  validateSearch: (search: Record<string, unknown>) => ({
+    query: typeof search.query === "string" ? search.query : "",
+  }),
 });

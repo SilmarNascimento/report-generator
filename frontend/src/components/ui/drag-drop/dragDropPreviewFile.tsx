@@ -1,26 +1,31 @@
-import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react"
+import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { PdfPreview } from "../pdfPreview";
 
 type DragDropPreviewFileUploaderProps = {
-  formVariable: string
-  message: string
-}
+  formVariable: string;
+  message: string;
+  url?: string;
+};
 
-export function DragDropPreviewFileUploader({ formVariable, message }: DragDropPreviewFileUploaderProps) {
+export function DragDropPreviewFileUploader({
+  formVariable,
+  message,
+  url,
+}: DragDropPreviewFileUploaderProps) {
   const { register, setValue, getValues } = useFormContext();
   const variableValue: File = getValues(formVariable);
-  
+
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const previewUrl = useMemo(() => {
     if (!variableValue) {
-      return ''
+      return url ?? "";
     }
-  
-    return URL.createObjectURL(variableValue)
-  }, [variableValue])
+
+    return URL.createObjectURL(variableValue);
+  }, [variableValue, url]);
 
   function selectFiles() {
     fileInputRef.current?.click();
@@ -29,9 +34,9 @@ export function DragDropPreviewFileUploader({ formVariable, message }: DragDropP
   function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
     const filesSelected = event.target.files;
     if (!filesSelected || filesSelected?.length === 0) return;
-    
+
     const newFile = filesSelected.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true });
   }
 
   function deleteImage() {
@@ -55,7 +60,7 @@ export function DragDropPreviewFileUploader({ formVariable, message }: DragDropP
     const filesDropped = event.dataTransfer.files;
 
     const newFile = filesDropped.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true });
   }
 
   return (
@@ -64,44 +69,45 @@ export function DragDropPreviewFileUploader({ formVariable, message }: DragDropP
         <p>{message}</p>
       </div>
 
-      <div
-        className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5"
-      >
-        {variableValue
-          ? <PdfPreview url={previewUrl} handleDelete={deleteImage}/>
-          : (
-            <div
-              className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDragDrop}
-            >
-              {isDragging ? (
-                <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
-                  Drop files here
+      <div className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5">
+        {previewUrl ? (
+          <PdfPreview url={previewUrl} handleDelete={deleteImage} />
+        ) : (
+          <div
+            className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDragDrop}
+          >
+            {isDragging ? (
+              <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
+                Drop files here
+              </span>
+            ) : (
+              <>
+                Drag and Drop file here or{" "}
+                <span
+                  className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60"
+                  role="button"
+                  onClick={selectFiles}
+                >
+                  Browse
                 </span>
-              ) : (
-                <>
-                  Drag and Drop file here or {" "}
-                  <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60" role="button" onClick={selectFiles}>
-                    Browse
-                  </span>
-                </>
-              )}
-              <input
-                {...register(formVariable)}
-                name={formVariable}
-                type="file"
-                className="file"
-                ref={fileInputRef}
-                hidden
-                accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onChange={handleFileSelect}
-              />
-            </div>
-          )
-        }
+              </>
+            )}
+            <input
+              {...register(formVariable)}
+              name={formVariable}
+              type="file"
+              className="file"
+              ref={fileInputRef}
+              hidden
+              accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              onChange={handleFileSelect}
+            />
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

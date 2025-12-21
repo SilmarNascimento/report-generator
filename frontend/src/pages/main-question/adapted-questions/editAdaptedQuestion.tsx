@@ -1,14 +1,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { EditAdaptedQuestionForm } from "../../../components/adaptedQuestion/editAdaptedQuestionForm";
-import { FormHeader } from "../../../components/formHeader";
-import { NavigationBar } from "../../../components/NavigationBar";
-import { AdaptedQuestion } from "../../../types";
-import { useParams } from "react-router-dom";
+import { EditAdaptedQuestionForm } from "@/components/adaptedQuestion/editAdaptedQuestionForm";
+import { FormHeader } from "@/components/formHeader";
+import { NavigationBar } from "@/components/NavigationBar";
+import { AdaptedQuestion } from "@/types";
+import { Route } from "@/router/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
 
 export function EditAdaptedQuestion() {
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
-  const { adaptedQuestionId } =
-    useParams<{ adaptedQuestionId: string }>() ?? "";
+  const { mainQuestionId, adaptedQuestionId } = Route.useParams();
 
   const { data: adaptedQuestionResponse } = useQuery<AdaptedQuestion>({
     queryKey: ["get-adapted-questions", mainQuestionId, adaptedQuestionId],
@@ -35,7 +33,11 @@ export function EditAdaptedQuestion() {
           headerDetails="Altere os campos a seguir para atualizar a questão adaptada."
         />
         {adaptedQuestionResponse && (
-          <EditAdaptedQuestionForm entity={adaptedQuestionResponse} />
+          <EditAdaptedQuestionForm
+            entity={adaptedQuestionResponse}
+            mainQuestionId={mainQuestionId}
+            adaptedQuestionId={adaptedQuestionId}
+          />
         )}
       </div>
     </>

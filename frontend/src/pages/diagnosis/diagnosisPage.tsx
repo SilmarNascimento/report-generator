@@ -5,7 +5,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Pagination } from "../../components/pagination";
-import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/button";
@@ -16,39 +15,39 @@ import { MockExamDiagnosisResponse } from "../../types/MockExamResponse";
 import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
 import { NavigationBar } from "../../components/NavigationBar";
 import { successAlert } from "@/utils/toastAlerts";
+import { Route } from "@/router/diagnosis";
+import { Route as MockExamResponseRoute } from "@/router/mock-exams/response/$studentResponseId";
 
 export function StudentsResponses() {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
-  //const navigate = useNavigate();
 
-  const urlFilter = searchParams.get("query") ?? "";
-  const [filter, setFilter] = useState(urlFilter);
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+
+  const { page, pageSize, query } = search;
+
+  const [filter, setFilter] = useState(query);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   useEffect(() => {
-    setSearchParams((params) => {
-      if (params.get("query") !== debouncedQueryFilter) {
-        params.set("page", "1");
-        params.set("query", debouncedQueryFilter);
-        return new URLSearchParams(params);
-      }
-      return params;
-    });
-  }, [debouncedQueryFilter, setSearchParams]);
-
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+    if (debouncedQueryFilter !== query) {
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          page: 1,
+          query: debouncedQueryFilter,
+        }),
+      });
+    }
+  }, [debouncedQueryFilter, query, navigate]);
 
   const { data: studentsResponsePage, isLoading } = useQuery<
     PageResponse<MockExamDiagnosisResponse>
   >({
-    queryKey: ["get-responses", urlFilter, page, pageSize],
+    queryKey: ["get-responses", query, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`
+        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${query}`
       );
       const data = await response.json();
 
@@ -84,6 +83,13 @@ export function StudentsResponses() {
   async function handleDeleteStudentResponse(studentResponseId: string) {
     await deleteResponse.mutateAsync(studentResponseId);
   }
+
+  const navigateToResponse = (studentResponseId: string) => {
+    navigate({
+      to: MockExamResponseRoute.to,
+      params: { studentResponseId },
+    });
+  };
 
   if (isLoading) {
     return null;
@@ -122,6 +128,7 @@ export function StudentsResponses() {
           <DiagnosisTable
             entity={studentsResponsePage?.data}
             deleteFunction={handleDeleteStudentResponse}
+            onViewResponse={navigateToResponse}
           />
         )}
         {studentsResponsePage && (

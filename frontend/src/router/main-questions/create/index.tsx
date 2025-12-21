@@ -12,5 +12,5 @@ export const Route = createFileRoute("/main-questions/create/")({
   //beforeLoad: () => requirePermissao(Permissao.ALTERAR_PERFIL),
   component: CreateMainQuestionPage,
   pendingComponent: () => <FullScreenLoader />,
-  errorComponent: () => <NotFoundPage />,
+  notFoundComponent: () => <NotFoundPage />,
 });

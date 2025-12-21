@@ -8,17 +8,17 @@ import { AlternativeForm } from "../alternative/alternativesForm";
 import { mainQuestionSchema } from "./mainQuestionSchema";
 import { CreateQuestion } from "../../types/MainQuestion";
 import { CreateAlternative } from "../../types/Alternative";
-import { useNavigate } from "react-router-dom";
 import { SelectLevel } from "../ui/selectLevel";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
+import { Route } from "@/router/main-questions/create";
 
 type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
 export function CreateMainQuestionForm() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   const formMethods = useForm<CreateMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
@@ -84,7 +84,10 @@ export function CreateMainQuestionForm() {
           queryKey: ["get-main-questions"],
         });
         successAlert("Questão principal salva com sucesso!");
-        navigate("/main-questions");
+        navigate({
+          to: "/main-questions",
+          search: { page: 1, pageSize: 10, query: "" },
+        });
       }
 
       if (response.status === 400) {
@@ -226,7 +229,14 @@ export function CreateMainQuestionForm() {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/main-questions",
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>

@@ -8,583 +8,604 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./router/__root";
-import { Route as LogoutRouteImport } from "./router/logout";
-import { Route as IndexRouteImport } from "./router/index";
-import { Route as UsuariosIndexRouteImport } from "./router/usuarios/index";
-import { Route as TagsIndexRouteImport } from "./router/tags/index";
-import { Route as SubjectsIndexRouteImport } from "./router/subjects/index";
-import { Route as PerfisIndexRouteImport } from "./router/perfis/index";
-import { Route as MockExamsIndexRouteImport } from "./router/mock-exams/index";
-import { Route as MainQuestionsIndexRouteImport } from "./router/main-questions/index";
-import { Route as LoginIndexRouteImport } from "./router/login/index";
-import { Route as DiagnosisIndexRouteImport } from "./router/diagnosis/index";
-import { Route as PerfisNovoPerfilRouteImport } from "./router/perfis/novo-perfil";
-import { Route as MockExamsCreateIndexRouteImport } from "./router/mock-exams/create/index";
-import { Route as MainQuestionsCreateIndexRouteImport } from "./router/main-questions/create/index";
-import { Route as DiagnosisGenerateIndexRouteImport } from "./router/diagnosis/generate/index";
-import { Route as UsuariosVisualizarUsuarioIdRouteImport } from "./router/usuarios/visualizar-usuario/$id";
-import { Route as UsuariosEditarUsuarioIdRouteImport } from "./router/usuarios/editar-usuario/$id";
-import { Route as PerfisVisualizarPerfilIdRouteImport } from "./router/perfis/visualizar-perfil/$id";
-import { Route as PerfisEditarPerfilIdRouteImport } from "./router/perfis/editar-perfil/$id";
-import { Route as MockExamsEditMockExamIdRouteImport } from "./router/mock-exams/edit/$mockExamId";
-import { Route as MainQuestionsEditMainQuestionIdRouteImport } from "./router/main-questions/edit/$mainQuestionId";
-import { Route as MockExamsMockExamIdSubjectsIndexRouteImport } from "./router/mock-exams/$mockExamId/subjects/index";
-import { Route as MockExamsMockExamIdMainQuestionsIndexRouteImport } from "./router/mock-exams/$mockExamId/main-questions/index";
-import { Route as MainQuestionsMainQuestionIdSubjectsIndexRouteImport } from "./router/main-questions/$mainQuestionId/subjects/index";
-import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport } from "./router/main-questions/$mainQuestionId/adapted-questions/index";
-import { Route as MockExamsMockExamIdMockExamAnswersIdexRouteImport } from "./router/mock-exams/$mockExamId/mock-exam-answers";
-import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport } from "./router/main-questions/$mainQuestionId/adapted-questions/create/index";
-import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport } from "./router/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
+import { Route as rootRouteImport } from './router/__root'
+import { Route as LogoutRouteImport } from './router/logout'
+import { Route as IndexRouteImport } from './router/index'
+import { Route as UsuariosIndexRouteImport } from './router/usuarios/index'
+import { Route as TagsIndexRouteImport } from './router/tags/index'
+import { Route as SubjectsIndexRouteImport } from './router/subjects/index'
+import { Route as PerfisIndexRouteImport } from './router/perfis/index'
+import { Route as MockExamsIndexRouteImport } from './router/mock-exams/index'
+import { Route as MainQuestionsIndexRouteImport } from './router/main-questions/index'
+import { Route as LoginIndexRouteImport } from './router/login/index'
+import { Route as DiagnosisIndexRouteImport } from './router/diagnosis/index'
+import { Route as PerfisNovoPerfilRouteImport } from './router/perfis/novo-perfil'
+import { Route as MockExamsCreateIndexRouteImport } from './router/mock-exams/create/index'
+import { Route as MainQuestionsCreateIndexRouteImport } from './router/main-questions/create/index'
+import { Route as DiagnosisGenerateIndexRouteImport } from './router/diagnosis/generate/index'
+import { Route as UsuariosVisualizarUsuarioIdRouteImport } from './router/usuarios/visualizar-usuario/$id'
+import { Route as UsuariosEditarUsuarioIdRouteImport } from './router/usuarios/editar-usuario/$id'
+import { Route as PerfisVisualizarPerfilIdRouteImport } from './router/perfis/visualizar-perfil/$id'
+import { Route as PerfisEditarPerfilIdRouteImport } from './router/perfis/editar-perfil/$id'
+import { Route as MockExamsResponseStudentResponseIdRouteImport } from './router/mock-exams/response/$studentResponseId'
+import { Route as MockExamsEditMockExamIdRouteImport } from './router/mock-exams/edit/$mockExamId'
+import { Route as MainQuestionsEditMainQuestionIdRouteImport } from './router/main-questions/edit/$mainQuestionId'
+import { Route as MockExamsMockExamIdSubjectsIndexRouteImport } from './router/mock-exams/$mockExamId/subjects/index'
+import { Route as MockExamsMockExamIdMockExamAnswersIndexRouteImport } from './router/mock-exams/$mockExamId/mock-exam-answers/index'
+import { Route as MockExamsMockExamIdMainQuestionsIndexRouteImport } from './router/mock-exams/$mockExamId/main-questions/index'
+import { Route as MainQuestionsMainQuestionIdSubjectsIndexRouteImport } from './router/main-questions/$mainQuestionId/subjects/index'
+import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport } from './router/main-questions/$mainQuestionId/adapted-questions/index'
+import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport } from './router/main-questions/$mainQuestionId/adapted-questions/create/index'
+import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport } from './router/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
 
 const LogoutRoute = LogoutRouteImport.update({
-  id: "/logout",
-  path: "/logout",
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UsuariosIndexRoute = UsuariosIndexRouteImport.update({
-  id: "/usuarios/",
-  path: "/usuarios/",
+  id: '/usuarios/',
+  path: '/usuarios/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
-  id: "/tags/",
-  path: "/tags/",
+  id: '/tags/',
+  path: '/tags/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const SubjectsIndexRoute = SubjectsIndexRouteImport.update({
-  id: "/subjects/",
-  path: "/subjects/",
+  id: '/subjects/',
+  path: '/subjects/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PerfisIndexRoute = PerfisIndexRouteImport.update({
-  id: "/perfis/",
-  path: "/perfis/",
+  id: '/perfis/',
+  path: '/perfis/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MockExamsIndexRoute = MockExamsIndexRouteImport.update({
-  id: "/mock-exams/",
-  path: "/mock-exams/",
+  id: '/mock-exams/',
+  path: '/mock-exams/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MainQuestionsIndexRoute = MainQuestionsIndexRouteImport.update({
-  id: "/main-questions/",
-  path: "/main-questions/",
+  id: '/main-questions/',
+  path: '/main-questions/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: "/login/",
-  path: "/login/",
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DiagnosisIndexRoute = DiagnosisIndexRouteImport.update({
-  id: "/diagnosis/",
-  path: "/diagnosis/",
+  id: '/diagnosis/',
+  path: '/diagnosis/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PerfisNovoPerfilRoute = PerfisNovoPerfilRouteImport.update({
-  id: "/perfis/novo-perfil",
-  path: "/perfis/novo-perfil",
+  id: '/perfis/novo-perfil',
+  path: '/perfis/novo-perfil',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MockExamsCreateIndexRoute = MockExamsCreateIndexRouteImport.update({
-  id: "/mock-exams/create/",
-  path: "/mock-exams/create/",
+  id: '/mock-exams/create/',
+  path: '/mock-exams/create/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MainQuestionsCreateIndexRoute =
   MainQuestionsCreateIndexRouteImport.update({
-    id: "/main-questions/create/",
-    path: "/main-questions/create/",
+    id: '/main-questions/create/',
+    path: '/main-questions/create/',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const DiagnosisGenerateIndexRoute = DiagnosisGenerateIndexRouteImport.update({
-  id: "/diagnosis/generate/",
-  path: "/diagnosis/generate/",
+  id: '/diagnosis/generate/',
+  path: '/diagnosis/generate/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UsuariosVisualizarUsuarioIdRoute =
   UsuariosVisualizarUsuarioIdRouteImport.update({
-    id: "/usuarios/visualizar-usuario/$id",
-    path: "/usuarios/visualizar-usuario/$id",
+    id: '/usuarios/visualizar-usuario/$id',
+    path: '/usuarios/visualizar-usuario/$id',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const UsuariosEditarUsuarioIdRoute = UsuariosEditarUsuarioIdRouteImport.update({
-  id: "/usuarios/editar-usuario/$id",
-  path: "/usuarios/editar-usuario/$id",
+  id: '/usuarios/editar-usuario/$id',
+  path: '/usuarios/editar-usuario/$id',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const PerfisVisualizarPerfilIdRoute =
   PerfisVisualizarPerfilIdRouteImport.update({
-    id: "/perfis/visualizar-perfil/$id",
-    path: "/perfis/visualizar-perfil/$id",
+    id: '/perfis/visualizar-perfil/$id',
+    path: '/perfis/visualizar-perfil/$id',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const PerfisEditarPerfilIdRoute = PerfisEditarPerfilIdRouteImport.update({
-  id: "/perfis/editar-perfil/$id",
-  path: "/perfis/editar-perfil/$id",
+  id: '/perfis/editar-perfil/$id',
+  path: '/perfis/editar-perfil/$id',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
+const MockExamsResponseStudentResponseIdRoute =
+  MockExamsResponseStudentResponseIdRouteImport.update({
+    id: '/mock-exams/response/$studentResponseId',
+    path: '/mock-exams/response/$studentResponseId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MockExamsEditMockExamIdRoute = MockExamsEditMockExamIdRouteImport.update({
-  id: "/mock-exams/edit/$mockExamId",
-  path: "/mock-exams/edit/$mockExamId",
+  id: '/mock-exams/edit/$mockExamId',
+  path: '/mock-exams/edit/$mockExamId',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const MainQuestionsEditMainQuestionIdRoute =
   MainQuestionsEditMainQuestionIdRouteImport.update({
-    id: "/main-questions/edit/$mainQuestionId",
-    path: "/main-questions/edit/$mainQuestionId",
+    id: '/main-questions/edit/$mainQuestionId',
+    path: '/main-questions/edit/$mainQuestionId',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const MockExamsMockExamIdSubjectsIndexRoute =
   MockExamsMockExamIdSubjectsIndexRouteImport.update({
-    id: "/mock-exams/$mockExamId/subjects/",
-    path: "/mock-exams/$mockExamId/subjects/",
+    id: '/mock-exams/$mockExamId/subjects/',
+    path: '/mock-exams/$mockExamId/subjects/',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
+const MockExamsMockExamIdMockExamAnswersIndexRoute =
+  MockExamsMockExamIdMockExamAnswersIndexRouteImport.update({
+    id: '/mock-exams/$mockExamId/mock-exam-answers/',
+    path: '/mock-exams/$mockExamId/mock-exam-answers/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MockExamsMockExamIdMainQuestionsIndexRoute =
   MockExamsMockExamIdMainQuestionsIndexRouteImport.update({
-    id: "/mock-exams/$mockExamId/main-questions/",
-    path: "/mock-exams/$mockExamId/main-questions/",
+    id: '/mock-exams/$mockExamId/main-questions/',
+    path: '/mock-exams/$mockExamId/main-questions/',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const MainQuestionsMainQuestionIdSubjectsIndexRoute =
   MainQuestionsMainQuestionIdSubjectsIndexRouteImport.update({
-    id: "/main-questions/$mainQuestionId/subjects/",
-    path: "/main-questions/$mainQuestionId/subjects/",
+    id: '/main-questions/$mainQuestionId/subjects/',
+    path: '/main-questions/$mainQuestionId/subjects/',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute =
   MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport.update({
-    id: "/main-questions/$mainQuestionId/adapted-questions/",
-    path: "/main-questions/$mainQuestionId/adapted-questions/",
+    id: '/main-questions/$mainQuestionId/adapted-questions/',
+    path: '/main-questions/$mainQuestionId/adapted-questions/',
     getParentRoute: () => rootRouteImport,
-  } as any);
-const MockExamsMockExamIdMockExamAnswersIdexRoute =
-  MockExamsMockExamIdMockExamAnswersIdexRouteImport.update({
-    id: "/mock-exams/$mockExamId/mock-exam-answers/idex",
-    path: "/mock-exams/$mockExamId/mock-exam-answers/idex",
-    getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute =
   MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport.update({
-    id: "/main-questions/$mainQuestionId/adapted-questions/create/",
-    path: "/main-questions/$mainQuestionId/adapted-questions/create/",
+    id: '/main-questions/$mainQuestionId/adapted-questions/create/',
+    path: '/main-questions/$mainQuestionId/adapted-questions/create/',
     getParentRoute: () => rootRouteImport,
-  } as any);
+  } as any)
 const MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute =
   MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport.update(
     {
-      id: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId",
-      path: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId",
+      id: '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId',
+      path: '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId',
       getParentRoute: () => rootRouteImport,
-    } as any
-  );
+    } as any,
+  )
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/logout": typeof LogoutRoute;
-  "/perfis/novo-perfil": typeof PerfisNovoPerfilRoute;
-  "/diagnosis": typeof DiagnosisIndexRoute;
-  "/login": typeof LoginIndexRoute;
-  "/main-questions": typeof MainQuestionsIndexRoute;
-  "/mock-exams": typeof MockExamsIndexRoute;
-  "/perfis": typeof PerfisIndexRoute;
-  "/subjects": typeof SubjectsIndexRoute;
-  "/tags": typeof TagsIndexRoute;
-  "/usuarios": typeof UsuariosIndexRoute;
-  "/main-questions/edit/$mainQuestionId": typeof MainQuestionsEditMainQuestionIdRoute;
-  "/mock-exams/edit/$mockExamId": typeof MockExamsEditMockExamIdRoute;
-  "/perfis/editar-perfil/$id": typeof PerfisEditarPerfilIdRoute;
-  "/perfis/visualizar-perfil/$id": typeof PerfisVisualizarPerfilIdRoute;
-  "/usuarios/editar-usuario/$id": typeof UsuariosEditarUsuarioIdRoute;
-  "/usuarios/visualizar-usuario/$id": typeof UsuariosVisualizarUsuarioIdRoute;
-  "/diagnosis/generate": typeof DiagnosisGenerateIndexRoute;
-  "/main-questions/create": typeof MainQuestionsCreateIndexRoute;
-  "/mock-exams/create": typeof MockExamsCreateIndexRoute;
-  "/mock-exams/$mockExamId/mock-exam-answers/idex": typeof MockExamsMockExamIdMockExamAnswersIdexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions": typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute;
-  "/main-questions/$mainQuestionId/subjects": typeof MainQuestionsMainQuestionIdSubjectsIndexRoute;
-  "/mock-exams/$mockExamId/main-questions": typeof MockExamsMockExamIdMainQuestionsIndexRoute;
-  "/mock-exams/$mockExamId/subjects": typeof MockExamsMockExamIdSubjectsIndexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId": typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/create": typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute;
+  '/': typeof IndexRoute
+  '/logout': typeof LogoutRoute
+  '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
+  '/diagnosis': typeof DiagnosisIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/main-questions': typeof MainQuestionsIndexRoute
+  '/mock-exams': typeof MockExamsIndexRoute
+  '/perfis': typeof PerfisIndexRoute
+  '/subjects': typeof SubjectsIndexRoute
+  '/tags': typeof TagsIndexRoute
+  '/usuarios': typeof UsuariosIndexRoute
+  '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
+  '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
+  '/mock-exams/response/$studentResponseId': typeof MockExamsResponseStudentResponseIdRoute
+  '/perfis/editar-perfil/$id': typeof PerfisEditarPerfilIdRoute
+  '/perfis/visualizar-perfil/$id': typeof PerfisVisualizarPerfilIdRoute
+  '/usuarios/editar-usuario/$id': typeof UsuariosEditarUsuarioIdRoute
+  '/usuarios/visualizar-usuario/$id': typeof UsuariosVisualizarUsuarioIdRoute
+  '/diagnosis/generate': typeof DiagnosisGenerateIndexRoute
+  '/main-questions/create': typeof MainQuestionsCreateIndexRoute
+  '/mock-exams/create': typeof MockExamsCreateIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions': typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute
+  '/main-questions/$mainQuestionId/subjects': typeof MainQuestionsMainQuestionIdSubjectsIndexRoute
+  '/mock-exams/$mockExamId/main-questions': typeof MockExamsMockExamIdMainQuestionsIndexRoute
+  '/mock-exams/$mockExamId/mock-exam-answers': typeof MockExamsMockExamIdMockExamAnswersIndexRoute
+  '/mock-exams/$mockExamId/subjects': typeof MockExamsMockExamIdSubjectsIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId': typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute
+  '/main-questions/$mainQuestionId/adapted-questions/create': typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/logout": typeof LogoutRoute;
-  "/perfis/novo-perfil": typeof PerfisNovoPerfilRoute;
-  "/diagnosis": typeof DiagnosisIndexRoute;
-  "/login": typeof LoginIndexRoute;
-  "/main-questions": typeof MainQuestionsIndexRoute;
-  "/mock-exams": typeof MockExamsIndexRoute;
-  "/perfis": typeof PerfisIndexRoute;
-  "/subjects": typeof SubjectsIndexRoute;
-  "/tags": typeof TagsIndexRoute;
-  "/usuarios": typeof UsuariosIndexRoute;
-  "/main-questions/edit/$mainQuestionId": typeof MainQuestionsEditMainQuestionIdRoute;
-  "/mock-exams/edit/$mockExamId": typeof MockExamsEditMockExamIdRoute;
-  "/perfis/editar-perfil/$id": typeof PerfisEditarPerfilIdRoute;
-  "/perfis/visualizar-perfil/$id": typeof PerfisVisualizarPerfilIdRoute;
-  "/usuarios/editar-usuario/$id": typeof UsuariosEditarUsuarioIdRoute;
-  "/usuarios/visualizar-usuario/$id": typeof UsuariosVisualizarUsuarioIdRoute;
-  "/diagnosis/generate": typeof DiagnosisGenerateIndexRoute;
-  "/main-questions/create": typeof MainQuestionsCreateIndexRoute;
-  "/mock-exams/create": typeof MockExamsCreateIndexRoute;
-  "/mock-exams/$mockExamId/mock-exam-answers/idex": typeof MockExamsMockExamIdMockExamAnswersIdexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions": typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute;
-  "/main-questions/$mainQuestionId/subjects": typeof MainQuestionsMainQuestionIdSubjectsIndexRoute;
-  "/mock-exams/$mockExamId/main-questions": typeof MockExamsMockExamIdMainQuestionsIndexRoute;
-  "/mock-exams/$mockExamId/subjects": typeof MockExamsMockExamIdSubjectsIndexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId": typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/create": typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute;
+  '/': typeof IndexRoute
+  '/logout': typeof LogoutRoute
+  '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
+  '/diagnosis': typeof DiagnosisIndexRoute
+  '/login': typeof LoginIndexRoute
+  '/main-questions': typeof MainQuestionsIndexRoute
+  '/mock-exams': typeof MockExamsIndexRoute
+  '/perfis': typeof PerfisIndexRoute
+  '/subjects': typeof SubjectsIndexRoute
+  '/tags': typeof TagsIndexRoute
+  '/usuarios': typeof UsuariosIndexRoute
+  '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
+  '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
+  '/mock-exams/response/$studentResponseId': typeof MockExamsResponseStudentResponseIdRoute
+  '/perfis/editar-perfil/$id': typeof PerfisEditarPerfilIdRoute
+  '/perfis/visualizar-perfil/$id': typeof PerfisVisualizarPerfilIdRoute
+  '/usuarios/editar-usuario/$id': typeof UsuariosEditarUsuarioIdRoute
+  '/usuarios/visualizar-usuario/$id': typeof UsuariosVisualizarUsuarioIdRoute
+  '/diagnosis/generate': typeof DiagnosisGenerateIndexRoute
+  '/main-questions/create': typeof MainQuestionsCreateIndexRoute
+  '/mock-exams/create': typeof MockExamsCreateIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions': typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute
+  '/main-questions/$mainQuestionId/subjects': typeof MainQuestionsMainQuestionIdSubjectsIndexRoute
+  '/mock-exams/$mockExamId/main-questions': typeof MockExamsMockExamIdMainQuestionsIndexRoute
+  '/mock-exams/$mockExamId/mock-exam-answers': typeof MockExamsMockExamIdMockExamAnswersIndexRoute
+  '/mock-exams/$mockExamId/subjects': typeof MockExamsMockExamIdSubjectsIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId': typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute
+  '/main-questions/$mainQuestionId/adapted-questions/create': typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/logout": typeof LogoutRoute;
-  "/perfis/novo-perfil": typeof PerfisNovoPerfilRoute;
-  "/diagnosis/": typeof DiagnosisIndexRoute;
-  "/login/": typeof LoginIndexRoute;
-  "/main-questions/": typeof MainQuestionsIndexRoute;
-  "/mock-exams/": typeof MockExamsIndexRoute;
-  "/perfis/": typeof PerfisIndexRoute;
-  "/subjects/": typeof SubjectsIndexRoute;
-  "/tags/": typeof TagsIndexRoute;
-  "/usuarios/": typeof UsuariosIndexRoute;
-  "/main-questions/edit/$mainQuestionId": typeof MainQuestionsEditMainQuestionIdRoute;
-  "/mock-exams/edit/$mockExamId": typeof MockExamsEditMockExamIdRoute;
-  "/perfis/editar-perfil/$id": typeof PerfisEditarPerfilIdRoute;
-  "/perfis/visualizar-perfil/$id": typeof PerfisVisualizarPerfilIdRoute;
-  "/usuarios/editar-usuario/$id": typeof UsuariosEditarUsuarioIdRoute;
-  "/usuarios/visualizar-usuario/$id": typeof UsuariosVisualizarUsuarioIdRoute;
-  "/diagnosis/generate/": typeof DiagnosisGenerateIndexRoute;
-  "/main-questions/create/": typeof MainQuestionsCreateIndexRoute;
-  "/mock-exams/create/": typeof MockExamsCreateIndexRoute;
-  "/mock-exams/$mockExamId/mock-exam-answers/idex": typeof MockExamsMockExamIdMockExamAnswersIdexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/": typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute;
-  "/main-questions/$mainQuestionId/subjects/": typeof MainQuestionsMainQuestionIdSubjectsIndexRoute;
-  "/mock-exams/$mockExamId/main-questions/": typeof MockExamsMockExamIdMainQuestionsIndexRoute;
-  "/mock-exams/$mockExamId/subjects/": typeof MockExamsMockExamIdSubjectsIndexRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId": typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute;
-  "/main-questions/$mainQuestionId/adapted-questions/create/": typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/logout': typeof LogoutRoute
+  '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
+  '/diagnosis/': typeof DiagnosisIndexRoute
+  '/login/': typeof LoginIndexRoute
+  '/main-questions/': typeof MainQuestionsIndexRoute
+  '/mock-exams/': typeof MockExamsIndexRoute
+  '/perfis/': typeof PerfisIndexRoute
+  '/subjects/': typeof SubjectsIndexRoute
+  '/tags/': typeof TagsIndexRoute
+  '/usuarios/': typeof UsuariosIndexRoute
+  '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
+  '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
+  '/mock-exams/response/$studentResponseId': typeof MockExamsResponseStudentResponseIdRoute
+  '/perfis/editar-perfil/$id': typeof PerfisEditarPerfilIdRoute
+  '/perfis/visualizar-perfil/$id': typeof PerfisVisualizarPerfilIdRoute
+  '/usuarios/editar-usuario/$id': typeof UsuariosEditarUsuarioIdRoute
+  '/usuarios/visualizar-usuario/$id': typeof UsuariosVisualizarUsuarioIdRoute
+  '/diagnosis/generate/': typeof DiagnosisGenerateIndexRoute
+  '/main-questions/create/': typeof MainQuestionsCreateIndexRoute
+  '/mock-exams/create/': typeof MockExamsCreateIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions/': typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute
+  '/main-questions/$mainQuestionId/subjects/': typeof MainQuestionsMainQuestionIdSubjectsIndexRoute
+  '/mock-exams/$mockExamId/main-questions/': typeof MockExamsMockExamIdMainQuestionsIndexRoute
+  '/mock-exams/$mockExamId/mock-exam-answers/': typeof MockExamsMockExamIdMockExamAnswersIndexRoute
+  '/mock-exams/$mockExamId/subjects/': typeof MockExamsMockExamIdSubjectsIndexRoute
+  '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId': typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute
+  '/main-questions/$mainQuestionId/adapted-questions/create/': typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | "/"
-    | "/logout"
-    | "/perfis/novo-perfil"
-    | "/diagnosis"
-    | "/login"
-    | "/main-questions"
-    | "/mock-exams"
-    | "/perfis"
-    | "/subjects"
-    | "/tags"
-    | "/usuarios"
-    | "/main-questions/edit/$mainQuestionId"
-    | "/mock-exams/edit/$mockExamId"
-    | "/perfis/editar-perfil/$id"
-    | "/perfis/visualizar-perfil/$id"
-    | "/usuarios/editar-usuario/$id"
-    | "/usuarios/visualizar-usuario/$id"
-    | "/diagnosis/generate"
-    | "/main-questions/create"
-    | "/mock-exams/create"
-    | "/mock-exams/$mockExamId/mock-exam-answers/idex"
-    | "/main-questions/$mainQuestionId/adapted-questions"
-    | "/main-questions/$mainQuestionId/subjects"
-    | "/mock-exams/$mockExamId/main-questions"
-    | "/mock-exams/$mockExamId/subjects"
-    | "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId"
-    | "/main-questions/$mainQuestionId/adapted-questions/create";
-  fileRoutesByTo: FileRoutesByTo;
+    | '/'
+    | '/logout'
+    | '/perfis/novo-perfil'
+    | '/diagnosis'
+    | '/login'
+    | '/main-questions'
+    | '/mock-exams'
+    | '/perfis'
+    | '/subjects'
+    | '/tags'
+    | '/usuarios'
+    | '/main-questions/edit/$mainQuestionId'
+    | '/mock-exams/edit/$mockExamId'
+    | '/mock-exams/response/$studentResponseId'
+    | '/perfis/editar-perfil/$id'
+    | '/perfis/visualizar-perfil/$id'
+    | '/usuarios/editar-usuario/$id'
+    | '/usuarios/visualizar-usuario/$id'
+    | '/diagnosis/generate'
+    | '/main-questions/create'
+    | '/mock-exams/create'
+    | '/main-questions/$mainQuestionId/adapted-questions'
+    | '/main-questions/$mainQuestionId/subjects'
+    | '/mock-exams/$mockExamId/main-questions'
+    | '/mock-exams/$mockExamId/mock-exam-answers'
+    | '/mock-exams/$mockExamId/subjects'
+    | '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+    | '/main-questions/$mainQuestionId/adapted-questions/create'
+  fileRoutesByTo: FileRoutesByTo
   to:
-    | "/"
-    | "/logout"
-    | "/perfis/novo-perfil"
-    | "/diagnosis"
-    | "/login"
-    | "/main-questions"
-    | "/mock-exams"
-    | "/perfis"
-    | "/subjects"
-    | "/tags"
-    | "/usuarios"
-    | "/main-questions/edit/$mainQuestionId"
-    | "/mock-exams/edit/$mockExamId"
-    | "/perfis/editar-perfil/$id"
-    | "/perfis/visualizar-perfil/$id"
-    | "/usuarios/editar-usuario/$id"
-    | "/usuarios/visualizar-usuario/$id"
-    | "/diagnosis/generate"
-    | "/main-questions/create"
-    | "/mock-exams/create"
-    | "/mock-exams/$mockExamId/mock-exam-answers/idex"
-    | "/main-questions/$mainQuestionId/adapted-questions"
-    | "/main-questions/$mainQuestionId/subjects"
-    | "/mock-exams/$mockExamId/main-questions"
-    | "/mock-exams/$mockExamId/subjects"
-    | "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId"
-    | "/main-questions/$mainQuestionId/adapted-questions/create";
+    | '/'
+    | '/logout'
+    | '/perfis/novo-perfil'
+    | '/diagnosis'
+    | '/login'
+    | '/main-questions'
+    | '/mock-exams'
+    | '/perfis'
+    | '/subjects'
+    | '/tags'
+    | '/usuarios'
+    | '/main-questions/edit/$mainQuestionId'
+    | '/mock-exams/edit/$mockExamId'
+    | '/mock-exams/response/$studentResponseId'
+    | '/perfis/editar-perfil/$id'
+    | '/perfis/visualizar-perfil/$id'
+    | '/usuarios/editar-usuario/$id'
+    | '/usuarios/visualizar-usuario/$id'
+    | '/diagnosis/generate'
+    | '/main-questions/create'
+    | '/mock-exams/create'
+    | '/main-questions/$mainQuestionId/adapted-questions'
+    | '/main-questions/$mainQuestionId/subjects'
+    | '/mock-exams/$mockExamId/main-questions'
+    | '/mock-exams/$mockExamId/mock-exam-answers'
+    | '/mock-exams/$mockExamId/subjects'
+    | '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+    | '/main-questions/$mainQuestionId/adapted-questions/create'
   id:
-    | "__root__"
-    | "/"
-    | "/logout"
-    | "/perfis/novo-perfil"
-    | "/diagnosis/"
-    | "/login/"
-    | "/main-questions/"
-    | "/mock-exams/"
-    | "/perfis/"
-    | "/subjects/"
-    | "/tags/"
-    | "/usuarios/"
-    | "/main-questions/edit/$mainQuestionId"
-    | "/mock-exams/edit/$mockExamId"
-    | "/perfis/editar-perfil/$id"
-    | "/perfis/visualizar-perfil/$id"
-    | "/usuarios/editar-usuario/$id"
-    | "/usuarios/visualizar-usuario/$id"
-    | "/diagnosis/generate/"
-    | "/main-questions/create/"
-    | "/mock-exams/create/"
-    | "/mock-exams/$mockExamId/mock-exam-answers/idex"
-    | "/main-questions/$mainQuestionId/adapted-questions/"
-    | "/main-questions/$mainQuestionId/subjects/"
-    | "/mock-exams/$mockExamId/main-questions/"
-    | "/mock-exams/$mockExamId/subjects/"
-    | "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId"
-    | "/main-questions/$mainQuestionId/adapted-questions/create/";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/logout'
+    | '/perfis/novo-perfil'
+    | '/diagnosis/'
+    | '/login/'
+    | '/main-questions/'
+    | '/mock-exams/'
+    | '/perfis/'
+    | '/subjects/'
+    | '/tags/'
+    | '/usuarios/'
+    | '/main-questions/edit/$mainQuestionId'
+    | '/mock-exams/edit/$mockExamId'
+    | '/mock-exams/response/$studentResponseId'
+    | '/perfis/editar-perfil/$id'
+    | '/perfis/visualizar-perfil/$id'
+    | '/usuarios/editar-usuario/$id'
+    | '/usuarios/visualizar-usuario/$id'
+    | '/diagnosis/generate/'
+    | '/main-questions/create/'
+    | '/mock-exams/create/'
+    | '/main-questions/$mainQuestionId/adapted-questions/'
+    | '/main-questions/$mainQuestionId/subjects/'
+    | '/mock-exams/$mockExamId/main-questions/'
+    | '/mock-exams/$mockExamId/mock-exam-answers/'
+    | '/mock-exams/$mockExamId/subjects/'
+    | '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+    | '/main-questions/$mainQuestionId/adapted-questions/create/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  LogoutRoute: typeof LogoutRoute;
-  PerfisNovoPerfilRoute: typeof PerfisNovoPerfilRoute;
-  DiagnosisIndexRoute: typeof DiagnosisIndexRoute;
-  LoginIndexRoute: typeof LoginIndexRoute;
-  MainQuestionsIndexRoute: typeof MainQuestionsIndexRoute;
-  MockExamsIndexRoute: typeof MockExamsIndexRoute;
-  PerfisIndexRoute: typeof PerfisIndexRoute;
-  SubjectsIndexRoute: typeof SubjectsIndexRoute;
-  TagsIndexRoute: typeof TagsIndexRoute;
-  UsuariosIndexRoute: typeof UsuariosIndexRoute;
-  MainQuestionsEditMainQuestionIdRoute: typeof MainQuestionsEditMainQuestionIdRoute;
-  MockExamsEditMockExamIdRoute: typeof MockExamsEditMockExamIdRoute;
-  PerfisEditarPerfilIdRoute: typeof PerfisEditarPerfilIdRoute;
-  PerfisVisualizarPerfilIdRoute: typeof PerfisVisualizarPerfilIdRoute;
-  UsuariosEditarUsuarioIdRoute: typeof UsuariosEditarUsuarioIdRoute;
-  UsuariosVisualizarUsuarioIdRoute: typeof UsuariosVisualizarUsuarioIdRoute;
-  DiagnosisGenerateIndexRoute: typeof DiagnosisGenerateIndexRoute;
-  MainQuestionsCreateIndexRoute: typeof MainQuestionsCreateIndexRoute;
-  MockExamsCreateIndexRoute: typeof MockExamsCreateIndexRoute;
-  MockExamsMockExamIdMockExamAnswersIdexRoute: typeof MockExamsMockExamIdMockExamAnswersIdexRoute;
-  MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute;
-  MainQuestionsMainQuestionIdSubjectsIndexRoute: typeof MainQuestionsMainQuestionIdSubjectsIndexRoute;
-  MockExamsMockExamIdMainQuestionsIndexRoute: typeof MockExamsMockExamIdMainQuestionsIndexRoute;
-  MockExamsMockExamIdSubjectsIndexRoute: typeof MockExamsMockExamIdSubjectsIndexRoute;
-  MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute;
-  MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute;
+  IndexRoute: typeof IndexRoute
+  LogoutRoute: typeof LogoutRoute
+  PerfisNovoPerfilRoute: typeof PerfisNovoPerfilRoute
+  DiagnosisIndexRoute: typeof DiagnosisIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
+  MainQuestionsIndexRoute: typeof MainQuestionsIndexRoute
+  MockExamsIndexRoute: typeof MockExamsIndexRoute
+  PerfisIndexRoute: typeof PerfisIndexRoute
+  SubjectsIndexRoute: typeof SubjectsIndexRoute
+  TagsIndexRoute: typeof TagsIndexRoute
+  UsuariosIndexRoute: typeof UsuariosIndexRoute
+  MainQuestionsEditMainQuestionIdRoute: typeof MainQuestionsEditMainQuestionIdRoute
+  MockExamsEditMockExamIdRoute: typeof MockExamsEditMockExamIdRoute
+  MockExamsResponseStudentResponseIdRoute: typeof MockExamsResponseStudentResponseIdRoute
+  PerfisEditarPerfilIdRoute: typeof PerfisEditarPerfilIdRoute
+  PerfisVisualizarPerfilIdRoute: typeof PerfisVisualizarPerfilIdRoute
+  UsuariosEditarUsuarioIdRoute: typeof UsuariosEditarUsuarioIdRoute
+  UsuariosVisualizarUsuarioIdRoute: typeof UsuariosVisualizarUsuarioIdRoute
+  DiagnosisGenerateIndexRoute: typeof DiagnosisGenerateIndexRoute
+  MainQuestionsCreateIndexRoute: typeof MainQuestionsCreateIndexRoute
+  MockExamsCreateIndexRoute: typeof MockExamsCreateIndexRoute
+  MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute
+  MainQuestionsMainQuestionIdSubjectsIndexRoute: typeof MainQuestionsMainQuestionIdSubjectsIndexRoute
+  MockExamsMockExamIdMainQuestionsIndexRoute: typeof MockExamsMockExamIdMainQuestionsIndexRoute
+  MockExamsMockExamIdMockExamAnswersIndexRoute: typeof MockExamsMockExamIdMockExamAnswersIndexRoute
+  MockExamsMockExamIdSubjectsIndexRoute: typeof MockExamsMockExamIdSubjectsIndexRoute
+  MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute
+  MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/logout": {
-      id: "/logout";
-      path: "/logout";
-      fullPath: "/logout";
-      preLoaderRoute: typeof LogoutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/usuarios/": {
-      id: "/usuarios/";
-      path: "/usuarios";
-      fullPath: "/usuarios";
-      preLoaderRoute: typeof UsuariosIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/tags/": {
-      id: "/tags/";
-      path: "/tags";
-      fullPath: "/tags";
-      preLoaderRoute: typeof TagsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/subjects/": {
-      id: "/subjects/";
-      path: "/subjects";
-      fullPath: "/subjects";
-      preLoaderRoute: typeof SubjectsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/perfis/": {
-      id: "/perfis/";
-      path: "/perfis";
-      fullPath: "/perfis";
-      preLoaderRoute: typeof PerfisIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/": {
-      id: "/mock-exams/";
-      path: "/mock-exams";
-      fullPath: "/mock-exams";
-      preLoaderRoute: typeof MockExamsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/": {
-      id: "/main-questions/";
-      path: "/main-questions";
-      fullPath: "/main-questions";
-      preLoaderRoute: typeof MainQuestionsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/login/": {
-      id: "/login/";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/diagnosis/": {
-      id: "/diagnosis/";
-      path: "/diagnosis";
-      fullPath: "/diagnosis";
-      preLoaderRoute: typeof DiagnosisIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/perfis/novo-perfil": {
-      id: "/perfis/novo-perfil";
-      path: "/perfis/novo-perfil";
-      fullPath: "/perfis/novo-perfil";
-      preLoaderRoute: typeof PerfisNovoPerfilRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/create/": {
-      id: "/mock-exams/create/";
-      path: "/mock-exams/create";
-      fullPath: "/mock-exams/create";
-      preLoaderRoute: typeof MockExamsCreateIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/create/": {
-      id: "/main-questions/create/";
-      path: "/main-questions/create";
-      fullPath: "/main-questions/create";
-      preLoaderRoute: typeof MainQuestionsCreateIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/diagnosis/generate/": {
-      id: "/diagnosis/generate/";
-      path: "/diagnosis/generate";
-      fullPath: "/diagnosis/generate";
-      preLoaderRoute: typeof DiagnosisGenerateIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/usuarios/visualizar-usuario/$id": {
-      id: "/usuarios/visualizar-usuario/$id";
-      path: "/usuarios/visualizar-usuario/$id";
-      fullPath: "/usuarios/visualizar-usuario/$id";
-      preLoaderRoute: typeof UsuariosVisualizarUsuarioIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/usuarios/editar-usuario/$id": {
-      id: "/usuarios/editar-usuario/$id";
-      path: "/usuarios/editar-usuario/$id";
-      fullPath: "/usuarios/editar-usuario/$id";
-      preLoaderRoute: typeof UsuariosEditarUsuarioIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/perfis/visualizar-perfil/$id": {
-      id: "/perfis/visualizar-perfil/$id";
-      path: "/perfis/visualizar-perfil/$id";
-      fullPath: "/perfis/visualizar-perfil/$id";
-      preLoaderRoute: typeof PerfisVisualizarPerfilIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/perfis/editar-perfil/$id": {
-      id: "/perfis/editar-perfil/$id";
-      path: "/perfis/editar-perfil/$id";
-      fullPath: "/perfis/editar-perfil/$id";
-      preLoaderRoute: typeof PerfisEditarPerfilIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/edit/$mockExamId": {
-      id: "/mock-exams/edit/$mockExamId";
-      path: "/mock-exams/edit/$mockExamId";
-      fullPath: "/mock-exams/edit/$mockExamId";
-      preLoaderRoute: typeof MockExamsEditMockExamIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/edit/$mainQuestionId": {
-      id: "/main-questions/edit/$mainQuestionId";
-      path: "/main-questions/edit/$mainQuestionId";
-      fullPath: "/main-questions/edit/$mainQuestionId";
-      preLoaderRoute: typeof MainQuestionsEditMainQuestionIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/$mockExamId/subjects/": {
-      id: "/mock-exams/$mockExamId/subjects/";
-      path: "/mock-exams/$mockExamId/subjects";
-      fullPath: "/mock-exams/$mockExamId/subjects";
-      preLoaderRoute: typeof MockExamsMockExamIdSubjectsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/$mockExamId/main-questions/": {
-      id: "/mock-exams/$mockExamId/main-questions/";
-      path: "/mock-exams/$mockExamId/main-questions";
-      fullPath: "/mock-exams/$mockExamId/main-questions";
-      preLoaderRoute: typeof MockExamsMockExamIdMainQuestionsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/$mainQuestionId/subjects/": {
-      id: "/main-questions/$mainQuestionId/subjects/";
-      path: "/main-questions/$mainQuestionId/subjects";
-      fullPath: "/main-questions/$mainQuestionId/subjects";
-      preLoaderRoute: typeof MainQuestionsMainQuestionIdSubjectsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/$mainQuestionId/adapted-questions/": {
-      id: "/main-questions/$mainQuestionId/adapted-questions/";
-      path: "/main-questions/$mainQuestionId/adapted-questions";
-      fullPath: "/main-questions/$mainQuestionId/adapted-questions";
-      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/mock-exams/$mockExamId/mock-exam-answers/idex": {
-      id: "/mock-exams/$mockExamId/mock-exam-answers/idex";
-      path: "/mock-exams/$mockExamId/mock-exam-answers/idex";
-      fullPath: "/mock-exams/$mockExamId/mock-exam-answers/idex";
-      preLoaderRoute: typeof MockExamsMockExamIdMockExamAnswersIdexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/$mainQuestionId/adapted-questions/create/": {
-      id: "/main-questions/$mainQuestionId/adapted-questions/create/";
-      path: "/main-questions/$mainQuestionId/adapted-questions/create";
-      fullPath: "/main-questions/$mainQuestionId/adapted-questions/create";
-      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId": {
-      id: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
-      path: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
-      fullPath: "/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId";
-      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios/': {
+      id: '/usuarios/'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subjects/': {
+      id: '/subjects/'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof SubjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfis/': {
+      id: '/perfis/'
+      path: '/perfis'
+      fullPath: '/perfis'
+      preLoaderRoute: typeof PerfisIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/': {
+      id: '/mock-exams/'
+      path: '/mock-exams'
+      fullPath: '/mock-exams'
+      preLoaderRoute: typeof MockExamsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/': {
+      id: '/main-questions/'
+      path: '/main-questions'
+      fullPath: '/main-questions'
+      preLoaderRoute: typeof MainQuestionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnosis/': {
+      id: '/diagnosis/'
+      path: '/diagnosis'
+      fullPath: '/diagnosis'
+      preLoaderRoute: typeof DiagnosisIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfis/novo-perfil': {
+      id: '/perfis/novo-perfil'
+      path: '/perfis/novo-perfil'
+      fullPath: '/perfis/novo-perfil'
+      preLoaderRoute: typeof PerfisNovoPerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/create/': {
+      id: '/mock-exams/create/'
+      path: '/mock-exams/create'
+      fullPath: '/mock-exams/create'
+      preLoaderRoute: typeof MockExamsCreateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/create/': {
+      id: '/main-questions/create/'
+      path: '/main-questions/create'
+      fullPath: '/main-questions/create'
+      preLoaderRoute: typeof MainQuestionsCreateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnosis/generate/': {
+      id: '/diagnosis/generate/'
+      path: '/diagnosis/generate'
+      fullPath: '/diagnosis/generate'
+      preLoaderRoute: typeof DiagnosisGenerateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios/visualizar-usuario/$id': {
+      id: '/usuarios/visualizar-usuario/$id'
+      path: '/usuarios/visualizar-usuario/$id'
+      fullPath: '/usuarios/visualizar-usuario/$id'
+      preLoaderRoute: typeof UsuariosVisualizarUsuarioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios/editar-usuario/$id': {
+      id: '/usuarios/editar-usuario/$id'
+      path: '/usuarios/editar-usuario/$id'
+      fullPath: '/usuarios/editar-usuario/$id'
+      preLoaderRoute: typeof UsuariosEditarUsuarioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfis/visualizar-perfil/$id': {
+      id: '/perfis/visualizar-perfil/$id'
+      path: '/perfis/visualizar-perfil/$id'
+      fullPath: '/perfis/visualizar-perfil/$id'
+      preLoaderRoute: typeof PerfisVisualizarPerfilIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfis/editar-perfil/$id': {
+      id: '/perfis/editar-perfil/$id'
+      path: '/perfis/editar-perfil/$id'
+      fullPath: '/perfis/editar-perfil/$id'
+      preLoaderRoute: typeof PerfisEditarPerfilIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/response/$studentResponseId': {
+      id: '/mock-exams/response/$studentResponseId'
+      path: '/mock-exams/response/$studentResponseId'
+      fullPath: '/mock-exams/response/$studentResponseId'
+      preLoaderRoute: typeof MockExamsResponseStudentResponseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/edit/$mockExamId': {
+      id: '/mock-exams/edit/$mockExamId'
+      path: '/mock-exams/edit/$mockExamId'
+      fullPath: '/mock-exams/edit/$mockExamId'
+      preLoaderRoute: typeof MockExamsEditMockExamIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/edit/$mainQuestionId': {
+      id: '/main-questions/edit/$mainQuestionId'
+      path: '/main-questions/edit/$mainQuestionId'
+      fullPath: '/main-questions/edit/$mainQuestionId'
+      preLoaderRoute: typeof MainQuestionsEditMainQuestionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/$mockExamId/subjects/': {
+      id: '/mock-exams/$mockExamId/subjects/'
+      path: '/mock-exams/$mockExamId/subjects'
+      fullPath: '/mock-exams/$mockExamId/subjects'
+      preLoaderRoute: typeof MockExamsMockExamIdSubjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/$mockExamId/mock-exam-answers/': {
+      id: '/mock-exams/$mockExamId/mock-exam-answers/'
+      path: '/mock-exams/$mockExamId/mock-exam-answers'
+      fullPath: '/mock-exams/$mockExamId/mock-exam-answers'
+      preLoaderRoute: typeof MockExamsMockExamIdMockExamAnswersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mock-exams/$mockExamId/main-questions/': {
+      id: '/mock-exams/$mockExamId/main-questions/'
+      path: '/mock-exams/$mockExamId/main-questions'
+      fullPath: '/mock-exams/$mockExamId/main-questions'
+      preLoaderRoute: typeof MockExamsMockExamIdMainQuestionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/$mainQuestionId/subjects/': {
+      id: '/main-questions/$mainQuestionId/subjects/'
+      path: '/main-questions/$mainQuestionId/subjects'
+      fullPath: '/main-questions/$mainQuestionId/subjects'
+      preLoaderRoute: typeof MainQuestionsMainQuestionIdSubjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/$mainQuestionId/adapted-questions/': {
+      id: '/main-questions/$mainQuestionId/adapted-questions/'
+      path: '/main-questions/$mainQuestionId/adapted-questions'
+      fullPath: '/main-questions/$mainQuestionId/adapted-questions'
+      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/$mainQuestionId/adapted-questions/create/': {
+      id: '/main-questions/$mainQuestionId/adapted-questions/create/'
+      path: '/main-questions/$mainQuestionId/adapted-questions/create'
+      fullPath: '/main-questions/$mainQuestionId/adapted-questions/create'
+      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId': {
+      id: '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+      path: '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+      fullPath: '/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
+      preLoaderRoute: typeof MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -602,6 +623,8 @@ const rootRouteChildren: RootRouteChildren = {
   UsuariosIndexRoute: UsuariosIndexRoute,
   MainQuestionsEditMainQuestionIdRoute: MainQuestionsEditMainQuestionIdRoute,
   MockExamsEditMockExamIdRoute: MockExamsEditMockExamIdRoute,
+  MockExamsResponseStudentResponseIdRoute:
+    MockExamsResponseStudentResponseIdRoute,
   PerfisEditarPerfilIdRoute: PerfisEditarPerfilIdRoute,
   PerfisVisualizarPerfilIdRoute: PerfisVisualizarPerfilIdRoute,
   UsuariosEditarUsuarioIdRoute: UsuariosEditarUsuarioIdRoute,
@@ -609,20 +632,20 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosisGenerateIndexRoute: DiagnosisGenerateIndexRoute,
   MainQuestionsCreateIndexRoute: MainQuestionsCreateIndexRoute,
   MockExamsCreateIndexRoute: MockExamsCreateIndexRoute,
-  MockExamsMockExamIdMockExamAnswersIdexRoute:
-    MockExamsMockExamIdMockExamAnswersIdexRoute,
   MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute:
     MainQuestionsMainQuestionIdAdaptedQuestionsIndexRoute,
   MainQuestionsMainQuestionIdSubjectsIndexRoute:
     MainQuestionsMainQuestionIdSubjectsIndexRoute,
   MockExamsMockExamIdMainQuestionsIndexRoute:
     MockExamsMockExamIdMainQuestionsIndexRoute,
+  MockExamsMockExamIdMockExamAnswersIndexRoute:
+    MockExamsMockExamIdMockExamAnswersIndexRoute,
   MockExamsMockExamIdSubjectsIndexRoute: MockExamsMockExamIdSubjectsIndexRoute,
   MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute:
     MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute,
   MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute:
     MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

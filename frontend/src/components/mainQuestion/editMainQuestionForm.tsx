@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mainQuestionSchema } from "./mainQuestionSchema";
 import { AlternativeForm } from "../alternative/alternativesForm";
-import { useNavigate, useParams } from "react-router-dom";
 import { MainQuestion } from "../../types";
 import { DevTool } from "@hookform/devtools";
 import { CreateAlternative } from "../../types/Alternative";
@@ -16,20 +15,22 @@ import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { SelectLevel } from "../ui/selectLevel";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
+import { Route } from "@/router/main-questions/edit/$mainQuestionId";
 
 type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
 
 interface EditMainQuestionFormProps {
   entity: MainQuestion;
+  mainQuestionId: string;
 }
 
 export function EditMainQuestionForm({
   entity: mainQuestion,
+  mainQuestionId,
 }: EditMainQuestionFormProps) {
   const [hasChanged, setHasChanged] = useState(false);
   const queryClient = useQueryClient();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
 
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
@@ -139,7 +140,10 @@ export function EditMainQuestionForm({
           queryKey: ["get-main-questions"],
         });
         successAlert("Questão principal alterada com sucesso!");
-        navigate("/main-questions");
+        navigate({
+          to: "/main-questions",
+          search: { page: 1, pageSize: 10, query: "" },
+        });
       }
 
       if (response.status === 404) {
@@ -277,7 +281,14 @@ export function EditMainQuestionForm({
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/main-questions",
+                search: { page: 1, pageSize: 10, query: "" },
+              })
+            }
+          >
             <X className="size-3" />
             Cancel
           </Button>
