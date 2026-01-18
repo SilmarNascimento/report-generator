@@ -24,6 +24,7 @@ import { successAlert } from "@/utils/toastAlerts";
 import { PageResponse } from "@/types";
 import { Route } from "@/router/mock-exams";
 import { Link } from "@tanstack/react-router";
+import { SearchParams, setUrlSearch } from "@/utils/setUrlSearch";
 
 export function MockExams() {
   const queryClient = useQueryClient();
@@ -37,6 +38,27 @@ export function MockExams() {
 
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  function updateSearch(next: SearchParams) {
+    navigate({
+      search: (prev) => {
+        const merged = {
+          ...prev,
+        };
+
+        setUrlSearch(
+          (p) => {
+            Object.assign(merged, p);
+          },
+          prev,
+          next
+        );
+
+        return merged;
+      },
+      replace: true,
+    });
+  }
 
   useEffect(() => {
     navigate({
@@ -256,6 +278,8 @@ export function MockExams() {
             items={mockExamPageResponse.pageItems}
             page={page}
             totalItems={mockExamPageResponse.totalItems}
+            searchParams={search}
+            setSearchParams={updateSearch}
           />
         )}
       </main>

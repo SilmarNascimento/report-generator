@@ -14,18 +14,18 @@ export function normalizeToSearchParams(obj: AnyParams): SearchParams {
 export function setUrlSearch(
   setSearchParams: (p: SearchParams) => void,
   current: SearchParams,
-  next: Record<string, Stringificable>,
+  next: Record<string, Stringificable>
 ): void;
 export function setUrlSearch(
   setSearchParams: (p: SearchParams) => void,
   current: AnyParams,
-  next: AnyParams,
+  next: AnyParams
 ): void;
 
 export function setUrlSearch(
   setSearchParams: (p: SearchParams) => void,
   current: AnyParams,
-  next: AnyParams,
+  next: AnyParams
 ): void {
   const merged: SearchParams = normalizeToSearchParams(current);
 

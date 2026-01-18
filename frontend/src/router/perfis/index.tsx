@@ -1,11 +1,11 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { z } from "zod";
-import { requirePermissao } from "@/router/guard";
+import { requirePermissao } from "@/config/_guard";
 import FullScreenLoader from "@/components/shared/FullScreanLoader";
 import { Permissao } from "@/constants/permissoes";
 
 const ListagemPerfils = lazyRouteComponent(
-  () => import("@/pages/perfis/ListagemPerfil")
+  () => import("@/pages/perfis/ListagemPerfil"),
 );
 
 const searchSchema = z.object({

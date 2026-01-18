@@ -44,6 +44,15 @@ public class MockExamResponse {
 
   private int totalQuestions;
 
+  @Column(name = "ipm_score")
+  private Double ipmScore;
+
+  @Column(name = "icp_previous")
+  private Double icpPrevious;
+
+  @Column(name = "punishment_score")
+  private Double punishmentScore;
+
   @ElementCollection
   @OrderColumn
   private List<String> responses;
@@ -76,6 +85,10 @@ public class MockExamResponse {
     this.diagnosisPdfFile = null;
     this.comment = comment;
     this.createdAt = createdAt;
+
+    this.ipmScore = 0.0;
+    this.icpPrevious = 0.0;
+    this.punishmentScore = 0.0;
   }
 
   public static List<MockExamResponse> parseResponse(List<List<String>> studentsResponse) {

@@ -1,8 +1,8 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 import FullScreenLoader from "@/components/ui/Spinner";
 import { z } from "zod";
-import { requirePermissao } from "@/router/guard";
-import { Permissao } from "@/constants/permissoes"; 
+import { requirePermissao } from "@/config/_guard";
+import { Permissao } from "@/constants/permissoes";
 
 const ListagemUsuarios = lazyRouteComponent(
   () => import("@/pages/usuarios/ListagemUsuario"),

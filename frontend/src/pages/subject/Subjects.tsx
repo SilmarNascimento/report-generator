@@ -27,6 +27,7 @@ import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../types/PageResponse";
 import { useSearch } from "@tanstack/react-router";
 import { Route } from "@/router/subjects";
+import { SearchParams, setUrlSearch } from "@/utils/setUrlSearch";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -39,6 +40,33 @@ export function Subjects() {
   const urlFilter = search.query ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const searchParams: SearchParams = {
+    page,
+    pageSize,
+    query: search.query ?? "",
+  };
+
+  function updateSearch(next: SearchParams) {
+    navigate({
+      search: (prev) => {
+        const merged = {
+          ...prev,
+        };
+
+        setUrlSearch(
+          (p) => {
+            Object.assign(merged, p);
+          },
+          prev,
+          next
+        );
+
+        return merged;
+      },
+      replace: true,
+    });
+  }
 
   useEffect(() => {
     navigate({
@@ -228,6 +256,8 @@ export function Subjects() {
             items={subjectPageResponse.pageItems}
             page={page}
             totalItems={subjectPageResponse.totalItems}
+            searchParams={searchParams}
+            setSearchParams={updateSearch}
           />
         )}
       </main>

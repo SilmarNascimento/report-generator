@@ -1,43 +1,30 @@
 import { FilePlus, Plus, Search } from "lucide-react";
 import { Control, Input } from "../ui/input";
 import { Button } from "../ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
-import { MainQuestion, PageResponse } from "../../types";
 import { useState } from "react";
 import { Pagination } from "../pagination";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
+import { MainQuestion, PageResponse } from "@/types";
 
-type AddMainQuestionManagerTableProps = {
+type AddMainQuestionManagerTableProps = ({
   entity: PageResponse<MainQuestion>;
   filter: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   page: number;
   handleAddMainQuestion: UseMutateAsyncFunction<void, Error, string[], unknown>;
-};
+})
 
-export function AddMainQuestionManagerTable({
-  entity,
-  filter,
-  setFilter,
-  page,
-  handleAddMainQuestion,
-}: AddMainQuestionManagerTableProps) {
+export function AddMainQuestionManagerTable({ entity, filter, setFilter, page, handleAddMainQuestion }: AddMainQuestionManagerTableProps) {
   const [mainQuestionIdToAdd, setMainQuestionIdToAdd] = useState<string[]>([]);
 
   function toggleCheckBox(subjectId: string) {
-    setMainQuestionIdToAdd((prev) =>
+    setMainQuestionIdToAdd(prev => (
       prev.includes(subjectId)
         ? prev.filter((id) => id !== subjectId)
-        : [...prev, subjectId]
-    );
+        : [...prev, subjectId],
+    ));
   }
 
   function getMainQuestionCode(mainQuestion: MainQuestion) {
@@ -46,7 +33,7 @@ export function AddMainQuestionManagerTable({
 
   function handleCorrectAnswer(question: MainQuestion) {
     const correctIndex = question.alternatives.findIndex(
-      (alternative) => alternative.questionAnswer
+      (alternative) => alternative.questionAnswer,
     );
     return getAlternativeLetter(correctIndex);
   }
@@ -55,7 +42,7 @@ export function AddMainQuestionManagerTable({
     setMainQuestionIdToAdd([]);
     handleAddMainQuestion(mainQuestionIdList);
   }
-
+  
   return (
     <>
       <div className="max-w-6xl mx-auto space-y-5">
@@ -65,11 +52,11 @@ export function AddMainQuestionManagerTable({
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
+            <Input variant='filter'>
               <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
+              <Control 
+                placeholder="Search tags..." 
+                onChange={event => setFilter(event.target.value)}
                 value={filter}
               />
             </Input>
@@ -128,38 +115,42 @@ export function AddMainQuestionManagerTable({
                     </div>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>{mainQuestion.level}</span>
-                  </TableCell>
-                  <TableCell className="text-zinc-300">
                     <span>
-                      {mainQuestion.subjects.length
-                        ? mainQuestion.subjects[0].name
-                        : "Sem assunto principal"}
+                      {mainQuestion.level}
                     </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>{handleCorrectAnswer(mainQuestion)}</span>
+                    <span>
+                      {mainQuestion.subjects.length ? mainQuestion.subjects[0].name : "Sem assunto principal"}
+                    </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>{mainQuestion.adaptedQuestions.length}</span>
+                    <span>
+                      {handleCorrectAnswer(mainQuestion)}
+                    </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>{mainQuestion.mockExams.length}</span>
+                    <span>
+                      {mainQuestion.adaptedQuestions.length}
+                    </span>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <span>{mainQuestion.handouts.length}</span>
+                    <span>
+                      {mainQuestion.mockExams.length}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-zinc-300">
+                    <span>
+                      {mainQuestion.handouts.length}
+                    </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      onClick={() => handleClick([mainQuestion.id])}
-                    >
-                      <Plus className="size-3" color="green" />
+                    <Button size="icon" className="mx-0.5" onClick={() => handleClick([mainQuestion.id])}>
+                      <Plus className="size-3" color="green"/>
                     </Button>
                   </TableCell>
                 </TableRow>
-              );
+              )
             })}
           </TableBody>
         </Table>
@@ -169,6 +160,8 @@ export function AddMainQuestionManagerTable({
             items={entity.pageItems}
             page={page}
             totalItems={entity.totalItems}
+            searchParams={searchParams}
+            setSearchParams={updateSearch}
           />
         )}
       </div>

@@ -35,7 +35,7 @@ export function AddSubjectManagerTable({
     setSubjectIdToAdd((prev) =>
       prev.includes(subjectId)
         ? prev.filter((id) => id !== subjectId)
-        : [...prev, subjectId]
+        : [...prev, subjectId],
     );
   }
 

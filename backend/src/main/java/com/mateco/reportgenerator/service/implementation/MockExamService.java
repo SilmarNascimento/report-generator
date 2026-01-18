@@ -15,6 +15,8 @@ import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -178,28 +180,60 @@ public class MockExamService implements MockExamServiceInterface {
     answerMap.put(3, "D");
     answerMap.put(4, "E");
 
+    List<Integer> punishmentLevels = List.of(1, 2, 5);
+
     for (MockExamResponse studentResponse : mockExamResponses) {
       studentResponse.setMockExam(mockExamFound);
 
       Map<Integer, MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
       List<String> studentAnswers = studentResponse.getResponses();
 
+      double totalWeightAllQuestions = 0.0;
+      double totalAchievedWeight = 0.0;
+      double maxWeightPunishmentLevels = 0.0;
+      double achievedWeightPunishmentLevels = 0.0;
+
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
         int questionNumber = questionIndex + MockExam.INITIAL_QUESTION_NUMBER;
-
         MainQuestion mainQuestion = mockExamQuestions.get(questionNumber);
+
+        int questionWeight = mainQuestion.getWeight();
+        int lerickucasLevel = mainQuestion.getLerickucas();
+        boolean isPunishmentLevel = punishmentLevels.contains(lerickucasLevel);
+
+        totalWeightAllQuestions += questionWeight;
+        if (isPunishmentLevel) {
+          maxWeightPunishmentLevels += questionWeight;
+        }
+
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
             .findFirst()
             .orElseThrow(() -> new NotFoundException("Alternativa correta não encontrada!"));
 
-        if (answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex))) {
+        boolean isCorrect = answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex));
+
+        if (isCorrect) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
+
+          totalAchievedWeight += questionWeight;
+          if (isPunishmentLevel) {
+            achievedWeightPunishmentLevels += questionWeight;
+          }
         } else {
           studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
         }
       }
+
+      calculateAndSetIpm(
+        studentResponse,
+        totalWeightAllQuestions,
+        totalAchievedWeight,
+        maxWeightPunishmentLevels,
+        achievedWeightPunishmentLevels
+      );
+
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);
@@ -283,6 +317,44 @@ public class MockExamService implements MockExamServiceInterface {
 
       mainQuestionMap.put(availableQuestionNumber, mainQuestionToAdd);
     }
+  }
+
+  private void calculateAndSetIpm(
+          MockExamResponse studentResponse,
+          double A_totalWeight,
+          double sumIcpTotal,
+          double B_maxWeightPunishment,
+          double C_achievedWeightPunishment
+  ) {
+    if (A_totalWeight == 0) {
+      studentResponse.setIpmScore(0.0);
+      studentResponse.setIcpPrevious(0.0);
+      studentResponse.setPunishmentScore(0.0);
+      return;
+    }
+
+    double icpPrevious = (sumIcpTotal / A_totalWeight) * 100.0;
+
+    double punishmentPercent = 0.0;
+
+    if (B_maxWeightPunishment > 0) {
+      double consistencyFactor = 1.0 - (C_achievedWeightPunishment / B_maxWeightPunishment);
+      double weightFactor = B_maxWeightPunishment / A_totalWeight;
+
+      punishmentPercent = (consistencyFactor * weightFactor) * 100.0;
+    }
+
+    double finalIpm = icpPrevious - punishmentPercent;
+
+    studentResponse.setIcpPrevious(round(icpPrevious));
+    studentResponse.setPunishmentScore(round(punishmentPercent));
+    studentResponse.setIpmScore(round(Math.max(0, finalIpm)));
+  }
+
+  private double round(double value) {
+    BigDecimal bd = BigDecimal.valueOf(value);
+    bd = bd.setScale(2, RoundingMode.HALF_UP);
+    return bd.doubleValue();
   }
 
 }

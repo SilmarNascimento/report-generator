@@ -1,7 +1,7 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 import FullScreenLoader from "@/components/ui/Spinner";
 import { perfilLoader } from "@/loaders/perfilLoader";
-import { requirePermissao } from "@/router/guard";
+import { requirePermissao } from "@/config/_guard";
 import { Permissao } from "@/constants/permissoes";
 
 const VisualizarPerfil = lazyRouteComponent(

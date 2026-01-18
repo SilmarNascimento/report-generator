@@ -17,6 +17,7 @@ import { NavigationBar } from "../../components/NavigationBar";
 import { successAlert } from "@/utils/toastAlerts";
 import { Route } from "@/router/diagnosis";
 import { Route as MockExamResponseRoute } from "@/router/mock-exams/response/$studentResponseId";
+import { SearchParams, setUrlSearch } from "@/utils/setUrlSearch";
 
 export function StudentsResponses() {
   const queryClient = useQueryClient();
@@ -28,6 +29,33 @@ export function StudentsResponses() {
 
   const [filter, setFilter] = useState(query);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const searchParams: SearchParams = {
+    page,
+    pageSize,
+    query: search.query ?? "",
+  };
+
+  function updateSearch(next: SearchParams) {
+    navigate({
+      search: (prev) => {
+        const merged = {
+          ...prev,
+        };
+
+        setUrlSearch(
+          (p) => {
+            Object.assign(merged, p);
+          },
+          prev,
+          next,
+        );
+
+        return merged;
+      },
+      replace: true,
+    });
+  }
 
   useEffect(() => {
     if (debouncedQueryFilter !== query) {
@@ -47,7 +75,7 @@ export function StudentsResponses() {
     queryKey: ["get-responses", query, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${query}`
+        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${query}`,
       );
       const data = await response.json();
 
@@ -66,7 +94,7 @@ export function StudentsResponses() {
               "Content-Type": "application/json",
             },
             method: "DELETE",
-          }
+          },
         );
       } catch (error) {
         console.error("Erro na requisição:", error);
@@ -137,6 +165,8 @@ export function StudentsResponses() {
             items={studentsResponsePage.pageItems}
             page={page}
             totalItems={studentsResponsePage.totalItems}
+            searchParams={searchParams}
+            setSearchParams={updateSearch}
           />
         )}
       </main>

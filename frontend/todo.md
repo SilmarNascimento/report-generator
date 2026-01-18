@@ -1,8 +1,3 @@
-# refatorar react-router-dom para tanstack-router
-
-- refatorar uso do navigate
-- remover lib da aplicação
-
 # refatorar uso do componente de paginação
 
 - refotar os componentes q usam o componente paginação

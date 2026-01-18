@@ -25,6 +25,7 @@ import { successAlert } from "../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import { PageResponse } from "../../types";
 import { Route } from "@/router/main-questions";
+import { SearchParams, setUrlSearch } from "@/utils/setUrlSearch";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -34,6 +35,32 @@ export function MainQuestions() {
 
   const [filter, setFilter] = useState(query);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const searchParams: SearchParams = {
+    page,
+    pageSize,
+  };
+
+  function updateSearch(next: SearchParams) {
+    navigate({
+      search: (prev) => {
+        const merged = {
+          ...prev,
+        };
+
+        setUrlSearch(
+          (p) => {
+            Object.assign(merged, p);
+          },
+          prev,
+          next
+        );
+
+        return merged;
+      },
+      replace: true,
+    });
+  }
 
   useEffect(() => {
     navigate({
@@ -268,6 +295,8 @@ export function MainQuestions() {
             items={mainQuestionPageResponse.pageItems}
             page={page}
             totalItems={mainQuestionPageResponse.totalItems}
+            searchParams={searchParams}
+            setSearchParams={updateSearch}
           />
         )}
       </main>
