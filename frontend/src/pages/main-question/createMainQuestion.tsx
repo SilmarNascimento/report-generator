@@ -1,7 +1,7 @@
 import { FormHeader } from "../../components/formHeader";
 import { Header } from "../../components/header";
 import { CreateMainQuestionForm } from "../../components/mainQuestion/createMainQuestionForm";
-import { NavigationBar } from "../../components/navigationBar";
+import { NavigationBar } from "../../components/NavigationBar";
 
 export function CreateMainQuestion() {
   return (
@@ -18,5 +18,5 @@ export function CreateMainQuestion() {
         <CreateMainQuestionForm />
       </div>
     </>
-  )
+  );
 }

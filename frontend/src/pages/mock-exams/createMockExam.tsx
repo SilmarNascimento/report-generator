@@ -1,7 +1,7 @@
 import { FormHeader } from "../../components/formHeader";
 import { Header } from "../../components/header";
 import { CreateMockExamForm } from "../../components/mockExam/createMockExamForm";
-import { NavigationBar } from "../../components/navigationBar";
+import { NavigationBar } from "../../components/NavigationBar";
 
 export function CreateMockExam() {
   return (
@@ -18,5 +18,5 @@ export function CreateMockExam() {
         <CreateMockExamForm />
       </div>
     </>
-  )
+  );
 }

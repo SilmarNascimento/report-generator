@@ -1,7 +1,7 @@
 import { CreateAdaptedQuestionForm } from "../../../components/adaptedQuestion/createAdaptedQuestionForm";
 import { FormHeader } from "../../../components/formHeader";
 import { Header } from "../../../components/header";
-import { NavigationBar } from "../../../components/navigationBar";
+import { NavigationBar } from "../../../components/NavigationBar";
 
 export function CreateAdaptedQuestion() {
   return (
@@ -18,5 +18,5 @@ export function CreateAdaptedQuestion() {
         <CreateAdaptedQuestionForm />
       </div>
     </>
-  )
+  );
 }

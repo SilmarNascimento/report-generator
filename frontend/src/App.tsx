@@ -1,65 +1,85 @@
-import { Plus, Search, Filter, FileDown, MoreHorizontal, Loader2 } from 'lucide-react'
-import { Header } from './components/header'
-import { NavigationBar } from './components/navigationBar'
-import { Button } from './components/ui/button'
-import { Control, Input } from './components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { useSearchParams } from 'react-router-dom'
-import { FormEvent, useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog';
-import { CreateSubjectForm } from './components/subject/createSubjectForm';
+import {
+  Plus,
+  Search,
+  Filter,
+  FileDown,
+  MoreHorizontal,
+  Loader2,
+} from "lucide-react";
+import { Header } from "./components/header";
+import { Button } from "./components/ui/button";
+import { Control, Input } from "./components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./components/ui/table";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { FormEvent, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { CreateSubjectForm } from "./components/subject/createSubjectForm";
+import { NavigationBar } from "./components/NavigationBar";
 
 export interface TagResponse {
-  first: number
-  prev: number | null
-  next: number
-  last: number
-  pages: number
-  items: number
-  data: Tag[]
+  first: number;
+  prev: number | null;
+  next: number;
+  last: number;
+  pages: number;
+  items: number;
+  data: Tag[];
 }
 
 export interface Tag {
-  title: string
-  slug: string
-  amountOfVideos: number
-  id: string
+  title: string;
+  slug: string;
+  amountOfVideos: number;
+  id: string;
 }
 
 export function App() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const urlFilter = searchParams.get('filter') ?? ''
-  
-  const [filter, setFilter] = useState(urlFilter)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlFilter = searchParams.get("filter") ?? "";
 
-  const page = searchParams.get('page') ? Number(searchParams.get('page')) : 1;
-  const pageSize = searchParams.get('pageSize') ?? "10";
+  const [filter, setFilter] = useState(urlFilter);
 
-  const { data: tagsResponse, isLoading, isFetching } = useQuery<TagResponse>({
-    queryKey: ['get-tags', urlFilter, page, pageSize],
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const pageSize = searchParams.get("pageSize") ?? "10";
+
+  const {
+    data: tagsResponse,
+    isLoading,
+    isFetching,
+  } = useQuery<TagResponse>({
+    queryKey: ["get-tags", urlFilter, page, pageSize],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:3333/tags?_page=${page}&_per_page=10&title=${urlFilter}`)
-      const data = await response.json()
+      const response = await fetch(
+        `http://localhost:3333/tags?_page=${page}&_per_page=10&title=${urlFilter}`,
+      );
+      const data = await response.json();
 
-      return data
+      return data;
     },
     placeholderData: keepPreviousData,
-  })
+  });
 
   function handleFilter(event: FormEvent) {
-    event.preventDefault()
+    event.preventDefault();
 
-    setSearchParams(params => {
-      params.set('page', '1')
-      params.set('filter', filter)
+    setSearchParams((params) => {
+      params.set("page", "1");
+      params.set("filter", filter);
 
-      return params
-    })
+      return params;
+    });
   }
 
   if (isLoading) {
-    return null
+    return null;
   }
 
   return (
@@ -74,7 +94,7 @@ export function App() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant='primary'>
+              <Button variant="primary">
                 <Plus className="size-3" />
                 Create new
               </Button>
@@ -97,16 +117,18 @@ export function App() {
             </Dialog.Portal>
           </Dialog.Root>
 
-          {isFetching && <Loader2 className="size-4 animate-spin text-zinc-500" />}
+          {isFetching && (
+            <Loader2 className="size-4 animate-spin text-zinc-500" />
+          )}
         </div>
 
         <div className="flex items-center justify-between">
           <form onSubmit={handleFilter} className="flex items-center gap-2">
-            <Input variant='filter'>
+            <Input variant="filter">
               <Search className="size-3" />
-              <Control 
-                placeholder="Search tags..." 
-                onChange={e => setFilter(e.target.value)}
+              <Control
+                placeholder="Search tags..."
+                onChange={(e) => setFilter(e.target.value)}
                 value={filter}
               />
             </Input>
@@ -151,16 +173,13 @@ export function App() {
                     </Button>
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
-
-       
       </main>
     </div>
-  )
+  );
 }
 
 //  {tagsResponse && <Pagination pages={tagsResponse.pages} totalItems={tagsResponse.items} page={page} />}
-

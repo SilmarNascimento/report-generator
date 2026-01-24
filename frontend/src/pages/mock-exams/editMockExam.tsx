@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { FormHeader } from "../../components/formHeader";
 import { Header } from "../../components/header";
 import { EditMockExamForm } from "../../components/mockExam/editMockExamForm";
-import { NavigationBar } from "../../components/navigationBar";
+import { NavigationBar } from "../../components/NavigationBar";
 import { MockExam } from "../../interfaces";
 import { useParams } from "react-router-dom";
 import { MockExamReceived } from "../../interfaces/MockExam";
@@ -10,13 +10,15 @@ import { convertMockExamData } from "../../utils/convertMockExamData";
 
 export function EditMockExam() {
   const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
-  
+
   const { data: mockExamResponse } = useQuery<MockExam>({
-    queryKey: ['get-mock-exams', mockExamId],
+    queryKey: ["get-mock-exams", mockExamId],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/mock-exam/${mockExamId}`);
+      const response = await fetch(
+        `http://localhost:8080/mock-exam/${mockExamId}`,
+      );
       const data: MockExamReceived = await response.json();
-      
+
       return convertMockExamData(data);
     },
     placeholderData: keepPreviousData,
@@ -25,7 +27,6 @@ export function EditMockExam() {
   const mockExamCode = `${mockExamResponse?.releasedYear}:S${mockExamResponse?.number}-${mockExamResponse?.className}`;
 
   console.log(mockExamResponse);
-  
 
   return (
     <>
@@ -38,8 +39,8 @@ export function EditMockExam() {
           headerTitle={`Editar Simulado ${mockExamCode}`}
           headerDetails="Altere os campos a seguir para atualizar o simulado"
         />
-        { mockExamResponse && <EditMockExamForm entity={mockExamResponse}/> }
+        {mockExamResponse && <EditMockExamForm entity={mockExamResponse} />}
       </div>
     </>
-  )
+  );
 }
