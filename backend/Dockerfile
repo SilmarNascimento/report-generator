@@ -1,32 +1,23 @@
-# Usar a imagem base do Maven com OpenJDK 17 para a etapa de construção
-FROM maven:3-openjdk-17 as build-image
+FROM maven:3.9.6-eclipse-temurin-21
 
-# Definir o diretório de trabalho para a etapa de construção
-WORKDIR /to-build-app
+WORKDIR /app
 
-# Copiar o arquivo pom.xml para baixar as dependências do Maven
+# Variável de ambiente para o Maven não spamar logs
+ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+# Copia apenas o pom para cachear dependências
 COPY pom.xml .
 
-# Baixar as dependências do Maven
-RUN mvn dependency:go-offline
+# Truque: go-offline falha as vezes.
+# dependency:resolve garante dependências e plugins
+# O cache do Docker vai pular essa etapa se o pom.xml não mudar
+RUN mvn dependency:go-offline -B && mvn dependency:resolve-plugins dependency:resolve
 
-# Copiar o código-fonte para o diretório /src
-COPY src ./src
+# NÃO fazemos COPY . . aqui para desenvolvimento.
+# O código será injetado via Volume (Bind Mount) no docker-compose.
+# Isso torna o startup instantâneo.
 
-# Compilar o código-fonte e criar o arquivo JAR
-RUN mvn clean package -Dmaven.test.skip=true
+EXPOSE 8080 5005
 
-# Usar uma imagem Alpine com OpenJRE 17 para a imagem final
-FROM eclipse-temurin:17-jre-alpine
-
-# Definir o diretório de trabalho para a imagem final
-WORKDIR /app-backend
-
-# Copiar o arquivo JAR gerado na etapa de construção para o diretório /target
-COPY --from=build-image /to-build-app/target/report-generator-API-0.0.1-SNAPSHOT.jar ./target/app.jar
-
-# Expor a porta 8080 para acessar a aplicação
-EXPOSE 8080
-
-# Definir o ponto de entrada para iniciar a aplicação Spring Boot
-ENTRYPOINT ["java", "-jar", "target/app.jar"]
+# O comando de execução padrão
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-Dmaven.test.skip=true"]

@@ -10,7 +10,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: [ "CMD", "lsof", "-t", "-i:3030" ]
+      test: [ "CMD", "lsof", "-t", "-i:5173" ]
       timeout: 10s
       retries: 5
 
@@ -19,10 +19,10 @@ services:
     build: ./backend
     ports:
       - 8080:8080
-    working_dir: /app-backend
-    command: dev
+    working_dir: /app
     volumes:
-      - ./backend/src:/app-backend/src
+      - ./backend:/app
+      - ~/.m2:/root/.m2
     depends_on:
       - db
     environment:
