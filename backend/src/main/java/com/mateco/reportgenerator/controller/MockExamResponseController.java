@@ -31,7 +31,7 @@ public class MockExamResponseController {
   private final MockExamResponseServiceInterface mockExamResponseService;
 
   @GetMapping
-  public ResponseEntity<PageOutputDto<MockExamResponseOutputDto>> findAllMockExams(
+  public ResponseEntity<PageOutputDto<MockExamResponseOutputDto>> findAllMockExamsResponse(
       @RequestParam(required = false, defaultValue = "0") int pageNumber,
       @RequestParam(required = false, defaultValue = "20") int pageSize,
       @RequestParam(required = false) String query,
@@ -51,7 +51,7 @@ public class MockExamResponseController {
   }
 
   @GetMapping("/{mockExamResponseId}")
-  public ResponseEntity<MockExamResponseOutputDto> findMockExamById(
+  public ResponseEntity<MockExamResponseOutputDto> findMockExamResponseById(
       @PathVariable UUID mockExamResponseId
   ) {
     MockExamResponse mockExamResponse = mockExamResponseService

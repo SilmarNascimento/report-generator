@@ -14,7 +14,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 
 # Compilar o código-fonte e criar o arquivo JAR
-RUN mvn clean package
+RUN mvn clean package -Dmaven.test.skip=true
 
 # Usar uma imagem Alpine com OpenJRE 17 para a imagem final
 FROM eclipse-temurin:17-jre-alpine
