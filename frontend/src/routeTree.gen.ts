@@ -9,10 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './router/__root'
-import { Route as LogoutRouteImport } from './router/logout'
 import { Route as IndexRouteImport } from './router/index'
 import { Route as UsuariosIndexRouteImport } from './router/usuarios/index'
-import { Route as TagsIndexRouteImport } from './router/tags/index'
 import { Route as SubjectsIndexRouteImport } from './router/subjects/index'
 import { Route as PerfisIndexRouteImport } from './router/perfis/index'
 import { Route as MockExamsIndexRouteImport } from './router/mock-exams/index'
@@ -38,11 +36,6 @@ import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsIndexRouteImport } 
 import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsCreateIndexRouteImport } from './router/main-questions/$mainQuestionId/adapted-questions/create/index'
 import { Route as MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRouteImport } from './router/main-questions/$mainQuestionId/adapted-questions/edit/$adaptedQuestionId'
 
-const LogoutRoute = LogoutRouteImport.update({
-  id: '/logout',
-  path: '/logout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -51,11 +44,6 @@ const IndexRoute = IndexRouteImport.update({
 const UsuariosIndexRoute = UsuariosIndexRouteImport.update({
   id: '/usuarios/',
   path: '/usuarios/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TagsIndexRoute = TagsIndexRouteImport.update({
-  id: '/tags/',
-  path: '/tags/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubjectsIndexRoute = SubjectsIndexRouteImport.update({
@@ -195,7 +183,6 @@ const MainQuestionsMainQuestionIdAdaptedQuestionsEditAdaptedQuestionIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/logout': typeof LogoutRoute
   '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
   '/diagnosis': typeof DiagnosisIndexRoute
   '/login': typeof LoginIndexRoute
@@ -203,7 +190,6 @@ export interface FileRoutesByFullPath {
   '/mock-exams': typeof MockExamsIndexRoute
   '/perfis': typeof PerfisIndexRoute
   '/subjects': typeof SubjectsIndexRoute
-  '/tags': typeof TagsIndexRoute
   '/usuarios': typeof UsuariosIndexRoute
   '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
   '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
@@ -225,7 +211,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/logout': typeof LogoutRoute
   '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
   '/diagnosis': typeof DiagnosisIndexRoute
   '/login': typeof LoginIndexRoute
@@ -233,7 +218,6 @@ export interface FileRoutesByTo {
   '/mock-exams': typeof MockExamsIndexRoute
   '/perfis': typeof PerfisIndexRoute
   '/subjects': typeof SubjectsIndexRoute
-  '/tags': typeof TagsIndexRoute
   '/usuarios': typeof UsuariosIndexRoute
   '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
   '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
@@ -256,7 +240,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/logout': typeof LogoutRoute
   '/perfis/novo-perfil': typeof PerfisNovoPerfilRoute
   '/diagnosis/': typeof DiagnosisIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -264,7 +247,6 @@ export interface FileRoutesById {
   '/mock-exams/': typeof MockExamsIndexRoute
   '/perfis/': typeof PerfisIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
-  '/tags/': typeof TagsIndexRoute
   '/usuarios/': typeof UsuariosIndexRoute
   '/main-questions/edit/$mainQuestionId': typeof MainQuestionsEditMainQuestionIdRoute
   '/mock-exams/edit/$mockExamId': typeof MockExamsEditMockExamIdRoute
@@ -288,7 +270,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/logout'
     | '/perfis/novo-perfil'
     | '/diagnosis'
     | '/login'
@@ -296,7 +277,6 @@ export interface FileRouteTypes {
     | '/mock-exams'
     | '/perfis'
     | '/subjects'
-    | '/tags'
     | '/usuarios'
     | '/main-questions/edit/$mainQuestionId'
     | '/mock-exams/edit/$mockExamId'
@@ -318,7 +298,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/logout'
     | '/perfis/novo-perfil'
     | '/diagnosis'
     | '/login'
@@ -326,7 +305,6 @@ export interface FileRouteTypes {
     | '/mock-exams'
     | '/perfis'
     | '/subjects'
-    | '/tags'
     | '/usuarios'
     | '/main-questions/edit/$mainQuestionId'
     | '/mock-exams/edit/$mockExamId'
@@ -348,7 +326,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/logout'
     | '/perfis/novo-perfil'
     | '/diagnosis/'
     | '/login/'
@@ -356,7 +333,6 @@ export interface FileRouteTypes {
     | '/mock-exams/'
     | '/perfis/'
     | '/subjects/'
-    | '/tags/'
     | '/usuarios/'
     | '/main-questions/edit/$mainQuestionId'
     | '/mock-exams/edit/$mockExamId'
@@ -379,7 +355,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  LogoutRoute: typeof LogoutRoute
   PerfisNovoPerfilRoute: typeof PerfisNovoPerfilRoute
   DiagnosisIndexRoute: typeof DiagnosisIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -387,7 +362,6 @@ export interface RootRouteChildren {
   MockExamsIndexRoute: typeof MockExamsIndexRoute
   PerfisIndexRoute: typeof PerfisIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
-  TagsIndexRoute: typeof TagsIndexRoute
   UsuariosIndexRoute: typeof UsuariosIndexRoute
   MainQuestionsEditMainQuestionIdRoute: typeof MainQuestionsEditMainQuestionIdRoute
   MockExamsEditMockExamIdRoute: typeof MockExamsEditMockExamIdRoute
@@ -410,13 +384,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/logout': {
-      id: '/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof LogoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -429,13 +396,6 @@ declare module '@tanstack/react-router' {
       path: '/usuarios'
       fullPath: '/usuarios'
       preLoaderRoute: typeof UsuariosIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tags/': {
-      id: '/tags/'
-      path: '/tags'
-      fullPath: '/tags'
-      preLoaderRoute: typeof TagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/subjects/': {
@@ -611,7 +571,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  LogoutRoute: LogoutRoute,
   PerfisNovoPerfilRoute: PerfisNovoPerfilRoute,
   DiagnosisIndexRoute: DiagnosisIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
@@ -619,7 +578,6 @@ const rootRouteChildren: RootRouteChildren = {
   MockExamsIndexRoute: MockExamsIndexRoute,
   PerfisIndexRoute: PerfisIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
-  TagsIndexRoute: TagsIndexRoute,
   UsuariosIndexRoute: UsuariosIndexRoute,
   MainQuestionsEditMainQuestionIdRoute: MainQuestionsEditMainQuestionIdRoute,
   MockExamsEditMockExamIdRoute: MockExamsEditMockExamIdRoute,

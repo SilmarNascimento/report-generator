@@ -1,8 +1,8 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 import { z } from "zod";
-import { requirePermissao } from "@/config/_guard";
+// import { requirePermissao } from "@/router/guard";
 import FullScreenLoader from "@/components/shared/FullScreanLoader";
-import { Permissao } from "@/constants/permissoes";
+// import { Permissao } from "@/constants/permissoes";
 
 const ListagemPerfils = lazyRouteComponent(
   () => import("@/pages/perfis/ListagemPerfil"),
@@ -16,7 +16,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/perfis/")({
-  beforeLoad: () => requirePermissao(Permissao.LISTAR_PERFIS),
+  // beforeLoad: () => requirePermissao(Permissao.LISTAR_PERFIS),
   component: ListagemPerfils,
   pendingComponent: () => <FullScreenLoader />,
   validateSearch: (search) => searchSchema.parse(search),
