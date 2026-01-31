@@ -5,7 +5,7 @@ services:
     container_name: app_frontend
     build: ./frontend
     ports:
-      - 5173:5173
+      - "5173:5173"
     working_dir: /app-frontend
     networks:
       - app-network
@@ -18,7 +18,7 @@ services:
     container_name: app_backend
     build: ./backend
     ports:
-      - 8080:8080
+      - "8080:8080"
     working_dir: /app
     volumes:
       - ./backend:/app
@@ -29,6 +29,8 @@ services:
       - DATABASE_URL=jdbc:postgresql://db:5432/db
       - DATABASE_USERNAME=mateco
       - DATABASE_PASSWORD=1234
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
     networks:
       - app-network
     healthcheck:
@@ -42,6 +44,8 @@ services:
     container_name: postgres-db
     ports:
       - '5432:5432'
+    volumes:
+      - report_generator_db:/var/lib/postgresql/data
     networks:
       - app-network
     environment:
@@ -52,3 +56,5 @@ services:
 networks:
   app-network:
     driver: bridge
+volumes:
+  report_generator_db:
