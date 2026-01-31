@@ -7,7 +7,7 @@ import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.enums.Pattern;
 import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ public record MainQuestionOutputDto(
         List<AlternativeOutputDto> alternatives,
         List<AdaptedQuestionOutputDto> adaptedQuestions,
         List<MockExamListOutputDto> mockExams,
-        List<Handout> handout,
+        List<Handout> handouts,
         int lerickucas,
         Pattern pattern,
         int weight

@@ -96,7 +96,7 @@ public class MainQuestion extends Question {
           List<AdaptedQuestion> adaptedQuestions,
           FileEntity adaptedQuestionsPdfFile,
           List<MockExam> mockExams,
-          List<Handout> handout
+          List<Handout> handouts
   ) throws IOException {
 
     super(title, level);
@@ -108,7 +108,7 @@ public class MainQuestion extends Question {
     this.adaptedQuestions = adaptedQuestions;
     this.adaptedQuestionsPdfFile = adaptedQuestionsPdfFile;
     this.mockExams = mockExams;
-    this.handout = handout;
+    this.handout = handouts;
 
     if (this.lerickucas != 0) {
       this.weight = WEIGHTS.getOrDefault(this.lerickucas, 0);
