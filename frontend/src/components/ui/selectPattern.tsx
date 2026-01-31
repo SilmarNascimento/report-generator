@@ -1,40 +1,40 @@
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import { MainQuestionFormType } from "../mainQuestion/mainQuestionSchema";
-import { LevelType } from "../../interfaces/MainQuestion";
-
-const LEVEL_OPTIONS: LevelType[] = ["Fácil", "Médio", "Difícil"];
+import { QuestionPattern } from "../../interfaces/MainQuestion";
 
 interface SelectProps {
-  defaultValue?: LevelType;
+  defaultValue?: QuestionPattern;
 }
 
-export function SelectLevel({ defaultValue }: SelectProps) {
+const PATTERN_OPTIONS = ["ARITMETICA", "ALGEBRA", "GEOMETRIA"];
+
+export function SelectPattern({ defaultValue }: SelectProps) {
   const { register, setValue, watch } = useFormContext<MainQuestionFormType>();
 
-  const currentValue = watch("level");
+  const currentValue = watch("pattern");
 
   useEffect(() => {
     if (defaultValue) {
-      setValue("level", defaultValue);
+      setValue("pattern", defaultValue);
     }
   }, [defaultValue, setValue]);
 
   return (
     <select
-      {...register("level")}
+      {...register("pattern")}
       defaultValue={defaultValue || ""}
       className={`border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-50/50 w-72 text-sm ${
         !currentValue ? "text-gray-500" : "text-zinc-800"
       }`}
     >
       <option value="" disabled hidden>
-        Nível da Questão
+        Selecione o padrão da questão
       </option>
 
-      {LEVEL_OPTIONS.map((option) => (
-        <option key={option} value={option} className="text-zinc-800">
-          {option}
+      {PATTERN_OPTIONS.map((value) => (
+        <option key={value} value={value} className="text-zinc-800">
+          {value}
         </option>
       ))}
     </select>
