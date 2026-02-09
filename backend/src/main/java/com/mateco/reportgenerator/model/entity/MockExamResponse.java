@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -63,6 +61,27 @@ public class MockExamResponse {
 
     private LocalDateTime createdAt;
 
+    @ElementCollection
+    @OrderColumn(name = "easy_missed_order")
+    private List<Integer> easyMissedQuestions;
+
+    @ElementCollection
+    @OrderColumn(name = "hard_missed_order")
+    private List<Integer> hardMissedQuestions;
+
+    @ElementCollection
+    private Map<String, String> top5SubjectsPerformance;
+
+    @ElementCollection
+    private Map<String, String> areaPerformance;
+
+    @ElementCollection
+    private Map<String, String> difficultyPerformance;
+
+    @ElementCollection
+    @OrderColumn(name = "priority_order")
+    private List<String> subjectsToReview;
+
     public MockExamResponse(
             String name,
             String email,
@@ -84,6 +103,13 @@ public class MockExamResponse {
         this.ipmScore = 0.0;
         this.icpPrevious = 0.0;
         this.punishmentScore = 0.0;
+
+        this.easyMissedQuestions = new ArrayList<>();
+        this.hardMissedQuestions = new ArrayList<>();
+        this.top5SubjectsPerformance = new HashMap<>();
+        this.areaPerformance = new HashMap<>();
+        this.difficultyPerformance = new HashMap<>();
+        this.subjectsToReview = new ArrayList<>();
     }
 
     public static List<MockExamResponse> parseResponse(List<List<String>> studentsResponse) {

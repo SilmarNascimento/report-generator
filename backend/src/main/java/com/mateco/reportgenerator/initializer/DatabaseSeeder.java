@@ -8,6 +8,8 @@ import com.mateco.reportgenerator.model.repository.MockExamRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Profile("!test")
 @Component
+@Slf4j
 public class DatabaseSeeder implements CommandLineRunner {
   private final SubjectRepository subjectRepository;
   private final MainQuestionRepository mainQuestionRepository;
@@ -33,7 +36,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    seedSubjects();
+    //seedSubjects();
     // seedMainQuestions();
   }
 

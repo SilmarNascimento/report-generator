@@ -17,13 +17,7 @@ import com.mateco.reportgenerator.utils.UpdateEntity;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
@@ -193,18 +187,35 @@ public class MockExamService implements MockExamServiceInterface {
       double maxWeightPunishmentLevels = 0.0;
       double achievedWeightPunishmentLevels = 0.0;
 
+      Map<String, int[]> areaStats = new HashMap<>();
+      Map<String, int[]> difficultyStats = new HashMap<>();
+      Map<Subject, int[]> subjectStats = new HashMap<>();
+      Map<Subject, Double> subjectTotalWeight = new HashMap<>();
+      Map<Subject, Double> subjectErrorWeight = new HashMap<>();
+
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
         int questionNumber = questionIndex + MockExam.INITIAL_QUESTION_NUMBER;
         MainQuestion mainQuestion = mockExamQuestions.get(questionNumber);
 
         int questionWeight = mainQuestion.getWeight();
         int lerickucasLevel = mainQuestion.getLerickucas();
-        boolean isPunishmentLevel = punishmentLevels.contains(lerickucasLevel);
+        String area = mainQuestion.getPattern().name().toUpperCase();
+        String level = mainQuestion.getLevel().toUpperCase();
+
+        Subject primarySubject = (mainQuestion.getSubjects() != null && !mainQuestion.getSubjects().isEmpty())
+                ? mainQuestion.getSubjects().get(0) : null;
 
         totalWeightAllQuestions += questionWeight;
-        if (isPunishmentLevel) {
+        if (punishmentLevels.contains(lerickucasLevel)) {
           maxWeightPunishmentLevels += questionWeight;
         }
+
+        areaStats.putIfAbsent(area, new int[2]);
+        difficultyStats.putIfAbsent(level, new int[2]);
+        areaStats.get(area)[1]++;
+        difficultyStats.get(level)[1]++;
+
+
 
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
@@ -214,15 +225,38 @@ public class MockExamService implements MockExamServiceInterface {
 
         boolean isCorrect = answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex));
 
+        if (primarySubject != null) {
+          subjectTotalWeight.put(primarySubject, subjectTotalWeight.getOrDefault(primarySubject, 0.0) + questionWeight);
+
+          subjectStats.putIfAbsent(primarySubject, new int[2]);
+          subjectStats.get(primarySubject)[1]++;
+
+          if (isCorrect) {
+            subjectStats.get(primarySubject)[0]++;
+          }
+        }
+
         if (isCorrect) {
           studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
 
           totalAchievedWeight += questionWeight;
-          if (isPunishmentLevel) {
+          if (punishmentLevels.contains(lerickucasLevel)) {
             achievedWeightPunishmentLevels += questionWeight;
           }
+          areaStats.get(area)[0]++;
+          difficultyStats.get(level)[0]++;
         } else {
           studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
+
+          if (primarySubject != null) {
+            subjectErrorWeight.put(primarySubject, subjectErrorWeight.getOrDefault(primarySubject, 0.0) + questionWeight);
+          }
+
+          if ("FÁCIL".equals(level)) {
+            studentResponse.getEasyMissedQuestions().add(questionNumber);
+          } else if ("DIFÍCIL".equals(level)) {
+            studentResponse.getHardMissedQuestions().add(questionNumber);
+          }
         }
       }
 
@@ -234,9 +268,62 @@ public class MockExamService implements MockExamServiceInterface {
         achievedWeightPunishmentLevels
       );
 
+      studentResponse.setAreaPerformance(formatPerformanceMap(areaStats));
+      studentResponse.setDifficultyPerformance(formatPerformanceMap(difficultyStats));
+      studentResponse.setTop5SubjectsPerformance(calculateTop5Subjects(subjectStats));
+      studentResponse.setSubjectsToReview(calculateRevisionPriorities(subjectTotalWeight, subjectErrorWeight));
+
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);
+  }
+
+  private List<String> calculateRevisionPriorities(
+          Map<Subject, Double> subjectTotalWeight,
+          Map<Subject, Double> subjectErrorWeight
+  ) {
+    Map<Subject, Double> priorityIndices = new HashMap<>();
+
+    subjectTotalWeight.forEach((subject, totalWeight) -> {
+      double errorWeight = subjectErrorWeight.getOrDefault(subject, 0.0);
+
+      double errorRate = errorWeight / totalWeight;
+
+      priorityIndices.put(subject, totalWeight * errorRate);
+    });
+
+    return priorityIndices.entrySet().stream()
+            .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+            .limit(3)
+            .map(entry -> entry.getKey().getName())
+            .collect(Collectors.toList());
+  }
+
+  private Map<String, String> formatPerformanceMap(Map<String, int[]> stats) {
+    Map<String, String> formatted = new HashMap<>();
+    stats.forEach((key, val) -> {
+      double percent = (val[1] > 0) ? ((double) val[0] / val[1]) * 100 : 0;
+      formatted.put(key, String.format("%d de %d (%d%%)", val[0], val[1], (int) Math.round(percent)));
+    });
+    return formatted;
+  }
+
+  private Map<String, String> calculateTop5Subjects(Map<Subject, int[]> subjectStats) {
+    return subjectStats.entrySet().stream()
+            .sorted((a, b) -> {
+              int compareCount = Integer.compare(b.getValue()[1], a.getValue()[1]); // 1º: Maior quantidade
+              if (compareCount == 0) {
+                return a.getKey().getName().compareTo(b.getKey().getName()); // 2º: Ordem alfabética
+              }
+              return compareCount;
+            })
+            .limit(5)
+            .collect(Collectors.toMap(
+                    entry -> entry.getKey().getName(),
+                    entry -> String.format("%d de %d", entry.getValue()[0], entry.getValue()[1]),
+                    (v1, v2) -> v1,
+                    LinkedHashMap::new
+            ));
   }
 
   private static void addFileEntityIfPresent(
@@ -346,15 +433,9 @@ public class MockExamService implements MockExamServiceInterface {
 
     double finalIpm = icpPrevious - punishmentPercent;
 
-    studentResponse.setIcpPrevious(round(icpPrevious));
-    studentResponse.setPunishmentScore(round(punishmentPercent));
-    studentResponse.setIpmScore(round(Math.max(0, finalIpm)));
-  }
-
-  private double round(double value) {
-    BigDecimal bd = BigDecimal.valueOf(value);
-    bd = bd.setScale(2, RoundingMode.HALF_UP);
-    return bd.doubleValue();
+    studentResponse.setIcpPrevious((double) Math.round(icpPrevious));
+    studentResponse.setPunishmentScore((double) Math.round(punishmentPercent));
+    studentResponse.setIpmScore((double) Math.round(Math.max(0, finalIpm)));
   }
 
 }
