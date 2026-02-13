@@ -6,7 +6,11 @@ import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectOutputDto;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.service.SubjectServiceInterface;
+
+import java.util.List;
 import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,13 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/subject")
+@RequiredArgsConstructor
 public class SubjectController {
   private final SubjectServiceInterface subjectService;
-
-  @Autowired
-  public SubjectController(SubjectServiceInterface subjectService) {
-    this.subjectService = subjectService;
-  }
 
   @PostMapping("/filter")
   public ResponseEntity<PageOutputDto<SubjectOutputDto>> findAllSubjects(
@@ -38,13 +38,12 @@ public class SubjectController {
       @RequestParam(required = false) String query,
       @RequestBody(required = false) SubjectListInputDto excludedSubjects
   ) {
-    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize, query, excludedSubjects.subjectsId());
+    List<UUID> excludedIds = (excludedSubjects != null) ? excludedSubjects.subjectsId() : List.of();
+
+    Page<Subject> subjectPage = subjectService.findAllSubjects(pageNumber, pageSize, query, excludedIds);
     return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(PageOutputDto.parseDto(
-            subjectPage,
-            SubjectOutputDto::parseDto
-        ));
+            .status(HttpStatus.OK)
+            .body(PageOutputDto.parseDto(subjectPage, SubjectOutputDto::parseDto));
   }
 
   @GetMapping("/{subjectId}")

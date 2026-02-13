@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.service.implementation;
 
+import com.mateco.reportgenerator.controller.dto.jasperReportDto.DiagnosisReportDTO;
 import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
@@ -21,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MockExamService implements MockExamServiceInterface {
   private final MockExamRepository mockExamRepository;
   private final MainQuestionRepository mainQuestionRepository;
@@ -190,8 +193,6 @@ public class MockExamService implements MockExamServiceInterface {
       Map<String, int[]> areaStats = new HashMap<>();
       Map<String, int[]> difficultyStats = new HashMap<>();
       Map<Subject, int[]> subjectStats = new HashMap<>();
-      Map<Subject, Double> subjectTotalWeight = new HashMap<>();
-      Map<Subject, Double> subjectErrorWeight = new HashMap<>();
 
       for (int questionIndex = 0; questionIndex < mockExamQuestions.size(); questionIndex++) {
         int questionNumber = questionIndex + MockExam.INITIAL_QUESTION_NUMBER;
@@ -215,8 +216,6 @@ public class MockExamService implements MockExamServiceInterface {
         areaStats.get(area)[1]++;
         difficultyStats.get(level)[1]++;
 
-
-
         int correctAlternativeIndex = IntStream.range(0, mainQuestion.getAlternatives().size())
             .filter(filterIndex -> mainQuestion
                 .getAlternatives().get(filterIndex).isQuestionAnswer())
@@ -226,8 +225,6 @@ public class MockExamService implements MockExamServiceInterface {
         boolean isCorrect = answerMap.get(correctAlternativeIndex).equals(studentAnswers.get(questionIndex));
 
         if (primarySubject != null) {
-          subjectTotalWeight.put(primarySubject, subjectTotalWeight.getOrDefault(primarySubject, 0.0) + questionWeight);
-
           subjectStats.putIfAbsent(primarySubject, new int[2]);
           subjectStats.get(primarySubject)[1]++;
 
@@ -248,16 +245,13 @@ public class MockExamService implements MockExamServiceInterface {
         } else {
           studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
 
-          if (primarySubject != null) {
-            subjectErrorWeight.put(primarySubject, subjectErrorWeight.getOrDefault(primarySubject, 0.0) + questionWeight);
-          }
-
           if ("FÁCIL".equals(level)) {
             studentResponse.getEasyMissedQuestions().add(questionNumber);
           } else if ("DIFÍCIL".equals(level)) {
             studentResponse.getHardMissedQuestions().add(questionNumber);
           }
         }
+
       }
 
       calculateAndSetIpm(
@@ -271,25 +265,28 @@ public class MockExamService implements MockExamServiceInterface {
       studentResponse.setAreaPerformance(formatPerformanceMap(areaStats));
       studentResponse.setDifficultyPerformance(formatPerformanceMap(difficultyStats));
       studentResponse.setTop5SubjectsPerformance(calculateTop5Subjects(subjectStats));
-      studentResponse.setSubjectsToReview(calculateRevisionPriorities(subjectTotalWeight, subjectErrorWeight));
-
+      studentResponse.setSubjectsToReview(calculateRevisionPriorities(subjectStats));
     }
 
     return mockExamResponseRepository.saveAll(mockExamResponses);
   }
 
   private List<String> calculateRevisionPriorities(
-          Map<Subject, Double> subjectTotalWeight,
-          Map<Subject, Double> subjectErrorWeight
+          Map<Subject, int[]> subjectStats
   ) {
     Map<Subject, Double> priorityIndices = new HashMap<>();
 
-    subjectTotalWeight.forEach((subject, totalWeight) -> {
-      double errorWeight = subjectErrorWeight.getOrDefault(subject, 0.0);
+    subjectStats.forEach((subject, stats) -> {
+      int acertos = stats[0];
+      int totalNoSimulado = stats[1];
 
-      double errorRate = errorWeight / totalWeight;
+      double errorRate = (totalNoSimulado > 0)
+              ? (double) (totalNoSimulado - acertos) / totalNoSimulado
+              : 0.0;
 
-      priorityIndices.put(subject, totalWeight * errorRate);
+      double fixedWeight = (subject.getFixedWeight() != null) ? subject.getFixedWeight() : 0.0;
+
+      priorityIndices.put(subject, fixedWeight * errorRate);
     });
 
     return priorityIndices.entrySet().stream()
@@ -311,9 +308,9 @@ public class MockExamService implements MockExamServiceInterface {
   private Map<String, String> calculateTop5Subjects(Map<Subject, int[]> subjectStats) {
     return subjectStats.entrySet().stream()
             .sorted((a, b) -> {
-              int compareCount = Integer.compare(b.getValue()[1], a.getValue()[1]); // 1º: Maior quantidade
+              int compareCount = Integer.compare(b.getValue()[1], a.getValue()[1]);
               if (compareCount == 0) {
-                return a.getKey().getName().compareTo(b.getKey().getName()); // 2º: Ordem alfabética
+                return a.getKey().getName().compareTo(b.getKey().getName());
               }
               return compareCount;
             })

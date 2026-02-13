@@ -31,10 +31,9 @@ public class SubjectService implements SubjectServiceInterface {
   @Override
   public Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query, List<UUID> excludedSubjects) {
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
-    if (excludedSubjects.isEmpty()) {
+    if (excludedSubjects == null || excludedSubjects.isEmpty()) {
       return subjectRepository.findAllOrderByName(pageable, query);
     }
-
     return subjectRepository.findAllOrderByName(pageable, query, excludedSubjects);
   }
 
@@ -62,12 +61,18 @@ public class SubjectService implements SubjectServiceInterface {
   public Subject updateSubject(UUID subjectId, Subject subject) {
     Subject subjectFound = subjectRepository.findById(subjectId)
         .orElseThrow(() -> new NotFoundException("Conteúdo não encontrado!"));
+
     subjectFound.setName(subject.getName());
+    subjectFound.setFixedWeight(subject.getFixedWeight());
+
     return subjectRepository.save(subjectFound);
   }
 
   @Override
   public void deleteSubject(UUID subjectId) {
+    if (!subjectRepository.existsById(subjectId)) {
+      throw new NotFoundException("Conteúdo não encontrado!");
+    }
     subjectRepository.deleteById(subjectId);
   }
 }

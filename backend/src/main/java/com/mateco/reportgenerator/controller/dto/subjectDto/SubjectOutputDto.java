@@ -6,15 +6,21 @@ import java.util.UUID;
 
 public record SubjectOutputDto(
     UUID id,
-    String name
+    String name,
+    Double fixedWeight
 ) {
   public static SubjectOutputDto parseDto(Subject subject) {
-    return new SubjectOutputDto(subject.getId(), subject.getName());
+    return new SubjectOutputDto(
+            subject.getId(),
+            subject.getName(),
+            subject.getFixedWeight()
+    );
   }
 
-  public static List<SubjectOutputDto>  parseDto(List<Subject> subjects) {
+  public static List<SubjectOutputDto> parseDto(List<Subject> subjects) {
+    if (subjects == null) return List.of();
     return subjects.stream()
-        .map((Subject subject) -> new SubjectOutputDto(subject.getId(), subject.getName()))
-        .toList();
+            .map(SubjectOutputDto::parseDto)
+            .toList();
   }
 }
