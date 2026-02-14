@@ -171,7 +171,8 @@ export function Subjects() {
           <TableHeader>
             <TableRow>
               <TableHead></TableHead>
-              <TableHead>Tag</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Peso</TableHead>
               <TableHead>Id</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -181,12 +182,25 @@ export function Subjects() {
               return (
                 <TableRow key={subject.id}>
                   <TableCell></TableCell>
+
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">{subject.name}</span>
                     </div>
                   </TableCell>
+
+                  <TableCell>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-medium">
+                        {subject.fixedWeight
+                          ? `${(subject.fixedWeight * 100).toFixed(1)}%`
+                          : "0%"}
+                      </span>
+                    </div>
+                  </TableCell>
+
                   <TableCell className="text-zinc-300">{subject.id}</TableCell>
+
                   <TableCell className="text-right">
                     <Button
                       size="icon"

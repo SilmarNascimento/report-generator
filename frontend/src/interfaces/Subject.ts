@@ -1,4 +1,5 @@
-export type Subject =  {
-  id: string
-  name: string
-}
+export type Subject = {
+  id: string;
+  name: string;
+  fixedWeight: number;
+};
