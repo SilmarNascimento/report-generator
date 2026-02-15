@@ -3,37 +3,44 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { Button } from './ui/button'
-import { SelectPageSize } from './ui/selectPageSize'
+import { Button } from "./ui/shadcn/button";
+import { SelectPageSize } from "./ui/selectPageSize";
 
 interface PaginationProps {
-  page: number
-  items: number
-  totalItems: number
-  pages: number
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
-  setPageSize: React.Dispatch<React.SetStateAction<number>>
+  page: number;
+  items: number;
+  totalItems: number;
+  pages: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export function PaginationFromList({ items, page, pages, totalItems, setCurrentPage, setPageSize }: PaginationProps) {
+export function PaginationFromList({
+  items,
+  page,
+  pages,
+  totalItems,
+  setCurrentPage,
+  setPageSize,
+}: PaginationProps) {
   function firstPage() {
     setCurrentPage(1);
   }
 
   function previousPage() {
     if (page - 1 <= 0) {
-      return
+      return;
     }
-    setCurrentPage(prev => prev - 1);
+    setCurrentPage((prev) => prev - 1);
   }
 
   function nextPage() {
     if (page + 1 > pages) {
-      return
+      return;
     }
-    setCurrentPage(prev => prev + 1);
+    setCurrentPage((prev) => prev + 1);
   }
 
   function lastPage() {
@@ -42,25 +49,41 @@ export function PaginationFromList({ items, page, pages, totalItems, setCurrentP
 
   return (
     <div className="flex text-sm items-center justify-between text-zinc-500">
-      <span>Showing {items} of {totalItems} items</span>
+      <span>
+        Showing {items} of {totalItems} items
+      </span>
       <div className="flex items-center gap-8">
-        { pages >= 2 && (
+        {pages >= 2 && (
           <>
-            <span>Page {page} of {pages}</span>
+            <span>
+              Page {page} of {pages}
+            </span>
             <div className="space-x-1.5">
               <Button onClick={firstPage} size="icon" disabled={page - 1 <= 0}>
                 <ChevronsLeft className="size-4" />
                 <span className="sr-only">First page</span>
               </Button>
-              <Button onClick={previousPage} size="icon" disabled={page - 1 <= 0}>
+              <Button
+                onClick={previousPage}
+                size="icon"
+                disabled={page - 1 <= 0}
+              >
                 <ChevronLeft className="size-4" />
                 <span className="sr-only">Previous page</span>
               </Button>
-              <Button onClick={nextPage} size="icon" disabled={page + 1 > pages}>
+              <Button
+                onClick={nextPage}
+                size="icon"
+                disabled={page + 1 > pages}
+              >
                 <ChevronRight className="size-4" />
                 <span className="sr-only">Next page</span>
               </Button>
-              <Button onClick={lastPage} size="icon" disabled={page + 1 > pages}>
+              <Button
+                onClick={lastPage}
+                size="icon"
+                disabled={page + 1 > pages}
+              >
                 <ChevronsRight className="size-4" />
                 <span className="sr-only">Last page</span>
               </Button>
@@ -70,9 +93,9 @@ export function PaginationFromList({ items, page, pages, totalItems, setCurrentP
 
         <div className="flex items-center gap-2">
           <span>Rows per page</span>
-          <SelectPageSize setPageSize={setPageSize}/>
+          <SelectPageSize setPageSize={setPageSize} />
         </div>
       </div>
     </div>
-  )
+  );
 }

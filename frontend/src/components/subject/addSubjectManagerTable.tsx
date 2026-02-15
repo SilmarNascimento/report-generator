@@ -1,6 +1,6 @@
 import { FilePlus, Plus, Search } from "lucide-react";
-import { Control, Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Control, Input } from "../ui/shadcn/input";
+import { Button } from "../ui/shadcn/button";
 import {
   Table,
   TableBody,

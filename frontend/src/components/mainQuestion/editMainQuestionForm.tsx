@@ -2,7 +2,7 @@ import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
+import { Button } from "../ui/shadcn/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mainQuestionSchema } from "./mainQuestionSchema";
 import { AlternativeForm } from "../alternative/alternativesForm";
@@ -11,7 +11,7 @@ import { MainQuestion } from "../../interfaces";
 import { DevTool } from "@hookform/devtools";
 import { CreateAlternative } from "../../interfaces/Alternative";
 import { CreateQuestion } from "../../interfaces/MainQuestion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { SelectLevel } from "../ui/selectLevel";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
@@ -33,8 +33,27 @@ export function EditMainQuestionForm({
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
   const navigate = useNavigate();
 
+  const memoizedDefaultValues = useMemo(() => {
+    return mainQuestion
+      ? mainQuestionSchema.parse(mainQuestion)
+      : {
+          title: "",
+          level: "Fácil" as const,
+          lerikucas: "1" as const,
+          pattern: "ARITMETICA" as const,
+          videoResolutionUrl: "",
+          alternatives: Array(5).fill({ description: "" }),
+          questionAnswer: "0",
+          adaptedQuestionsPdfFile: undefined as unknown as File,
+          images: undefined as unknown as FileList,
+        };
+  }, [mainQuestion]);
+
   const formMethods = useForm<EditMainQuestionForm>({
     resolver: zodResolver(mainQuestionSchema),
+    defaultValues: memoizedDefaultValues,
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
   const { register, handleSubmit, formState, setValue, control, watch } =
     formMethods;
@@ -231,7 +250,7 @@ export function EditMainQuestionForm({
           <label className="text-sm font-medium block" htmlFor="level">
             Lerikucas
           </label>
-          <SelectLerikucas />
+          <SelectLerikucas defaultValue={memoizedDefaultValues.lerikucas} />
           <p
             className={`text-sm ${formState.errors?.lerikucas ? "text-red-400" : "text-transparent"}`}
           >
@@ -245,7 +264,7 @@ export function EditMainQuestionForm({
           <label className="text-sm font-medium block" htmlFor="level">
             Nível da questão
           </label>
-          <SelectLevel />
+          <SelectLevel defaultValue={memoizedDefaultValues.level} />
           <p
             className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
           >
@@ -259,7 +278,7 @@ export function EditMainQuestionForm({
           <label className="text-sm font-medium block" htmlFor="level">
             Padrão da Questão
           </label>
-          <SelectPattern />
+          <SelectPattern defaultValue={memoizedDefaultValues.pattern} />
           <p
             className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
           >

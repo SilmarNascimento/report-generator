@@ -1,7 +1,7 @@
 import { Check, Loader2, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
+import { Button } from "../ui/shadcn/button";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";

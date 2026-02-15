@@ -10,7 +10,7 @@ import { Pagination } from "../../components/pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/shadcn/button";
 import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
 import {
@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Control, Input } from "../../components/ui/input";
+import { Control, Input } from "../../components/ui/shadcn/input";
 import { EditSubjectForm } from "../../components/subject/editSubjectForm";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Subject } from "../../interfaces";

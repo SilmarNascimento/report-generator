@@ -2,7 +2,7 @@ import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
+import { Button } from "../ui/shadcn/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { mainQuestionSchema } from "./mainQuestionSchema";

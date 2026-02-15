@@ -11,9 +11,9 @@ import { AdaptedQuestion } from "../../../interfaces";
 import { successAlert } from "../../../utils/toastAlerts";
 import { Header } from "../../../components/header";
 import { NavigationBar } from "../../../components/NavigationBar";
-import { Button } from "../../../components/ui/button";
+import { Button } from "../../../components/ui/shadcn/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../../../components/ui/input";
+import { Control, Input } from "../../../components/ui/shadcn/input";
 import {
   Table,
   TableBody,

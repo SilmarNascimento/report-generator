@@ -7,8 +7,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { Header } from "./components/header";
-import { Button } from "./components/ui/button";
-import { Control, Input } from "./components/ui/input";
+import { Button } from "./components/ui/shadcn/button";
+import { Control, Input } from "./components/ui/shadcn/input";
 import {
   Table,
   TableBody,

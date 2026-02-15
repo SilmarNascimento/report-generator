@@ -10,9 +10,9 @@ import { Pagination } from "../../components/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/shadcn/button";
 import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../../components/ui/input";
+import { Control, Input } from "../../components/ui/shadcn/input";
 import {
   Table,
   TableBody,
