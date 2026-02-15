@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { AxiosError } from "axios";
 import apiService from "@/service/ApiService";
-import { successAlert } from "@/util/toastAlerts";
+import { createSearchParams, useNavigate } from "react-router-dom";
+import { successAlert } from "@/utils/toastAlerts";
 
 type SearchParamsType = {
   pagina_atual: number;
@@ -12,11 +11,10 @@ type SearchParamsType = {
 type UseHandleCreateParams<FormType, DtoType> = {
   endpoint: string;
   invalidateKeys: string[][];
-  successMessage: string | ((payload: DtoType) => string);
+  successMessage: string;
   navigateTo: string;
   mapFn: (data: FormType) => DtoType;
   searchParams?: SearchParamsType;
-  onConflict?: (mensagem: string, payload: DtoType) => void;
 };
 
 export function useHandleCreate<FormType, DtoType>({
@@ -26,40 +24,30 @@ export function useHandleCreate<FormType, DtoType>({
   navigateTo,
   mapFn,
   searchParams,
-  onConflict,
 }: UseHandleCreateParams<FormType, DtoType>) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: (data: DtoType) => apiService.post(endpoint, data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       invalidateKeys.forEach((key) =>
         queryClient.invalidateQueries({ queryKey: key }),
       );
 
-      const mensagemFinal =
-        typeof successMessage === "function"
-          ? successMessage(variables)
-          : successMessage;
+      successAlert(successMessage);
 
-      successAlert(mensagemFinal);
+      const params = {
+        pagina_atual: String(searchParams?.pagina_atual ?? 1),
+        registros_pagina: String(searchParams?.registros_pagina ?? 25),
+      };
+
       navigate({
-        to: navigateTo,
-        search: searchParams ?? {
-          pagina_atual: 1,
-          registros_pagina: 25,
-        },
+        pathname: navigateTo,
+        search: `?${createSearchParams(params)}`,
       });
     },
-    onError: (error, variables) => {
-      if (error instanceof AxiosError && error.response?.status === 409) {
-        const mensagem = error.response?.data?.mensagem;
-        if (onConflict) {
-          onConflict(mensagem, variables as DtoType);
-          return;
-        }
-      }
+    onError: (error) => {
       console.error(`Erro ao criar recurso:`, error);
     },
   });

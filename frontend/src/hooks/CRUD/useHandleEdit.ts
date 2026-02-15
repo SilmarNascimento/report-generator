@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "@/service/ApiService";
 import { successAlert } from "@/utils/toastAlerts";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 
 type SearchParamsType = {
   pagina_atual: number;
@@ -25,6 +25,7 @@ export function useHandleEdit<FormType, DtoType>({
   successMessage,
   navigateTo,
   mapFn,
+  searchParams,
 }: UseHandleEditParams<FormType, DtoType>) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -39,7 +40,15 @@ export function useHandleEdit<FormType, DtoType>({
       ]);
       successAlert(successMessage);
 
-      navigate(navigateTo);
+      const params = {
+        pagina_atual: String(searchParams?.pagina_atual ?? 1),
+        registros_pagina: String(searchParams?.registros_pagina ?? 25),
+      };
+
+      navigate({
+        pathname: navigateTo,
+        search: `?${createSearchParams(params)}`,
+      });
     },
     onError: (error) => {
       console.error(`Erro ao editar recurso:`, error);

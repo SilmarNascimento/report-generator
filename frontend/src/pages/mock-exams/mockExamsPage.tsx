@@ -11,8 +11,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { EyeIcon, FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../../components/ui/shadcn/input";
+import { EyeIcon, FileDown, Pencil, Plus, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -25,6 +24,7 @@ import { MockExam } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
+import FiltroListagem from "@/components/shared/FiltroListagem";
 
 export function MockExams() {
   const queryClient = useQueryClient();
@@ -66,8 +66,6 @@ export function MockExams() {
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
-
-  console.log(mockExamPageResponse);
 
   const deleteMainQuestion = useMutation({
     mutationFn: async (mockExamId: string) => {
@@ -128,14 +126,10 @@ export function MockExams() {
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button>

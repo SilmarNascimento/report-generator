@@ -1,6 +1,6 @@
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from "lucide-react";
 
-import { Badge } from './ui/badge'
+import { Badge } from "./ui/shadcn/badge";
 
 export function Header() {
   return (
@@ -76,5 +76,5 @@ export function Header() {
         <ChevronDown className="size-4 text-zinc-600" />
       </div>
     </div>
-  )
+  );
 }

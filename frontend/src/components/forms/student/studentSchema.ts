@@ -3,8 +3,14 @@ import { createCpfSchema } from "@/utils/validacoes/cpf/cpfSchema";
 import { CLASS_GROUP } from "@/constants/students";
 import { BR_STATES } from "@/constants/general";
 
+export const badgeDropdownSchema = z.object({
+  dropdownLabel: z.string().optional(),
+  displayLabel: z.string().optional(),
+  value: z.enum(CLASS_GROUP),
+});
+
 export const studentSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1, "Nome é obrigatório"),
   email: z
     .string()
     .trim()
@@ -12,7 +18,9 @@ export const studentSchema = z.object({
     .pipe(z.email({ message: "E-mail inválido" })),
   cpf: createCpfSchema(),
   enrollmentYear: z.number(),
-  classGroup: z.enum(CLASS_GROUP),
+  classGroup: z
+    .array(badgeDropdownSchema)
+    .min(1, "Selecione ao menos uma turma"),
   photoUrl: z.string().optional(),
   address: z
     .object({

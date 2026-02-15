@@ -5,13 +5,18 @@ import { useMemo } from "react";
 import SessaoBotoesFormulario from "@/components/shared/SessaoBotoesFormulario";
 import { InputTextWrapper } from "@/components/features/form-input/InputTextWrapper";
 import { InputSelectDropdownWrapper } from "@/components/features/form-input/InputSelectDropdownWrapper";
-import { brStatesOptions, classGroupOptions } from "@/mapper/student";
 import { InputNumberWrapper } from "@/components/features/form-input/InputNumberWrapper";
+import { InputMultiSelectWrapper } from "@/components/features/form-input/InputMultiSelectWrapper";
+import { classGroupBadgeOptions } from "@/constants/students";
+import { brStatesOptions } from "@/constants/general";
+import { DiagnosisList } from "@/components/features/DiagnosisList";
+import { YearlyResponse } from "@/interfaces/Student";
 
 type StudentFormProps = {
   titulo: string;
-  modo: "criacao" | "edicao" | "visualizacao";
+  modo: "criacao" | "edicao" | "view";
   defaultValues?: StudentFormType;
+  responses?: YearlyResponse[];
   handleSubmitRequest?: (data: StudentFormType) => Promise<void>;
 };
 
@@ -20,8 +25,9 @@ const StudentForm = ({
   modo,
   defaultValues,
   handleSubmitRequest,
+  responses,
 }: StudentFormProps) => {
-  const isReadOnly = modo === "visualizacao";
+  const isReadOnly = modo === "view";
 
   const memoizedDefaultValues = useMemo(() => {
     return defaultValues
@@ -119,14 +125,13 @@ const StudentForm = ({
           </div>
 
           <div className="flex w-full flex-col xl:max-w-85">
-            <InputSelectDropdownWrapper
+            <InputMultiSelectWrapper
               name="classGroup"
               control={control}
-              errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
-              options={classGroupOptions}
-              isReadOnly={isReadOnly}
+              label="Órgãos"
+              placeholder="Todos"
+              options={classGroupBadgeOptions}
+              showBadges
             />
           </div>
 
@@ -143,28 +148,30 @@ const StudentForm = ({
           </div>
 
           <div>
-            <div className="flex w-full flex-col xl:max-w-85">
-              <InputTextWrapper
-                name="address.street"
-                control={control}
-                errors={errors}
-                label="Rua"
-                placeholder="Digite o nome da rua"
-                format="cpf"
-                isReadOnly={isReadOnly}
-              />
-            </div>
+            <div className="flex flex-row gap-6">
+              <div className="flex w-full flex-col xl:max-w-85">
+                <InputTextWrapper
+                  name="address.street"
+                  control={control}
+                  errors={errors}
+                  label="Rua"
+                  placeholder="Digite o nome da rua"
+                  format="cpf"
+                  isReadOnly={isReadOnly}
+                />
+              </div>
 
-            <div className="flex w-full flex-col xl:max-w-85">
-              <InputNumberWrapper
-                name="address.number"
-                control={control}
-                errors={errors}
-                label="Número"
-                placeholder="Digite o número"
-                isReadOnly={isReadOnly}
-                allowNegative={false}
-              />
+              <div className="flex w-full flex-col xl:max-w-85">
+                <InputNumberWrapper
+                  name="address.number"
+                  control={control}
+                  errors={errors}
+                  label="Número"
+                  placeholder="Digite o número"
+                  isReadOnly={isReadOnly}
+                  allowNegative={false}
+                />
+              </div>
             </div>
 
             <div className="flex w-full flex-col xl:max-w-85">
@@ -225,6 +232,12 @@ const StudentForm = ({
           </div>
         </section>
       </section>
+
+      {modo === "view" && responses && (
+        <section>
+          <DiagnosisList responses={responses} />
+        </section>
+      )}
 
       <SessaoBotoesFormulario
         modo={modo}
