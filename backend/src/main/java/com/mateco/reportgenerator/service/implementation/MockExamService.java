@@ -252,7 +252,7 @@ public class MockExamService implements MockExamServiceInterface {
         List<Integer> punishmentLevels = List.of(1, 2, 5);
 
         for (MockExamResponse mockExamResponse : mockExamResponses) {
-            Student student = studentRepository.findByUserEmail(mockExamResponse.getStudent().getUser().getEmail())
+            Student student = studentRepository.findByUserEmail(mockExamResponse.getEmail())
                     .orElseThrow(() -> new NotFoundException("Estudante não encontrado"));
 
             mockExamResponse.setStudent(student);
