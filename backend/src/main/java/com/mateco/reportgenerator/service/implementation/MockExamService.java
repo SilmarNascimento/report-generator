@@ -251,19 +251,15 @@ public class MockExamService implements MockExamServiceInterface {
 
         List<Integer> punishmentLevels = List.of(1, 2, 5);
 
-        for (MockExamResponse studentResponse : mockExamResponses) {
-            if (studentResponse.getStudent() == null || studentResponse.getStudent().getId() == null) {
-                throw new InvalidDataException("É obrigatório informar o ID do estudante.");
-            }
-
-            Student student = studentRepository.findById(studentResponse.getStudent().getId())
+        for (MockExamResponse mockExamResponse : mockExamResponses) {
+            Student student = studentRepository.findByUserEmail(mockExamResponse.getStudent().getUser().getEmail())
                     .orElseThrow(() -> new NotFoundException("Estudante não encontrado"));
 
-            studentResponse.setStudent(student);
-            studentResponse.setMockExam(mockExamFound);
+            mockExamResponse.setStudent(student);
+            mockExamResponse.setMockExam(mockExamFound);
 
             Map<Integer, MainQuestion> mockExamQuestions = mockExamFound.getMockExamQuestions();
-            List<String> studentAnswers = studentResponse.getResponses();
+            List<String> studentAnswers = mockExamResponse.getResponses();
 
             double totalWeightAllQuestions = 0.0;
             double totalAchievedWeight = 0.0;
@@ -314,7 +310,7 @@ public class MockExamService implements MockExamServiceInterface {
                 }
 
                 if (isCorrect) {
-                    studentResponse.setCorrectAnswers(studentResponse.getCorrectAnswers() + 1);
+                    mockExamResponse.setCorrectAnswers(mockExamResponse.getCorrectAnswers() + 1);
 
                     totalAchievedWeight += questionWeight;
                     if (punishmentLevels.contains(lerickucasLevel)) {
@@ -323,29 +319,29 @@ public class MockExamService implements MockExamServiceInterface {
                     areaStats.get(area)[0]++;
                     difficultyStats.get(level)[0]++;
                 } else {
-                    studentResponse.getMissedMainQuestionNumbers().add(questionNumber);
+                    mockExamResponse.getMissedMainQuestionNumbers().add(questionNumber);
 
                     if ("FÁCIL".equals(level)) {
-                        studentResponse.getEasyMissedQuestions().add(questionNumber);
+                        mockExamResponse.getEasyMissedQuestions().add(questionNumber);
                     } else if ("DIFÍCIL".equals(level)) {
-                        studentResponse.getHardMissedQuestions().add(questionNumber);
+                        mockExamResponse.getHardMissedQuestions().add(questionNumber);
                     }
                 }
 
             }
 
             calculateAndSetIpm(
-                    studentResponse,
+                    mockExamResponse,
                     totalWeightAllQuestions,
                     totalAchievedWeight,
                     maxWeightPunishmentLevels,
                     achievedWeightPunishmentLevels
             );
 
-            studentResponse.setAreaPerformance(formatPerformanceMap(areaStats));
-            studentResponse.setDifficultyPerformance(formatPerformanceMap(difficultyStats));
-            studentResponse.setTop5SubjectsPerformance(calculateTop5Subjects(subjectStats));
-            studentResponse.setSubjectsToReview(calculateRevisionPriorities(subjectStats));
+            mockExamResponse.setAreaPerformance(formatPerformanceMap(areaStats));
+            mockExamResponse.setDifficultyPerformance(formatPerformanceMap(difficultyStats));
+            mockExamResponse.setTop5SubjectsPerformance(calculateTop5Subjects(subjectStats));
+            mockExamResponse.setSubjectsToReview(calculateRevisionPriorities(subjectStats));
         }
 
         return mockExamResponseRepository.saveAll(mockExamResponses);
