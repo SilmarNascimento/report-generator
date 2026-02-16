@@ -1,5 +1,4 @@
-import { FileMinus, Search, X } from "lucide-react";
-import { Control, Input } from "../ui/shadcn/input";
+import { FileMinus, X } from "lucide-react";
 import { Button } from "../ui/shadcn/button";
 import {
   Table,
@@ -14,6 +13,7 @@ import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { PaginationFromList } from "../paginationFromList";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
+import FiltroListagem from "../shared/FiltroListagem";
 
 type RemoveSubjectManagerTableProps = {
   entity: Subject[];
@@ -65,14 +65,10 @@ export function RemoveSubjectManagerTable({
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button onClick={() => handleClick(subjectIdToDelete)}>

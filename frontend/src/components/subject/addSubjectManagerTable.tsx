@@ -1,5 +1,4 @@
-import { FilePlus, Plus, Search } from "lucide-react";
-import { Control, Input } from "../ui/shadcn/input";
+import { FilePlus, Plus } from "lucide-react";
 import { Button } from "../ui/shadcn/button";
 import {
   Table,
@@ -13,6 +12,7 @@ import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { PageResponse, Subject } from "../../interfaces";
 import { useState } from "react";
 import { Pagination } from "../pagination";
+import FiltroListagem from "../shared/FiltroListagem";
 
 type AddSubjectManagerTableProps = {
   entity: PageResponse<Subject>;
@@ -53,14 +53,10 @@ export function AddSubjectManagerTable({
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button onClick={() => handleClick(subjectIdToAdd)}>

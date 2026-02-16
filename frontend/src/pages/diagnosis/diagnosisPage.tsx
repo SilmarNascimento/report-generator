@@ -11,12 +11,12 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Search } from "lucide-react";
-import { Control, Input } from "../../components/ui/shadcn/input";
+import { FileDown } from "lucide-react";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
 import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
+import FiltroListagem from "@/components/shared/FiltroListagem";
 
 export function StudentsResponses() {
   const queryClient = useQueryClient();
@@ -104,14 +104,10 @@ export function StudentsResponses() {
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Procurar..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button>

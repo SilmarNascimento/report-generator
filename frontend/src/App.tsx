@@ -1,14 +1,6 @@
-import {
-  Plus,
-  Search,
-  Filter,
-  FileDown,
-  MoreHorizontal,
-  Loader2,
-} from "lucide-react";
+import { Plus, Filter, FileDown, MoreHorizontal, Loader2 } from "lucide-react";
 import { Header } from "./components/header";
 import { Button } from "./components/ui/shadcn/button";
-import { Control, Input } from "./components/ui/shadcn/input";
 import {
   Table,
   TableBody,
@@ -23,6 +15,7 @@ import { FormEvent, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { CreateSubjectForm } from "./components/subject/createSubjectForm";
 import { NavigationBar } from "./components/NavigationBar";
+import FiltroListagem from "./components/shared/FiltroListagem";
 
 export interface TagResponse {
   first: number;
@@ -124,14 +117,10 @@ export function App() {
 
         <div className="flex items-center justify-between">
           <form onSubmit={handleFilter} className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(e) => setFilter(e.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
             <Button type="submit">
               <Filter className="size-3" />
               Apply filters

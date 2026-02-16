@@ -12,8 +12,7 @@ import { successAlert } from "../../../utils/toastAlerts";
 import { Header } from "../../../components/header";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { Button } from "../../../components/ui/shadcn/button";
-import { FileDown, Pencil, Plus, Search, X } from "lucide-react";
-import { Control, Input } from "../../../components/ui/shadcn/input";
+import { FileDown, Pencil, Plus, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
   TableRow,
 } from "../../../components/ui/table";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+import FiltroListagem from "@/components/shared/FiltroListagem";
 
 export function AdaptedQuestions() {
   const queryClient = useQueryClient();
@@ -126,14 +126,10 @@ export function AdaptedQuestions() {
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button>

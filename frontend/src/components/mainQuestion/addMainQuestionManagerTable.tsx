@@ -1,5 +1,4 @@
-import { FilePlus, Plus, Search } from "lucide-react";
-import { Control, Input } from "../ui/shadcn/input";
+import { FilePlus, Plus } from "lucide-react";
 import { Button } from "../ui/shadcn/button";
 import {
   Table,
@@ -14,6 +13,7 @@ import { MainQuestion, PageResponse } from "../../interfaces";
 import { useState } from "react";
 import { Pagination } from "../pagination";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
+import FiltroListagem from "../shared/FiltroListagem";
 
 type AddMainQuestionManagerTableProps = {
   entity: PageResponse<MainQuestion>;
@@ -65,14 +65,10 @@ export function AddMainQuestionManagerTable({
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button onClick={() => handleClick(mainQuestionIdToAdd)}>

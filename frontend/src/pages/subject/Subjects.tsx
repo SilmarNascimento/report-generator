@@ -11,7 +11,7 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Loader2, Plus, Search, X, Pencil } from "lucide-react";
+import { FileDown, Loader2, Plus, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
 import {
   Table,
@@ -21,12 +21,12 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Control, Input } from "../../components/ui/shadcn/input";
 import { EditSubjectForm } from "../../components/subject/editSubjectForm";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Subject } from "../../interfaces";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces/PageResponse";
+import FiltroListagem from "@/components/shared/FiltroListagem";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -151,14 +151,10 @@ export function Subjects() {
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
-            <Input variant="filter">
-              <Search className="size-3" />
-              <Control
-                placeholder="Search tags..."
-                onChange={(event) => setFilter(event.target.value)}
-                value={filter}
-              />
-            </Input>
+            <FiltroListagem
+              searchTerm={filter}
+              handleSearchChange={(event) => setFilter(event.target.value)}
+            />
           </form>
 
           <Button>

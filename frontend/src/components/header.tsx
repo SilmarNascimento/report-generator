@@ -35,7 +35,7 @@ export function Header() {
 
           <span className="text-sm font-medium text-zinc-100">Rocketseat</span>
 
-          <Badge variant="primary">PRO</Badge>
+          <Badge>PRO</Badge>
 
           <ChevronDown className="text-zinc-600 size-4" />
         </div>
