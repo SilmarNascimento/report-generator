@@ -1,6 +1,7 @@
 import { ChangeEvent, useRef } from "react";
 import { Input } from "../ui/shadcn/input";
 import { cn } from "@/lib/utils";
+import { Search } from "lucide-react";
 
 type BarraPesquisaProps = {
   value: string;
@@ -48,7 +49,10 @@ const BarraPesquisa = ({
           "focus:outline-none focus-visible:ring-0",
         )}
       >
-        <span className="material-symbols-outlined">search</span>
+        <Search
+          size={18}
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+        />
       </button>
     </div>
   );

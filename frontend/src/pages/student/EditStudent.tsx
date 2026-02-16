@@ -11,7 +11,7 @@ const EditStudent = () => {
   const { data: aluno } = useSuspenseQuery(studentQueryOptions(id ?? ""));
   const { handleEdit } = useHandleEditStudent(id ?? "");
   return (
-    <>
+    <main className="max-w-6xl mx-auto space-y-5">
       <h1
         className={`my-6 text-xl leading-[1.4] font-bold tracking-[-0.25px] text-[#2C2E34]`}
       >
@@ -24,7 +24,7 @@ const EditStudent = () => {
         defaultValues={mapStudentResponseToForm(aluno)}
         handleSubmitRequest={handleEdit}
       />
-    </>
+    </main>
   );
 };
 

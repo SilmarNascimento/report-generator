@@ -7,7 +7,7 @@ export const mapStudentFormToRequest = (
 ): StudentRequest => {
   return {
     ...data,
-    classGroup: data.classGroup.map((item) => item.value),
+    classGroups: data.classGroups.map((item) => item.value),
     activationDate: new Date().toISOString(),
     address: data.address
       ? {
@@ -26,7 +26,7 @@ export const mapStudentResponseToForm = (
     email: data.email,
     cpf: data.cpf,
     enrollmentYear: data.enrollmentYear,
-    classGroup: data.classGroup.map((enumValue) => ({
+    classGroups: data.classGroups.map((enumValue) => ({
       value: enumValue,
       dropdownLabel: classGroupLabelMap[enumValue],
       displayLabel: classGroupLabelMap[enumValue],

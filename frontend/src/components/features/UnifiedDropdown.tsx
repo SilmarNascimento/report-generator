@@ -182,7 +182,7 @@ export default function UnifiedDropdown<T extends DropdownType>(
       <Button
         type="button"
         onClick={handleChevronClick}
-        className="absolute top-1/2 right-2 -translate-y-1/2 bg-transparent shadow-none hover:bg-transparent"
+        className="absolute top-1/2 right-2 -translate-y-1/2 bg-transparent shadow-none hover:bg-transparent text-gray-700!"
       >
         <ChevronDown
           size={18}

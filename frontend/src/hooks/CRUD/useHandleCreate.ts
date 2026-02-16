@@ -53,8 +53,12 @@ export function useHandleCreate<FormType, DtoType>({
   });
 
   const handleCreate = async (formData: FormType) => {
-    const payload = mapFn(formData);
-    await mutation.mutateAsync(payload);
+    try {
+      const payload = mapFn(formData);
+      await mutation.mutateAsync(payload);
+    } catch (error) {
+      console.error("Erro capturado no handleCreate:", error);
+    }
   };
 
   return { handleCreate };

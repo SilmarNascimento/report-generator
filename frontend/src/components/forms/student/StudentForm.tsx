@@ -31,13 +31,13 @@ const StudentForm = ({
 
   const memoizedDefaultValues = useMemo(() => {
     return defaultValues
-      ? studentSchema.parse(defaultValues)
+      ? defaultValues
       : {
           name: "",
           email: "",
           cpf: "",
           enrollmentYear: undefined,
-          classGroup: undefined,
+          classGroups: [],
           activationDate: "",
           photoUrl: "",
           address: {
@@ -72,7 +72,7 @@ const StudentForm = ({
       <section className="">
         <div>
           <h1
-            className={`mb-4 text-lg leading-[1.4] font-bold tracking-[-0.25px] text-[#2C2E34]`}
+            className={`mb-4 text-lg leading-[1.4] font-bold tracking-[-0.25px] text-foreground`}
           >
             {titulo}
           </h1>
@@ -84,8 +84,8 @@ const StudentForm = ({
               name="name"
               control={control}
               errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
+              label="Nome*"
+              placeholder="Digite o nome do aluno"
               isReadOnly={isReadOnly}
             />
           </div>
@@ -95,8 +95,8 @@ const StudentForm = ({
               name="email"
               control={control}
               errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
+              label="email*"
+              placeholder="Digite o email"
               isReadOnly={isReadOnly}
             />
           </div>
@@ -106,8 +106,8 @@ const StudentForm = ({
               name="cpf"
               control={control}
               errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
+              label="CPF*"
+              placeholder="Digite o CPF"
               format="cpf"
               isReadOnly={isReadOnly}
             />
@@ -118,18 +118,18 @@ const StudentForm = ({
               name="enrollmentYear"
               control={control}
               errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
+              label="Ano de Matrícula*"
+              placeholder="Digite o ano de matrícula"
               isReadOnly={isReadOnly}
             />
           </div>
 
           <div className="flex w-full flex-col xl:max-w-85">
             <InputMultiSelectWrapper
-              name="classGroup"
+              name="classGroups"
               control={control}
-              label="Órgãos"
-              placeholder="Todos"
+              label="Turmas"
+              placeholder="Selecione as turmas"
               options={classGroupBadgeOptions}
               showBadges
             />
@@ -140,9 +140,8 @@ const StudentForm = ({
               name="photoUrl"
               control={control}
               errors={errors}
-              label="Descrição do motivo*"
-              placeholder="Digite o motivo de bloqueio"
-              format="cpf"
+              label="Foto"
+              placeholder="Digite o endereço da imagem"
               isReadOnly={isReadOnly}
             />
           </div>
@@ -156,7 +155,6 @@ const StudentForm = ({
                   errors={errors}
                   label="Rua"
                   placeholder="Digite o nome da rua"
-                  format="cpf"
                   isReadOnly={isReadOnly}
                 />
               </div>

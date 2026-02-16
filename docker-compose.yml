@@ -7,6 +7,9 @@ services:
     ports:
       - "5173:5173"
     working_dir: /app-frontend
+    volumes:
+      - ./frontend:/app-frontend
+      - /app-frontend/node_modules
     networks:
       - app-network
     healthcheck:

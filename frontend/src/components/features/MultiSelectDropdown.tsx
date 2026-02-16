@@ -239,7 +239,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
 
       <Button
         type="button"
-        className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer bg-transparent! text-gray-700!"
+        className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer bg-transparent shadow-none hover:bg-transparent text-gray-700!"
         onMouseDown={(e) => {
           e.preventDefault();
 

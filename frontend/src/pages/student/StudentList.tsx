@@ -1,5 +1,6 @@
 import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/pagination";
+import Botao from "@/components/shared/Botao";
 import FiltroListagem from "@/components/shared/FiltroListagem";
 import { Button } from "@/components/ui/shadcn/button";
 import {
@@ -14,7 +15,7 @@ import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
 import { useHandleDeleteStudent } from "@/hooks/CRUD/student/useHandleDeleteStudent";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { StudentResponse } from "@/interfaces/Student";
-import { FileDown, Pencil, Plus, X } from "lucide-react";
+import { FileDown, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -48,9 +49,9 @@ const StudentList = () => {
   }
 
   function formatClassGroup(student: StudentResponse) {
-    const { classGroup } = student;
+    const { classGroups } = student;
 
-    return classGroup.map((group) => <span>{group}</span>);
+    return classGroups.map((group) => <span>{group}</span>);
   }
 
   return (
@@ -62,10 +63,7 @@ const StudentList = () => {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Alunos</h1>
-          <Button variant="primary" onClick={handleCreateStudent}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateStudent} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -82,61 +80,70 @@ const StudentList = () => {
           </Button>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>
-                <span>Nome</span>
-              </TableHead>
-              <TableHead>
-                <span>E-mail</span>
-              </TableHead>
-              <TableHead>
-                <span>CPF</span>
-              </TableHead>
-              <TableHead>
-                <span>Ano de Matricula</span>
-              </TableHead>
-              <TableHead>
-                <span>Turmas</span>
-              </TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {studentPage?.data.map((student) => (
-              <TableRow key={student.id}>
-                <TableCell>{student.name}</TableCell>
-                <TableCell>{student.email}</TableCell>
-                <TableCell>{student.cpf}</TableCell>
-                <TableCell>{student.enrollmentYear}</TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-1">
-                    {formatClassGroup(student)}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Button onClick={() => deleteStudent(student.id)}>
-                    <X className="size-3 text-red-500" />
-                  </Button>
-                  <Button
-                    onClick={() => navigate(`/students/edit/${student.id}`)}
-                  >
-                    <Pencil className="size-3 text-green-500" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {studentPage && (
-          <Pagination
-            pages={studentPage.pages}
-            items={studentPage.pageItems}
-            page={page}
-            totalItems={studentPage.totalItems}
-          />
+        {studentPage?.data ? (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead></TableHead>
+                  <TableHead>
+                    <span>Nome</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>E-mail</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>CPF</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Ano de Matricula</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Turmas</span>
+                  </TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {studentPage?.data.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell>{student.cpf}</TableCell>
+                    <TableCell>{student.enrollmentYear}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        {formatClassGroup(student)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={() => deleteStudent(student.id)}>
+                        <X className="size-3 text-red-500" />
+                      </Button>
+                      <Button
+                        onClick={() => navigate(`/students/edit/${student.id}`)}
+                      >
+                        <Pencil className="size-3 text-green-500" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {studentPage && (
+              <Pagination
+                pages={studentPage.pages}
+                items={studentPage.pageItems}
+                page={page}
+                totalItems={studentPage.totalItems}
+              />
+            )}
+          </>
+        ) : (
+          <div>
+            <h1 className="text-center font-medium">Nenhum aluno cadastrado</h1>
+          </div>
         )}
       </main>
     </>

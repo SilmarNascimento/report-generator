@@ -51,13 +51,15 @@ const iconClass = "w-5 h-5";
 
 const buttonStyles: ButtonStylesObject = {
   novo: {
-    className: "bg-secondary text-background font-medium h-10 py-2 px-4 mx-2",
+    className:
+      "bg-secondary hover:bg-secondary/80 text-background font-medium h-10 py-2 px-4 mx-2",
     label: "Novo",
     icon: <Plus className={iconClass} />,
     iconPos: "left",
   },
   salvar: {
-    className: "bg-secondary text-background font-medium h-10 py-2 px-4 mx-2",
+    className:
+      "bg-secondary hover:bg-secondary/80 text-background font-medium h-10 py-2 px-4 mx-2",
     label: "Salvar",
     iconPos: "left",
   },
@@ -90,14 +92,14 @@ const buttonStyles: ButtonStylesObject = {
   },
   voltarIcone: {
     className:
-      "bg-background! font-medium text-secondary h-10 py-2 px-4 border border-secondary",
+      "bg-transparent! font-medium text-secondary h-10 py-2 px-4 border border-border",
     label: "Voltar",
     icon: <span className="material-symbols-outlined">arrow_left_alt</span>,
     iconPos: "left",
   },
   cancelar: {
     className:
-      "bg-background! font-medium text-secondary h-10 py-2 px-4 border border-secondary",
+      "bg-transparent! font-medium text-secondary h-10 py-2 px-4 border border-border",
     label: "Cancelar",
     iconPos: "left",
   },

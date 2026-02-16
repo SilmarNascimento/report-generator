@@ -18,7 +18,7 @@ export const studentSchema = z.object({
     .pipe(z.email({ message: "E-mail inválido" })),
   cpf: createCpfSchema(),
   enrollmentYear: z.number(),
-  classGroup: z
+  classGroups: z
     .array(badgeDropdownSchema)
     .min(1, "Selecione ao menos uma turma"),
   photoUrl: z.string().optional(),
