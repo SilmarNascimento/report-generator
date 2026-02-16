@@ -8,6 +8,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,9 +35,11 @@ public class Student implements Serializable {
     @Column(length = 4, nullable = false)
     private Integer enrollmentYear;
 
+    @ElementCollection(targetClass = ClassGroup.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "student_class_groups", joinColumns = @JoinColumn(name = "student_id"))
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ClassGroup classGroup;
+    @Column(name = "class_group")
+    private List<ClassGroup> classGroups = new ArrayList<>();
 
     @Column(nullable = false)
     private Instant activationDate;
@@ -47,6 +51,9 @@ public class Student implements Serializable {
 
     @Embedded
     private Address address;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MockExamResponse> mockExamResponses;
 
     public String getStudentName() {
         return user != null ? user.getName() : null;

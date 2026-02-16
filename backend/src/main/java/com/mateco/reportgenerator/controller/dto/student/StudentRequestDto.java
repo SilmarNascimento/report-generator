@@ -3,13 +3,11 @@ package com.mateco.reportgenerator.controller.dto.student;
 
 import com.mateco.reportgenerator.enums.ClassGroup;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public record StudentRequestDto(
         @NotBlank(message = "O nome é obrigatório")
@@ -29,8 +27,8 @@ public record StudentRequestDto(
         @NotNull(message = "O ano de matrícula é obrigatório")
         Integer enrollmentYear,
 
-        @NotNull(message = "A turma é obrigatória")
-        ClassGroup classGroup,
+        @NotEmpty(message = "Pelo menos uma turma é obrigatória")
+        List<ClassGroup> classGroups,
 
         @NotNull(message = "A data de ativação é obrigatória")
         OffsetDateTime activationDate,
