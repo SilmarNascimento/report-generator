@@ -1,23 +1,17 @@
-FROM node:20-alpine
+# build
+FROM node:20-alpine AS build
+WORKDIR /app
 
-# Diretório de trabalho
-WORKDIR /app-frontend
-
-# Copiar apenas arquivos de dependências
-COPY package.json package-lock.json ./
-
-# Corrigir o bug de dependência opcional quebrada
-RUN npm ci --legacy-peer-deps
-
-# Copiar todo o código
+COPY package*.json ./
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# Expor a porta padrão do Vite
-EXPOSE 5173
+# runtime
+FROM nginx:1.27-alpine
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.prod.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Ativar live reload em ambiente Docker
-ENV CHOKIDAR_USEPOLLING=true
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
-# Rodar o app em modo dev
-CMD ["npm", "run", "dev"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

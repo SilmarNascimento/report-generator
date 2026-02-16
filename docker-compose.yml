@@ -3,61 +3,67 @@ version: "3.9"
 services:
   frontend:
     container_name: app_frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "5173:5173"
-    working_dir: /app-frontend
-    volumes:
-      - ./frontend:/app-frontend
-      - /app-frontend/node_modules
+      - "80:80"
+    depends_on:
+      - backend
     networks:
       - app-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "lsof", "-t", "-i:5173"]
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   backend:
     container_name: app_backend
-    build: ./backend
-    ports:
-      - "8080:8080"
-    working_dir: /app
-    volumes:
-      - ./backend:/app
-      - ~/.m2:/root/.m2
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
     depends_on:
       - db
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/db
-      - DATABASE_USERNAME=mateco
-      - DATABASE_PASSWORD=1234
-      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
-      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+      - SPRING_DATASOURCE_USERNAME=mateco
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=prod
     networks:
       - app-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "lsof", "-t", "-i:8080"]
-      timeout: 10s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
       retries: 5
 
   db:
     image: postgres:16
-    hostname: postgres
     container_name: postgres-db
-    ports:
-      - "5432:5432"
-    volumes:
-      - report_generator_db:/var/lib/postgresql/data
-    networks:
-      - app-network
     environment:
       POSTGRES_USER: mateco
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: db
+    volumes:
+      - report_generator_db:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mateco -d db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 networks:
   app-network:
     driver: bridge
+
 volumes:
   report_generator_db:
