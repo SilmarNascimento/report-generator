@@ -109,6 +109,7 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
 
     @Transactional
     public void generateAndAttachDiagnosisPdf(UUID responseId) {
+        //TODO USAR DiagnosisReportDTO
         MockExamResponse response = mockExamResponseRepository.findById(responseId)
                 .orElseThrow(() -> new NotFoundException("Resposta não encontrada para o ID: " + responseId));
 
@@ -165,6 +166,7 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             params.put("punishmentScore", response.getPunishmentScore());
             params.put("comment", response.getComment());
 
+            //TODO verificar uso do data source vs params
             byte[] pdfBytes = jasperReportService.generatePdf(
                     "student_diagnosis.jrxml",
                     params,
