@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { FormHeader } from "../../components/formHeader";
-import { Header } from "../../components/header";
-import { EditMockExamForm } from "../../components/mockExam/editMockExamForm";
+import { FormHeader } from "../../components/FormHeader";
+import { Header } from "../../components/Header";
+import { EditMockExamForm } from "../../components/MockExam/EditMockExamForm";
 import { NavigationBar } from "../../components/NavigationBar";
 import { MockExam } from "../../interfaces";
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ export function EditMockExam() {
     queryKey: ["get-mock-exams", mockExamId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
+        `/mock-exam/${mockExamId}`,
       );
       const data: MockExamReceived = await response.json();
 

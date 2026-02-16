@@ -102,7 +102,7 @@ const router = createBrowserRouter([
     element: <MockExamMainQuestionManager />,
   },
   {
-    path: "/mock-exams/:mockExamId/mock-exam-answers",
+    path: "/mock-exams/:mockExamId/mock-exams-answers",
     element: <MockExamAnswers />,
   },
 

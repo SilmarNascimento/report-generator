@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { FormHeader } from "../../components/formHeader";
-import { Header } from "../../components/header";
-import { EditMainQuestionForm } from "../../components/mainQuestion/editMainQuestionForm";
+import { FormHeader } from "../../components/FormHeader";
+import { Header } from "../../components/Header";
+import { EditMainQuestionForm } from "../../components/MainQuestion/EditMainQuestionForm";
 import { NavigationBar } from "../../components/NavigationBar";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { MainQuestion } from "../../interfaces";
@@ -15,7 +15,7 @@ export function EditMainQuestion() {
     queryKey: ["get-main-questions", mainQuestionId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}`,
+        `/main-question/${mainQuestionId}`,
       );
       const data: MainQuestionReceived = await response.json();
       console.log(data);

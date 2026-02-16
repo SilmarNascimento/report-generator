@@ -1,6 +1,6 @@
-import { Header } from "../components/header";
+import { Header } from "../components/Header";
 import { NavigationBar } from "../components/NavigationBar";
-import { Pagination } from "../components/pagination";
+import { Pagination } from "../components/Pagination";
 
 export function Handouts() {
   return (

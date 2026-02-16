@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode dev --config vite.config.ts",
+    "build:fast": "vite build",
     "build": "tsc && vite build",
     "start": "serve -s dist",
     "lint": "eslint . --ext ts,tsx --fix --report-unused-disable-directives --max-warnings 0",

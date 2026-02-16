@@ -9,7 +9,7 @@ export function Test() {
   const { data: mainQuestionResponse } = useQuery({
     queryKey: ['get-main-questions'],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:8080/tests/${mainQuestionId}/complete`);
+      const response = await fetch(`/tests/${mainQuestionId}/complete`);
       const data: MockExamReceived = await response.json();
       
       return convertMockExamData(data);

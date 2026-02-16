@@ -11,8 +11,8 @@ import useDebounceValue from "../../../hooks/useDebounceValue";
 import { MainQuestion, MockExam } from "../../../interfaces";
 import { successAlert, warningAlert } from "../../../utils/toastAlerts";
 import { PageResponse } from "../../../interfaces";
-import { RemoveMainQuestionManagerTable } from "../../../components/mainQuestion/removeMainQuestionManagerTable";
-import { AddMainQuestionManagerTable } from "../../../components/mainQuestion/addMainQuestionManagerTable";
+import { RemoveMainQuestionManagerTable } from "../../../components/MainQuestion/RemoveMainQuestionManagerTable";
+import { AddMainQuestionManagerTable } from "../../../components/MainQuestion/AddMainQuestionManagerTable";
 
 export function MockExamMainQuestionManager() {
   const queryClient = useQueryClient();
@@ -45,7 +45,7 @@ export function MockExamMainQuestionManager() {
     queryKey: ["get-mock-exams", mockExamId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
+        `/mock-exam/${mockExamId}`,
       );
       const data: MockExam = await response.json();
 
@@ -68,7 +68,7 @@ export function MockExamMainQuestionManager() {
     queryKey: ["get-main-questions", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/main-question/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export function MockExamMainQuestionManager() {
   const addMainQuestionToMockExam = useMutation({
     mutationFn: async (mainQuestionIdListToAdd: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}/main-question`,
+        `/mock-exam/${mockExamId}/main-questions`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -140,7 +140,7 @@ export function MockExamMainQuestionManager() {
   const removeMainQuestionFromMockExam = useMutation({
     mutationFn: async (mainQuestionIdListToRemove: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}/main-question`,
+        `/mock-exam/${mockExamId}/main-questions`,
         {
           headers: {
             "Content-Type": "application/json",

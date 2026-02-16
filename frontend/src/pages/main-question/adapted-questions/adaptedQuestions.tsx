@@ -9,7 +9,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { AdaptedQuestion } from "../../../interfaces";
 import { successAlert } from "../../../utils/toastAlerts";
-import { Header } from "../../../components/header";
+import { Header } from "../../../components/Header";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { Button } from "../../../components/ui/shadcn/button";
 import { FileDown, Pencil, Plus, X } from "lucide-react";
@@ -20,9 +20,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
+} from "../../../components/ui/Table";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 
 export function AdaptedQuestions() {
   const queryClient = useQueryClient();
@@ -50,7 +50,7 @@ export function AdaptedQuestions() {
     queryKey: ["get-adapted-questions", urlFilter],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/adapted-question`,
+        `/main-question/${mainQuestionId}/adapted-question`,
       );
       const data = await response.json();
 
@@ -63,7 +63,7 @@ export function AdaptedQuestions() {
   const deleteAdaptedQuestion = useMutation({
     mutationFn: async (adaptedQuestionId: string) => {
       await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
+        `/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
         {
           headers: {
             "Content-Type": "application/json",

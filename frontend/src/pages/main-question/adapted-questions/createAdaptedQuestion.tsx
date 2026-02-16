@@ -1,6 +1,6 @@
-import { CreateAdaptedQuestionForm } from "../../../components/adaptedQuestion/createAdaptedQuestionForm";
-import { FormHeader } from "../../../components/formHeader";
-import { Header } from "../../../components/header";
+import { CreateAdaptedQuestionForm } from "../../../components/AdaptedQuestion/CreateAdaptedQuestionForm";
+import { FormHeader } from "../../../components/FormHeader";
+import { Header } from "../../../components/Header";
 import { NavigationBar } from "../../../components/NavigationBar";
 
 export function CreateAdaptedQuestion() {

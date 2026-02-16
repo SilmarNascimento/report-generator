@@ -1,5 +1,5 @@
 // import { Plus, Filter, FileDown, MoreHorizontal, Loader2 } from "lucide-react";
-// import { Header } from "./components/header";
+// import { Header } from "./components/Header";
 // import { Button } from "./components/ui/shadcn/button";
 // import {
 //   Table,
@@ -8,14 +8,14 @@
 //   TableHead,
 //   TableHeader,
 //   TableRow,
-// } from "./components/ui/table";
+// } from "./components/ui/Table";
 // import { useQuery, keepPreviousData } from "@tanstack/react-query";
 // import { useSearchParams } from "react-router-dom";
 // import { FormEvent, useState } from "react";
 // import * as Dialog from "@radix-ui/react-dialog";
-// import { CreateSubjectForm } from "./components/subject/createSubjectForm";
+// import { CreateSubjectForm } from "./components/Subject/CreateSubjectForm";
 // import { NavigationBar } from "./components/NavigationBar";
-// import FiltroListagem from "./components/shared/FiltroListagem";
+// import FiltroListagem from "./components/Shared/FiltroListagem";
 
 // export interface TagResponse {
 //   first: number;

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
+import { DiagnosisTable } from "../../components/Diagnosis/DiagnosisTable";
 import { NavigationBar } from "../../components/NavigationBar";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
-import { GenerateResponsesForm } from "../../components/diagnosis/diagnosisForm";
+import { GenerateResponsesForm } from "../../components/Diagnosis/DiagnosisForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { successAlert } from "../../utils/toastAlerts";
 
@@ -16,7 +16,7 @@ export function GenerateDiagnosis() {
     mutationFn: async (studentResponseId: string) => {
       try {
         await fetch(
-          `http://localhost:8080/students-response/${studentResponseId}`,
+          `/students-response/${studentResponseId}`,
           {
             headers: {
               "Content-Type": "application/json",

@@ -4,9 +4,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Header } from "../../components/header";
+import { Header } from "../../components/Header";
 import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Pagination } from "../../components/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
@@ -19,12 +19,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "../../components/ui/Table";
 import { MockExam } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 
 export function MockExams() {
   const queryClient = useQueryClient();
@@ -57,7 +57,7 @@ export function MockExams() {
     queryKey: ["get-mock-exams", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/mock-exam?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
       );
       const data = await response.json();
 
@@ -70,7 +70,7 @@ export function MockExams() {
   const deleteMainQuestion = useMutation({
     mutationFn: async (mockExamId: string) => {
       try {
-        await fetch(`http://localhost:8080/mock-exam/${mockExamId}`, {
+        await fetch(`/mock-exam/${mockExamId}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -89,11 +89,11 @@ export function MockExams() {
   });
 
   function handleCreateNewMockExam() {
-    navigate("/mock-exams/create");
+    navigate("/mock-exam/create");
   }
 
   function handleEditMockExam(mockExamId: string) {
-    navigate(`/mock-exams/edit/${mockExamId}`);
+    navigate(`/mock-exam/edit/${mockExamId}`);
   }
 
   async function handleDeleteMockExam(mockExamId: string) {
@@ -197,7 +197,7 @@ export function MockExams() {
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link
-                      to={`/mock-exams/${mockExam.id}/subjects`}
+                      to={`/mock-exam/${mockExam.id}/subjects`}
                       className="flex align-middle justify-center"
                     >
                       <span>
@@ -206,7 +206,7 @@ export function MockExams() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
+                    <Link to={`/mock-exam/${mockExam.id}/main-questions`}>
                       <span>
                         {Object.keys(mockExam.mockExamQuestions).length}
                       </span>
@@ -214,7 +214,7 @@ export function MockExams() {
                   </TableCell>
                   <TableCell className="text-zinc-300">
                     <Link
-                      to={`/mock-exams/${mockExam.id}/mock-exam-answers`}
+                      to={`/mock-exam/${mockExam.id}/mock-exams-answers`}
                       className="flex align-middle justify-center"
                     >
                       <span>

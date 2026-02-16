@@ -1,6 +1,6 @@
-import { FormHeader } from "../../components/formHeader";
-import { Header } from "../../components/header";
-import { CreateMockExamForm } from "../../components/mockExam/createMockExamForm";
+import { FormHeader } from "../../components/FormHeader";
+import { Header } from "../../components/Header";
+import { CreateMockExamForm } from "../../components/MockExam/CreateMockExamForm";
 import { NavigationBar } from "../../components/NavigationBar";
 
 export function CreateMockExam() {

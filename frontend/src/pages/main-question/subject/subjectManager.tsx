@@ -7,8 +7,8 @@ import {
 import { useParams, useSearchParams } from "react-router-dom";
 import { MainQuestion, PageResponse, Subject } from "../../../interfaces";
 import { successAlert, warningAlert } from "../../../utils/toastAlerts";
-import { AddSubjectManagerTable } from "../../../components/subject/addSubjectManagerTable";
-import { RemoveSubjectManagerTable } from "../../../components/subject/removeSubjectManagerTable";
+import { AddSubjectManagerTable } from "../../../components/Subject/AddSubjectManagerTable";
+import { RemoveSubjectManagerTable } from "../../../components/Subject/RemoveSubjectManagerTable";
 import { useEffect, useRef, useState } from "react";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { NavigationBar } from "../../../components/NavigationBar";
@@ -44,7 +44,7 @@ export function MainQuestionSubjectManager() {
     queryKey: ["get-main-questions", mainQuestionId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}`,
+        `/main-question/${mainQuestionId}`,
       );
       const data: MainQuestion = await response.json();
 
@@ -62,7 +62,7 @@ export function MainQuestionSubjectManager() {
     queryKey: ["get-subjects", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -85,7 +85,7 @@ export function MainQuestionSubjectManager() {
   const addSubjectToMainQuestion = useMutation({
     mutationFn: async (subjectIdListToAdd: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/subject`,
+        `/main-question/${mainQuestionId}/subject`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -124,7 +124,7 @@ export function MainQuestionSubjectManager() {
   const removeSubjectFromMainQuestion = useMutation({
     mutationFn: async (subjectIdListToRemove: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/subject`,
+        `/main-question/${mainQuestionId}/subject`,
         {
           headers: {
             "Content-Type": "application/json",

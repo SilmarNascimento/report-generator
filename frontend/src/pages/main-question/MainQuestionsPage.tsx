@@ -4,9 +4,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Header } from "../../components/header";
+import { Header } from "../../components/Header";
 import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Pagination } from "../../components/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
@@ -19,13 +19,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "../../components/ui/Table";
 import { MainQuestion } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import { PageResponse } from "../../interfaces";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -58,7 +58,7 @@ export function MainQuestions() {
     queryKey: ["get-main-questions", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
       );
       const data = await response.json();
 
@@ -70,7 +70,7 @@ export function MainQuestions() {
   const deleteMainQuestion = useMutation({
     mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
       try {
-        await fetch(`http://localhost:8080/main-question/${mainQuestionId}`, {
+        await fetch(`/main-question/${mainQuestionId}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -217,12 +217,12 @@ export function MainQuestions() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/mock-exams`}>
+                    <Link to={`/main-questions/${question.id}/mock-exams`}>
                       <span>{question.mockExams.length}</span>
                     </Link>
                   </TableCell>
                   <TableCell className="text-zinc-300">
-                    <Link to={`/main-question/${question.id}/handouts`}>
+                    <Link to={`/main-questions/${question.id}/handouts`}>
                       <span>{question.handouts.length}</span>
                     </Link>
                   </TableCell>

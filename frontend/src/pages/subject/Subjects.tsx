@@ -4,15 +4,15 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Header } from "../../components/header";
+import { Header } from "../../components/Header";
 import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Pagination } from "../../components/Pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../../components/ui/shadcn/button";
 import { FileDown, Loader2, Plus, X, Pencil } from "lucide-react";
-import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
+import { CreateSubjectForm } from "../../components/Subject/CreateSubjectForm";
 import {
   Table,
   TableBody,
@@ -20,13 +20,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import { EditSubjectForm } from "../../components/subject/editSubjectForm";
+} from "../../components/ui/Table";
+import { EditSubjectForm } from "../../components/Subject/EditSubjectForm";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Subject } from "../../interfaces";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces/PageResponse";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -60,7 +60,7 @@ export function Subjects() {
     queryKey: ["get-subjects", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export function Subjects() {
   const deleteSubject = useMutation({
     mutationFn: async ({ id: subjectId }: Subject) => {
       try {
-        await fetch(`http://localhost:8080/subject/${subjectId}`, {
+        await fetch(`/subject/${subjectId}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -121,7 +121,7 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant="primary">
+              <Button variant="default">
                 <Plus className="size-3" />
                 Create new
               </Button>

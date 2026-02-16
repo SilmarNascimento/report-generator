@@ -1,7 +1,7 @@
 import { NavigationBar } from "@/components/NavigationBar";
-import { Pagination } from "@/components/pagination";
-import Botao from "@/components/shared/Botao";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import { Pagination } from "@/components/Pagination";
+import Botao from "@/components/Shared/Botao";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { Button } from "@/components/ui/shadcn/button";
 import {
   Table,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
 import { useHandleDeleteStudent } from "@/hooks/CRUD/student/useHandleDeleteStudent";
 import useDebounceValue from "@/hooks/useDebounceValue";

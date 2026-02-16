@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { EditAdaptedQuestionForm } from "../../../components/adaptedQuestion/editAdaptedQuestionForm";
-import { FormHeader } from "../../../components/formHeader";
-import { Header } from "../../../components/header";
+import { EditAdaptedQuestionForm } from "../../../components/AdaptedQuestion/EditAdaptedQuestionForm";
+import { FormHeader } from "../../../components/FormHeader";
+import { Header } from "../../../components/Header";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { AdaptedQuestion } from "../../../interfaces";
 import { useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ export function EditAdaptedQuestion() {
     queryKey: ["get-adapted-questions", mainQuestionId, adaptedQuestionId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
+        `/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
       );
       const data = await response.json();
 

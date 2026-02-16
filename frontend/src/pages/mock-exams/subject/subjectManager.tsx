@@ -7,8 +7,8 @@ import {
 import { useParams, useSearchParams } from "react-router-dom";
 import { MockExam, PageResponse, Subject } from "../../../interfaces";
 import { successAlert, warningAlert } from "../../../utils/toastAlerts";
-import { AddSubjectManagerTable } from "../../../components/subject/addSubjectManagerTable";
-import { RemoveSubjectManagerTable } from "../../../components/subject/removeSubjectManagerTable";
+import { AddSubjectManagerTable } from "../../../components/Subject/AddSubjectManagerTable";
+import { RemoveSubjectManagerTable } from "../../../components/Subject/RemoveSubjectManagerTable";
 import { useEffect, useRef, useState } from "react";
 import useDebounceValue from "../../../hooks/useDebounceValue";
 import { NavigationBar } from "../../../components/NavigationBar";
@@ -44,7 +44,7 @@ export function MockExamSubjectManager() {
     queryKey: ["get-mock-exams", mockExamId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
+        `/mock-exam/${mockExamId}`,
       );
       const data: MockExam = await response.json();
 
@@ -63,7 +63,7 @@ export function MockExamSubjectManager() {
     queryKey: ["get-subjects", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -86,7 +86,7 @@ export function MockExamSubjectManager() {
   const addSubjectToMockExam = useMutation({
     mutationFn: async (subjectIdListToAdd: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}/subject`,
+        `/mock-exam/${mockExamId}/subjects`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -123,7 +123,7 @@ export function MockExamSubjectManager() {
   const removeSubjectFromMockExam = useMutation({
     mutationFn: async (subjectIdListToRemove: string[]) => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}/subject`,
+        `/mock-exam/${mockExamId}/subjects`,
         {
           headers: {
             "Content-Type": "application/json",

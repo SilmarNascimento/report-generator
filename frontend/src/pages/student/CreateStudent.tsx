@@ -1,4 +1,4 @@
-import StudentForm from "@/components/forms/student/StudentForm";
+import StudentForm from "@/components/Forms/student/StudentForm";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useHandleCreateStudent } from "@/hooks/CRUD/student/useHandleCreateStudent";
 

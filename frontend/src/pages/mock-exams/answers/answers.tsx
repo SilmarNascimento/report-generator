@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
+} from "../../../components/ui/Table";
 import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
 
 export function MockExamAnswers() {
@@ -21,7 +21,7 @@ export function MockExamAnswers() {
     queryKey: ["get-mock-exams", mockExamId],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
+        `/mock-exam/${mockExamId}`,
       );
       const data: MockExam = await response.json();
 

@@ -4,9 +4,9 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Header } from "../../components/header";
+import { Header } from "../../components/Header";
 import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Pagination } from "../../components/Pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
@@ -15,8 +15,8 @@ import { FileDown } from "lucide-react";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
 import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
-import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
-import FiltroListagem from "@/components/shared/FiltroListagem";
+import { DiagnosisTable } from "../../components/Diagnosis/DiagnosisTable";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 
 export function StudentsResponses() {
   const queryClient = useQueryClient();
@@ -49,7 +49,7 @@ export function StudentsResponses() {
     queryKey: ["get-responses", urlFilter, page, pageSize],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
+        `/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
       );
       const data = await response.json();
 
@@ -62,7 +62,7 @@ export function StudentsResponses() {
     mutationFn: async (studentResponseId: string) => {
       try {
         await fetch(
-          `http://localhost:8080/students-response/${studentResponseId}`,
+          `/students-response/${studentResponseId}`,
           {
             headers: {
               "Content-Type": "application/json",
