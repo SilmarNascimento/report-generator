@@ -16,8 +16,6 @@ const StudentView = () => {
       </header>
 
       <main className="max-w-6xl mx-auto space-y-5">
-        <NavigationBar />
-
         <h1
           className={`my-6 text-xl leading-[1.4] font-bold tracking-[-0.25px] text-[#2C2E34]`}
         >
@@ -28,6 +26,7 @@ const StudentView = () => {
           modo="view"
           titulo="Editar Cadastro de Aluno"
           defaultValues={mapStudentResponseToForm(aluno)}
+          responses={aluno.performanceHistory}
         />
       </main>
     </>

@@ -15,7 +15,7 @@ import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
 import { useHandleDeleteStudent } from "@/hooks/CRUD/student/useHandleDeleteStudent";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { StudentResponse } from "@/interfaces/Student";
-import { FileDown, Pencil, X } from "lucide-react";
+import { Eye, FileDown, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -107,6 +107,7 @@ const StudentList = () => {
               <TableBody>
                 {studentPage?.data.map((student) => (
                   <TableRow key={student.id}>
+                    <TableCell></TableCell>
                     <TableCell>{student.name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.cpf}</TableCell>
@@ -117,13 +118,18 @@ const StudentList = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => deleteStudent(student.id)}>
-                        <X className="size-3 text-red-500" />
-                      </Button>
                       <Button
                         onClick={() => navigate(`/students/edit/${student.id}`)}
                       >
                         <Pencil className="size-3 text-green-500" />
+                      </Button>
+                      <Button
+                        onClick={() => navigate(`/students/view/${student.id}`)}
+                      >
+                        <Eye className="size-3 text-green-500" />
+                      </Button>
+                      <Button onClick={() => deleteStudent(student.id)}>
+                        <X className="size-3 text-red-500" />
                       </Button>
                     </TableCell>
                   </TableRow>

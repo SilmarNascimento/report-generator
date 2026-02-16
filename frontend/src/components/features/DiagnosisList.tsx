@@ -67,25 +67,25 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                   Ano Letivo: {yearly.year}
                 </span>
                 <span className="text-xs bg-zinc-200 px-2 py-0.5 rounded-full">
-                  {yearly.classGroupResponsesList.length} Turmas
+                  {yearly.classGroups.length} Turmas
                 </span>
               </div>
             </AccordionTrigger>
 
             <AccordionContent className="pb-4">
               <Accordion type="multiple" className="space-y-2">
-                {yearly.classGroupResponsesList.map((group) => {
-                  const isAllGroupSelected = group.responses.every((r) =>
+                {yearly.classGroups.map((group) => {
+                  const isAllGroupSelected = group.exams.every((r) =>
                     selectedIds.includes(r.id),
                   );
                   const isSomeGroupSelected =
-                    group.responses.some((r) => selectedIds.includes(r.id)) &&
+                    group.exams.some((r) => selectedIds.includes(r.id)) &&
                     !isAllGroupSelected;
 
                   return (
                     <AccordionItem
-                      key={group.classGroupName}
-                      value={`${yearly.year}-${group.classGroupName}`}
+                      key={group.name}
+                      value={`${yearly.year}-${group.name}`}
                       className="border rounded-md bg-white shadow-sm"
                     >
                       <div className="flex items-center px-4 hover:bg-zinc-50 transition-colors">
@@ -95,14 +95,12 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                             (isSomeGroupSelected ? "indeterminate" : false)
                           }
                           className={cn(isSomeGroupSelected && "opacity-50")}
-                          onCheckedChange={() =>
-                            toggleSelectAll(group.responses)
-                          }
+                          onCheckedChange={() => toggleSelectAll(group.exams)}
                         />
 
                         <AccordionTrigger className="flex-1 py-3 pl-3 hover:no-underline">
                           <span className="font-semibold text-zinc-600">
-                            Turma: {group.classGroupName}
+                            Turma: {group.name}
                           </span>
                         </AccordionTrigger>
                       </div>
@@ -126,7 +124,7 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {group.responses.map((report) => (
+                            {group.exams.map((report) => (
                               <TableRow
                                 key={report.id}
                                 className="hover:bg-zinc-50/50"

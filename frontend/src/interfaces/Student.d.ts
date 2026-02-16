@@ -10,13 +10,13 @@ export type MockExamResponseType = {
 };
 
 export type ClassGroupResponse = {
-  classGroupName: string;
-  responses: MockExamResponseType[];
+  name: string;
+  exams: MockExamResponseType[];
 };
 
 export type YearlyResponse = {
   year: number;
-  classGroupResponsesList: ClassGroupResponse[];
+  classGroups: ClassGroupResponse[];
 };
 
 export type StudentResponse = {
@@ -37,7 +37,7 @@ export type StudentResponse = {
     state: BR_STATES;
     zipCode: string;
   };
-  responses: YearlyResponse[];
+  performanceHistory: YearlyResponse[];
 };
 
 export type StudentRequest = {
