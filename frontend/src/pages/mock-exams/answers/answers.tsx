@@ -1,8 +1,6 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { NavigationBar } from "../../../components/NavigationBar";
+import { NavigationBar } from "@/components/NavigationBar";
 import { useParams } from "react-router-dom";
-import { useRef } from "react";
-import { MainQuestion, MockExam } from "../../../interfaces";
+import { MainQuestion } from "@/interfaces";
 import {
   Table,
   TableBody,
@@ -10,30 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
-import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+} from "@/components/ui/table";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
+import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
 
 export function MockExamAnswers() {
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
-  const mockExam = useRef<MockExam>();
-
-  useQuery<MockExam>({
-    queryKey: ["get-mock-exams", mockExamId],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
-      );
-      const data: MockExam = await response.json();
-
-      if (data) {
-        mockExam.current = data;
-      }
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 10,
-  });
+  const { mockExamId } = useParams<{ mockExamId: string }>();
+  const { data: mockExam } = useGetMockExamById(mockExamId ?? "");
 
   function handleCorrectAnswer(question: MainQuestion) {
     const correctIndex = question.alternatives.findIndex(
@@ -43,15 +24,13 @@ export function MockExamAnswers() {
   }
 
   function handleUrlResolution(question: MainQuestion) {
-    console.log(question);
-
     return question.videoResolutionUrl ? question.videoResolutionUrl : "-";
   }
 
   return (
     <div className="max-w-6xl mx-auto space-y-5">
       <NavigationBar />
-      {mockExam.current && (
+      {mockExam && (
         <div>
           <Table>
             <TableHeader>
@@ -76,7 +55,7 @@ export function MockExamAnswers() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Object.entries(mockExam.current.mockExamQuestions).map(
+              {Object.entries(mockExam.mockExamQuestions).map(
                 ([questionIndex, mainQuestion]) => {
                   return (
                     <TableRow key={mainQuestion.id}>
@@ -88,16 +67,16 @@ export function MockExamAnswers() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-zinc-300">
+                      <TableCell>
                         <span>{mainQuestion.level}</span>
                       </TableCell>
-                      <TableCell className="text-zinc-300">
+                      <TableCell>
                         <span>{handleCorrectAnswer(mainQuestion)}</span>
                       </TableCell>
-                      <TableCell className="text-zinc-300">
+                      <TableCell>
                         <span>{mainQuestion.subjects[0].name}</span>
                       </TableCell>
-                      <TableCell className="text-zinc-300">
+                      <TableCell>
                         <span>{handleUrlResolution(mainQuestion)}</span>
                       </TableCell>
                       <TableCell></TableCell>
