@@ -59,13 +59,19 @@ export function PaginationFromList({
               Page {page} of {pages}
             </span>
             <div className="space-x-1.5">
-              <Button onClick={firstPage} size="icon" disabled={page - 1 <= 0}>
+              <Button
+                onClick={firstPage}
+                size="icon"
+                variant="secondary"
+                disabled={page - 1 <= 0}
+              >
                 <ChevronsLeft className="size-4" />
                 <span className="sr-only">First page</span>
               </Button>
               <Button
                 onClick={previousPage}
                 size="icon"
+                variant="secondary"
                 disabled={page - 1 <= 0}
               >
                 <ChevronLeft className="size-4" />
@@ -74,6 +80,7 @@ export function PaginationFromList({
               <Button
                 onClick={nextPage}
                 size="icon"
+                variant="secondary"
                 disabled={page + 1 > pages}
               >
                 <ChevronRight className="size-4" />
@@ -82,6 +89,7 @@ export function PaginationFromList({
               <Button
                 onClick={lastPage}
                 size="icon"
+                variant="secondary"
                 disabled={page + 1 > pages}
               >
                 <ChevronsRight className="size-4" />

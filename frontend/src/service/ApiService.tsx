@@ -160,11 +160,8 @@ class ApiService {
     return response.data;
   }
 
-  async delete<T>(
-    endpoint: string,
-    params: Record<string, unknown> = {},
-  ): Promise<T> {
-    const config = { params };
+  async delete<T>(endpoint: string, data: unknown = {}): Promise<T> {
+    const config = { data };
     const response = await this.api.delete<T>(endpoint, config);
     return response.data;
   }
