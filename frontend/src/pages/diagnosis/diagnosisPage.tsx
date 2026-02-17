@@ -1,31 +1,25 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Header } from "../../components/header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Header } from "@/components/header";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Pagination } from "@/components/pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/shadcn/button";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { Button } from "@/components/ui/shadcn/button";
 import { FileDown } from "lucide-react";
-import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../interfaces";
-import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
-import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
+import { DiagnosisTable } from "@/components/diagnosis/diagnosisTable";
 import FiltroListagem from "@/components/shared/FiltroListagem";
+import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
+import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
 
 export function StudentsResponses() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
-  //const navigate = useNavigate();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = Number(searchParams.get("page") ?? 1);
+  const pageSize = Number(searchParams.get("pageSize") ?? 10);
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -38,56 +32,16 @@ export function StudentsResponses() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  const { data: studentsResponsePage } = useGetStudentsResponseList(
+    page,
+    pageSize,
+    urlFilter,
+  );
 
-  const { data: studentsResponsePage, isLoading } = useQuery<
-    PageResponse<MockExamDiagnosisResponse>
-  >({
-    queryKey: ["get-responses", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/students-response?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-      );
-      const data = await response.json();
+  const deleteMutation = useHandleDeleteStudentResponse();
 
-      return data;
-    },
-    placeholderData: keepPreviousData,
-  });
-
-  const deleteResponse = useMutation({
-    mutationFn: async (studentResponseId: string) => {
-      try {
-        await fetch(
-          `http://localhost:8080/students-response/${studentResponseId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "DELETE",
-          },
-        );
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-responses"],
-      });
-      successAlert("Resposta do aluno para o simulado excluída com sucesso!");
-    },
-  });
-
-  async function handleDeleteStudentResponse(studentResponseId: string) {
-    await deleteResponse.mutateAsync(studentResponseId);
-  }
-
-  if (isLoading) {
-    return null;
+  async function handleDeleteStudentResponse(id: string) {
+    await deleteMutation.mutateAsync(id);
   }
 
   return (
