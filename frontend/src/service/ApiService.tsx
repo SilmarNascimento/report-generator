@@ -165,6 +165,16 @@ class ApiService {
     const response = await this.api.delete<T>(endpoint, config);
     return response.data;
   }
+
+  async postMultipart<T = unknown>(url: string, data: FormData) {
+    return this.api
+      .post<T>(url, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => response.data);
+  }
 }
 
 const apiService = new ApiService();

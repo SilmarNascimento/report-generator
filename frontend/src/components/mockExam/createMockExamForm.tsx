@@ -2,18 +2,17 @@ import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { MockExamFormType, mockExamSchema } from "./mockExamSchema";
-import { CreateMockExam } from "../../interfaces/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 import { InputSelectDropdownWrapper } from "../features/form-input/InputSelectDropdownWrapper";
 import { classGroupOptions } from "@/constants/students";
+import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMockExam";
 
 export function CreateMockExamForm() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const createMockExam = useHandleCreateMockExam();
 
   const formMethods = useForm<MockExamFormType>({
     resolver: zodResolver(mockExamSchema),
@@ -21,64 +20,20 @@ export function CreateMockExamForm() {
   const { register, handleSubmit, formState, control } = formMethods;
   const { errors } = formState;
 
-  const createMockExam = useMutation({
-    mutationFn: async (data: MockExamFormType) => {
-      const formData = new FormData();
-      const {
-        name,
-        className,
-        releasedYear,
-        number,
-        coverPdfFile,
-        matrixPdfFile,
-        answersPdfFile,
-      } = data;
-
-      formData.append("coverPdfFile", coverPdfFile);
-      formData.append("matrixPdfFile", matrixPdfFile);
-      formData.append("answersPdfFile", answersPdfFile);
-
-      const mockExam: CreateMockExam = {
-        name,
-        className: [className],
-        releasedYear,
-        number: Number(number),
-      };
-      const json = JSON.stringify(mockExam);
-      const blob = new Blob([json], {
-        type: "application/json",
-      });
-
-      formData.append("mockExamInputDto", blob);
-
-      const response = await fetch("http://localhost:8080/mock-exam", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.status === 201) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-mock-exams"],
-        });
-        successAlert("Simulado salvo com sucesso!");
-        navigate("/mock-exams");
-      }
-
-      if (response.status === 400) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleCreateMainQuestion(data: MockExamFormType) {
-    await createMockExam.mutateAsync(data);
+  async function onSubmit(data: MockExamFormType) {
+    try {
+      await createMockExam.mutateAsync(data);
+      successAlert("Simulado salvo com sucesso!");
+      navigate("/mock-exams");
+    } catch {
+      warningAlert("Erro ao salvar simulado");
+    }
   }
 
   return (
     <FormProvider {...formMethods}>
       <form
-        onSubmit={handleSubmit(handleCreateMainQuestion)}
+        onSubmit={handleSubmit(onSubmit)}
         encType="multipart/form-data"
         className="w-full space-y-6"
       >
