@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Pencil, Plus, X } from "lucide-react";
+import { FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,7 @@ import { successAlert } from "../../utils/toastAlerts";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import { PageResponse } from "../../interfaces";
 import FiltroListagem from "@/components/shared/FiltroListagem";
+import Botao from "@/components/shared/Botao";
 
 export function MainQuestions() {
   const queryClient = useQueryClient();
@@ -134,10 +135,7 @@ export function MainQuestions() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Principais</h1>
-          <Button variant="primary" onClick={handleCreateNewMainQuestion}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateNewMainQuestion} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -148,7 +146,7 @@ export function MainQuestions() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -194,10 +192,10 @@ export function MainQuestions() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{question.level}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link to={`/main-questions/${question.id}/subjects`}>
                       <span>
                         {question.subjects.length
@@ -206,40 +204,42 @@ export function MainQuestions() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{handleCorrectAnswer(question)}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/main-questions/${question.id}/adapted-questions`}
                     >
                       <span>{question.adaptedQuestions.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link to={`/main-question/${question.id}/mock-exams`}>
                       <span>{question.mockExams.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link to={`/main-question/${question.id}/handouts`}>
                       <span>{question.handouts.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex gap-1">
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleDeleteMainQuestion(question)}
+                      variant="muted"
+                      onClick={() => handleEditMainQuestion(question.id)}
                     >
-                      <X className="size-3" color="red" />
+                      <Pencil className="size-3" color="green" />
                     </Button>
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleEditMainQuestion(question.id)}
+                      variant="muted"
+                      onClick={() => handleDeleteMainQuestion(question)}
                     >
-                      <Pencil className="size-3" color="green" />
+                      <X className="size-3" color="red" />
                     </Button>
                   </TableCell>
                 </TableRow>

@@ -25,3 +25,5 @@ export const mockExamSchema = z.object({
   matrixPdfFile: fileListSchema,
   answersPdfFile: fileListSchema,
 });
+
+export type MockExamFormType = z.infer<typeof mockExamSchema>;

@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { EyeIcon, FileDown, Pencil, Plus, X } from "lucide-react";
+import { EyeIcon, FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,12 +19,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "@/components/ui/table";
 import { MockExam } from "../../interfaces";
 import { Link } from "react-router-dom";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces";
 import FiltroListagem from "@/components/shared/FiltroListagem";
+import Botao from "@/components/shared/Botao";
 
 export function MockExams() {
   const queryClient = useQueryClient();
@@ -118,10 +119,7 @@ export function MockExams() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Simulados</h1>
-          <Button variant="primary" onClick={handleCreateNewMockExam}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateNewMockExam} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -132,7 +130,7 @@ export function MockExams() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -181,21 +179,21 @@ export function MockExams() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.name}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     {mockExam.className.map((name: string) => (
                       <span key={name}>{name}</span>
                     ))}
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.releasedYear}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.number}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/mock-exams/${mockExam.id}/subjects`}
                       className="flex align-middle justify-center"
@@ -205,14 +203,14 @@ export function MockExams() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
                       <span>
                         {Object.keys(mockExam.mockExamQuestions).length}
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/mock-exams/${mockExam.id}/mock-exam-answers`}
                       className="flex align-middle justify-center"
@@ -222,20 +220,22 @@ export function MockExams() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex gap-1">
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleDeleteMockExam(mockExam.id)}
+                      variant="muted"
+                      onClick={() => handleEditMockExam(mockExam.id)}
                     >
-                      <X className="size-3" color="red" />
+                      <Pencil className="size-3" color="green" />
                     </Button>
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleEditMockExam(mockExam.id)}
+                      variant="muted"
+                      onClick={() => handleDeleteMockExam(mockExam.id)}
                     >
-                      <Pencil className="size-3" color="green" />
+                      <X className="size-3" color="red" />
                     </Button>
                   </TableCell>
                 </TableRow>

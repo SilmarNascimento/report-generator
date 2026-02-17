@@ -11,7 +11,7 @@ import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Loader2, Plus, X, Pencil } from "lucide-react";
+import { FileDown, Loader2, X, Pencil } from "lucide-react";
 import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
 import {
   Table,
@@ -27,6 +27,7 @@ import { Subject } from "../../interfaces";
 import { successAlert } from "../../utils/toastAlerts";
 import { PageResponse } from "../../interfaces/PageResponse";
 import FiltroListagem from "@/components/shared/FiltroListagem";
+import Botao from "@/components/shared/Botao";
 
 export function Subjects() {
   const queryClient = useQueryClient();
@@ -121,15 +122,12 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant="primary">
-                <Plus className="size-3" />
-                Create new
-              </Button>
+              <Botao perfil="novo" />
             </Dialog.Trigger>
 
             <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
+              <Dialog.Overlay className="fixed inset-0 bg-black/70 z-0" />
+              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
                     Novo Assunto
@@ -157,7 +155,7 @@ export function Subjects() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -195,20 +193,12 @@ export function Subjects() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-zinc-300">{subject.id}</TableCell>
+                  <TableCell>{subject.id}</TableCell>
 
                   <TableCell className="text-right">
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      onClick={() => handleDeleteSubject(subject)}
-                    >
-                      <X className="size-3" color="red" />
-                    </Button>
-
                     <Dialog.Root>
                       <Dialog.Trigger asChild>
-                        <Button size="icon" className="mx-0.5">
+                        <Button size="icon" className="mx-0.5" variant="muted">
                           <Pencil className="size-3" color="green" />
                         </Button>
                       </Dialog.Trigger>
@@ -228,6 +218,15 @@ export function Subjects() {
                         </Dialog.Content>
                       </Dialog.Portal>
                     </Dialog.Root>
+
+                    <Button
+                      size="icon"
+                      className="mx-0.5"
+                      variant="muted"
+                      onClick={() => handleDeleteSubject(subject)}
+                    >
+                      <X className="size-3" color="red" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );
