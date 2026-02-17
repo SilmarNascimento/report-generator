@@ -1,29 +1,24 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlternativeForm } from "../alternative/alternativesForm";
-import { mainQuestionSchema } from "./mainQuestionSchema";
+import { MainQuestionFormType, mainQuestionSchema } from "./mainQuestionSchema";
 import { CreateQuestion } from "../../interfaces/MainQuestion";
 import { CreateAlternative } from "../../interfaces/Alternative";
 import { useNavigate } from "react-router-dom";
 import { SelectLevel } from "../ui/selectLevel";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
-import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 import { useEffect } from "react";
 import { SelectLerikucas } from "../ui/selectLerikucas";
 import { SelectPattern } from "../ui/selectPattern";
-
-type CreateMainQuestionForm = z.infer<typeof mainQuestionSchema>;
+import { useHandleCreateMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleCreateMainQuestion";
 
 export function CreateMainQuestionForm() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const createMutation = useHandleCreateMainQuestion();
 
-  const formMethods = useForm<CreateMainQuestionForm>({
+  const formMethods = useForm<MainQuestionFormType>({
     resolver: zodResolver(mainQuestionSchema),
   });
   const { register, handleSubmit, formState, watch, setValue } = formMethods;
@@ -52,85 +47,63 @@ export function CreateMainQuestionForm() {
     }
   }, [selectedLerikucas, setValue]);
 
-  const createMainQuestion = useMutation({
-    mutationFn: async (data: CreateMainQuestionForm) => {
-      const formData = new FormData();
-      let titleImage: File[] = [];
-      const alternativeImages: File[] = [];
+  function buildFormData(data: MainQuestionFormType) {
+    const formData = new FormData();
 
-      if (data.images) {
-        titleImage = Array.from(data?.images).filter(
-          (file): file is File => file !== undefined,
+    const titleImages = data.images
+      ? Array.from(data.images).filter((f): f is File => !!f)
+      : [];
+
+    const alternativeImages: File[] = [];
+    for (const alt of data.alternatives) {
+      if (alt.images) {
+        alternativeImages.push(
+          ...Array.from(alt.images).filter((f): f is File => !!f),
         );
       }
+    }
 
-      const alternatives: z.infer<typeof alternativeSchema>[] =
-        data.alternatives;
-      for (const alternative of alternatives) {
-        if (alternative.images) {
-          const files = Array.from(alternative.images).filter(
-            (file): file is File => file !== undefined,
-          );
-          alternativeImages.push(...files);
-        }
-      }
+    [...titleImages, ...alternativeImages].forEach((file) =>
+      formData.append("images", file),
+    );
 
-      const totalImages = titleImage.concat(alternativeImages);
-      totalImages.forEach((file) => {
-        formData.append("images", file);
-      });
+    const alternatives: CreateAlternative[] = data.alternatives.map(
+      (alt, index) => ({
+        description: alt.description,
+        questionAnswer: Number(data.questionAnswer) === index,
+      }),
+    );
 
-      const createAlternatives = data.alternatives.map((alternative, index) => {
-        const createAlternative: CreateAlternative = {
-          description: alternative?.description,
-          questionAnswer: Number(data.questionAnswer) === index,
-        };
-        return createAlternative;
-      });
-      const mainQuestion: CreateQuestion = {
-        title: data.title,
-        level: data.level,
-        lerickucas: Number(data.lerikucas),
-        pattern: data.pattern,
-        alternatives: createAlternatives,
-        videoResolutionUrl: data.videoResolutionUrl,
-      };
-      const json = JSON.stringify(mainQuestion);
-      const blob = new Blob([json], {
+    const mainQuestion: CreateQuestion = {
+      title: data.title,
+      level: data.level,
+      lerickucas: Number(data.lerikucas),
+      pattern: data.pattern,
+      alternatives,
+      videoResolutionUrl: data.videoResolutionUrl,
+    };
+
+    formData.append(
+      "mainQuestionInputDto",
+      new Blob([JSON.stringify(mainQuestion)], {
         type: "application/json",
-      });
+      }),
+    );
 
-      formData.append("mainQuestionInputDto", blob);
-      formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
+    formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
 
-      const response = await fetch("http://localhost:8080/main-question", {
-        method: "POST",
-        body: formData,
-      });
+    return formData;
+  }
 
-      if (response.status === 201) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-main-questions"],
-        });
-        successAlert("Questão principal salva com sucesso!");
-        navigate("/main-questions");
-      }
-
-      if (response.status === 400) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleCreateMainQuestion(data: CreateMainQuestionForm) {
-    await createMainQuestion.mutateAsync(data);
+  async function handleCreate(data: MainQuestionFormType) {
+    const formData = buildFormData(data);
+    await createMutation.mutateAsync(formData);
   }
 
   return (
     <FormProvider {...formMethods}>
       <form
-        onSubmit={handleSubmit(handleCreateMainQuestion)}
+        onSubmit={handleSubmit(handleCreate)}
         encType="multipart/form-data"
         className="w-full space-y-6"
       >
@@ -141,7 +114,7 @@ export function CreateMainQuestionForm() {
           <textarea
             {...register("title")}
             id="enunciado"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm h-auto"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm h-auto"
           />
           <p
             className={`text-sm ${formState.errors?.title ? "text-red-400" : "text-transparent"}`}
@@ -163,7 +136,7 @@ export function CreateMainQuestionForm() {
             multiple
             hidden
             accept="image/*,.pdf"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5  w-full text-sm"
           />
           <p
             className={`text-sm ${formState.errors?.images ? "text-red-400" : "text-transparent"}`}
@@ -227,7 +200,7 @@ export function CreateMainQuestionForm() {
             {...register("videoResolutionUrl")}
             type="text"
             id="videoResolutionUrl"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5  w-full text-sm"
           />
           <p
             className={`text-sm ${formState.errors?.videoResolutionUrl ? "text-red-400" : "text-transparent"}`}
@@ -271,6 +244,7 @@ export function CreateMainQuestionForm() {
           <Button
             disabled={
               formState.isSubmitting ||
+              createMutation.isPending ||
               !Object.keys(formState.dirtyFields).length
             }
             className="bg-teal-400 text-teal-950"
@@ -283,7 +257,7 @@ export function CreateMainQuestionForm() {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button type="button" onClick={() => navigate("/main-questions")}>
             <X className="size-3" />
             Cancel
           </Button>
