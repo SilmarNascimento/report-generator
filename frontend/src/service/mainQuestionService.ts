@@ -8,4 +8,10 @@ export const mainQuestionService = {
       },
     });
   },
+
+  update(id: string, formData: FormData) {
+    return apiService.put<void>(`/main-question/${id}`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 };

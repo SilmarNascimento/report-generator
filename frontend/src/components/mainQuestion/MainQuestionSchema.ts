@@ -1,5 +1,10 @@
 import { z } from "zod";
 import { alternativeSchema } from "../alternative/AlternativeSchema";
+import {
+  LerikucasEnum,
+  QuestionLevelEnum,
+  QuestionPatternEnum,
+} from "@/constants/general";
 
 const fileListSchema = z.instanceof(FileList);
 
@@ -9,9 +14,9 @@ const fileSchema = z.instanceof(File).refine((file) => !!file, {
 
 export const mainQuestionSchema = z.object({
   title: z.string().min(1, { message: "Enunciado é obrigatório" }),
-  level: z.enum(["Fácil", "Médio", "Difícil"]),
-  lerikucas: z.enum(["1", "2", "3", "4", "5", "6", "7", "8"]),
-  pattern: z.enum(["ARITMETICA", "ALGEBRA", "GEOMETRIA"]),
+  level: z.enum(QuestionLevelEnum),
+  lerikucas: z.enum(LerikucasEnum),
+  pattern: z.enum(QuestionPatternEnum),
   images: fileListSchema.optional(),
   videoResolutionUrl: z
     .string()

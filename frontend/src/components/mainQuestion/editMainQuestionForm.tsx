@@ -1,25 +1,24 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { mainQuestionSchema } from "./mainQuestionSchema";
+import { MainQuestionFormType, mainQuestionSchema } from "./mainQuestionSchema";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { useNavigate, useParams } from "react-router-dom";
-import { MainQuestion } from "../../interfaces";
-import { DevTool } from "@hookform/devtools";
-import { CreateAlternative } from "../../interfaces/Alternative";
-import { CreateQuestion } from "../../interfaces/MainQuestion";
-import { useEffect, useMemo, useState } from "react";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
+import { MainQuestion } from "@/interfaces";
+import { CreateAlternative } from "@/interfaces/Alternative";
+import { CreateQuestion } from "@/interfaces/MainQuestion";
+import { useEffect, useMemo } from "react";
 import { SelectLevel } from "../ui/selectLevel";
-import { alternativeSchema } from "../alternative/AlternativeSchema";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 import { SelectLerikucas } from "../ui/selectLerikucas";
 import { SelectPattern } from "../ui/selectPattern";
-
-type EditMainQuestionForm = z.infer<typeof mainQuestionSchema>;
+import { useHandleEditMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleEditMainQuestion";
+import {
+  LerikucasEnum,
+  QuestionLevelEnum,
+  QuestionPatternEnum,
+} from "@/constants/general";
 
 interface EditMainQuestionFormProps {
   entity: MainQuestion;
@@ -28,35 +27,40 @@ interface EditMainQuestionFormProps {
 export function EditMainQuestionForm({
   entity: mainQuestion,
 }: EditMainQuestionFormProps) {
-  const [hasChanged, setHasChanged] = useState(false);
-  const queryClient = useQueryClient();
-  const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
+  const { mainQuestionId = "" } = useParams<{ mainQuestionId: string }>();
   const navigate = useNavigate();
 
-  const memoizedDefaultValues = useMemo(() => {
-    return mainQuestion
-      ? mainQuestionSchema.parse(mainQuestion)
-      : {
-          title: "",
-          level: "Fácil" as const,
-          lerikucas: "1" as const,
-          pattern: "ARITMETICA" as const,
-          videoResolutionUrl: "",
-          alternatives: Array(5).fill({ description: "" }),
-          questionAnswer: "0",
-          adaptedQuestionsPdfFile: undefined as unknown as File,
-          images: undefined as unknown as FileList,
-        };
+  const updateMutation = useHandleEditMainQuestion(mainQuestionId!);
+
+  const memoizedDefaultValues = useMemo<MainQuestionFormType>(() => {
+    return {
+      title: mainQuestion.title,
+      level: mainQuestion.level,
+      lerikucas: String(mainQuestion.lerickucas) as LerikucasEnum,
+      pattern: mainQuestion.pattern as unknown as QuestionPatternEnum,
+      videoResolutionUrl: mainQuestion.videoResolutionUrl,
+      adaptedQuestionsPdfFile: mainQuestion.adaptedQuestionPdfFile.file,
+      questionAnswer: mainQuestion.alternatives
+        .findIndex((a) => a.questionAnswer)
+        .toString(),
+      alternatives: mainQuestion.alternatives.map((a) => ({
+        description: a.description,
+      })),
+    };
   }, [mainQuestion]);
 
-  const formMethods = useForm<EditMainQuestionForm>({
+  const formMethods = useForm<MainQuestionFormType>({
     resolver: zodResolver(mainQuestionSchema),
     defaultValues: memoizedDefaultValues,
     mode: "onChange",
     reValidateMode: "onChange",
   });
-  const { register, handleSubmit, formState, setValue, control, watch } =
+  const { register, handleSubmit, formState, setValue, watch, reset } =
     formMethods;
+
+  useEffect(() => {
+    reset(memoizedDefaultValues);
+  }, [memoizedDefaultValues, reset]);
 
   const selectedLerikucas = watch("lerikucas");
 
@@ -64,140 +68,70 @@ export function EditMainQuestionForm({
     if (!selectedLerikucas) return;
 
     const lerikucasValue = Number(selectedLerikucas);
-    let calculatedLevel: "Fácil" | "Médio" | "Difícil" | "" = "";
+    let level: QuestionLevelEnum | undefined;
 
     if ([1, 2, 5].includes(lerikucasValue)) {
-      calculatedLevel = "Fácil";
+      level = QuestionLevelEnum.FACIL;
     } else if ([3, 6].includes(lerikucasValue)) {
-      calculatedLevel = "Médio";
+      level = QuestionLevelEnum.MEDIO;
     } else if ([4, 7, 8].includes(lerikucasValue)) {
-      calculatedLevel = "Difícil";
+      level = QuestionLevelEnum.DIFICIL;
     }
 
-    if (calculatedLevel) {
-      setValue("level", calculatedLevel, {
+    if (level !== undefined) {
+      setValue("level", level, {
         shouldValidate: true,
         shouldDirty: true,
       });
     }
   }, [selectedLerikucas, setValue]);
 
-  useEffect(() => {
-    if (mainQuestion) {
-      setValue("title", mainQuestion.title);
-      setValue("level", mainQuestion.level);
-      setValue("videoResolutionUrl", mainQuestion.videoResolutionUrl);
-      setValue(
-        "adaptedQuestionsPdfFile",
-        mainQuestion.adaptedQuestionPdfFile.file,
-      );
-      mainQuestion.alternatives.forEach((alternative, index) => {
-        setValue(`alternatives.${index}.description`, alternative.description);
-        if (alternative.questionAnswer) {
-          setValue("questionAnswer", index.toString());
-        }
-      });
-    }
-  }, [mainQuestion, setValue]);
+  function buildFormData(data: MainQuestionFormType) {
+    const formData = new FormData();
 
-  useEffect(() => {
-    function hasChangedValues(): boolean {
-      const questionAnswerFormValues = watch("questionAnswer");
+    const titleImages = data.images ? Array.from(data.images) : [];
 
-      const questionAnswerIndex =
-        mainQuestion?.alternatives.findIndex(
-          (alternative) => alternative.questionAnswer,
-        ) ?? "";
+    const altImages = data.alternatives.flatMap((a) =>
+      a.images ? Array.from(a.images) : [],
+    );
 
-      if (
-        questionAnswerFormValues !== questionAnswerIndex.toString() ||
-        !!Object.keys(formState.dirtyFields).length
-      ) {
-        return true;
-      }
+    [...titleImages, ...altImages].forEach((file) =>
+      formData.append("images", file),
+    );
 
-      return false;
-    }
+    const alternatives: CreateAlternative[] = data.alternatives.map((a, i) => ({
+      description: a.description,
+      questionAnswer: Number(data.questionAnswer) === i,
+    }));
 
-    setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mainQuestion, watch]);
+    const payload: CreateQuestion = {
+      title: data.title,
+      level: data.level,
+      lerickucas: Number(data.lerikucas),
+      pattern: data.pattern,
+      alternatives,
+      videoResolutionUrl: data.videoResolutionUrl,
+    };
 
-  const editMainQuestion = useMutation({
-    mutationFn: async (data: EditMainQuestionForm) => {
-      const formData = new FormData();
-      let titleImage: File[] = [];
-      const alternativeImages: File[] = [];
-
-      if (data.images) {
-        titleImage = Array.from(data?.images).filter(
-          (file): file is File => file !== undefined,
-        );
-      }
-
-      const alternatives: z.infer<typeof alternativeSchema>[] =
-        data.alternatives;
-      for (const alternative of alternatives) {
-        if (alternative.images) {
-          const files = Array.from(alternative.images).filter(
-            (file): file is File => file !== undefined,
-          );
-          alternativeImages.push(...files);
-        }
-      }
-
-      const totalImages = titleImage.concat(alternativeImages);
-      totalImages.forEach((file) => {
-        formData.append("images", file);
-      });
-
-      const createAlternatives = data.alternatives.map((alternative, index) => {
-        const createAlternative: CreateAlternative = {
-          description: alternative.description,
-          questionAnswer: Number(data.questionAnswer) === index,
-        };
-        return createAlternative;
-      });
-      const createMainQuestion: CreateQuestion = {
-        title: data.title,
-        level: data.level,
-        lerickucas: Number(data.lerikucas),
-        pattern: data.pattern,
-        alternatives: createAlternatives,
-        videoResolutionUrl: data.videoResolutionUrl,
-      };
-      const json = JSON.stringify(createMainQuestion);
-      const blob = new Blob([json], {
+    formData.append(
+      "mainQuestionInputDto",
+      new Blob([JSON.stringify(payload)], {
         type: "application/json",
-      });
+      }),
+    );
 
-      formData.append("mainQuestionInputDto", blob);
+    if (data.adaptedQuestionsPdfFile) {
       formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
+    }
 
-      const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}`,
-        {
-          method: "PUT",
-          body: formData,
-        },
-      );
+    return formData;
+  }
 
-      if (response.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-main-questions"],
-        });
-        successAlert("Questão principal alterada com sucesso!");
-        navigate("/main-questions");
-      }
+  async function handleEditMainQuestion(data: MainQuestionFormType) {
+    const formData = buildFormData(data);
+    await updateMutation.mutateAsync(formData);
 
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleEditMainQuestion(data: EditMainQuestionForm) {
-    await editMainQuestion.mutateAsync(data);
+    navigate("/main-questions");
   }
 
   return (
@@ -299,7 +233,7 @@ export function EditMainQuestionForm({
             {...register("videoResolutionUrl")}
             type="text"
             id="videoResolutionUrl"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm"
           />
           <p
             className={`text-sm ${formState.errors?.videoResolutionUrl ? "text-red-400" : "text-transparent"}`}
@@ -341,7 +275,7 @@ export function EditMainQuestionForm({
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting || !hasChanged}
+            disabled={formState.isSubmitting || !formState.isDirty}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
@@ -358,7 +292,6 @@ export function EditMainQuestionForm({
           </Button>
         </div>
       </form>
-      <DevTool control={control} />
     </FormProvider>
   );
 }

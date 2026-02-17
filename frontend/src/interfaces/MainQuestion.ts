@@ -4,12 +4,13 @@ import { AdaptedQuestion } from "./AdaptedQuestion";
 import { MockExam } from "./MockExam";
 import { Handout } from "./Handout";
 import { FileEntity, FileHandle } from "./FileEntity";
+import { LerikucasEnum, QuestionLevelEnum } from "@/constants/general";
 
 export type QuestionPattern = "ARITMETICA" | "ALGEBRA" | "GEOMETRIA";
 
-export type LevelType = "Fácil" | "Médio" | "Difícil";
+export type LevelType = QuestionLevelEnum;
 
-export type LerikucasType = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8";
+export type LerikucasType = LerikucasEnum;
 
 export type MainQuestionReceived = {
   id: string;
