@@ -89,8 +89,10 @@ export function InputTextWrapper<T extends FormTypes>({
         control={control}
         render={({ field }) => {
           const formattedValue = formatter
-            ? formatter.format(field.value ?? "")
-            : field.value || "";
+            ? formatter.format(field.value ? String(field.value) : "")
+            : field.value
+              ? String(field.value)
+              : "";
 
           return (
             <Input

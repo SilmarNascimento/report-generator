@@ -96,7 +96,7 @@ export function InputSelectDropdownWrapper<
               placeholder={placeholder}
               queryValue={queryValue}
               options={options}
-              value={field.value ?? ""}
+              value={field.value ? String(field.value) : ""}
               className={inputClassName}
               onChange={(option) => {
                 const value = option?.value ?? "";

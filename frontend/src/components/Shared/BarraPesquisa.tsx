@@ -34,7 +34,7 @@ const BarraPesquisa = ({
         onChange={onChange}
         placeholder={placeholder ?? "Consulta sobre"}
         className={cn(
-          "text-base leading-[1.5] font-normal",
+          "text-sm leading-[1.5] font-normal text-muted-foreground",
           "h-full flex-1 rounded-none border-none shadow-none",
           "focus-visible:border-none focus-visible:ring-0",
         )}
@@ -44,9 +44,9 @@ const BarraPesquisa = ({
         onClick={handleIconClick}
         aria-label="Focar no campo de pesquisa"
         className={cn(
-          "text-muted-foreground flex h-10 w-10 items-center justify-center",
-          "hover:text-foreground",
+          "text-muted-foreground flex h-10 w-10 items-center justify-center hover:text-foreground",
           "focus:outline-none focus-visible:ring-0",
+          "relative",
         )}
       >
         <Search

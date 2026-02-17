@@ -1,3 +1,4 @@
+import { CLASS_GROUP } from "@/constants/students";
 import { z } from "zod";
 
 const fileListSchema = z.instanceof(File).refine((file) => !!file, {
@@ -6,7 +7,7 @@ const fileListSchema = z.instanceof(File).refine((file) => !!file, {
 
 export const MockExamSchema = z.object({
   name: z.string().min(1, { message: "Descrição é obrigatória" }),
-  className: z.enum(["Intensivo", "Extensivo"]),
+  className: z.enum(CLASS_GROUP),
   releasedYear: z.string().refine(
     (year) => {
       const inputYear = Number(year);
@@ -25,3 +26,5 @@ export const MockExamSchema = z.object({
   matrixPdfFile: fileListSchema,
   answersPdfFile: fileListSchema,
 });
+
+export type MockExamFormType = z.infer<typeof MockExamSchema>;

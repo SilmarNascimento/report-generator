@@ -49,8 +49,8 @@ export type MainQuestion = {
 export type CreateQuestion = {
   title: string;
   level: string;
-  lerickucas: number;
-  pattern: QuestionPattern;
+  lerickucas?: number;
+  pattern?: QuestionPattern;
   alternatives: CreateAlternative[];
   videoResolutionUrl?: string;
 };

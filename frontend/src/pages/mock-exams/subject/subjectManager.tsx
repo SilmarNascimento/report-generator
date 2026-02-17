@@ -1,33 +1,38 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { MockExam, PageResponse, Subject } from "../../../interfaces";
-import { successAlert, warningAlert } from "../../../utils/toastAlerts";
-import { AddSubjectManagerTable } from "../../../components/Subject/AddSubjectManagerTable";
-import { RemoveSubjectManagerTable } from "../../../components/Subject/RemoveSubjectManagerTable";
-import { useEffect, useRef, useState } from "react";
-import useDebounceValue from "../../../hooks/useDebounceValue";
-import { NavigationBar } from "../../../components/NavigationBar";
+import { useEffect, useMemo, useState } from "react";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { NavigationBar } from "@/components/NavigationBar";
+import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
+import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import { useUpdateMockExamSubjects } from "@/hooks/CRUD/mockExam/subjectManager/useUpdateMockExamSubjects";
+import { AddSubjectManagerTable } from "@/components/Subject/AddSubjectManagerTable";
+import { RemoveSubjectManagerTable } from "@/components/Subject/RemoveSubjectManagerTable";
 
 export function MockExamSubjectManager() {
-  const queryClient = useQueryClient();
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
-
+  const { mockExamId = "" } = useParams<{ mockExamId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
-  const subjectIdList = useRef<string[]>();
-  const mockExam = useRef<MockExam>();
+  const { data: mockExam, isLoading } = useGetMockExamById(mockExamId);
+
+  const excludedIds = useMemo(
+    () => mockExam?.subjects.map((s) => s.id) ?? [],
+    [mockExam],
+  );
+
+  const { data: subjectPageResponse } = useGetSubjects(
+    page,
+    10,
+    urlFilter,
+    excludedIds,
+    !isLoading,
+  );
+
+  const { addSubjects, removeSubjects } = useUpdateMockExamSubjects(mockExamId);
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -40,131 +45,6 @@ export function MockExamSubjectManager() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  useQuery<MockExam>({
-    queryKey: ["get-mock-exams", mockExamId],
-    queryFn: async () => {
-      const response = await fetch(
-        `/mock-exam/${mockExamId}`,
-      );
-      const data: MockExam = await response.json();
-
-      if (data) {
-        mockExam.current = data;
-        subjectIdList.current = data.subjects.map((subject) => subject.id);
-      }
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 10,
-  });
-
-  const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
-    queryKey: ["get-subjects", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            subjectsId: subjectIdList.current,
-          }),
-        },
-      );
-      const requestData = await response.json();
-
-      return requestData;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: 1000 * 10,
-    enabled: !!subjectIdList.current,
-  });
-
-  const addSubjectToMockExam = useMutation({
-    mutationFn: async (subjectIdListToAdd: string[]) => {
-      const response = await fetch(
-        `/mock-exam/${mockExamId}/subjects`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "PATCH",
-          body: JSON.stringify({
-            subjectsId: subjectIdListToAdd,
-          }),
-        },
-      );
-
-      if (response.status === 200) {
-        const updatedMockExam: MockExam = await response.json();
-        mockExam.current = updatedMockExam;
-        subjectIdList.current = updatedMockExam.subjects.map(
-          (subject) => subject.id,
-        );
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-
-        subjectIdListToAdd.length === 1
-          ? successAlert("Assunto adicionado ao simulado com sucesso!")
-          : successAlert("Assuntos adicionados ao simulado com sucesso!");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  const removeSubjectFromMockExam = useMutation({
-    mutationFn: async (subjectIdListToRemove: string[]) => {
-      const response = await fetch(
-        `/mock-exam/${mockExamId}/subjects`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-          body: JSON.stringify({
-            subjectsId: subjectIdListToRemove,
-          }),
-        },
-      );
-
-      if (response.status === 200) {
-        const updatedMainQuestion: MockExam = await response.json();
-        mockExam.current = updatedMainQuestion;
-        subjectIdList.current = updatedMainQuestion.subjects.map(
-          (subject) => subject.id,
-        );
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-
-        subjectIdListToRemove.length === 1
-          ? successAlert("Assunto removido do simulado com sucesso!")
-          : successAlert("Assuntos removidos do simulado com sucesso!");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleAddSubject(subjectIdList: string[]) {
-    await addSubjectToMockExam.mutateAsync(subjectIdList);
-  }
-
-  async function handleRemoveSubject(subjectIdList: string[]) {
-    await removeSubjectFromMockExam.mutateAsync(subjectIdList);
-  }
-
   return (
     <>
       <NavigationBar />
@@ -174,13 +54,25 @@ export function MockExamSubjectManager() {
           filter={filter}
           setFilter={setFilter}
           page={page}
-          handleAddSubjects={handleAddSubject}
+          handleAddSubjects={async (ids) => {
+            try {
+              await addSubjects.mutateAsync(ids);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
         />
       )}
-      {mockExam.current && (
+      {mockExam && (
         <RemoveSubjectManagerTable
-          entity={mockExam.current.subjects}
-          handleRemoveSubjects={handleRemoveSubject}
+          entity={mockExam.subjects}
+          handleRemoveSubjects={async (ids) => {
+            try {
+              await removeSubjects.mutateAsync(ids);
+            } catch (error) {
+              console.error(error);
+            }
+          }}
         />
       )}
     </>

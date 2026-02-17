@@ -3,56 +3,31 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
-import { SubjectSchema } from "./SubjectSchema";
-import { Subject } from "../../interfaces";
-import { z } from "zod";
+import { SubjectFormOutput, SubjectSchema } from "./SubjectSchema";
+import { Subject } from "@/interfaces";
+import { useHandleEditSubject } from "@/hooks/CRUD/subject/useHandleEditSubject";
 
 interface EditSubjectFormProps {
   entity: Subject;
 }
 
-type EditSubjectForm = z.infer<typeof SubjectSchema>;
-
 export function EditSubjectForm({ entity }: EditSubjectFormProps) {
-  const queryClient = useQueryClient();
-  const subjectId = entity.id;
-
-  const { register, handleSubmit, formState } = useForm<EditSubjectForm>({
+  const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(SubjectSchema),
-  });
-
-  const editSubject = useMutation({
-    mutationFn: async ({ name }: EditSubjectForm) => {
-      const response = await fetch(
-        `/subject/${subjectId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "PUT",
-          body: JSON.stringify({ name }),
-        },
-      );
-
-      if (response.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-        successAlert("Assunto alterado com sucesso!");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
+    defaultValues: {
+      name: entity.name,
+      fixedWeight: entity.fixedWeight * 100,
     },
   });
 
-  async function handleEditSubject({ name, fixedWeight }: EditSubjectForm) {
-    await editSubject.mutateAsync({ name, fixedWeight });
-  }
+  const editSubject = useHandleEditSubject();
+
+  const handleEditSubject = async (data: SubjectFormOutput) => {
+    await editSubject.mutateAsync({
+      subjectId: entity.id,
+      ...data,
+    });
+  };
 
   return (
     <form
@@ -68,7 +43,7 @@ export function EditSubjectForm({ entity }: EditSubjectFormProps) {
           id="name"
           type="text"
           defaultValue={entity.name}
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm"
         />
         {formState.errors?.name && (
           <p className="text-sm text-red-400">
@@ -85,7 +60,7 @@ export function EditSubjectForm({ entity }: EditSubjectFormProps) {
           {...register("fixedWeight")}
           id="fixedWeight"
           type="text"
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm"
         />
         {formState.errors?.fixedWeight && (
           <p className="text-sm text-red-400">

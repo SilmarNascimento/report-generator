@@ -1,40 +1,36 @@
 import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Header } from "../../components/Header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/Pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Pencil, Plus, X } from "lucide-react";
-import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/Table";
-import { MainQuestion } from "../../interfaces";
-import { Link } from "react-router-dom";
-import { successAlert } from "../../utils/toastAlerts";
-import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
-import { PageResponse } from "../../interfaces";
+} from "@/components/ui/Table";
+import { MainQuestion } from "@/interfaces";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
+import { useGetMainQuestionList } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionList";
+import { useEffect, useState } from "react";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { useDeleteMainQuestionById } from "@/hooks/CRUD/mainQuestion/useDeleteMainQuestionById";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Header } from "@/components/Header";
+import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
+import { Button } from "@/components/ui/shadcn/button";
+import { FileDown, Pencil, X } from "lucide-react";
+import { Pagination } from "@/components/Pagination";
 
 export function MainQuestions() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = Number(searchParams.get("page") ?? "1");
+  const pageSize = Number(searchParams.get("pageSize") ?? "10");
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -47,46 +43,13 @@ export function MainQuestions() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  const { data: mainQuestionPageResponse, isLoading } = useGetMainQuestionList(
+    urlFilter,
+    page,
+    pageSize,
+  );
 
-  const { data: mainQuestionPageResponse, isLoading } = useQuery<
-    PageResponse<MainQuestion>
-  >({
-    queryKey: ["get-main-questions", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-      );
-      const data = await response.json();
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-  });
-
-  const deleteMainQuestion = useMutation({
-    mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
-      try {
-        await fetch(`/main-question/${mainQuestionId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        });
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-main-questions"],
-      });
-      successAlert("Questão principal excluída com sucesso!");
-    },
-  });
+  const deleteMainQuestion = useDeleteMainQuestionById();
 
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
@@ -97,7 +60,7 @@ export function MainQuestions() {
   }
 
   async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question);
+    await deleteMainQuestion.mutateAsync(question.id);
   }
 
   function handleCorrectAnswer(question: MainQuestion) {
@@ -134,10 +97,7 @@ export function MainQuestions() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Principais</h1>
-          <Button variant="primary" onClick={handleCreateNewMainQuestion}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateNewMainQuestion} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -148,7 +108,7 @@ export function MainQuestions() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -194,10 +154,10 @@ export function MainQuestions() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{question.level}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link to={`/main-questions/${question.id}/subjects`}>
                       <span>
                         {question.subjects.length
@@ -206,40 +166,42 @@ export function MainQuestions() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{handleCorrectAnswer(question)}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/main-questions/${question.id}/adapted-questions`}
                     >
                       <span>{question.adaptedQuestions.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <Link to={`/main-questions/${question.id}/mock-exams`}>
+                  <TableCell>
+                    <Link to={`/main-question/${question.id}/mock-exams`}>
                       <span>{question.mockExams.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <Link to={`/main-questions/${question.id}/handouts`}>
+                  <TableCell>
+                    <Link to={`/main-question/${question.id}/handouts`}>
                       <span>{question.handouts.length}</span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex gap-1">
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleDeleteMainQuestion(question)}
+                      variant="muted"
+                      onClick={() => handleEditMainQuestion(question.id)}
                     >
-                      <X className="size-3" color="red" />
+                      <Pencil className="size-3" color="green" />
                     </Button>
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleEditMainQuestion(question.id)}
+                      variant="muted"
+                      onClick={() => handleDeleteMainQuestion(question)}
                     >
-                      <Pencil className="size-3" color="green" />
+                      <X className="size-3" color="red" />
                     </Button>
                   </TableCell>
                 </TableRow>

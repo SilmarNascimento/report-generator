@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { StudentFormType, studentSchema } from "./studentSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
@@ -11,6 +10,7 @@ import { classGroupBadgeOptions } from "@/constants/students";
 import { brStatesOptions } from "@/constants/general";
 import { DiagnosisList } from "@/components/Features/DiagnosisList";
 import { YearlyResponse } from "@/interfaces/Student";
+import { StudentFormType, studentSchema } from "./StudentSchema";
 
 type StudentFormProps = {
   titulo: string;

@@ -160,29 +160,30 @@ export function RemoveMainQuestionManagerTable({
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{handleCorrectAnswer(mainQuestion)}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.pattern}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.level}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.lerickucas}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.subjects[0].name}</span>
                   </TableCell>
 
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.adaptedQuestions.length}</span>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="icon"
                       className="mx-0.5"
+                      variant="muted"
                       onClick={() => handleClick([mainQuestion.id])}
                     >
                       <X className="size-3" color="red" />

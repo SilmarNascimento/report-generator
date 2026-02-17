@@ -1,18 +1,11 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Header } from "../../components/Header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/Pagination";
-import { useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "../../components/ui/shadcn/button";
-import { FileDown, Loader2, Plus, X, Pencil } from "lucide-react";
-import { CreateSubjectForm } from "../../components/Subject/CreateSubjectForm";
+import { Header } from "@/components/Header";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Pagination } from "@/components/Pagination";
+import Botao from "@/components/Shared/Botao";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
+import { CreateSubjectForm } from "@/components/Subject/CreateSubjectForm";
+import { EditSubjectForm } from "@/components/Subject/EditSubjectForm";
+import { Button } from "@/components/ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -20,21 +13,26 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/Table";
-import { EditSubjectForm } from "../../components/Subject/EditSubjectForm";
-import useDebounceValue from "../../hooks/useDebounceValue";
-import { Subject } from "../../interfaces";
-import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../interfaces/PageResponse";
-import FiltroListagem from "@/components/Shared/FiltroListagem";
+} from "@/components/ui/Table";
+import { useDeleteSubject } from "@/hooks/CRUD/subject/useDeleteSubject";
+import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import * as Dialog from "@radix-ui/react-dialog";
+import { FileDown, Loader2, Pencil, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export function Subjects() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const pageSize = searchParams.get("pageSize")
+    ? Number(searchParams.get("pageSize"))
+    : 10;
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -47,62 +45,12 @@ export function Subjects() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
-
   const {
     data: subjectPageResponse,
     isLoading,
     isFetching,
-  } = useQuery<PageResponse<Subject>>({
-    queryKey: ["get-subjects", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            subjectsId: [],
-          }),
-        },
-      );
-      const data = await response.json();
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
-
-  const deleteSubject = useMutation({
-    mutationFn: async ({ id: subjectId }: Subject) => {
-      try {
-        await fetch(`/subject/${subjectId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        });
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-subjects"],
-      });
-      successAlert("Assunto excluído com sucesso!");
-    },
-  });
-
-  async function handleDeleteSubject(subject: Subject) {
-    await deleteSubject.mutateAsync(subject);
-  }
+  } = useGetSubjects(page, pageSize, urlFilter);
+  const { mutateAsync: deleteSubject } = useDeleteSubject();
 
   if (isLoading) {
     return null;
@@ -121,15 +69,12 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Button variant="default">
-                <Plus className="size-3" />
-                Create new
-              </Button>
+              <Botao perfil="novo" />
             </Dialog.Trigger>
 
             <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
+              <Dialog.Overlay className="fixed inset-0 bg-black/70 z-0" />
+              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
                     Novo Assunto
@@ -157,7 +102,7 @@ export function Subjects() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -195,32 +140,24 @@ export function Subjects() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-zinc-300">{subject.id}</TableCell>
+                  <TableCell>{subject.id}</TableCell>
 
                   <TableCell className="text-right">
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      onClick={() => handleDeleteSubject(subject)}
-                    >
-                      <X className="size-3" color="red" />
-                    </Button>
-
                     <Dialog.Root>
                       <Dialog.Trigger asChild>
-                        <Button size="icon" className="mx-0.5">
+                        <Button size="icon" className="mx-0.5" variant="muted">
                           <Pencil className="size-3" color="green" />
                         </Button>
                       </Dialog.Trigger>
 
                       <Dialog.Portal>
                         <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
+                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
                           <div className="space-y-3">
                             <Dialog.Title className="text-xl font-bold">
                               Editar Assunto
                             </Dialog.Title>
-                            <Dialog.Description className="text-sm text-zinc-500">
+                            <Dialog.Description className="text-sm">
                               Altere o campo a seguir para atualizar o assunto.
                             </Dialog.Description>
                           </div>
@@ -228,6 +165,15 @@ export function Subjects() {
                         </Dialog.Content>
                       </Dialog.Portal>
                     </Dialog.Root>
+
+                    <Button
+                      size="icon"
+                      className="mx-0.5"
+                      variant="muted"
+                      onClick={() => deleteSubject(subject.id)}
+                    >
+                      <X className="size-3" color="red" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

@@ -112,11 +112,12 @@ export function RemoveSubjectManagerTable({
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">{subject.id}</TableCell>
+                  <TableCell>{subject.id}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="icon"
                       className="mx-0.5"
+                      variant="muted"
                       onClick={() => handleClick([subject.id])}
                     >
                       <X className="size-3" color="red" />

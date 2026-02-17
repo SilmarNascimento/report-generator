@@ -1,6 +1,7 @@
 import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { PdfPreview } from "../PdfPreview";
+import { cn } from "@/lib/utils";
 
 type DragDropPreviewFileUploaderProps = {
   formVariable: string;
@@ -13,8 +14,8 @@ export function DragDropPreviewFileUploader({
   message,
   url,
 }: DragDropPreviewFileUploaderProps) {
-  const { register, setValue, getValues } = useFormContext();
-  const variableValue: File = getValues(formVariable);
+  const { register, setValue, watch } = useFormContext();
+  const variableValue = watch(formVariable);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -64,8 +65,8 @@ export function DragDropPreviewFileUploader({
   }
 
   return (
-    <div className="p-2.5 shadow-[0_0_5px_rgb(255,223,223)] border rounded overflow-hidden flex flex-col justify-between items-center">
-      <div className="font-bold text-zinc-200">
+    <div className="p-4 bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col items-center w-full transition-all">
+      <div className="font-bold text-foreground text-center mb-2 font-redhat text-sm">
         <p>{message}</p>
       </div>
 
@@ -74,27 +75,35 @@ export function DragDropPreviewFileUploader({
           <PdfPreview url={previewUrl} handleDelete={deleteImage} />
         ) : (
           <div
-            className="h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5"
+            className={cn(
+              "w-full h-40 rounded-lg border-2 border-dashed flex flex-col justify-center items-center select-none transition-all duration-200",
+              isDragging
+                ? "border-secondary bg-secondary/10 scale-[1.02]"
+                : "border-muted-foreground/30 bg-muted/20 hover:border-secondary/50",
+            )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDragDrop}
           >
-            {isDragging ? (
-              <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
-                Drop files here
-              </span>
-            ) : (
-              <>
-                Drag and Drop file here or{" "}
-                <span
-                  className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60"
-                  role="button"
-                  onClick={selectFiles}
-                >
-                  Browse
+            <div className="flex flex-col items-center gap-2 text-sm">
+              {isDragging ? (
+                <span className="text-secondary font-bold animate-pulse">
+                  Solte o arquivo aqui
                 </span>
-              </>
-            )}
+              ) : (
+                <div className="text-muted-foreground text-center px-4">
+                  Arraste o arquivo ou{" "}
+                  <button
+                    type="button"
+                    className="text-secondary font-bold hover:underline underline-offset-4"
+                    onClick={selectFiles}
+                  >
+                    procure
+                  </button>
+                </div>
+              )}
+            </div>
+
             <input
               {...register(formVariable)}
               name={formVariable}

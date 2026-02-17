@@ -7,7 +7,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { AlternativeSchema } from "../Alternative/AlternativeSchema";
 import { CreateAlternative } from "../../interfaces/Alternative";
-import { CreateQuestion } from "../../interfaces/MainQuestion";
 import { SelectLevel } from "../ui/SelectLevel";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
 import { Check, Loader2, X } from "lucide-react";
@@ -60,7 +59,7 @@ export function CreateAdaptedQuestionForm() {
         };
         return createAlternative;
       });
-      const createAdaptedQuestion: CreateQuestion = {
+      const createAdaptedQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives,

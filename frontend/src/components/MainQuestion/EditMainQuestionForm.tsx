@@ -173,13 +173,10 @@ export function EditMainQuestionForm({
       formData.append("mainQuestionInputDto", blob);
       formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
 
-      const response = await fetch(
-        `/main-question/${mainQuestionId}`,
-        {
-          method: "PUT",
-          body: formData,
-        },
-      );
+      const response = await fetch(`/main-question/${mainQuestionId}`, {
+        method: "PUT",
+        body: formData,
+      });
 
       if (response.status === 200) {
         queryClient.invalidateQueries({

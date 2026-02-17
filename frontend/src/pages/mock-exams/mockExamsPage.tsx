@@ -1,17 +1,6 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Header } from "../../components/Header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/Pagination";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { EyeIcon, FileDown, Pencil, Plus, X } from "lucide-react";
+import { EyeIcon, FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,21 +8,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/Table";
+} from "@/components/ui/Table";
 import { MockExam } from "../../interfaces";
-import { Link } from "react-router-dom";
-import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../interfaces";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useGetMockExamList } from "@/hooks/CRUD/mockExam/useGetMockExamList";
+import { useDeleteMockExamById } from "@/hooks/CRUD/mockExam/useDeleteMockExambyId";
+import { Header } from "@/components/Header";
+import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
+import Botao from "@/components/Shared/Botao";
+import { Pagination } from "@/components/Pagination";
 
 export function MockExams() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = Number(searchParams.get("page") ?? 1);
+  const pageSize = Number(searchParams.get("pageSize") ?? 10);
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -46,47 +42,13 @@ export function MockExams() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
-
-  const { data: mockExamPageResponse, isLoading } = useQuery<
-    PageResponse<MockExam>
-  >({
-    queryKey: ["get-mock-exams", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `/mock-exam?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-      );
-      const data = await response.json();
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
+  const { data: mockExamPageResponse } = useGetMockExamList({
+    query: urlFilter,
+    page,
+    pageSize,
   });
 
-  const deleteMainQuestion = useMutation({
-    mutationFn: async (mockExamId: string) => {
-      try {
-        await fetch(`/mock-exam/${mockExamId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        });
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-mock-exams"],
-      });
-      successAlert("Simulado excluído com sucesso!");
-    },
-  });
+  const deleteMockExam = useDeleteMockExamById();
 
   function handleCreateNewMockExam() {
     navigate("/mock-exam/create");
@@ -97,11 +59,7 @@ export function MockExams() {
   }
 
   async function handleDeleteMockExam(mockExamId: string) {
-    await deleteMainQuestion.mutateAsync(mockExamId);
-  }
-
-  if (isLoading) {
-    return null;
+    await deleteMockExam.mutateAsync(mockExamId);
   }
 
   function getMockExamCode({ releasedYear, number, className }: MockExam) {
@@ -118,10 +76,7 @@ export function MockExams() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Simulados</h1>
-          <Button variant="primary" onClick={handleCreateNewMockExam}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateNewMockExam} />
         </div>
 
         <div className="flex items-center justify-between">
@@ -132,7 +87,7 @@ export function MockExams() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -181,21 +136,21 @@ export function MockExams() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.name}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     {mockExam.className.map((name: string) => (
                       <span key={name}>{name}</span>
                     ))}
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.releasedYear}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mockExam.number}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/mock-exam/${mockExam.id}/subjects`}
                       className="flex align-middle justify-center"
@@ -205,14 +160,14 @@ export function MockExams() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
-                    <Link to={`/mock-exam/${mockExam.id}/main-questions`}>
+                  <TableCell>
+                    <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
                       <span>
                         {Object.keys(mockExam.mockExamQuestions).length}
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <Link
                       to={`/mock-exam/${mockExam.id}/mock-exams-answers`}
                       className="flex align-middle justify-center"
@@ -222,20 +177,22 @@ export function MockExams() {
                       </span>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right flex gap-1">
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleDeleteMockExam(mockExam.id)}
+                      variant="muted"
+                      onClick={() => handleEditMockExam(mockExam.id)}
                     >
-                      <X className="size-3" color="red" />
+                      <Pencil className="size-3" color="green" />
                     </Button>
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleEditMockExam(mockExam.id)}
+                      variant="muted"
+                      onClick={() => handleDeleteMockExam(mockExam.id)}
                     >
-                      <Pencil className="size-3" color="green" />
+                      <X className="size-3" color="red" />
                     </Button>
                   </TableCell>
                 </TableRow>

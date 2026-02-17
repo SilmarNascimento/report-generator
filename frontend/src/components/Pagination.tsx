@@ -65,7 +65,7 @@ export function Pagination({
   }
 
   return (
-    <div className="flex text-sm items-center justify-between text-zinc-500">
+    <div className="flex text-sm items-center justify-between text-muted-foreground">
       <span>
         Showing {items} of {totalItems} items
       </span>
@@ -76,11 +76,17 @@ export function Pagination({
               Page {page} of {pages}
             </span>
             <div className="space-x-1.5">
-              <Button onClick={firstPage} size="icon" disabled={page - 1 <= 0}>
+              <Button
+                variant="secondary"
+                onClick={firstPage}
+                size="icon"
+                disabled={page - 1 <= 0}
+              >
                 <ChevronsLeft className="size-4" />
                 <span className="sr-only">First page</span>
               </Button>
               <Button
+                variant="secondary"
                 onClick={previousPage}
                 size="icon"
                 disabled={page - 1 <= 0}
@@ -89,6 +95,7 @@ export function Pagination({
                 <span className="sr-only">Previous page</span>
               </Button>
               <Button
+                variant="secondary"
                 onClick={nextPage}
                 size="icon"
                 disabled={page + 1 > pages}
@@ -97,6 +104,7 @@ export function Pagination({
                 <span className="sr-only">Next page</span>
               </Button>
               <Button
+                variant="secondary"
                 onClick={lastPage}
                 size="icon"
                 disabled={page + 1 > pages}

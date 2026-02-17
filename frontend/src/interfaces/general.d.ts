@@ -1,4 +1,5 @@
-import { StudentFormType } from "@/components/forms/student/studentSchema";
+import { StudentFormType } from "@/components/Forms/student/StudentSchema";
+import { MockExamFormType } from "@/components/MockExam/temp";
 
 type ListaPaginada<T> = {
   dados: T[];
@@ -23,4 +24,4 @@ export type BadgeDropdownType = {
   value: string;
 };
 
-export type FormTypes = StudentFormType;
+export type FormTypes = StudentFormType | MockExamFormType;

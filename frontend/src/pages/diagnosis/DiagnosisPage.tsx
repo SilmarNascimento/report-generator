@@ -61,15 +61,12 @@ export function StudentsResponses() {
   const deleteResponse = useMutation({
     mutationFn: async (studentResponseId: string) => {
       try {
-        await fetch(
-          `/students-response/${studentResponseId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            method: "DELETE",
+        await fetch(`/students-response/${studentResponseId}`, {
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          method: "DELETE",
+        });
       } catch (error) {
         console.error("Erro na requisição:", error);
       }

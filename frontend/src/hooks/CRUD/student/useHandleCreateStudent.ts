@@ -1,4 +1,4 @@
-import { StudentFormType } from "@/components/forms/student/studentSchema";
+import { StudentFormType } from "@/components/Forms/student/StudentSchema";
 import { useHandleCreate } from "../useHandleCreate";
 import { StudentRequest } from "@/interfaces/Student";
 import { mapStudentFormToRequest } from "@/mapper/student";

@@ -91,13 +91,10 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
 
       formData.append("mockExamInputDto", blob);
 
-      const response = await fetch(
-        `/mock-exam/${mockExamId}`,
-        {
-          method: "PUT",
-          body: formData,
-        },
-      );
+      const response = await fetch(`/mock-exam/${mockExamId}`, {
+        method: "PUT",
+        body: formData,
+      });
 
       if (response.status === 200) {
         queryClient.invalidateQueries({
@@ -135,7 +132,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
             type="text"
             {...register("name")}
             id="name"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm"
           />
           <p
             className={`text-sm ${formState.errors?.name ? "text-red-400" : "text-transparent"}`}
@@ -162,7 +159,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="coverPdfFile"
-              message="Escolha o arquivo para a capa do simulado"
+              message="Escolha o arquivo para a capa do relatório"
               url={mockExam.coverPdfFile.url}
             />
             <p
@@ -177,7 +174,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="matrixPdfFile"
-              message="Escolha o arquivo para a matrix Lericucas do simulado"
+              message="Escolha o arquivo para a matrix Lericucas do relatório"
               url={mockExam.matrixPdfFile.url}
             />
             <p
@@ -192,7 +189,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="answersPdfFile"
-              message="Escolha o arquivo de respostas do simulado"
+              message="Escolha o arquivo de respostas do relatório"
               url={mockExam.answersPdfFile.url}
             />
             <p
@@ -213,7 +210,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
             type="number"
             {...register("releasedYear")}
             id="releasedYear"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p
             className={`text-sm ${formState.errors?.releasedYear ? "text-red-400" : "text-transparent"}`}
@@ -232,7 +229,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
             type="number"
             {...register("number")}
             id="number"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p
             className={`text-sm ${formState.errors?.number ? "text-red-400" : "text-transparent"}`}

@@ -1,32 +1,20 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { FormHeader } from "../../components/FormHeader";
-import { Header } from "../../components/Header";
-import { EditMockExamForm } from "../../components/MockExam/EditMockExamForm";
-import { NavigationBar } from "../../components/NavigationBar";
-import { MockExam } from "../../interfaces";
+import { FormHeader } from "@/components/FormHeader";
+import { Header } from "@/components/Header";
+import { EditMockExamForm } from "@/components/MockExam/EditMockExamForm";
+import { NavigationBar } from "@/components/NavigationBar";
+import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
+import { convertMockExamData } from "@/utils/convertMockExamData";
 import { useParams } from "react-router-dom";
-import { MockExamReceived } from "../../interfaces/MockExam";
-import { convertMockExamData } from "../../utils/convertMockExamData";
 
 export function EditMockExam() {
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
+  const { mockExamId = "" } = useParams<{ mockExamId: string }>();
 
-  const { data: mockExamResponse } = useQuery<MockExam>({
-    queryKey: ["get-mock-exams", mockExamId],
-    queryFn: async () => {
-      const response = await fetch(
-        `/mock-exam/${mockExamId}`,
-      );
-      const data: MockExamReceived = await response.json();
+  const { data: mockExamResponse } = useGetMockExamById(mockExamId);
+  const mockExamResponseFormatted = mockExamResponse
+    ? convertMockExamData(mockExamResponse)
+    : undefined;
 
-      return convertMockExamData(data);
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
-  const mockExamCode = `${mockExamResponse?.releasedYear}:S${mockExamResponse?.number}-${mockExamResponse?.className}`;
-
-  console.log(mockExamResponse);
+  const mockExamCode = `${mockExamResponseFormatted?.releasedYear}:S${mockExamResponseFormatted?.number}-${mockExamResponseFormatted?.className}`;
 
   return (
     <>
@@ -39,7 +27,9 @@ export function EditMockExam() {
           headerTitle={`Editar Simulado ${mockExamCode}`}
           headerDetails="Altere os campos a seguir para atualizar o simulado"
         />
-        {mockExamResponse && <EditMockExamForm entity={mockExamResponse} />}
+        {mockExamResponseFormatted && (
+          <EditMockExamForm entity={mockExamResponseFormatted} />
+        )}
       </div>
     </>
   );

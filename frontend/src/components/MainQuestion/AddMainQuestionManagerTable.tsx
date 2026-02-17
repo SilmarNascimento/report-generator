@@ -71,7 +71,10 @@ export function AddMainQuestionManagerTable({
             />
           </form>
 
-          <Button onClick={() => handleClick(mainQuestionIdToAdd)}>
+          <Button
+            variant="secondary"
+            onClick={() => handleClick(mainQuestionIdToAdd)}
+          >
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>
@@ -123,32 +126,33 @@ export function AddMainQuestionManagerTable({
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.level}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>
                       {mainQuestion.subjects.length
                         ? mainQuestion.subjects[0].name
                         : "Sem assunto principal"}
                     </span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{handleCorrectAnswer(mainQuestion)}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.adaptedQuestions.length}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.mockExams.length}</span>
                   </TableCell>
-                  <TableCell className="text-zinc-300">
+                  <TableCell>
                     <span>{mainQuestion.handouts.length}</span>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="icon"
                       className="mx-0.5"
+                      variant="muted"
                       onClick={() => handleClick([mainQuestion.id])}
                     >
                       <Plus className="size-3" color="green" />

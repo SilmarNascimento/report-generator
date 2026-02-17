@@ -74,7 +74,7 @@ const StudentList = () => {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
@@ -117,18 +117,23 @@ const StudentList = () => {
                         {formatClassGroup(student)}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex gap-1">
                       <Button
+                        variant="muted"
                         onClick={() => navigate(`/students/edit/${student.id}`)}
                       >
                         <Pencil className="size-3 text-green-500" />
                       </Button>
                       <Button
+                        variant="muted"
                         onClick={() => navigate(`/students/view/${student.id}`)}
                       >
                         <Eye className="size-3 text-green-500" />
                       </Button>
-                      <Button onClick={() => deleteStudent(student.id)}>
+                      <Button
+                        variant="muted"
+                        onClick={() => deleteStudent(student.id)}
+                      >
                         <X className="size-3 text-red-500" />
                       </Button>
                     </TableCell>

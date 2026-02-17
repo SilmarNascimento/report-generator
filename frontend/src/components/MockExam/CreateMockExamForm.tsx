@@ -1,86 +1,39 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { SelectClass } from "../ui/SelectClass";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
-import { MockExamSchema } from "./MockExamSchema";
-import { DevTool } from "@hookform/devtools";
-import { CreateMockExam } from "../../interfaces/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
-
-type CreateMockExamForm = z.infer<typeof MockExamSchema>;
+import { classGroupOptions } from "@/constants/students";
+import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMockExam";
+import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
+import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 
 export function CreateMockExamForm() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const createMockExam = useHandleCreateMockExam();
 
-  const formMethods = useForm<CreateMockExamForm>({
+  const formMethods = useForm<MockExamFormType>({
     resolver: zodResolver(MockExamSchema),
   });
   const { register, handleSubmit, formState, control } = formMethods;
+  const { errors } = formState;
 
-  const createMockExam = useMutation({
-    mutationFn: async (data: CreateMockExamForm) => {
-      const formData = new FormData();
-      const {
-        name,
-        className,
-        releasedYear,
-        number,
-        coverPdfFile,
-        matrixPdfFile,
-        answersPdfFile,
-      } = data;
-
-      formData.append("coverPdfFile", coverPdfFile);
-      formData.append("matrixPdfFile", matrixPdfFile);
-      formData.append("answersPdfFile", answersPdfFile);
-
-      const mockExam: CreateMockExam = {
-        name,
-        className: [className],
-        releasedYear,
-        number: Number(number),
-      };
-      const json = JSON.stringify(mockExam);
-      const blob = new Blob([json], {
-        type: "application/json",
-      });
-
-      formData.append("mockExamInputDto", blob);
-
-      const response = await fetch("/mock-exam", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.status === 201) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-mock-exams"],
-        });
-        successAlert("Simulado salvo com sucesso!");
-        navigate("/mock-exam");
-      }
-
-      if (response.status === 400) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleCreateMainQuestion(data: CreateMockExamForm) {
-    await createMockExam.mutateAsync(data);
+  async function onSubmit(data: MockExamFormType) {
+    try {
+      await createMockExam.mutateAsync(data);
+      successAlert("Simulado salvo com sucesso!");
+      navigate("/mock-exams");
+    } catch {
+      warningAlert("Erro ao salvar simulado");
+    }
   }
 
   return (
     <FormProvider {...formMethods}>
       <form
-        onSubmit={handleSubmit(handleCreateMainQuestion)}
+        onSubmit={handleSubmit(onSubmit)}
         encType="multipart/form-data"
         className="w-full space-y-6"
       >
@@ -92,7 +45,7 @@ export function CreateMockExamForm() {
             type="text"
             {...register("name")}
             id="name"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm"
           />
           <p
             className={`text-sm ${formState.errors?.name ? "text-red-400" : "text-transparent"}`}
@@ -101,25 +54,22 @@ export function CreateMockExamForm() {
           </p>
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Turma
-          </label>
-          <SelectClass />
-          <p
-            className={`text-sm ${formState.errors?.className ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.className
-              ? formState.errors.className.message
-              : "\u00A0"}
-          </p>
+        <div className="flex w-full flex-col xl:max-w-85">
+          <InputSelectDropdownWrapper
+            name="className"
+            control={control}
+            errors={errors}
+            label="Turma"
+            placeholder="Digite a turma"
+            options={classGroupOptions}
+          />
         </div>
 
         <div className="flex flex-row gap-1 justify-around align-middle">
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="coverPdfFile"
-              message="Escolha o arquivo para a capa do simulado"
+              message="Escolha o arquivo para a capa do relatório"
             />
             <p
               className={`text-sm ${formState.errors?.coverPdfFile ? "text-red-400" : "text-transparent"}`}
@@ -133,7 +83,7 @@ export function CreateMockExamForm() {
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="matrixPdfFile"
-              message="Escolha o arquivo para a matrix Lericucas do simulado"
+              message="Escolha o arquivo para a matrix Lericucas do relatório"
             />
             <p
               className={`text-sm ${formState.errors?.matrixPdfFile ? "text-red-400" : "text-transparent"}`}
@@ -147,7 +97,7 @@ export function CreateMockExamForm() {
           <div className="space-y-2 flex flex-col justify-center items-start">
             <DragDropPreviewFileUploader
               formVariable="answersPdfFile"
-              message="Escolha o arquivo de respostas do simulado"
+              message="Escolha o arquivo de respostas do relatório"
             />
             <p
               className={`text-sm ${formState.errors?.answersPdfFile ? "text-red-400" : "text-transparent"}`}
@@ -167,7 +117,7 @@ export function CreateMockExamForm() {
             type="number"
             {...register("releasedYear")}
             id="releasedYear"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p
             className={`text-sm ${formState.errors?.releasedYear ? "text-red-400" : "text-transparent"}`}
@@ -186,7 +136,7 @@ export function CreateMockExamForm() {
             type="number"
             {...register("number")}
             id="number"
-            className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
           <p
             className={`text-sm ${formState.errors?.number ? "text-red-400" : "text-transparent"}`}
@@ -219,7 +169,6 @@ export function CreateMockExamForm() {
           </Button>
         </div>
       </form>
-      <DevTool control={control} />
     </FormProvider>
   );
 }
