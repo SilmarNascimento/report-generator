@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
 import { AlternativeForm } from "../alternative/alternativesForm";
 import { MainQuestionFormType, mainQuestionSchema } from "./mainQuestionSchema";
-import { CreateQuestion } from "../../interfaces/MainQuestion";
-import { CreateAlternative } from "../../interfaces/Alternative";
+import { CreateQuestion } from "@/interfaces/MainQuestion";
+import { CreateAlternative } from "@/interfaces/Alternative";
 import { useNavigate } from "react-router-dom";
 import { SelectLevel } from "../ui/selectLevel";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { SelectLerikucas } from "../ui/selectLerikucas";
 import { SelectPattern } from "../ui/selectPattern";
 import { useHandleCreateMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleCreateMainQuestion";
+import { QuestionLevelEnum } from "@/constants/general";
 
 export function CreateMainQuestionForm() {
   const navigate = useNavigate();
@@ -29,18 +30,18 @@ export function CreateMainQuestionForm() {
     if (!selectedLerikucas) return;
 
     const lerikucasValue = Number(selectedLerikucas);
-    let calculatedLevel: "Fácil" | "Médio" | "Difícil" | "" = "";
+    let level: QuestionLevelEnum | undefined;
 
     if ([1, 2, 5].includes(lerikucasValue)) {
-      calculatedLevel = "Fácil";
+      level = QuestionLevelEnum.FACIL;
     } else if ([3, 6].includes(lerikucasValue)) {
-      calculatedLevel = "Médio";
+      level = QuestionLevelEnum.MEDIO;
     } else if ([4, 7, 8].includes(lerikucasValue)) {
-      calculatedLevel = "Difícil";
+      level = QuestionLevelEnum.DIFICIL;
     }
 
-    if (calculatedLevel) {
-      setValue("level", calculatedLevel, {
+    if (level !== undefined) {
+      setValue("level", level, {
         shouldValidate: true,
         shouldDirty: true,
       });

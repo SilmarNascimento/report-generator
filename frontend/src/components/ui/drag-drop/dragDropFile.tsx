@@ -5,7 +5,9 @@ type DragDropFileUploaderProps = {
   formVariable: string;
 };
 
-export function DragDropFileUploader({ formVariable }: DragDropFileUploaderProps) {
+export function DragDropFileUploader({
+  formVariable,
+}: DragDropFileUploaderProps) {
   const { register, setValue } = useFormContext();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,7 +20,7 @@ export function DragDropFileUploader({ formVariable }: DragDropFileUploaderProps
     const filesSelected = event.target.files;
     if (!filesSelected || filesSelected.length === 0) return;
     const newFile = filesSelected.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true });
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -37,12 +39,12 @@ export function DragDropFileUploader({ formVariable }: DragDropFileUploaderProps
     setIsDragging(false);
     const filesDropped = event.dataTransfer.files;
     const newFile = filesDropped.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true});
+    setValue(formVariable, newFile!, { shouldDirty: true });
   }
 
   return (
     <div
-      className={`h-40 rounded border-dashed border-2 border-violet-600 bg-zinc-800 flex flex-col justify-center items-center select-none mt-2.5 ${isDragging ? 'border-violet-400' : ''}`}
+      className={`h-40 rounded border-dashed border-2 border-violet-600 flex flex-col justify-center items-center select-none mt-2.5 ${isDragging ? "border-violet-400" : ""}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDragDrop}
@@ -53,8 +55,12 @@ export function DragDropFileUploader({ formVariable }: DragDropFileUploaderProps
         </span>
       ) : (
         <>
-          Drag and Drop file here or {" "}
-          <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60" role="button" onClick={selectFiles}>
+          Drag and Drop file here or{" "}
+          <span
+            className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60"
+            role="button"
+            onClick={selectFiles}
+          >
             Browse
           </span>
         </>

@@ -71,7 +71,7 @@ export function StudentDiagnosisStatus({
       <button
         onClick={handleUpload}
         disabled={!fileSelected || uploadMutation.isPending}
-        className="font-light text-zinc-300/70"
+        className="font-light "
       >
         <FileUp className="size-4" />
       </button>

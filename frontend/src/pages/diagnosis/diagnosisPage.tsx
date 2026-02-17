@@ -64,7 +64,7 @@ export function StudentsResponses() {
             />
           </form>
 
-          <Button>
+          <Button variant="secondary">
             <FileDown className="size-3" />
             Export
           </Button>
