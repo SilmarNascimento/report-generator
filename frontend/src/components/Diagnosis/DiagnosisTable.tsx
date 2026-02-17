@@ -98,6 +98,7 @@ export function DiagnosisTable({
                   <Button
                     size="icon"
                     className="mx-0.5"
+                    variant="muted"
                     onClick={() => deleteFunction(studentResponse.id)}
                   >
                     <X className="size-3" color="red" />

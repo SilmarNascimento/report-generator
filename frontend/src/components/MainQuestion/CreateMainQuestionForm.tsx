@@ -2,17 +2,18 @@ import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { CreateQuestion } from "../../interfaces/MainQuestion";
-import { CreateAlternative } from "../../interfaces/Alternative";
+import { CreateQuestion } from "@/interfaces/MainQuestion";
+import { CreateAlternative } from "@/interfaces/Alternative";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useHandleCreateMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleCreateMainQuestion";
+import { QuestionLevelEnum } from "@/constants/general";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
+import { SelectLerikucas } from "../ui/SelectLerikucas";
 import { SelectLevel } from "../ui/SelectLevel";
 import { SelectPattern } from "../ui/SelectPattern";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
-import { SelectLerikucas } from "../ui/SelectLerikucas";
 
 export function CreateMainQuestionForm() {
   const navigate = useNavigate();
@@ -29,18 +30,18 @@ export function CreateMainQuestionForm() {
     if (!selectedLerikucas) return;
 
     const lerikucasValue = Number(selectedLerikucas);
-    let calculatedLevel: "Fácil" | "Médio" | "Difícil" | "" = "";
+    let level: QuestionLevelEnum | undefined;
 
     if ([1, 2, 5].includes(lerikucasValue)) {
-      calculatedLevel = "Fácil";
+      level = QuestionLevelEnum.FACIL;
     } else if ([3, 6].includes(lerikucasValue)) {
-      calculatedLevel = "Médio";
+      level = QuestionLevelEnum.MEDIO;
     } else if ([4, 7, 8].includes(lerikucasValue)) {
-      calculatedLevel = "Difícil";
+      level = QuestionLevelEnum.DIFICIL;
     }
 
-    if (calculatedLevel) {
-      setValue("level", calculatedLevel, {
+    if (level !== undefined) {
+      setValue("level", level, {
         shouldValidate: true,
         shouldDirty: true,
       });

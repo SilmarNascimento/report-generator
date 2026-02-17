@@ -1,9 +1,10 @@
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
+import { LevelType } from "@/interfaces/MainQuestion";
+import { QuestionLevelEnum } from "@/constants/general";
 import { MainQuestionFormType } from "../MainQuestion/MainQuestionSchema";
-import { LevelType } from "../../interfaces/MainQuestion";
 
-const LEVEL_OPTIONS = ["Fácil", "Médio", "Difícil"] as LevelType[];
+const LEVEL_OPTIONS: QuestionLevelEnum[] = Object.values(QuestionLevelEnum);
 
 interface SelectProps {
   defaultValue?: LevelType;
