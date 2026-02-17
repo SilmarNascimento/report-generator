@@ -10,7 +10,6 @@ import {
 import { InfiniteSelect } from "../ui/select/infiniteSelect";
 import { useMemo } from "react";
 import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
-import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
 import { useNavigate } from "react-router-dom";
 import { useInfiniteMockExams } from "@/hooks/CRUD/mockExam/diagnosis/useInfiniteMockExams";
 import { useGenerateResponses } from "@/hooks/CRUD/mockExam/diagnosis/useGenerateResponses";
@@ -21,15 +20,11 @@ type SelectOptionProps = {
 };
 
 type GenerateResponsesFormProps = {
-  setStudentResponseList: React.Dispatch<
-    React.SetStateAction<MockExamDiagnosisResponse[]>
-  >;
   selectPlaceholder: string;
   dragAndDropPlaceholder: string;
 };
 
 export function GenerateResponsesForm({
-  setStudentResponseList,
   selectPlaceholder,
   dragAndDropPlaceholder,
 }: GenerateResponsesFormProps) {
@@ -76,7 +71,6 @@ export function GenerateResponsesForm({
       mockExamId: formData.mockExamSelected.value,
       label: formData.mockExamSelected.label,
       file: formData.studentRecordsExcelFile,
-      onSuccessData: setStudentResponseList,
     });
 
     navigate("/students-response");

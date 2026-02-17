@@ -7,7 +7,7 @@ interface Payload {
   mockExamId: string;
   label: string;
   file: File;
-  onSuccessData: (data: MockExamDiagnosisResponse[]) => void;
+  onSuccessData?: (data: MockExamDiagnosisResponse[]) => void;
 }
 
 export function useGenerateResponses() {
@@ -16,7 +16,7 @@ export function useGenerateResponses() {
       mockExamService.uploadResponses(mockExamId, file),
 
     onSuccess: (data, variables) => {
-      variables.onSuccessData(data);
+      variables.onSuccessData?.(data);
       successAlert(
         `Respostas para o simulado ${variables.label} salvas com sucesso!`,
       );
