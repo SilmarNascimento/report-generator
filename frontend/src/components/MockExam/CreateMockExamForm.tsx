@@ -7,7 +7,7 @@ import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
 import { classGroupOptions } from "@/constants/students";
 import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMockExam";
-import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
+import { MockExamFormType, MockExamSchema } from "./MockExamSchema.ts";
 import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 
 export function CreateMockExamForm() {

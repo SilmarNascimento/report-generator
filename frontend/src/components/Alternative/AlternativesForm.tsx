@@ -1,7 +1,7 @@
 import { FieldErrors, useFormContext } from "react-hook-form";
 import { z } from "zod";
-import { MainQuestionSchema } from "../MainQuestion/MainQuestionSchema";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
+import { MainQuestionSchema } from "../MainQuestion/MainQuestionSchema";
 
 type CreateMainQuestionSchema = z.infer<typeof MainQuestionSchema>;
 
@@ -21,7 +21,7 @@ export const AlternativeForm = ({ index, errors }: AlternativeFormProps) => {
           {...register(`alternatives.${index}.description`)}
           id={`description${index}`}
           placeholder={`Descrição da ${index + 1}ª Alternativa`}
-          className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+          className="border border-zinc-800 rounded-lg px-3 py-2.5  w-full text-sm"
         />
         <p
           className={`text-xs ${errors?.alternatives?.[index]?.description ? "text-red-400" : "text-transparent"}`}

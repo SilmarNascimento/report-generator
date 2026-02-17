@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "@/service/ApiService";
 import { CreateMockExam } from "@/interfaces/MockExam";
 import { CLASS_GROUP } from "@/constants/students";
-import { MockExamFormType } from "@/components/MockExam/MockExamSchema";
+import { MockExamFormType } from "@/components/MockExam/MockExamSchema.ts";
 
 export function useHandleCreateMockExam() {
   const queryClient = useQueryClient();

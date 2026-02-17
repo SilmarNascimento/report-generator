@@ -103,7 +103,7 @@ export function InputNumberWrapper<T extends FormTypes>({
           render={({ field }) => (
             <InputNumber
               placeholder={placeholder}
-              value={field.value}
+              value={field.value as number | string}
               onChange={(value) => {
                 field.onChange(value);
 

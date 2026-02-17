@@ -1,5 +1,28 @@
 import { DropdownType } from "@/interfaces/general";
 
+export enum LerikucasEnum {
+  L1 = "1",
+  L2 = "2",
+  L3 = "3",
+  L4 = "4",
+  L5 = "5",
+  L6 = "6",
+  L7 = "7",
+  L8 = "8",
+}
+
+export enum QuestionLevelEnum {
+  FACIL = "Fácil",
+  MEDIO = "Médio",
+  DIFICIL = "Difícil",
+}
+
+export enum QuestionPatternEnum {
+  ARITMETICA = "ARITMETICA",
+  ALGEBRA = "ALGEBRA",
+  GEOMETRIA = "GEOMETRIA",
+}
+
 export enum BR_STATES {
   AC = "AC",
   AL = "AL",

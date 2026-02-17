@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { MainQuestionFormType } from "../MainQuestion/MainQuestionSchema";
 import { LevelType } from "../../interfaces/MainQuestion";
 
-const LEVEL_OPTIONS: LevelType[] = ["Fácil", "Médio", "Difícil"];
+const LEVEL_OPTIONS = ["Fácil", "Médio", "Difícil"] as LevelType[];
 
 interface SelectProps {
   defaultValue?: LevelType;

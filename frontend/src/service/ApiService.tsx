@@ -1,6 +1,7 @@
 import axios, {
   AxiosError,
   AxiosInstance,
+  AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
@@ -132,48 +133,74 @@ class ApiService {
     endpoint: string,
     params: Record<string, unknown> = {},
     headers?: Record<string, string>,
+    extraConfig?: AxiosRequestConfig,
   ): Promise<T> {
-    const config: {
-      params: Record<string, unknown>;
-      headers?: Record<string, string>;
-    } = { params };
-    if (headers) {
-      config.headers = headers;
-    }
+    const config: AxiosRequestConfig = {
+      ...extraConfig,
+      params: {
+        ...params,
+        ...extraConfig?.params,
+      },
+      headers: {
+        ...headers,
+        ...extraConfig?.headers,
+      },
+    };
 
     const response = await this.api.get<T>(endpoint, config);
     return response.data;
   }
 
-  async post<T>(endpoint: string, data: unknown): Promise<T> {
-    const response = await this.api.post<T>(endpoint, data);
+  async post<T>(
+    endpoint: string,
+    data: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const response = await this.api.post<T>(endpoint, data, config);
     return response.data;
   }
 
-  async put<T>(endpoint: string, data: unknown): Promise<T> {
-    const response = await this.api.put<T>(endpoint, data);
+  async put<T>(
+    endpoint: string,
+    data: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const response = await this.api.put<T>(endpoint, data, config);
     return response.data;
   }
 
-  async patch<T>(endpoint: string, data: unknown): Promise<T> {
-    const response = await this.api.patch<T>(endpoint, data);
+  async patch<T>(
+    endpoint: string,
+    data: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const response = await this.api.patch<T>(endpoint, data, config);
     return response.data;
   }
 
-  async delete<T>(endpoint: string, data: unknown = {}): Promise<T> {
-    const config = { data };
-    const response = await this.api.delete<T>(endpoint, config);
+  async delete<T>(
+    endpoint: string,
+    data: unknown = {},
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    const response = await this.api.delete<T>(endpoint, {
+      data,
+      ...config,
+    });
     return response.data;
   }
 
-  async postMultipart<T = unknown>(url: string, data: FormData) {
-    return this.api
-      .post<T>(url, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => response.data);
+  async postMultipart<T = unknown>(
+    endpoint: string,
+    data: FormData,
+    config?: AxiosRequestConfig,
+  ) {
+    const response = await this.api.post<T>(endpoint, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+      ...config,
+    });
+
+    return response.data;
   }
 }
 

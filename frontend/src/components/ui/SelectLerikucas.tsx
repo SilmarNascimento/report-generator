@@ -1,7 +1,7 @@
-import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import { MainQuestionFormType } from "../MainQuestion/MainQuestionSchema";
 import { LerikucasType } from "../../interfaces/MainQuestion";
+import { useFormContext } from "react-hook-form";
 
 interface SelectProps {
   defaultValue?: LerikucasType;

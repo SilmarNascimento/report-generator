@@ -9,7 +9,6 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Login } from "./pages/Login.tsx";
 import { MainQuestions } from "./pages/main-question/MainQuestionsPage.tsx";
-import { Test } from "./pages/test.tsx";
 import { MockExams } from "./pages/mock-exams/mockExamsPage.tsx";
 import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 import { Subjects } from "./pages/subject/Subjects.tsx";
@@ -131,11 +130,6 @@ const router = createBrowserRouter([
     path: "/students/view/:id",
     element: <StudentView />,
     loader: viewStudentLoader(queryClient),
-  },
-
-  {
-    path: "/test",
-    element: <Test />,
   },
 ]);
 
