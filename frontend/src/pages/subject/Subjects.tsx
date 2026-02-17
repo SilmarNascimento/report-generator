@@ -1,9 +1,3 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
 import { Header } from "../../components/header";
 import { NavigationBar } from "../../components/NavigationBar";
 import { Pagination } from "../../components/pagination";
@@ -23,19 +17,22 @@ import {
 } from "../../components/ui/table";
 import { EditSubjectForm } from "../../components/subject/editSubjectForm";
 import useDebounceValue from "../../hooks/useDebounceValue";
-import { Subject } from "../../interfaces";
-import { successAlert } from "../../utils/toastAlerts";
-import { PageResponse } from "../../interfaces/PageResponse";
 import FiltroListagem from "@/components/shared/FiltroListagem";
 import Botao from "@/components/shared/Botao";
+import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import { useDeleteSubject } from "@/hooks/CRUD/subject/useDeleteSubject";
 
 export function Subjects() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const pageSize = searchParams.get("pageSize")
+    ? Number(searchParams.get("pageSize"))
+    : 10;
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -48,62 +45,12 @@ export function Subjects() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
-
   const {
     data: subjectPageResponse,
     isLoading,
     isFetching,
-  } = useQuery<PageResponse<Subject>>({
-    queryKey: ["get-subjects", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            subjectsId: [],
-          }),
-        },
-      );
-      const data = await response.json();
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-  });
-
-  const deleteSubject = useMutation({
-    mutationFn: async ({ id: subjectId }: Subject) => {
-      try {
-        await fetch(`http://localhost:8080/subject/${subjectId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        });
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-subjects"],
-      });
-      successAlert("Assunto excluído com sucesso!");
-    },
-  });
-
-  async function handleDeleteSubject(subject: Subject) {
-    await deleteSubject.mutateAsync(subject);
-  }
+  } = useGetSubjects(page, pageSize, urlFilter);
+  const { mutateAsync: deleteSubject } = useDeleteSubject();
 
   if (isLoading) {
     return null;
@@ -223,7 +170,7 @@ export function Subjects() {
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
-                      onClick={() => handleDeleteSubject(subject)}
+                      onClick={() => deleteSubject(subject.id)}
                     >
                       <X className="size-3" color="red" />
                     </Button>
