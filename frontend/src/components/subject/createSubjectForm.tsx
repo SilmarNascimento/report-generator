@@ -3,45 +3,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
-import { subjectSchema } from "./subjectSchema";
-import { z } from "zod";
-
-type CreateSubjectForm = z.infer<typeof subjectSchema>;
+import { SubjectFormOutput, subjectSchema } from "./subjectSchema";
+import { useHandleCreateSubject } from "@/hooks/CRUD/subject/useHandleCreateSubject";
 
 export function CreateSubjectForm() {
-  const queryClient = useQueryClient();
-
-  const { register, handleSubmit, formState } = useForm<CreateSubjectForm>({
+  const { register, handleSubmit, formState } = useForm({
     resolver: zodResolver(subjectSchema),
   });
 
-  const createSubject = useMutation({
-    mutationFn: async ({ name }: CreateSubjectForm) => {
-      const response = await fetch("http://localhost:8080/subject", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({ name }),
-      });
+  const createSubject = useHandleCreateSubject();
 
-      if (response.status === 201) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-        successAlert("Assunto salvo com sucesso!");
-      }
-
-      if (response.status === 400) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleCreateSubject({ name, fixedWeight }: CreateSubjectForm) {
+  async function handleCreateSubject({ name, fixedWeight }: SubjectFormOutput) {
     await createSubject.mutateAsync({ name, fixedWeight });
   }
 

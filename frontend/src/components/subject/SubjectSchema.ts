@@ -19,3 +19,6 @@ export const subjectSchema = z.object({
     .max(100, { message: "Ovalor máximo deve ser menor que 100" })
     .transform((val) => Number((val / 100).toFixed(3))),
 });
+
+export type SubjectFormOutput = z.output<typeof subjectSchema>;
+export type SubjectFormInput = z.input<typeof subjectSchema>;
