@@ -1,16 +1,10 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Header } from "../../components/header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Header } from "@/components/header";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Pagination } from "@/components/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/shadcn/button";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { Button } from "@/components/ui/shadcn/button";
 import { FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
@@ -19,23 +13,25 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import { MainQuestion } from "../../interfaces";
+} from "@/components/ui/table";
+import { MainQuestion } from "@/interfaces";
 import { Link } from "react-router-dom";
-import { successAlert } from "../../utils/toastAlerts";
-import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
-import { PageResponse } from "../../interfaces";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import FiltroListagem from "@/components/shared/FiltroListagem";
 import Botao from "@/components/shared/Botao";
+import { useGetMainQuestionList } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionList";
+import { useDeleteMainQuestionById } from "@/hooks/CRUD/mainQuestion/useDeleteMainQuestionById";
 
 export function MainQuestions() {
-  const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const urlFilter = searchParams.get("query") ?? "";
   const [filter, setFilter] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
+
+  const page = Number(searchParams.get("page") ?? "1");
+  const pageSize = Number(searchParams.get("pageSize") ?? "10");
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -48,46 +44,13 @@ export function MainQuestions() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
-  const pageSize = searchParams.get("pageSize")
-    ? Number(searchParams.get("pageSize"))
-    : 10;
+  const { data: mainQuestionPageResponse, isLoading } = useGetMainQuestionList(
+    urlFilter,
+    page,
+    pageSize,
+  );
 
-  const { data: mainQuestionPageResponse, isLoading } = useQuery<
-    PageResponse<MainQuestion>
-  >({
-    queryKey: ["get-main-questions", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/main-question?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-      );
-      const data = await response.json();
-
-      return data;
-    },
-    placeholderData: keepPreviousData,
-  });
-
-  const deleteMainQuestion = useMutation({
-    mutationFn: async ({ id: mainQuestionId }: MainQuestion) => {
-      try {
-        await fetch(`http://localhost:8080/main-question/${mainQuestionId}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        });
-      } catch (error) {
-        console.error("Erro na requisição:", error);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-main-questions"],
-      });
-      successAlert("Questão principal excluída com sucesso!");
-    },
-  });
+  const deleteMainQuestion = useDeleteMainQuestionById();
 
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
@@ -98,7 +61,7 @@ export function MainQuestions() {
   }
 
   async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question);
+    await deleteMainQuestion.mutateAsync(question.id);
   }
 
   function handleCorrectAnswer(question: MainQuestion) {

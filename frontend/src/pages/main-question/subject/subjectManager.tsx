@@ -5,9 +5,9 @@ import { RemoveSubjectManagerTable } from "@/components/subject/removeSubjectMan
 import { useEffect, useRef, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { NavigationBar } from "@/components/NavigationBar";
-import { useGetMainQuestionSubjectManager } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionSubjectManager";
-import { useFilteredSubjectsForMainQuestion } from "@/hooks/CRUD/mainQuestion/useFilteredSubjects";
-import { useUpdateMainQuestionSubjects } from "@/hooks/CRUD/mainQuestion/useUpdateMainQuestionSubjects";
+import { useGetMainQuestionSubjectManager } from "@/hooks/CRUD/mainQuestion/subjectManager/useGetMainQuestionSubjectManager";
+import { useFilteredSubjectsForMainQuestion } from "@/hooks/CRUD/mainQuestion/subjectManager/useFilteredSubjects";
+import { useUpdateMainQuestionSubjects } from "@/hooks/CRUD/mainQuestion/subjectManager/useUpdateMainQuestionSubjects";
 
 export function MainQuestionSubjectManager() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
