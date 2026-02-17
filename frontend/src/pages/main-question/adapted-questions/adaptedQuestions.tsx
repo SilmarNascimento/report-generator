@@ -6,13 +6,13 @@ import {
 } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import useDebounceValue from "../../../hooks/useDebounceValue";
-import { AdaptedQuestion } from "../../../interfaces";
-import { successAlert } from "../../../utils/toastAlerts";
-import { Header } from "../../../components/header";
-import { NavigationBar } from "../../../components/NavigationBar";
-import { Button } from "../../../components/ui/shadcn/button";
-import { FileDown, Pencil, Plus, X } from "lucide-react";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { AdaptedQuestion } from "@/interfaces";
+import { successAlert } from "@/utils/toastAlerts";
+import { Header } from "@/components/header";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Button } from "@/components/ui/shadcn/button";
+import { FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -20,9 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
-import { getAlternativeLetter } from "../../../utils/correctAnswerMapping";
+} from "@/components/ui/table";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import FiltroListagem from "@/components/shared/FiltroListagem";
+import Botao from "@/components/shared/Botao";
 
 export function AdaptedQuestions() {
   const queryClient = useQueryClient();
@@ -118,10 +119,7 @@ export function AdaptedQuestions() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Adaptadas 2022:S6:136</h1>
-          <Button variant="primary" onClick={handleCreateAdaptedQuestion}>
-            <Plus className="size-3" />
-            Create new
-          </Button>
+          <Botao perfil="novo" onClick={handleCreateAdaptedQuestion} />
         </div>
 
         <div className="flex items-center justify-between">

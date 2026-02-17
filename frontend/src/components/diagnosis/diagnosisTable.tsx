@@ -27,8 +27,8 @@ export function DiagnosisTable({
     const time = dateAndTime[1].split(":").slice(0, 2).join(":");
     return (
       <div className="flex flex-col gap-1">
-        <span className="font-normal text-zinc-300">{time}</span>
-        <span className="font-light text-zinc-300/70">{date}</span>
+        <span className="font-normal">{time}</span>
+        <span className="font-light">{date}</span>
       </div>
     );
   }
@@ -68,29 +68,23 @@ export function DiagnosisTable({
             return (
               <TableRow key={studentResponse.id}>
                 <TableCell></TableCell>
-                <TableCell className="text-zinc-300">
-                  {studentResponse.examCode}
-                </TableCell>
-                <TableCell className="text-zinc-300">
-                  {studentResponse.className}
-                </TableCell>
+                <TableCell>{studentResponse.examCode}</TableCell>
+                <TableCell>{studentResponse.className}</TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-zinc-300 text-left">
+                    <span className="font-medium text-left">
                       {studentResponse.name}
                     </span>
-                    <span className="font-light italic text-zinc-300/70 text-left">
+                    <span className="font-light italic text-left">
                       {studentResponse.email}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="text-zinc-300">
-                  {`${studentResponse.correctAnswers}/45`}
-                </TableCell>
-                <TableCell className="text-zinc-300">
+                <TableCell>{`${studentResponse.correctAnswers}/45`}</TableCell>
+                <TableCell>
                   {handleDateTime(studentResponse.createdAt)}
                 </TableCell>
-                <TableCell className="text-zinc-300">
+                <TableCell>
                   <StudentDiagnosisStatus studentResponse={studentResponse} />
                 </TableCell>
                 <TableCell>

@@ -1,12 +1,12 @@
-import { Header } from "../../components/header";
-import { NavigationBar } from "../../components/NavigationBar";
-import { Pagination } from "../../components/pagination";
+import { Header } from "@/components/header";
+import { NavigationBar } from "@/components/NavigationBar";
+import { Pagination } from "@/components/pagination";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "../../components/ui/shadcn/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { FileDown, Loader2, X, Pencil } from "lucide-react";
-import { CreateSubjectForm } from "../../components/subject/createSubjectForm";
+import { CreateSubjectForm } from "@/components/subject/createSubjectForm";
 import {
   Table,
   TableBody,
@@ -14,9 +14,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import { EditSubjectForm } from "../../components/subject/editSubjectForm";
-import useDebounceValue from "../../hooks/useDebounceValue";
+} from "@/components/ui/table";
+import { EditSubjectForm } from "@/components/subject/editSubjectForm";
+import useDebounceValue from "@/hooks/useDebounceValue";
 import FiltroListagem from "@/components/shared/FiltroListagem";
 import Botao from "@/components/shared/Botao";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
@@ -152,12 +152,12 @@ export function Subjects() {
 
                       <Dialog.Portal>
                         <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-zinc-950 border-l border-zinc-900">
+                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
                           <div className="space-y-3">
                             <Dialog.Title className="text-xl font-bold">
                               Editar Assunto
                             </Dialog.Title>
-                            <Dialog.Description className="text-sm text-zinc-500">
+                            <Dialog.Description className="text-sm">
                               Altere o campo a seguir para atualizar o assunto.
                             </Dialog.Description>
                           </div>

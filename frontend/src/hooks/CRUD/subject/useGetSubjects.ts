@@ -7,7 +7,7 @@ export function useGetSubjects(
   page: number,
   pageSize: number,
   filter: string,
-  subjectsId: string[],
+  subjectsId: string[] = [],
   isEnabled: boolean = true,
 ) {
   return useQuery<PageResponse<Subject>>({
