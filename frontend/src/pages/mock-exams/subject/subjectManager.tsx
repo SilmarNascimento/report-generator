@@ -6,7 +6,7 @@ import useDebounceValue from "@/hooks/useDebounceValue";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
-import { useUpdateMockExamSubjects } from "@/hooks/CRUD/mockExam/useUpdateMockExamSubjects";
+import { useUpdateMockExamSubjects } from "@/hooks/CRUD/mockExam/subjectManager/useUpdateMockExamSubjects";
 
 export function MockExamSubjectManager() {
   const { mockExamId = "" } = useParams<{ mockExamId: string }>();
