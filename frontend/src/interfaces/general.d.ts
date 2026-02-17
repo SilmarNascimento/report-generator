@@ -24,4 +24,11 @@ export type BadgeDropdownType = {
   value: string;
 };
 
+export type QueryFunctionContext = {
+  queryKey: QueryKey;
+  pageParam?: unknown;
+  signal: AbortSignal;
+  meta?: Record<string, unknown>;
+};
+
 export type FormTypes = StudentFormType | MockExamFormType;

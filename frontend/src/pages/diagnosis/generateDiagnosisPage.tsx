@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { DiagnosisTable } from "../../components/diagnosis/diagnosisTable";
-import { NavigationBar } from "../../components/NavigationBar";
-import { MockExamDiagnosisResponse } from "../../interfaces/MockExamResponse";
-import { GenerateResponsesForm } from "../../components/diagnosis/diagnosisForm";
+import { DiagnosisTable } from "@/components/diagnosis/diagnosisTable";
+import { NavigationBar } from "@/components/NavigationBar";
+import { MockExamDiagnosisResponse } from "@/interfaces/MockExamResponse";
+import { GenerateResponsesForm } from "@/components/diagnosis/diagnosisForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { successAlert } from "../../utils/toastAlerts";
+import { successAlert } from "@/utils/toastAlerts";
 
 export function GenerateDiagnosis() {
   const [studentResponseList, setStudentResponseList] = useState<
