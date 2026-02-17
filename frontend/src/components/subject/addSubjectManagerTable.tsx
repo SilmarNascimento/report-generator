@@ -59,7 +59,10 @@ export function AddSubjectManagerTable({
             />
           </form>
 
-          <Button onClick={() => handleClick(subjectIdToAdd)}>
+          <Button
+            variant="secondary"
+            onClick={() => handleClick(subjectIdToAdd)}
+          >
             <FilePlus className="size-3" />
             Adicionar todos
           </Button>
@@ -105,6 +108,7 @@ export function AddSubjectManagerTable({
                     <Button
                       size="icon"
                       className="mx-0.5"
+                      variant="muted"
                       onClick={() => handleClick([subject.id])}
                     >
                       <Plus className="size-3" color="green" />

@@ -117,6 +117,7 @@ export function RemoveSubjectManagerTable({
                     <Button
                       size="icon"
                       className="mx-0.5"
+                      variant="muted"
                       onClick={() => handleClick([subject.id])}
                     >
                       <X className="size-3" color="red" />
