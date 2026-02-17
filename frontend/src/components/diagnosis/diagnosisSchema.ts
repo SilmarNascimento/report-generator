@@ -16,6 +16,10 @@ export const responseStatusSchema = z.object({
   studentRecord: fileSchema,
 });
 
+export type StudentDiagnosisStatusFormType = z.infer<
+  typeof responseStatusSchema
+>;
+
 export type GenerateStudentsResponseFormType = z.infer<
   typeof studentRecordsSchema
 >;
