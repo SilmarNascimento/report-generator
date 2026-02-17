@@ -103,7 +103,7 @@ export function AddSubjectManagerTable({
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-300">{subject.id}</TableCell>
+                  <TableCell>{subject.id}</TableCell>
                   <TableCell className="text-right">
                     <Button
                       size="icon"

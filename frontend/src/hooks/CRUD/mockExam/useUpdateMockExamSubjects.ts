@@ -20,7 +20,7 @@ export function useUpdateMockExamSubjects(mockExamId: string) {
   const removeSubjects = useMutation({
     mutationFn: (subjectsId: string[]) =>
       apiService.delete(`/mock-exam/${mockExamId}/subject`, {
-        data: { subjectsId },
+        subjectsId,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({

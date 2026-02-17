@@ -98,10 +98,7 @@ export function RemoveMainQuestionManagerTable({
             />
           </form>
 
-          <Button
-            variant="destructive"
-            onClick={() => handleClick(mainQuestionIdToDelete)}
-          >
+          <Button onClick={() => handleClick(mainQuestionIdToDelete)}>
             <FileMinus className="size-3" />
             Remover todos
           </Button>

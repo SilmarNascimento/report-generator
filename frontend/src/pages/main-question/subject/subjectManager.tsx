@@ -1,20 +1,15 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router-dom";
-import { MainQuestion, PageResponse, Subject } from "../../../interfaces";
-import { successAlert, warningAlert } from "../../../utils/toastAlerts";
-import { AddSubjectManagerTable } from "../../../components/subject/addSubjectManagerTable";
-import { RemoveSubjectManagerTable } from "../../../components/subject/removeSubjectManagerTable";
+import { MainQuestion } from "@/interfaces";
+import { AddSubjectManagerTable } from "@/components/subject/addSubjectManagerTable";
+import { RemoveSubjectManagerTable } from "@/components/subject/removeSubjectManagerTable";
 import { useEffect, useRef, useState } from "react";
-import useDebounceValue from "../../../hooks/useDebounceValue";
-import { NavigationBar } from "../../../components/NavigationBar";
+import useDebounceValue from "@/hooks/useDebounceValue";
+import { NavigationBar } from "@/components/NavigationBar";
+import { useGetMainQuestionSubjectManager } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionSubjectManager";
+import { useFilteredSubjectsForMainQuestion } from "@/hooks/CRUD/mainQuestion/useFilteredSubjects";
+import { useUpdateMainQuestionSubjects } from "@/hooks/CRUD/mainQuestion/useUpdateMainQuestionSubjects";
 
 export function MainQuestionSubjectManager() {
-  const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,132 +35,27 @@ export function MainQuestionSubjectManager() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  useQuery<MainQuestion>({
-    queryKey: ["get-main-questions", mainQuestionId],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}`,
-      );
-      const data: MainQuestion = await response.json();
+  useGetMainQuestionSubjectManager(mainQuestionId, mainQuestion, subjectIdList);
 
-      if (data) {
-        mainQuestion.current = data;
-        subjectIdList.current = data.subjects.map((subject) => subject.id);
-      }
+  const { data: subjectPageResponse } = useFilteredSubjectsForMainQuestion(
+    page,
+    pageSize,
+    urlFilter,
+    subjectIdList,
+  );
 
-      return data;
-    },
-    placeholderData: keepPreviousData,
-  });
-
-  const { data: subjectPageResponse } = useQuery<PageResponse<Subject>>({
-    queryKey: ["get-subjects", urlFilter, page, pageSize],
-    queryFn: async () => {
-      const response = await fetch(
-        `http://localhost:8080/subject/filter?pageNumber=${page - 1}&pageSize=${pageSize}&query=${urlFilter}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            subjectsId: subjectIdList.current,
-          }),
-        },
-      );
-      const requestData = await response.json();
-
-      return requestData;
-    },
-    placeholderData: keepPreviousData,
-    staleTime: Infinity,
-    enabled: !!subjectIdList.current,
-  });
-
-  const addSubjectToMainQuestion = useMutation({
-    mutationFn: async (subjectIdListToAdd: string[]) => {
-      const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/subject`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "PATCH",
-          body: JSON.stringify({
-            subjectsId: subjectIdListToAdd,
-          }),
-        },
-      );
-
-      if (response.status === 200) {
-        const updatedMainQuestion: MainQuestion = await response.json();
-        mainQuestion.current = updatedMainQuestion;
-        subjectIdList.current = updatedMainQuestion.subjects.map(
-          (subject) => subject.id,
-        );
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-
-        subjectIdListToAdd.length === 1
-          ? successAlert("Assunto adicionado à questão principal com sucesso!")
-          : successAlert(
-              "Assuntos adicionados à questão principal com sucesso!",
-            );
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  const removeSubjectFromMainQuestion = useMutation({
-    mutationFn: async (subjectIdListToRemove: string[]) => {
-      const response = await fetch(
-        `http://localhost:8080/main-question/${mainQuestionId}/subject`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-          body: JSON.stringify({
-            subjectsId: subjectIdListToRemove,
-          }),
-        },
-      );
-
-      if (response.status === 200) {
-        const updatedMainQuestion: MainQuestion = await response.json();
-        mainQuestion.current = updatedMainQuestion;
-        subjectIdList.current = updatedMainQuestion.subjects.map(
-          (subject) => subject.id,
-        );
-        queryClient.invalidateQueries({
-          queryKey: ["get-subjects"],
-        });
-
-        subjectIdListToRemove.length === 1
-          ? successAlert("Assunto removido da questão principal com sucesso!")
-          : successAlert(
-              "Assuntos removidos da questão principal com sucesso!",
-            );
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
+  const { addSubject, removeSubject } = useUpdateMainQuestionSubjects(
+    mainQuestionId,
+    mainQuestion,
+    subjectIdList,
+  );
 
   async function handleAddSubject(subjectIdList: string[]) {
-    await addSubjectToMainQuestion.mutateAsync(subjectIdList);
+    await addSubject.mutateAsync(subjectIdList);
   }
 
   async function handleRemoveSubject(subjectIdList: string[]) {
-    await removeSubjectFromMainQuestion.mutateAsync(subjectIdList);
+    await removeSubject.mutateAsync(subjectIdList);
   }
 
   return (
