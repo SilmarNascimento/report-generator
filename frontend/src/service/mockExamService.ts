@@ -9,6 +9,14 @@ export const mockExamService = {
     });
   },
 
+  update(id: string, formData: FormData) {
+    return apiService.put<void>(`/mock-exam/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
   uploadResponses(mockExamId: string, file: File) {
     const formData = new FormData();
     formData.append("studentsMockExamsAnswers", file);

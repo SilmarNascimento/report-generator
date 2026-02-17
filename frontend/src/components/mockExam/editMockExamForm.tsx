@@ -1,124 +1,70 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/shadcn/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { MockExam } from "../../interfaces";
-import { successAlert, warningAlert } from "../../utils/toastAlerts";
-import { mockExamSchema } from "./mockExamSchema";
+import { MockExamFormType, mockExamSchema } from "./mockExamSchema";
 import { SelectClass } from "../ui/selectClass";
-import { useEffect, useState } from "react";
-import { DevTool } from "@hookform/devtools";
 import { CreateMockExam } from "../../interfaces/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
-
-type EditMockExamForm = z.infer<typeof mockExamSchema>;
+import { useHandleEditMockExam } from "@/hooks/CRUD/mockExam/useHandleEditMockExam";
+import { mapMockExamToForm } from "@/mapper/mockExamMapper";
+import { useMemo } from "react";
 
 interface EditMockExamFormProps {
   entity: MockExam;
 }
 
 export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
-  const [hasChanged, setHasChanged] = useState(false);
-  const queryClient = useQueryClient();
-  const { mockExamId } = useParams<{ mockExamId: string }>() ?? "";
+  const { mockExamId = "" } = useParams<{ mockExamId: string }>();
   const navigate = useNavigate();
 
-  const formMethods = useForm<EditMockExamForm>({
+  const memoizedDefaultValue = useMemo(
+    () => mapMockExamToForm(mockExam),
+    [mockExam],
+  );
+
+  const formMethods = useForm<MockExamFormType>({
     resolver: zodResolver(mockExamSchema),
+    defaultValues: memoizedDefaultValue,
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
-  const { register, handleSubmit, formState, setValue, watch, control } =
-    formMethods;
+  const { register, handleSubmit, formState } = formMethods;
 
-  useEffect(() => {
-    if (mockExam) {
-      setValue("name", mockExam.name);
-      setValue("className", mockExam.className[0]);
-      setValue("releasedYear", mockExam.releasedYear.toString());
-      setValue("coverPdfFile", mockExam.coverPdfFile.file);
-      setValue("matrixPdfFile", mockExam.matrixPdfFile.file);
-      setValue("answersPdfFile", mockExam.answersPdfFile.file);
-      setValue("number", mockExam.number.toString());
-    }
-  }, [mockExam, setValue]);
+  const updateMutation = useHandleEditMockExam(mockExamId);
 
-  useEffect(() => {
-    function hasChangedValues(): boolean {
-      const classNameFormValues = watch("className");
+  function buildFormData(data: MockExamFormType) {
+    const formData = new FormData();
 
-      if (
-        classNameFormValues !== mockExam?.className[0] ||
-        !!Object.keys(formState.dirtyFields).length
-      ) {
-        return true;
-      }
+    formData.append("coverPdfFile", data.coverPdfFile);
+    formData.append("matrixPdfFile", data.matrixPdfFile);
+    formData.append("answersPdfFile", data.answersPdfFile);
 
-      return false;
-    }
+    const payload: CreateMockExam = {
+      name: data.name,
+      className: [data.className],
+      releasedYear: data.releasedYear,
+      number: Number(data.number),
+    };
 
-    setHasChanged(hasChangedValues());
-  }, [formState, hasChanged, mockExam, watch]);
-
-  const editMainQuestion = useMutation({
-    mutationFn: async (data: EditMockExamForm) => {
-      const formData = new FormData();
-      const {
-        name,
-        className,
-        releasedYear,
-        number,
-        coverPdfFile,
-        matrixPdfFile,
-        answersPdfFile,
-      } = data;
-
-      formData.append("coverPdfFile", coverPdfFile);
-      formData.append("matrixPdfFile", matrixPdfFile);
-      formData.append("answersPdfFile", answersPdfFile);
-
-      const mockExam: CreateMockExam = {
-        name,
-        className: [className],
-        releasedYear,
-        number: Number(number),
-      };
-      const json = JSON.stringify(mockExam);
-      const blob = new Blob([json], {
+    formData.append(
+      "mockExamInputDto",
+      new Blob([JSON.stringify(payload)], {
         type: "application/json",
-      });
+      }),
+    );
 
-      formData.append("mockExamInputDto", blob);
-
-      const response = await fetch(
-        `http://localhost:8080/mock-exam/${mockExamId}`,
-        {
-          method: "PUT",
-          body: formData,
-        },
-      );
-
-      if (response.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: ["get-mock-exams"],
-        });
-        successAlert("Simulado alterado com sucesso!");
-        navigate("/mock-exams");
-      }
-
-      if (response.status === 404) {
-        const errorMessage = await response.text();
-        warningAlert(errorMessage);
-      }
-    },
-  });
-
-  async function handleEditMockExam(data: EditMockExamForm) {
-    await editMainQuestion.mutateAsync(data);
+    return formData;
   }
 
-  //console.log(watch());
+  async function handleEditMockExam(data: MockExamFormType) {
+    const formData = buildFormData(data);
+    await updateMutation.mutateAsync(formData);
+
+    navigate("/mock-exams");
+  }
 
   return (
     <FormProvider {...formMethods}>
@@ -245,7 +191,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
 
         <div className="flex items-center justify-center gap-2">
           <Button
-            disabled={formState.isSubmitting || !hasChanged}
+            disabled={formState.isSubmitting || !formState.isDirty}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
@@ -256,13 +202,12 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
             )}
             Save
           </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          <Button onClick={() => navigate("/mock-exams")}>
             <X className="size-3" />
             Cancel
           </Button>
         </div>
       </form>
-      <DevTool control={control} />
     </FormProvider>
   );
 }
