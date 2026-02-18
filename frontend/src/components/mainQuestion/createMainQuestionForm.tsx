@@ -7,13 +7,16 @@ import { MainQuestionFormType, mainQuestionSchema } from "./mainQuestionSchema";
 import { CreateQuestion } from "@/interfaces/MainQuestion";
 import { CreateAlternative } from "@/interfaces/Alternative";
 import { useNavigate } from "react-router-dom";
-import { SelectLevel } from "../ui/selectLevel";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 import { useEffect } from "react";
-import { SelectLerikucas } from "../ui/selectLerikucas";
-import { SelectPattern } from "../ui/selectPattern";
 import { useHandleCreateMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleCreateMainQuestion";
-import { QuestionLevelEnum } from "@/constants/general";
+import {
+  LerikucasOptions,
+  QuestionLevelEnum,
+  questionLevelOptions,
+  questionPatternOptions,
+} from "@/constants/general";
+import { InputSelectDropdownWrapper } from "../features/form-input/InputSelectDropdownWrapper";
 
 export function CreateMainQuestionForm() {
   const navigate = useNavigate();
@@ -22,7 +25,9 @@ export function CreateMainQuestionForm() {
   const formMethods = useForm<MainQuestionFormType>({
     resolver: zodResolver(mainQuestionSchema),
   });
-  const { register, handleSubmit, formState, watch, setValue } = formMethods;
+  const { register, handleSubmit, formState, watch, setValue, control } =
+    formMethods;
+  const { errors } = formState;
 
   const selectedLerikucas = watch("lerikucas");
 
@@ -148,46 +153,37 @@ export function CreateMainQuestionForm() {
           </p>
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Lerikucas
-          </label>
-          <SelectLerikucas />
-          <p
-            className={`text-sm ${formState.errors?.lerikucas ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.lerikucas
-              ? formState.errors.lerikucas.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="lerikucas"
+            control={control}
+            errors={errors}
+            label="Lerikucas"
+            placeholder="Selecione o valor da lerikucas"
+            options={LerikucasOptions}
+          />
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Nível da questão
-          </label>
-          <SelectLevel />
-          <p
-            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.level
-              ? formState.errors.level.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="level"
+            control={control}
+            errors={errors}
+            label="Nível"
+            placeholder="Selecione o nível da questão"
+            options={questionLevelOptions}
+          />
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Padrão da Questão
-          </label>
-          <SelectPattern />
-          <p
-            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.level
-              ? formState.errors.level.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="pattern"
+            control={control}
+            errors={errors}
+            label="Padrão da Questão"
+            placeholder="Selecione o padrão da questão"
+            options={questionPatternOptions}
+          />
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">

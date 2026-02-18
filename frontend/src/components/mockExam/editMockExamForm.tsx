@@ -5,12 +5,13 @@ import { Button } from "../ui/shadcn/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { MockExam } from "../../interfaces";
 import { MockExamFormType, mockExamSchema } from "./mockExamSchema";
-import { SelectClass } from "../ui/selectClass";
 import { CreateMockExam } from "../../interfaces/MockExam";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/dragDropPreviewFile";
 import { useHandleEditMockExam } from "@/hooks/CRUD/mockExam/useHandleEditMockExam";
 import { mapMockExamToForm } from "@/mapper/mockExamMapper";
 import { useMemo } from "react";
+import { InputSelectDropdownWrapper } from "../features/form-input/InputSelectDropdownWrapper";
+import { classGroupOptions } from "@/constants/students";
 
 interface EditMockExamFormProps {
   entity: MockExam;
@@ -31,7 +32,8 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
     mode: "onChange",
     reValidateMode: "onChange",
   });
-  const { register, handleSubmit, formState } = formMethods;
+  const { register, handleSubmit, formState, control } = formMethods;
+  const { errors } = formState;
 
   const updateMutation = useHandleEditMockExam(mockExamId);
 
@@ -90,18 +92,15 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
           </p>
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Turma
-          </label>
-          <SelectClass />
-          <p
-            className={`text-sm ${formState.errors?.className ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.className
-              ? formState.errors.className.message
-              : "\u00A0"}
-          </p>
+        <div className="flex w-full flex-col xl:max-w-85">
+          <InputSelectDropdownWrapper
+            name="className"
+            control={control}
+            errors={errors}
+            label="Turma"
+            placeholder="Digite a turma"
+            options={classGroupOptions}
+          />
         </div>
 
         <div className="flex flex-row gap-1 justify-around align-middle">

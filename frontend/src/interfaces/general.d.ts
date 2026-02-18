@@ -1,4 +1,5 @@
 import { StudentFormType } from "@/components/forms/student/studentSchema";
+import { MainQuestionFormType } from "@/components/mainQuestion/mainQuestionSchema";
 import { MockExamFormType } from "@/components/mockExam/mockExamSchema";
 
 type ListaPaginada<T> = {
@@ -31,4 +32,7 @@ export type QueryFunctionContext = {
   meta?: Record<string, unknown>;
 };
 
-export type FormTypes = StudentFormType | MockExamFormType;
+export type FormTypes =
+  | StudentFormType
+  | MockExamFormType
+  | MainQuestionFormType;
