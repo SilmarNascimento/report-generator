@@ -5,14 +5,23 @@ import { StudentRequest, StudentResponse } from "@/interfaces/Student";
 export const mapStudentFormToRequest = (
   data: StudentFormType,
 ): StudentRequest => {
+  const addressValues = data.address ? Object.values(data.address) : [];
+  const hasAddressData = addressValues.some(
+    (value) => value !== "" && value !== undefined && value !== null,
+  );
+
   return {
     ...data,
     classGroups: data.classGroups.map((item) => item.value),
     activationDate: new Date().toISOString(),
-    address: data.address
+    address: hasAddressData
       ? {
           ...data.address,
-          number: data.address.number || undefined,
+          number:
+            data.address?.number !== undefined && data.address?.number !== null
+              ? Number(data.address.number)
+              : undefined,
+          complement: data.address?.complement || undefined,
         }
       : undefined,
   };
