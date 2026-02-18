@@ -35,7 +35,7 @@ export const mapStudentResponseToForm = (
     address: data.address
       ? {
           street: data.address.street,
-          number: data.address.number,
+          number: Number(data.address.number),
           complement: data.address.complement,
           neighborhood: data.address.neighborhood,
           city: data.address.city,

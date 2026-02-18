@@ -60,8 +60,6 @@ const StudentForm = ({
   });
   const { errors, isDirty } = formState;
 
-  console.log(responses);
-
   return (
     <form
       onSubmit={

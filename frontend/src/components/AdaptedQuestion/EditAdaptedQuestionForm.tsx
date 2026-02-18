@@ -7,14 +7,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { AlternativeSchema } from "../Alternative/AlternativeSchema";
 import { CreateAlternative } from "../../interfaces/Alternative";
-import { CreateQuestion } from "../../interfaces/MainQuestion";
-import { SelectLevel } from "../ui/SelectLevel";
-import { AlternativeForm } from "../Alternative/AlternativesForm";
 import { Check, Loader2, X } from "lucide-react";
 import { AdaptedQuestion } from "../../interfaces";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
 import { useEffect, useState } from "react";
+import { AlternativeForm } from "../Alternative/AlternativesForm";
 
 type EditAdaptedQuestionForm = z.infer<typeof AdaptedQuestionSchema>;
 
@@ -108,7 +106,7 @@ export function EditAdaptedQuestionForm({
         };
         return createAlternative;
       });
-      const createAdaptedQuestion: CreateQuestion = {
+      const createAdaptedQuestion = {
         title: data.title,
         level: data.level,
         alternatives: createAlternatives,
@@ -193,20 +191,6 @@ export function EditAdaptedQuestionForm({
           >
             {formState.errors?.images
               ? formState.errors.images.message
-              : "\u00A0"}
-          </p>
-        </div>
-
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Nível da questão
-          </label>
-          <SelectLevel />
-          <p
-            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.level
-              ? formState.errors.level.message
               : "\u00A0"}
           </p>
         </div>

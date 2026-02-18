@@ -7,18 +7,19 @@ import { MainQuestion } from "@/interfaces";
 import { CreateAlternative } from "@/interfaces/Alternative";
 import { CreateQuestion } from "@/interfaces/MainQuestion";
 import { useEffect, useMemo } from "react";
+import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
 import { useHandleEditMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleEditMainQuestion";
 import {
   LerikucasEnum,
+  LerikucasOptions,
   QuestionLevelEnum,
+  questionLevelOptions,
   QuestionPatternEnum,
+  questionPatternOptions,
 } from "@/constants/general";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
-import { SelectLerikucas } from "../ui/SelectLerikucas";
-import { SelectLevel } from "../ui/SelectLevel";
-import { SelectPattern } from "../ui/SelectPattern";
+import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
-import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
 
 interface EditMainQuestionFormProps {
   entity: MainQuestion;
@@ -55,8 +56,9 @@ export function EditMainQuestionForm({
     mode: "onChange",
     reValidateMode: "onChange",
   });
-  const { register, handleSubmit, formState, setValue, watch, reset } =
+  const { register, handleSubmit, formState, setValue, watch, reset, control } =
     formMethods;
+  const { errors } = formState;
 
   useEffect(() => {
     reset(memoizedDefaultValues);
@@ -180,46 +182,37 @@ export function EditMainQuestionForm({
           </p>
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Lerikucas
-          </label>
-          <SelectLerikucas defaultValue={memoizedDefaultValues.lerikucas} />
-          <p
-            className={`text-sm ${formState.errors?.lerikucas ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.lerikucas
-              ? formState.errors.lerikucas.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="lerikucas"
+            control={control}
+            errors={errors}
+            label="Lerikucas"
+            placeholder="Selecione o valor da lerikucas"
+            options={LerikucasOptions}
+          />
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Nível da questão
-          </label>
-          <SelectLevel defaultValue={memoizedDefaultValues.level} />
-          <p
-            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.level
-              ? formState.errors.level.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="level"
+            control={control}
+            errors={errors}
+            label="Nível"
+            placeholder="Selecione o nível da questão"
+            options={questionLevelOptions}
+          />
         </div>
 
-        <div className="space-y-2 flex flex-col justify-center items-start">
-          <label className="text-sm font-medium block" htmlFor="level">
-            Padrão da Questão
-          </label>
-          <SelectPattern defaultValue={memoizedDefaultValues.pattern} />
-          <p
-            className={`text-sm ${formState.errors?.level ? "text-red-400" : "text-transparent"}`}
-          >
-            {formState.errors?.level
-              ? formState.errors.level.message
-              : "\u00A0"}
-          </p>
+        <div className="flex flex-col max-w-85">
+          <InputSelectDropdownWrapper
+            name="pattern"
+            control={control}
+            errors={errors}
+            label="Padrão da Questão"
+            placeholder="Selecione o padrão da questão"
+            options={questionPatternOptions}
+          />
         </div>
 
         <div className="space-y-2 flex flex-col justify-center items-start">

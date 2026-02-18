@@ -11,17 +11,61 @@ export enum LerikucasEnum {
   L8 = "8",
 }
 
+export const lerikucasLabelMap: Record<LerikucasEnum, string> = {
+  [LerikucasEnum.L1]: "1",
+  [LerikucasEnum.L2]: "2",
+  [LerikucasEnum.L3]: "3",
+  [LerikucasEnum.L4]: "4",
+  [LerikucasEnum.L5]: "5",
+  [LerikucasEnum.L6]: "6",
+  [LerikucasEnum.L7]: "7",
+  [LerikucasEnum.L8]: "8",
+};
+
+export const LerikucasOptions: DropdownType[] = Object.values(
+  LerikucasEnum,
+).map((sigla) => ({
+  label: lerikucasLabelMap[sigla],
+  value: sigla,
+}));
+
 export enum QuestionLevelEnum {
   FACIL = "Fácil",
   MEDIO = "Médio",
   DIFICIL = "Difícil",
 }
 
+export const questionLevelLabelMap: Record<QuestionLevelEnum, string> = {
+  [QuestionLevelEnum.FACIL]: "Fácil",
+  [QuestionLevelEnum.MEDIO]: "Médio",
+  [QuestionLevelEnum.DIFICIL]: "Difícil",
+};
+
+export const questionLevelOptions: DropdownType[] = Object.values(
+  QuestionLevelEnum,
+).map((sigla) => ({
+  label: questionLevelLabelMap[sigla],
+  value: sigla,
+}));
+
 export enum QuestionPatternEnum {
   ARITMETICA = "ARITMETICA",
   ALGEBRA = "ALGEBRA",
   GEOMETRIA = "GEOMETRIA",
 }
+
+export const questionPatternLabelMap: Record<QuestionPatternEnum, string> = {
+  [QuestionPatternEnum.ALGEBRA]: "Algebra",
+  [QuestionPatternEnum.ARITMETICA]: "Aritmética",
+  [QuestionPatternEnum.GEOMETRIA]: "Geometria",
+};
+
+export const questionPatternOptions: DropdownType[] = Object.values(
+  QuestionPatternEnum,
+).map((sigla) => ({
+  label: questionPatternLabelMap[sigla],
+  value: sigla,
+}));
 
 export enum BR_STATES {
   AC = "AC",
