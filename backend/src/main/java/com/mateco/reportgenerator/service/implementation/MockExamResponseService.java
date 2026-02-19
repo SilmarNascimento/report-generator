@@ -121,22 +121,14 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         try {
             DiagnosisReportDTO reportDto = DiagnosisReportDTO.from(response);
 
+            Map<String, byte[]> imageBytesMap = loadAllImagesToMemory();
             Map<String, Object> params = new HashMap<>();
 
-            params.put("logoMateco", getImageFromResources("LOGO_MATECO"));
-            params.put("imgVisaoPorArea", getImageFromResources("VISAO_POR_AREA"));
-            params.put("imgOQueRevisar", getImageFromResources("O_QUE_REVISAR"));
-            params.put("imgDistribuicao", getImageFromResources("DISTRIBUICAO"));
-            params.put("imgTop5Assuntos", getImageFromResources("TOP_5_ASSUNTOS"));
-            params.put("imgErrouMasTaOk", getImageFromResources("ERROU_MAS_TA_OK"));
-            params.put("imgNaoDeveriaErrar", getImageFromResources("NAO_DEVERIA_ERRAR"));
+            imageBytesMap.forEach((key, bytes) -> {
+                params.put(key, new ByteArrayInputStream(bytes));
+            });
 
-            params.put("studentName", reportDto.studentName());
-            params.put("examName", reportDto.examName());
-            params.put("examYear", reportDto.examYear());
-            params.put("correctAnswers", reportDto.correctAnswers());
-            params.put("totalQuestions", reportDto.totalQuestions());
-            params.put("ipmScore", reportDto.ipmScore());
+            fillStudentParams(params, reportDto);
 
             params.put("top5Subjects", new JRBeanCollectionDataSource(reportDto.top5Subjects()));
             params.put("areaPerformance", new JRBeanCollectionDataSource(reportDto.areaPerformance()));
@@ -163,16 +155,19 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
     }
 
     @Transactional
-    public void generateAllDiagnosisPdfs(List<UUID> responseIds) {
+    public void generateAllDiagnosisPdfs(List<UUID> responseIds) throws IOException {
         List<MockExamResponse> responses = mockExamResponseRepository.findAllById(responseIds);
 
-        Map<String, Object> commonParams = loadStaticImageParams();
+        Map<String, byte[]> imageBytesMap = loadAllImagesToMemory();
 
         for (MockExamResponse response : responses) {
             try {
                 DiagnosisReportDTO reportDto = DiagnosisReportDTO.from(response);
 
-                Map<String, Object> studentParams = new HashMap<>(commonParams);
+                Map<String, Object> studentParams = new HashMap<>();
+                imageBytesMap.forEach((key, bytes) -> {
+                    studentParams.put(key, new ByteArrayInputStream(bytes));
+                });
                 fillStudentParams(studentParams, reportDto);
 
                 studentParams.put("top5Subjects", new JRBeanCollectionDataSource(reportDto.top5Subjects()));
@@ -201,16 +196,19 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         mockExamResponseRepository.saveAll(responses);
     }
 
-    private Map<String, Object> loadStaticImageParams() {
-        Map<String, Object> imgParams = new HashMap<>();
-        String[] images = {
-                "LOGO_MATECO", "VISAO_POR_AREA", "O_QUE_REVISAR",
-                "DISTRIBUICAO", "TOP_5_ASSUNTOS", "ERROU_MAS_TA_OK", "NAO_DEVERIA_ERRAR"
-        };
-        for (String img : images) {
-            imgParams.put(img, getClass().getResourceAsStream("/static/images/" + img + ".png"));
+    private Map<String, byte[]> loadAllImagesToMemory() throws IOException {
+        Map<String, byte[]> map = new HashMap<>();
+        String[] images = {"LOGO_MATECO", "VISAO_POR_AREA", "O_QUE_REVISAR", "DISTRIBUICAO", "TOP_5_ASSUNTOS", "ERROU_MAS_TA_OK", "NAO_DEVERIA_ERRAR"};
+
+        for (String imgName : images) {
+            String path = "/static/images/" + imgName + ".png";
+            try (InputStream is = getClass().getResourceAsStream(path)) {
+                if (is != null) {
+                    map.put(imgName, is.readAllBytes());
+                }
+            }
         }
-        return imgParams;
+        return map;
     }
 
     private void fillStudentParams(Map<String, Object> params, DiagnosisReportDTO dto) {
