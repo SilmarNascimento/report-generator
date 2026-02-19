@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileDownloadDto;
+import com.mateco.reportgenerator.controller.dto.jasperReportDto.DiagnosisReportDTO;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionDetailDto;
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.*;
@@ -110,54 +111,17 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
 
     @Transactional
     public void generateAndAttachDiagnosisPdf(UUID responseId) {
-        //TODO USAR DiagnosisReportDTO
         MockExamResponse response = mockExamResponseRepository.findById(responseId)
                 .orElseThrow(() -> new NotFoundException("Resposta não encontrada para o ID: " + responseId));
 
-        MockExam mockExam = response.getMockExam();
-
-        if (mockExam == null || mockExam.getMockExamQuestions().isEmpty()) {
+        if (response.getMockExam() == null || response.getMockExam().getMockExamQuestions().isEmpty()) {
             throw new InvalidDataException("Simulado não encontrado ou sem questões cadastradas.");
         }
 
         try {
-            List<QuestionDetailDto> detailsList = new ArrayList<>();
-            List<String> studentAnswers = response.getResponses();
-
-            Map<Integer, MainQuestion> questionsMap = mockExam.getMockExamQuestions();
-            List<Integer> sortedQuestionNumbers = new ArrayList<>(questionsMap.keySet());
-            Collections.sort(sortedQuestionNumbers);
-
-            for (int i = 0; i < sortedQuestionNumbers.size(); i++) {
-                Integer questionNum = sortedQuestionNumbers.get(i);
-                MainQuestion question = questionsMap.get(questionNum);
-
-                String studentAnswer = (i < studentAnswers.size()) ? studentAnswers.get(i) : "-";
-
-                String correctLetter = getCorrectLetterFromAlternatives(question.getAlternatives());
-
-                boolean isCorrect = studentAnswer.equalsIgnoreCase(correctLetter);
-
-                String subjectNames = question.getSubjects().stream()
-                        .map(Subject::getName)
-                        .collect(Collectors.joining(", "));
-
-                detailsList.add(new QuestionDetailDto(
-                        questionNum,
-                        subjectNames,
-                        question.getLevel(),
-                        studentAnswer,
-                        correctLetter,
-                        isCorrect ? "ACERTOU" : "ERROU",
-                        question.getWeight(),
-                        question.getPattern() != null ? question.getPattern().toString() : ""
-                ));
-            }
+            DiagnosisReportDTO reportDto = DiagnosisReportDTO.from(response);
 
             Map<String, Object> params = new HashMap<>();
-//            String formattedDate = (response.getCreatedAt() != null)
-//                    ? response.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-//                    : LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             params.put("logoMateco", getImageFromResources("LOGO_MATECO"));
             params.put("imgVisaoPorArea", getImageFromResources("VISAO_POR_AREA"));
@@ -167,11 +131,20 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             params.put("imgErrouMasTaOk", getImageFromResources("ERROU_MAS_TA_OK"));
             params.put("imgNaoDeveriaErrar", getImageFromResources("NAO_DEVERIA_ERRAR"));
 
-            //TODO verificar uso do data source vs params
+            params.put("studentName", reportDto.studentName());
+            params.put("examName", reportDto.examName());
+            params.put("examYear", reportDto.examYear());
+            params.put("correctAnswers", reportDto.correctAnswers());
+            params.put("totalQuestions", reportDto.totalQuestions());
+            params.put("ipmScore", reportDto.ipmScore());
+
+            params.put("top5Subjects", new JRBeanCollectionDataSource(reportDto.top5Subjects()));
+            params.put("areaPerformance", new JRBeanCollectionDataSource(reportDto.areaPerformance()));
+
             byte[] pdfBytes = jasperReportService.generatePdf(
                     "student_diagnosis.jrxml",
                     params,
-                    new JRBeanCollectionDataSource(detailsList)
+                    new JRBeanCollectionDataSource(reportDto.questionTable())
             );
 
             FileEntity pdfEntity = new FileEntity(
@@ -187,6 +160,66 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             e.printStackTrace();
             throw new RuntimeException("Falha ao gerar o PDF de diagnóstico: " + e.getMessage(), e);
         }
+    }
+
+    @Transactional
+    public void generateAllDiagnosisPdfs(List<UUID> responseIds) {
+        List<MockExamResponse> responses = mockExamResponseRepository.findAllById(responseIds);
+
+        Map<String, Object> commonParams = loadStaticImageParams();
+
+        for (MockExamResponse response : responses) {
+            try {
+                DiagnosisReportDTO reportDto = DiagnosisReportDTO.from(response);
+
+                Map<String, Object> studentParams = new HashMap<>(commonParams);
+                fillStudentParams(studentParams, reportDto);
+
+                studentParams.put("top5Subjects", new JRBeanCollectionDataSource(reportDto.top5Subjects()));
+                studentParams.put("areaPerformance", new JRBeanCollectionDataSource(reportDto.areaPerformance()));
+
+                byte[] pdfBytes = jasperReportService.generatePdf(
+                        "student_diagnosis.jrxml",
+                        studentParams,
+                        new JRBeanCollectionDataSource(reportDto.questionTable())
+                );
+
+                FileEntity pdfEntity = new FileEntity(
+                        pdfBytes,
+                        "diagnostico_" + reportDto.studentName().replaceAll("\\s+", "_") + ".pdf",
+                        "application/pdf"
+                );
+
+                response.setDiagnosisPdfFile(pdfEntity);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("Falha ao gerar o PDF de diagnóstico: " + e.getMessage(), e);
+            }
+        }
+
+        mockExamResponseRepository.saveAll(responses);
+    }
+
+    private Map<String, Object> loadStaticImageParams() {
+        Map<String, Object> imgParams = new HashMap<>();
+        String[] images = {
+                "LOGO_MATECO", "VISAO_POR_AREA", "O_QUE_REVISAR",
+                "DISTRIBUICAO", "TOP_5_ASSUNTOS", "ERROU_MAS_TA_OK", "NAO_DEVERIA_ERRAR"
+        };
+        for (String img : images) {
+            imgParams.put(img, getClass().getResourceAsStream("/static/images/" + img + ".png"));
+        }
+        return imgParams;
+    }
+
+    private void fillStudentParams(Map<String, Object> params, DiagnosisReportDTO dto) {
+        params.put("studentName", dto.studentName());
+        params.put("examName", dto.examName());
+        params.put("examYear", dto.examYear());
+        params.put("correctAnswers", dto.correctAnswers());
+        params.put("totalQuestions", dto.totalQuestions());
+        params.put("ipmScore", dto.ipmScore());
     }
 
     public PDDocument mergePDFs(List<FileEntity> fileEntities) throws IOException {
