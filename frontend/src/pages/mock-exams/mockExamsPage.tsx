@@ -51,11 +51,11 @@ export function MockExams() {
   const deleteMockExam = useDeleteMockExamById();
 
   function handleCreateNewMockExam() {
-    navigate("/mock-exam/create");
+    navigate("/mock-exams/create");
   }
 
   function handleEditMockExam(mockExamId: string) {
-    navigate(`/mock-exam/edit/${mockExamId}`);
+    navigate(`/mock-exams/edit/${mockExamId}`);
   }
 
   async function handleDeleteMockExam(mockExamId: string) {
