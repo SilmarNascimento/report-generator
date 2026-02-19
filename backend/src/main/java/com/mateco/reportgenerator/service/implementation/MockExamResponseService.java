@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -154,17 +155,17 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             }
 
             Map<String, Object> params = new HashMap<>();
-            params.put("studentName", response.getName());
+//            String formattedDate = (response.getCreatedAt() != null)
+//                    ? response.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+//                    : LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-            String formattedDate = (response.getCreatedAt() != null)
-                    ? response.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                    : LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            params.put("examDate", formattedDate);
-            params.put("finalScore", (double) response.getCorrectAnswers());
-            params.put("ipmScore", response.getIpmScore());
-            params.put("punishmentScore", response.getPunishmentScore());
-            params.put("comment", response.getComment());
+            params.put("logoMateco", getImageFromResources("LOGO_MATECO"));
+            params.put("imgVisaoPorArea", getImageFromResources("VISAO_POR_AREA"));
+            params.put("imgOQueRevisar", getImageFromResources("O_QUE_REVISAR"));
+            params.put("imgDistribuicao", getImageFromResources("DISTRIBUICAO"));
+            params.put("imgTop5Assuntos", getImageFromResources("TOP_5_ASSUNTOS"));
+            params.put("imgErrouMasTaOk", getImageFromResources("ERROU_MAS_TA_OK"));
+            params.put("imgNaoDeveriaErrar", getImageFromResources("NAO_DEVERIA_ERRAR"));
 
             //TODO verificar uso do data source vs params
             byte[] pdfBytes = jasperReportService.generatePdf(
@@ -248,5 +249,9 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
                 "application/pdf",
                 fileEntity.getFileContent().getContent()
         );
+    }
+
+    private InputStream getImageFromResources(String imageName) {
+        return getClass().getResourceAsStream("/static/images/" + imageName + ".png");
     }
 }
