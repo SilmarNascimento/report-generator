@@ -1,9 +1,11 @@
 package com.mateco.reportgenerator.specifications;
 
 import com.mateco.reportgenerator.controller.dto.student.StudentFilter;
+import com.mateco.reportgenerator.enums.ClassGroup; // Importe seu Enum
 import com.mateco.reportgenerator.model.entity.Student;
 import com.mateco.reportgenerator.utils.TextUtils;
-import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
@@ -13,41 +15,44 @@ import java.util.List;
 
 public class StudentSpecifications {
 
-    private StudentSpecifications() {
-    }
+    private StudentSpecifications() {}
 
     public static Specification<Student> withFilter(StudentFilter filter) {
         return (root, query, cb) -> {
+            if (!StringUtils.hasText(filter.query())) {
+                return null;
+            }
+
+            query.distinct(true);
+
+            String termo = filter.query().trim();
+            String termoNormalizado = TextUtils.normalize(termo).toLowerCase();
+            String likePattern = "%" + termoNormalizado + "%";
+
             List<Predicate> predicates = new ArrayList<>();
 
-            if (StringUtils.hasText(filter.name())) {
-                String termoTratado = "%" + TextUtils.normalize(filter.name()) + "%";
-
-                Expression<String> unaccentNome = cb.function("unaccent", String.class, root.get("user").get("name"));
-                Expression<String> lowerUnaccentNome = cb.lower(unaccentNome);
-
-                predicates.add(cb.like(lowerUnaccentNome, termoTratado.toLowerCase()));
+            try {
+                var unaccentFunc = cb.function("unaccent", String.class, root.get("user").get("name"));
+                predicates.add(cb.like(cb.lower(unaccentFunc), likePattern));
+            } catch (Exception e) {
+                predicates.add(cb.like(cb.lower(root.get("user").get("name")), likePattern));
             }
 
-            if (StringUtils.hasText(filter.email())) {
-                String emailTratado = "%" + filter.email().toLowerCase().trim() + "%";
+            predicates.add(cb.like(cb.lower(root.get("user").get("email")), likePattern));
 
-                predicates.add(cb.like(
-                        cb.lower(root.get("user").get("email")),
-                        emailTratado
-                ));
+            String termoNumerico = termo.replaceAll("\\D", "");
+            if (StringUtils.hasText(termoNumerico)) {
+                predicates.add(cb.like(root.get("cpf"), "%" + termoNumerico + "%"));
             }
 
-            if (StringUtils.hasText(filter.cpf())) {
-                String cpfLimpo = filter.cpf().replaceAll("\\D", "");
-                predicates.add(cb.equal(root.get("cpf"), cpfLimpo));
-            }
+            Join<Student, ClassGroup> groupsJoin = root.join("classGroups", JoinType.LEFT);
 
-            if (filter.classGroup() != null) {
-                predicates.add(cb.equal(root.get("classGroup"), filter.classGroup()));
-            }
+            predicates.add(cb.like(
+                    cb.lower(groupsJoin.as(String.class)),
+                    likePattern
+            ));
 
-            return cb.and(predicates.toArray(new Predicate[0]));
+            return cb.or(predicates.toArray(new Predicate[0]));
         };
     }
 }

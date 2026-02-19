@@ -7,9 +7,11 @@ import com.mateco.reportgenerator.controller.dto.student.StudentResponseDto;
 import com.mateco.reportgenerator.service.implementation.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +32,11 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<PageResponse<StudentResponseDto>> findAll(
             StudentFilter filter,
-            @PageableDefault(size = 10, sort = "user.name", direction = Sort.Direction.ASC)
-            Pageable pageable
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "10") int pageSize,
+            @SortDefault(sort = "user.name", direction = Sort.Direction.DESC) Sort sort
     ) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         return ResponseEntity.ok(studentService.findAll(filter, pageable));
     }
 
