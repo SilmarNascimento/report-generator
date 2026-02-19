@@ -5,6 +5,13 @@ public record QuestionDetailDTO(
         String level,
         String officialAnswer,
         String studentAnswer,
-        String status, // "✓" ou "X"
+        String status,
         String subject
-) {}
+) {
+    public Integer getId()            { return id; }
+    public String getLevel()          { return level; }
+    public String getOfficialAnswer() { return officialAnswer; }
+    public String getStudentAnswer()  { return studentAnswer; }
+    public String getStatus()         { return status; }
+    public String getSubject()        { return subject; }
+}
