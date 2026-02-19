@@ -34,7 +34,7 @@ public class StudentController {
             StudentFilter filter,
             @RequestParam(required = false, defaultValue = "0") int pageNumber,
             @RequestParam(required = false, defaultValue = "10") int pageSize,
-            @SortDefault(sort = "user.name", direction = Sort.Direction.DESC) Sort sort
+            @SortDefault(sort = "user.name", direction = Sort.Direction.ASC) Sort sort
     ) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         return ResponseEntity.ok(studentService.findAll(filter, pageable));

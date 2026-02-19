@@ -10,11 +10,9 @@ export function useGetStudents(page: number, pageSize: number, query: string) {
       const response = await apiService.get<PageResponse<StudentResponse>>(
         `/students`,
         {
-          params: {
-            pageNumber: page - 1,
-            pageSize,
-            query,
-          },
+          pageNumber: page - 1,
+          pageSize,
+          query,
         },
       );
       return response;
