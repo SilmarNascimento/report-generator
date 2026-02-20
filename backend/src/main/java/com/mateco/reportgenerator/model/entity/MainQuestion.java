@@ -3,26 +3,20 @@ package com.mateco.reportgenerator.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderColumn;
-import jakarta.persistence.Table;
+import com.mateco.reportgenerator.enums.Pattern;
+import jakarta.persistence.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "main_questions")
@@ -34,6 +28,13 @@ public class MainQuestion extends Question {
 
   protected List<String> images;
 
+  private int lerickucas;
+
+  @Enumerated(EnumType.STRING)
+  private Pattern pattern;
+
+  private int weight;
+
   @ManyToMany
   @JoinTable(
       name = "questions_content",
@@ -42,11 +43,13 @@ public class MainQuestion extends Question {
   )
   private List<Subject> subjects;
 
+  private String videoResolutionUrl;
+
   @OneToMany(
       mappedBy = "mainQuestion",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
-      fetch = FetchType.EAGER
+      fetch = FetchType.LAZY
   )
   @ElementCollection
   @OrderColumn
@@ -60,6 +63,10 @@ public class MainQuestion extends Question {
   )
   private List<AdaptedQuestion> adaptedQuestions;
 
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "adapted_questions_file_id")
+  private FileEntity adaptedQuestionsPdfFile;
+
   @ManyToMany(mappedBy = "mockExamQuestions")
   @JsonIgnore
   private List<MockExam> mockExams;
@@ -68,23 +75,49 @@ public class MainQuestion extends Question {
   @JsonIgnore
   private List<Handout> handout;
 
+  public static final Map<Integer, Integer> WEIGHTS = Map.of(
+          1, 10,
+          2, 8,
+          3, 5,
+          4, 3,
+          5, 8,
+          6, 6,
+          7, 3,
+          8, 1
+  );
+
   public MainQuestion(
-      String title,
-      List<Subject> subjects,
-      String level,
-      List<String> images,
-      List<Alternative> alternatives,
-      List<AdaptedQuestion> adaptedQuestions,
-      List<MockExam> mockExams,
-      List<Handout> handout
-  ) {
+          String title,
+          List<Subject> subjects,
+          String level,
+          List<String> images,
+          List<Alternative> alternatives,
+          String videoResolutionUrl,
+          List<AdaptedQuestion> adaptedQuestions,
+          FileEntity adaptedQuestionsPdfFile,
+          List<MockExam> mockExams,
+          List<Handout> handouts
+  ) throws IOException {
+
     super(title, level);
+
     this.images = images;
     this.subjects = subjects;
     this.alternatives = alternatives;
+    this.videoResolutionUrl = videoResolutionUrl;
     this.adaptedQuestions = adaptedQuestions;
+    this.adaptedQuestionsPdfFile = adaptedQuestionsPdfFile;
     this.mockExams = mockExams;
-    this.handout = handout;
+    this.handout = handouts;
+
+    if (this.lerickucas != 0) {
+      this.weight = WEIGHTS.getOrDefault(this.lerickucas, 0);
+    }
+  }
+
+  public void setLerickucas(int lerickucas) {
+    this.lerickucas = lerickucas;
+    this.weight = WEIGHTS.getOrDefault(lerickucas, 0);
   }
 
   @Override
@@ -96,37 +129,92 @@ public class MainQuestion extends Question {
         "image: " + this.images +
         "subjects: " + this.subjects +
         "alternatives: " + this.alternatives +
+        "video resolution: " + this.videoResolutionUrl +
         '}';
   }
 
   public static MainQuestion parseMainQuestion(
-      QuestionInputDto mainQuestionInputDto
+          QuestionInputDto mainQuestionInputDto,
+          MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
-    return new MainQuestion(
-        mainQuestionInputDto.title(),
-        new ArrayList<>(),
-        mainQuestionInputDto.level(),
-        new ArrayList<>(),
-        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
-        new ArrayList<>(),
-        new ArrayList<>(),
-        new ArrayList<>()
-    );
+
+    MainQuestion question;
+
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      question = new MainQuestion(
+              mainQuestionInputDto.title(),
+              new ArrayList<>(),
+              mainQuestionInputDto.level(),
+              new ArrayList<>(),
+              Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+              mainQuestionInputDto.videoResolutionUrl(),
+              new ArrayList<>(),
+              null,
+              new ArrayList<>(),
+              new ArrayList<>()
+      );
+    } else {
+      FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
+      question = new MainQuestion(
+              mainQuestionInputDto.title(),
+              new ArrayList<>(),
+              mainQuestionInputDto.level(),
+              new ArrayList<>(),
+              Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+              mainQuestionInputDto.videoResolutionUrl(),
+              new ArrayList<>(),
+              pdfEntity,
+              new ArrayList<>(),
+              new ArrayList<>()
+      );
+    }
+
+    question.setLerickucas(mainQuestionInputDto.lerickucas());
+    question.setPattern(mainQuestionInputDto.pattern());
+
+    return question;
   }
 
   public static MainQuestion parseMainQuestion(
-      MainQuestionInputDto mainQuestionInputDto
+          MainQuestionInputDto mainQuestionInputDto,
+          MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
-    return new MainQuestion(
-        mainQuestionInputDto.title(),
-        Subject.parseSubject(mainQuestionInputDto.subjects()),
-        mainQuestionInputDto.level(),
-        mainQuestionInputDto.images(),
-        Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
-        new ArrayList<>(),
-        new ArrayList<>(),
-        new ArrayList<>()
-    );
+
+    MainQuestion question;
+
+    if (adaptedQuestionPdfFile.isEmpty()) {
+      question = new MainQuestion(
+              mainQuestionInputDto.title(),
+              Subject.parseSubject(mainQuestionInputDto.subjects()),
+              mainQuestionInputDto.level(),
+              mainQuestionInputDto.images(),
+              Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+              mainQuestionInputDto.videoResolutionUrl(),
+              new ArrayList<>(),
+              null,
+              new ArrayList<>(),
+              new ArrayList<>()
+      );
+    } else {
+      FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
+      question = new MainQuestion(
+              mainQuestionInputDto.title(),
+              Subject.parseSubject(mainQuestionInputDto.subjects()),
+              mainQuestionInputDto.level(),
+              mainQuestionInputDto.images(),
+              Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
+              mainQuestionInputDto.videoResolutionUrl(),
+              new ArrayList<>(),
+              pdfEntity,
+              new ArrayList<>(),
+              new ArrayList<>()
+      );
+    }
+
+    question.setLerickucas(mainQuestionInputDto.lerickucas());
+    question.setPattern(mainQuestionInputDto.pattern());
+
+    return question;
   }
 
   public void updateMainQuestionImages(List<String> questionImages) {
@@ -165,4 +253,5 @@ public class MainQuestion extends Question {
 
     return allMainQuestionImages;
   }
+
 }

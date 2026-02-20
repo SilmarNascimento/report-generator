@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -30,10 +31,10 @@ public class SubjectService implements SubjectServiceInterface {
   @Override
   public Page<Subject> findAllSubjects(int pageNumber, int pageSize, String query, List<UUID> excludedSubjects) {
     Pageable pageable = PageRequest.of(pageNumber, pageSize);
-    if (excludedSubjects.isEmpty()) {
-      return subjectRepository.findAll(pageable, query);
+    if (excludedSubjects == null || excludedSubjects.isEmpty()) {
+      return subjectRepository.findAllOrderByName(pageable, query);
     }
-    return subjectRepository.findAll(pageable, query, excludedSubjects);
+    return subjectRepository.findAllOrderByName(pageable, query, excludedSubjects);
   }
 
   @Override
@@ -60,12 +61,18 @@ public class SubjectService implements SubjectServiceInterface {
   public Subject updateSubject(UUID subjectId, Subject subject) {
     Subject subjectFound = subjectRepository.findById(subjectId)
         .orElseThrow(() -> new NotFoundException("Conteúdo não encontrado!"));
+
     subjectFound.setName(subject.getName());
+    subjectFound.setFixedWeight(subject.getFixedWeight());
+
     return subjectRepository.save(subjectFound);
   }
 
   @Override
   public void deleteSubject(UUID subjectId) {
+    if (!subjectRepository.existsById(subjectId)) {
+      throw new NotFoundException("Conteúdo não encontrado!");
+    }
     subjectRepository.deleteById(subjectId);
   }
 }

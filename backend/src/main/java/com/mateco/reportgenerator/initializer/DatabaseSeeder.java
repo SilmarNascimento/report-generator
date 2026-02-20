@@ -8,6 +8,8 @@ import com.mateco.reportgenerator.model.repository.MockExamRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Profile("!test")
 @Component
+@Slf4j
 public class DatabaseSeeder implements CommandLineRunner {
   private final SubjectRepository subjectRepository;
   private final MainQuestionRepository mainQuestionRepository;
@@ -33,10 +36,11 @@ public class DatabaseSeeder implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    // seedSubjects();
+    //seedSubjects();
     // seedMainQuestions();
   }
 
+  /*
   private void seedMainQuestions() {
     Alternative alternativeA = new Alternative(
         "3,5%.",
@@ -77,145 +81,32 @@ public class DatabaseSeeder implements CommandLineRunner {
     );
     mainQuestionRepository.save(mainQuestion);
   }
+  */
 
   private void seedSubjects() {
-    Subject subject = new Subject("Conjuntos");
-    subjectRepository.save(subject);
+    List<Subject> subjects = List.of(
+            new Subject("ANÁLISE COMBINATÓRIA", 0.260),
+            new Subject("ANÁLISE DE GRÁFICOS", 0.950),
+            new Subject("CONJUNTOS", 0.099),
+            new Subject("ESTATÍSTICA", 1.000),
+            new Subject("FUNÇÃO DO 1º GRAU", 0.998),
+            new Subject("FUNÇÃO DO 2º GRAU", 0.310),
+            new Subject("FUNÇÃO EXPONENCIAL", 0.300),
+            new Subject("GEOMETRIA ESPACIAL", 0.900),
+            new Subject("GEOMETRIA PLANA", 0.899),
+            new Subject("LOGARITMO", 0.240),
+            new Subject("LÓGICA E ARITMÉTICA", 0.999),
+            new Subject("MATEMÁTICA FINANCEIRA", 0.250),
+            new Subject("MATRIZES", 0.100),
+            new Subject("PERCEPÇÕES TRIDIMENSIONAIS", 0.902),
+            new Subject("PROBABILIDADE", 0.400),
+            new Subject("RAZÃO E PROPORÇÃO", 0.901),
+            new Subject("SEQUÊNCIAS", 0.290),
+            new Subject("TRIGONOMETRIA", 0.500)
+    );
 
-    subject = new Subject("Sequência");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Progressão Aritmética");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Progessão Geométrica");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Matemática Financeira");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Juros Simples");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Juros Compostos");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Análise Combinatória");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Arranjo");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Combinação");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Permutação");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Probabilidade");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Estatística");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Matrizes");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Tabela");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Sentenças Matemáticas");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Funções");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Função do 1º Grau");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Função do 2º Grau");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Gráficos");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Lei da Função");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Coeficiente Angular");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Regra de Três");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Vértice");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Receita, Custo, Lucro");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Função Exponencial");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Logaritmo");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Matemática Básica");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Frações");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Porcentagem");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Números Decimais");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Conversão de Unidades");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Geometria");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Geometria Plana");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Geometria Espacial");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Plano Cartesiano");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Identificação de Figuras");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Movimentação no Espaço");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Projeção Ortogonal");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Trigonometria");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Teorema de Pitágoras");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Comparação de Volumes");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Razão e Proporção");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Comparação de Razões");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Escala");
-    subjectRepository.save(subject);
-
-    subject = new Subject("Grandezas Proporcionais");
-    subjectRepository.save(subject);
+    // Salva todos os assuntos de uma vez para melhor performance
+    subjectRepository.saveAll(subjects);
   }
 
   private void seedMainQuestion() {

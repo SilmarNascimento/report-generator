@@ -1,0 +1,94 @@
+import {
+  Book,
+  ScrollText,
+  Tags,
+  Presentation,
+  BarChartBig,
+  FilePlus,
+  User,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
+
+export function NavigationBar() {
+  const activatedLink =
+    "py-1.5 px-3 text-primary inline-flex items-center text-sm gap-1.5 font-bold rounded-full border border-primary/20 bg-primary/10 transition-all";
+
+  const deactivatedLink =
+    "py-1.5 px-3 text-muted-foreground inline-flex items-center text-sm gap-1.5 font-medium rounded-full border border-transparent transition-all duration-300 hover:text-secondary hover:bg-secondary/10";
+
+  return (
+    <div className="border-b border-border bg-background py-4">
+      <nav className="flex items-center gap-2 max-w-[1200px] mx-auto px-4 font-redhat">
+        <NavLink
+          to={"/dash-board"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <Presentation className="size-4" />
+          Dashboard
+        </NavLink>
+
+        <NavLink
+          to={"/students"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <User className="size-4" />
+          Alunos
+        </NavLink>
+
+        <NavLink
+          to={"/mock-exams"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <Book className="size-4" />
+          Simulados
+        </NavLink>
+
+        <NavLink
+          to={"/main-questions"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <ScrollText className="size-4" />
+          Questões
+        </NavLink>
+
+        <NavLink
+          to={"/subjects"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <Tags className="size-4" />
+          Assuntos
+        </NavLink>
+
+        <NavLink
+          to={"/diagnosis/generate"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <FilePlus className="size-4" />
+          Adicionar Diagnósticos
+        </NavLink>
+
+        <NavLink
+          to={"/students-response"}
+          className={({ isActive }) =>
+            isActive ? activatedLink : deactivatedLink
+          }
+        >
+          <BarChartBig className="size-4" />
+          Diagnósticos
+        </NavLink>
+      </nav>
+    </div>
+  );
+}

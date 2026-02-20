@@ -1,32 +1,18 @@
-# Usar a imagem base do Maven com OpenJDK 17 para a etapa de construção
-FROM maven:3-openjdk-17 as build-image
+# build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
 
-# Definir o diretório de trabalho para a etapa de construção
-WORKDIR /to-build-app
+COPY pom.xml ./
+RUN mvn -B -q dependency:go-offline
 
-# Copiar o arquivo pom.xml para baixar as dependências do Maven
-COPY pom.xml .
-
-# Baixar as dependências do Maven
-RUN mvn dependency:go-offline
-
-# Copiar o código-fonte para o diretório /src
 COPY src ./src
+RUN mvn -B -Dmaven.test.skip=true clean package
 
-# Compilar o código-fonte e criar o arquivo JAR
-RUN mvn clean package
+# runtime
+FROM eclipse-temurin:21-jre
+WORKDIR /app
 
-# Usar uma imagem Alpine com OpenJRE 17 para a imagem final
-FROM eclipse-temurin:17-jre-alpine
+COPY --from=build /app/target/*.jar app.jar
 
-# Definir o diretório de trabalho para a imagem final
-WORKDIR /app-backend
-
-# Copiar o arquivo JAR gerado na etapa de construção para o diretório /target
-COPY --from=build-image /to-build-app/target/report-generator-API-0.0.1-SNAPSHOT.jar ./target/
-
-# Expor a porta 8080 para acessar a aplicação
 EXPOSE 8080
-
-# Definir o ponto de entrada para iniciar a aplicação Spring Boot
-ENTRYPOINT ["java", "-jar", "target/report-generator-API-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

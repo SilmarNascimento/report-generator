@@ -28,6 +28,9 @@ public class Subject {
   @Column(unique = true)
   private String name;
 
+  @Column(name = "fixed_weight")
+  private Double fixedWeight;
+
   @ManyToMany(mappedBy = "subjects")
   @JsonIgnore
   private List<MainQuestion> mainQuestions;
@@ -36,12 +39,9 @@ public class Subject {
   @JsonIgnore
   private List<MockExam> mockExams;
 
-  public Subject(String name) {
+  public Subject(String name, Double fixedWeight) {
     this.name = name;
-  }
-
-  public static Subject parseSubject(SubjectInputDto inputDto) {
-    return new Subject(inputDto.name());
+    this.fixedWeight = fixedWeight;
   }
 
   @Override
@@ -49,7 +49,17 @@ public class Subject {
     return "{" +
         "id: " + this.getId() +
         "name: " + this.name +
+        "fixedWeight: " + this.fixedWeight +
         '}';
+  }
+
+  public Double calculatePriority(Double errorRate) {
+    if (this.fixedWeight == null || errorRate == null) return 0.0;
+    return this.fixedWeight * errorRate;
+  }
+
+  public static Subject parseSubject(SubjectInputDto inputDto) {
+    return new Subject(inputDto.name(), inputDto.fixedWeight());
   }
 
   public static List<Subject> parseSubject(List<SubjectInputDto> subjectInputDtos) {
@@ -57,7 +67,7 @@ public class Subject {
       return new ArrayList<>();
     }
     return subjectInputDtos.stream()
-        .map((SubjectInputDto inputDto) -> new Subject(inputDto.name()))
+        .map((SubjectInputDto inputDto) -> new Subject(inputDto.name(), inputDto.fixedWeight()))
         .toList();
   }
 }

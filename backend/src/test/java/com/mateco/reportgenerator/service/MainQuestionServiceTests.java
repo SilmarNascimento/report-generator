@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
+import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.Subject;
 import com.mateco.reportgenerator.model.repository.AdaptedQuestionRepository;
@@ -17,6 +18,7 @@ import com.mateco.reportgenerator.model.repository.MainQuestionRepository;
 import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +36,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -58,6 +61,8 @@ public class MainQuestionServiceTests {
   private UUID mockAdaptedQuestionId02;
   private UUID mockSubjectId01;
   private UUID mockSubjectId02;
+  private FileEntity mockMainQuestionFile01;
+  private FileEntity mockMainQuestionFile02;
   private MainQuestion mockMainQuestion01;
   private MainQuestion mockMainQuestion02;
   private AdaptedQuestion mockAdaptedQuestion01;
@@ -66,12 +71,28 @@ public class MainQuestionServiceTests {
   private Subject mockSubject02;
 
   @BeforeEach
-  public void setUp() {
+  public void setUp() throws IOException {
     mockMainQuestionId01 = UUID.randomUUID();
     mockMainQuestionId02 = UUID.randomUUID();
     mockAdaptedQuestionId = UUID.randomUUID();
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
+
+    MockMultipartFile multipartFile01 = new MockMultipartFile(
+        "adaptedQuestionPdfFile01",
+        "adaptedQuestionPdfFile01.pdf",
+        "application/pdf",
+        "adaptedQuestion01".getBytes()
+    );
+    mockMainQuestionFile01 = new FileEntity(multipartFile01);
+
+    MockMultipartFile multipartFile02 = new MockMultipartFile(
+        "adaptedQuestionPdfFile02",
+        "adaptedQuestionPdfFile02.pdf",
+        "application/pdf",
+        "adaptedQuestion02".getBytes()
+    );
+    mockMainQuestionFile02 = new FileEntity(multipartFile02);
 
     Alternative mockAlternative01 = new Alternative(
         "descrição da alternativa 01",
@@ -90,18 +111,23 @@ public class MainQuestionServiceTests {
         "difícil",
         List.of("imagem 01 da questão"),
         List.of(mockAlternative01, mockAlternative02),
+        "URL da questão 01",
         new ArrayList<>(),
+        mockMainQuestionFile01,
         new ArrayList<>(),
         new ArrayList<>()
     );
     mockMainQuestion01.setId(mockMainQuestionId01);
+
     mockMainQuestion02 = new MainQuestion(
         "título questão 02",
         new ArrayList<>(),
         "difícil",
         List.of("imagem 01 da questão"),
         List.of(mockAlternative01, mockAlternative02),
+        "URL da questão 02",
         new ArrayList<>(),
+        mockMainQuestionFile02,
         new ArrayList<>(),
         new ArrayList<>()
     );

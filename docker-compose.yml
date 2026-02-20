@@ -1,44 +1,74 @@
-version: '3.9'
+version: "3.9"
 
 services:
   frontend:
     container_name: app_frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - 5173:5173
-    working_dir: /app-frontend
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "lsof", "-t", "-i:3030"]
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   backend:
     container_name: app_backend
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-      - 8080:8080
-    working_dir: /app-backend
-    command: dev 
-    volumes: 
-      - ./backend/src:/app-backend/src
+      - "8081:8080"
     depends_on:
       - db
     environment:
-      - DATABASE_URL=jdbc:postgresql://db:5432/db
-      - DATABASE_USERNAME=mateco
-      - DATABASE_PASSWORD=1234
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - app-network
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "lsof", "-t", "-i:8080"]
-      timeout: 10s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
       retries: 5
 
   db:
-    image: postgres
-    hostname: postgres
+    image: postgres:16
     container_name: postgres-db
-    ports:
-      - '5432:5432'
     environment:
-      POSTGRES_USER: mateco
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - report_generator_db:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      # O healthcheck agora usa as variáveis para não falhar se você mudar o nome do usuário ou do banco
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  report_generator_db:

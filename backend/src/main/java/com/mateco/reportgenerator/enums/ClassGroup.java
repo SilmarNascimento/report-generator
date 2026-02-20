@@ -1,0 +1,12 @@
+package com.mateco.reportgenerator.enums;
+
+public enum ClassGroup {
+    SIMULADO_PRESENCIAL,
+    SIMULADO_ONLINE,
+    EXTENSIVO_PRESENCIAL,
+    EXTENSIVO_ONLINE,
+    INTENSIVO_PRESENCIAL,
+    INTENSIVO_ONLINE,
+    COMBO_PRESENCIAL,
+    COMBO_ONLINE
+}
