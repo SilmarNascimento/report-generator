@@ -2,7 +2,6 @@ package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileDownloadDto;
 import com.mateco.reportgenerator.controller.dto.jasperReportDto.DiagnosisReportDTO;
-import com.mateco.reportgenerator.controller.dto.questionDto.QuestionDetailDto;
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.*;
 import com.mateco.reportgenerator.model.repository.MockExamResponseRepository;
@@ -248,21 +247,6 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
                 .collect(Collectors.toList());
 
         return Sort.by(orders);
-    }
-
-    private String getCorrectLetterFromAlternatives(List<Alternative> alternatives) {
-        if (alternatives == null) return "?";
-
-        char[] letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
-
-        for (int i = 0; i < alternatives.size(); i++) {
-            if (alternatives.get(i).isQuestionAnswer()) {
-                if (i < letters.length) {
-                    return String.valueOf(letters[i]);
-                }
-            }
-        }
-        return "?";
     }
 
     public FileDownloadDto getDiagnosisPdfFile(UUID responseId) {
