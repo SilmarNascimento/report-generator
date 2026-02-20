@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  frontend:
+    container_name: app_frontend
+    image: app_frontend-image:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app-frontend
+      - /app-frontend/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  backend:
+    container_name: app_backend
+    image: app_backend-image:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8081:8080"
+      - "5005:5005"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DEVTOOLS_RESTART_POLL_INTERVAL=2s
+      - SPRING_DEVTOOLS_RESTART_QUIET_PERIOD=1s
+    volumes:
+      - ./backend:/app
+      - maven-repo:/root/.m2
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - report_generator_db:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  report_generator_db:
+  maven-repo:

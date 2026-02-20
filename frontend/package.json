@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode dev --config vite.config.ts",
+    "dev-exposed": "vite --host 0.0.0.0",
     "build:fast": "vite build",
     "build": "tsc && vite build",
     "start": "serve -s dist",
