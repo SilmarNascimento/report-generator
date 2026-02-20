@@ -29,7 +29,7 @@ public class Student implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User user;
 
-    @Column(nullable = false, unique = true, length = 11)
+    @Column(nullable = false, length = 11)
     private String cpf;
 
     @Column(length = 4, nullable = false)
