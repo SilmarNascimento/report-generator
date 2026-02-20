@@ -35,13 +35,13 @@ public class User implements UserDetails, Serializable {
     @Column(updatable = false, unique = true)
     private Long id;
 
-    @Column(length = 100, unique = true)
+    @Column(length = 100)
     private String username;
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 100, nullable = false, unique = true)
+    @Column(length = 100, nullable = false)
     private String email;
 
     @Column(nullable = true) //nullable = false quando houver login de estudantes
