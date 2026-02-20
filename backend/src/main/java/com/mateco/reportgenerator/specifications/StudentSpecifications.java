@@ -1,10 +1,8 @@
 package com.mateco.reportgenerator.specifications;
 
 import com.mateco.reportgenerator.controller.dto.student.StudentFilter;
-import com.mateco.reportgenerator.enums.ClassGroup; // Importe seu Enum
 import com.mateco.reportgenerator.model.entity.Student;
 import com.mateco.reportgenerator.utils.TextUtils;
-import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,11 +17,13 @@ public class StudentSpecifications {
 
     public static Specification<Student> withFilter(StudentFilter filter) {
         return (root, query, cb) -> {
-            if (!StringUtils.hasText(filter.query())) {
-                return null;
+            if (query.getResultType().equals(Student.class)) {
+                root.fetch("user", JoinType.LEFT);
             }
 
-            query.distinct(true);
+            if (filter == null || !StringUtils.hasText(filter.query())) {
+                return null;
+            }
 
             String termo = filter.query().trim();
             String termoNormalizado = TextUtils.normalize(termo).toLowerCase();
@@ -45,8 +45,7 @@ public class StudentSpecifications {
                 predicates.add(cb.like(root.get("cpf"), "%" + termoNumerico + "%"));
             }
 
-            Join<Student, ClassGroup> groupsJoin = root.join("classGroups", JoinType.LEFT);
-
+            var groupsJoin = root.join("classGroups", JoinType.LEFT);
             predicates.add(cb.like(
                     cb.lower(groupsJoin.as(String.class)),
                     likePattern
