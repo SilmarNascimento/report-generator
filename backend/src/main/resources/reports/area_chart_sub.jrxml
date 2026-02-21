@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="area_chart_sub"
+              pageWidth="316" pageHeight="46"
+              columnWidth="316"
+              leftMargin="0" rightMargin="0"
+              topMargin="0" bottomMargin="0"
+              whenNoDataType="AllSectionsNoDetail"
+              uuid="c3d4e5f6-a7b8-9012-cdef-123456789012">
+
+    <field name="label" class="java.lang.String"/>
+    <field name="value" class="java.lang.Double"/>
+    <field name="displayValue" class="java.lang.String"/>
+
+    <detail>
+        <band height="14" splitType="Stretch">
+            <!-- Area label -->
+            <textField>
+                <reportElement x="0" y="1" width="100" height="12" uuid="area_label"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="6.5" fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{label} + ":"]]></textFieldExpression>
+            </textField>
+            <!-- Display value -->
+            <textField>
+                <reportElement x="104" y="1" width="210" height="12" uuid="area_value"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="6.5" isBold="true" fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{displayValue}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

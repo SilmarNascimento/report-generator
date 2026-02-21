@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+        http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="student_diagnosis"
+    pageWidth="595" pageHeight="842"
+    columnWidth="555"
+    leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20"
+    whenNoDataType="AllSectionsNoDetail"
+    isTitleNewPage="false">
+
+    <!-- 1. style (DEVE ser o primeiro elemento filho) -->
+    <style name="tableHeader" isBold="true" fontSize="7"
+           backcolor="#2E4089" forecolor="#FFFFFF" mode="Opaque"/>
+    <style name="correct" fontSize="7" forecolor="#217346" isBold="true"/>
+    <style name="wrong"   fontSize="7" forecolor="#C00000" isBold="true"/>
+
+    <!-- 2. subDataset -->
+
+    <!-- 3. parameter -->
+    <parameter name="studentName"      class="java.lang.String"/>
+    <parameter name="examName"         class="java.lang.String"/>
+    <parameter name="examYear"         class="java.lang.String"/>
+    <parameter name="correctAnswers"   class="java.lang.Integer"/>
+    <parameter name="totalQuestions"   class="java.lang.Integer"/>
+    <parameter name="ipmScore"         class="java.lang.Double"/>
+    <parameter name="icpPrevious"      class="java.lang.Double"/>
+    <parameter name="punishmentScore"  class="java.lang.Double"/>
+    <parameter name="easyMissedList"   class="java.lang.String"/>
+    <parameter name="hardMissedList"   class="java.lang.String"/>
+    <parameter name="subjectsToReview" class="java.lang.String"/>
+    <parameter name="areaPerformanceStr"  class="java.lang.String"/>
+    <parameter name="top5SubjectsStr"     class="java.lang.String"/>
+    <parameter name="LOGO_MATECO"       class="java.io.InputStream"/>
+    <parameter name="VISAO_POR_AREA"    class="java.io.InputStream"/>
+    <parameter name="O_QUE_REVISAR"     class="java.io.InputStream"/>
+    <parameter name="DISTRIBUICAO"      class="java.io.InputStream"/>
+    <parameter name="TOP_5_ASSUNTOS"    class="java.io.InputStream"/>
+    <parameter name="ERROU_MAS_TA_OK"   class="java.io.InputStream"/>
+    <parameter name="NAO_DEVERIA_ERRAR" class="java.io.InputStream"/>
+
+    <!-- 4. field -->
+    <field name="id" class="java.lang.Integer"/>
+    <field name="level"          class="java.lang.String"/>
+    <field name="officialAnswer" class="java.lang.String"/>
+    <field name="studentAnswer"  class="java.lang.String"/>
+    <field name="status"         class="java.lang.String"/>
+    <field name="subject"    class="java.lang.String"/>
+
+    <!-- 5. title -->
+    <title>
+        <band height="60" splitType="Stretch">
+
+            <image scaleImage="RetainShape" hAlign="Left" vAlign="Middle">
+                <reportElement x="0" y="0" width="80" height="58"/>
+                <imageExpression><![CDATA[$P{LOGO_MATECO}]]></imageExpression>
+            </image>
+
+            <staticText>
+                <reportElement x="82" y="5" width="473" height="16"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DIAGNÓSTICO DO SIMULADO]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="82" y="22" width="473" height="14"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{examName} + " — " + $P{examYear}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="82" y="38" width="473" height="14" forecolor="#CC0000"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{studentName}]]></textFieldExpression>
+            </textField>
+
+            <line>
+                <reportElement x="0" y="59" width="555" height="1" forecolor="#2E4089"/>
+            </line>
+        </band>
+    </title>
+
+    <!-- 6. columnHeader -->
+    <columnHeader>
+        <band height="12">
+            <line>
+                <reportElement x="0" y="0" width="555" height="1"/>
+            </line>
+            <line>
+                <reportElement x="0" y="11" width="555" height="1"/>
+            </line>
+            <line>
+                <reportElement x="0" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="555" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="93" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="186" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="279" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="371" y="0" width="1" height="12"/>
+            </line>
+            <line>
+                <reportElement x="463" y="0" width="1" height="12"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="0" width="93" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="93" y="0" width="93" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[NÍVEL]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="186" y="0" width="93" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[GABARITO OFICIAL]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="279" y="0" width="92" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[SUAS RESPOSTAS]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="371" y="0" width="92" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[ACERTOU?]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="463" y="0" width="92" height="12" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[CONTEÚDO]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- 7. detail -->
+    <detail>
+        <band height="11" splitType="Stretch">
+
+            <rectangle>
+                <reportElement x="0" y="0" width="555" height="10"
+                    backcolor="#EEF0F8" mode="Opaque" forecolor="#EEF0F8">
+                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <line>
+                <reportElement x="0" y="10" width="555" height="1"/>
+            </line>
+            <line>
+                <reportElement x="0" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="555" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="93" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="186" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="279" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="371" y="0" width="1" height="11"/>
+            </line>
+            <line>
+                <reportElement x="463" y="0" width="1" height="11"/>
+            </line>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="0" y="0" width="93" height="10"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="93" y="0" width="93" height="10"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{level}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="186" y="0" width="93" height="10"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{officialAnswer}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="279" y="0" width="92" height="10"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{studentAnswer}]]></textFieldExpression>
+            </textField>
+            <!-- ✓ verde -->
+            <textField>
+                <reportElement x="371" y="0" width="92" height="10" forecolor="#217346">
+                    <printWhenExpression><![CDATA["✓".equals($F{status})]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="7" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+            </textField>
+            <!-- X vermelho -->
+            <textField>
+                <reportElement x="371" y="0" width="92" height="10" forecolor="#C00000">
+                    <printWhenExpression><![CDATA[!"✓".equals($F{status})]]></printWhenExpression>
+                </reportElement>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="7" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="463" y="0" width="92" height="10"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{subject}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+
+    <!-- 8. summary -->
+    <summary>
+        <band height="480" splitType="Stretch">
+
+            <!-- Visão por Área -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="8" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{VISAO_POR_AREA}]]></imageExpression>
+            </image>
+            <staticText>
+                <reportElement x="22" y="8" width="533" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Visão por Área]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="26" width="555" height="10" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Área / Resultado]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="0" y="36" width="555" height="60"/>
+                <textElement verticalAlignment="Top">
+                    <font size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{areaPerformanceStr} != null ? $P{areaPerformanceStr} : "-"]]></textFieldExpression>
+            </textField>
+
+            <!-- Top 5 Assuntos -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="108" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{TOP_5_ASSUNTOS}]]></imageExpression>
+            </image>
+            <staticText>
+                <reportElement x="22" y="108" width="533" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Top 5 Assuntos (por volume de questões)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="126" width="555" height="10" style="tableHeader"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Assunto / Acertos]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="0" y="136" width="555" height="50"/>
+                <textElement verticalAlignment="Top">
+                    <font size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{top5SubjectsStr} != null ? $P{top5SubjectsStr} : "-"]]></textFieldExpression>
+            </textField>
+
+            <!-- Distribuição -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="198" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{DISTRIBUICAO}]]></imageExpression>
+            </image>
+
+            <!-- O que revisar -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="224" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{O_QUE_REVISAR}]]></imageExpression>
+            </image>
+            <staticText>
+                <reportElement x="22" y="224" width="533" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[O que revisar (top 3 prioridades)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="242" width="110" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Assuntos prioritários:]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="82" y="242" width="473" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{subjectsToReview} != null ? $P{subjectsToReview} : "-"]]></textFieldExpression>
+            </textField>
+
+            <!-- Errou mas tá ok -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="265" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{ERROU_MAS_TA_OK}]]></imageExpression>
+            </image>
+            <staticText>
+                <reportElement x="22" y="265" width="533" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Errou mas tá ok (questões difíceis)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="283" width="110" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Questões:]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="82" y="283" width="473" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{hardMissedList} != null ? $P{hardMissedList} : "-"]]></textFieldExpression>
+            </textField>
+
+            <!-- Não deveria errar -->
+            <image scaleImage="RetainShape">
+                <reportElement x="0" y="306" width="18" height="14"/>
+                <imageExpression><![CDATA[$P{NAO_DEVERIA_ERRAR}]]></imageExpression>
+            </image>
+            <staticText>
+                <reportElement x="22" y="306" width="533" height="14"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Não deveria errar (questões fáceis)]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="324" width="110" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Questões:]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="82" y="324" width="473" height="10"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="7"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{easyMissedList} != null ? $P{easyMissedList} : "-"]]></textFieldExpression>
+            </textField>
+
+            <line>
+                <reportElement x="0" y="348" width="555" height="1" forecolor="#CCCCCC"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="352" width="555" height="9"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="6"/>
+                </textElement>
+                <text><![CDATA[Relatório gerado automaticamente pelo sistema Mateco — uso interno]]></text>
+            </staticText>
+
+        </band>
+    </summary>
+
+</jasperReport>

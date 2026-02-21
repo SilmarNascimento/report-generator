@@ -1,4 +1,4 @@
-import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { PdfPreview } from "../PdfPreview";
 import { cn } from "@/lib/utils";
@@ -16,17 +16,30 @@ export function DragDropPreviewFileUploader({
 }: DragDropPreviewFileUploaderProps) {
   const { register, setValue, watch } = useFormContext();
   const variableValue = watch(formVariable);
+  const {
+    ref: registerRef,
+    onChange: formOnChange,
+    ...rest
+  } = register(formVariable);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const previewUrl = useMemo(() => {
+  useEffect(() => {
     if (!variableValue) {
-      return url ?? "";
+      setPreviewUrl(url ?? "");
+      return;
     }
 
-    return URL.createObjectURL(variableValue);
-  }, [url, variableValue]);
+    if (!(variableValue instanceof File || variableValue instanceof Blob))
+      return;
+
+    const objectUrl = URL.createObjectURL(variableValue);
+    setPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [variableValue, url]);
 
   function selectFiles() {
     fileInputRef.current?.click();
@@ -105,14 +118,20 @@ export function DragDropPreviewFileUploader({
             </div>
 
             <input
-              {...register(formVariable)}
+              {...rest}
               name={formVariable}
               type="file"
               className="file"
-              ref={fileInputRef}
+              ref={(e) => {
+                registerRef(e);
+                fileInputRef.current = e;
+              }}
               hidden
               accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              onChange={handleFileSelect}
+              onChange={(e) => {
+                formOnChange(e);
+                handleFileSelect(e);
+              }}
             />
           </div>
         )}
