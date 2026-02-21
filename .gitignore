@@ -1,2 +1,5 @@
 .env
 .idea
+restore.sh
+backup.sh
+*.sql.gz
