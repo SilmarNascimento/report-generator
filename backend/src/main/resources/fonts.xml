@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="LeagueSpartan">
+        <normal><![CDATA[fonts/league_spartan/LeagueSpartan-Regular.ttf]]></normal>
+        <bold><![CDATA[fonts/league_spartan/LeagueSpartan-Black.ttf]]></bold>
+        <pdfEncoding><![CDATA[Identity-H]]></pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+</fontFamilies>
