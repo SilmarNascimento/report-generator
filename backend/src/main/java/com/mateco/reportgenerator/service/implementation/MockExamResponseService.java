@@ -2,7 +2,6 @@ package com.mateco.reportgenerator.service.implementation;
 
 import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileDownloadDto;
 import com.mateco.reportgenerator.controller.dto.jasperReportDto.DiagnosisReportDTO;
-import com.mateco.reportgenerator.controller.dto.jasperReportDto.Top5BarDTO;
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.FileEntity;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
@@ -134,68 +133,10 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
                 params.put(key, new ByteArrayInputStream(bytes));
             });
 
-            fillStudentParams(params, reportDto);
-
-            BufferedImage ipmChartImage = ChartGenerator.createDoughnutGauge(reportDto.ipmScore());
-            params.put("GRAFICO_IPM", ipmChartImage);
-            params.put("VALOR_IPM", reportDto.ipmScore());
-
-            List<Top5BarDTO> top5Bars = Top5BarDTO.from(reportDto.top5Subjects());
             JasperReport top5Subreport = jasperReportService.compileSubreport("top5_chart.jrxml");
             params.put("TOP5_SUBREPORT", top5Subreport);
-            params.put("TOP5_DATASOURCE", new JRBeanCollectionDataSource(top5Bars));
 
-            params.put("top5Subjects", new JRBeanCollectionDataSource(reportDto.top5Subjects()));
-            log.info("top5Subjects: {}", reportDto.top5Subjects());
-
-            params.put("areaPerformance", new JRBeanCollectionDataSource(reportDto.areaPerformance()));
-
-            String visaoPorAreaText = reportDto.areaPerformance().stream()
-                    .map(data -> data.label() + ": " + data.displayValue())
-                    .collect(Collectors.joining("\n"));
-
-            params.put("VISAO_POR_AREA_TEXT", visaoPorAreaText);
-
-            long totalFacil = 0, corretasFacil = 0;
-            long totalMedio = 0, corretasMedio = 0;
-            long totalDificil = 0, corretasDificil = 0;
-
-            // Varre a tabela de questões do relatório para contar os acertos e totais reais
-            for (var q : reportDto.questionTable()) {
-                String nivel = q.level() != null ? q.level().toUpperCase() : "";
-                boolean acertou = "✓".equals(q.status());
-
-                if (nivel.contains("FÁCIL") || nivel.contains("FACIL")) {
-                    totalFacil++;
-                    if (acertou) corretasFacil++;
-                } else if (nivel.contains("MÉDIO") || nivel.contains("MEDIO")) {
-                    totalMedio++;
-                    if (acertou) corretasMedio++;
-                } else if (nivel.contains("DIFÍCIL") || nivel.contains("DIFICIL")) {
-                    totalDificil++;
-                    if (acertou) corretasDificil++;
-                }
-            }
-
-            // Formata as strings e calcula a porcentagem (evitando divisão por zero)
-            String txtFacil = "FÁCIL: " + corretasFacil + " de " + totalFacil + " (" +
-                    (totalFacil > 0 ? Math.round((double) corretasFacil / totalFacil * 100) : 0) + "%)";
-            String txtMedio = "MÉDIO: " + corretasMedio + " de " + totalMedio + " (" +
-                    (totalMedio > 0 ? Math.round((double) corretasMedio / totalMedio * 100) : 0) + "%)";
-            String txtDificil = "DIFÍCIL: " + corretasDificil + " de " + totalDificil + " (" +
-                    (totalDificil > 0 ? Math.round((double) corretasDificil / totalDificil * 100) : 0) + "%)";
-
-            params.put("DISTRIBUICAO_TEXT", txtFacil + "\n" + txtMedio + "\n" + txtDificil);
-
-            List<String> assuntosParaRevisar = reportDto.subjectsToReview();
-
-            String revisar1 = assuntosParaRevisar.size() > 0 ? "1 - " + assuntosParaRevisar.get(0).toUpperCase() : "";
-            String revisar2 = assuntosParaRevisar.size() > 1 ? "2 - " + assuntosParaRevisar.get(1).toUpperCase() : "";
-            String revisar3 = assuntosParaRevisar.size() > 2 ? "3 - " + assuntosParaRevisar.get(2).toUpperCase() : "";
-
-            params.put("REVISAR_1", revisar1);
-            params.put("REVISAR_2", revisar2);
-            params.put("REVISAR_3", revisar3);
+            fillStudentParams(params, reportDto);
 
             byte[] pdfBytes = jasperReportService.generatePdf(
                     "diagnostico_simulado.jrxml",
@@ -281,7 +222,10 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         params.put("examYear", dto.examYear());
         params.put("correctAnswers", dto.correctAnswers());
         params.put("totalQuestions", dto.totalQuestions());
-        params.put("ipmScore", dto.ipmScore());
+
+        BufferedImage ipmChartImage = ChartGenerator.createDoughnutGauge(dto.ipmScore());
+        params.put("GRAFICO_IPM", ipmChartImage);
+        params.put("VALOR_IPM", dto.ipmScore());
 
         String naoDeviaErrarStr = dto.easyMissed().stream()
                 .map(String::valueOf)
@@ -290,8 +234,33 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         String errouMasTaOkStr = dto.hardMissed().stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(" "));
+
         params.put("naoDeviaErrar", naoDeviaErrarStr);
         params.put("errouMasTaOk", errouMasTaOkStr);
+        params.put("top5Subjects", new JRBeanCollectionDataSource(dto.top5Subjects()));
+        params.put("areaPerformance", new JRBeanCollectionDataSource(dto.areaPerformance()));
+
+        String visaoPorAreaText = dto.areaPerformance().stream()
+                .map(area -> area.label().toUpperCase() + ": " + area.displayValue())
+                .collect(Collectors.joining("\n"));
+        params.put("VISAO_POR_AREA_TEXT", visaoPorAreaText);
+
+        String distribuicaoText = dto.distribution().stream()
+                .sorted(java.util.Comparator.comparingInt(d -> {
+                    String label = d.label().toUpperCase();
+                    if (label.contains("FÁCIL") || label.contains("FACIL")) return 1;
+                    if (label.contains("MÉDIO") || label.contains("MEDIO")) return 2;
+                    if (label.contains("DIFÍCIL") || label.contains("DIFICIL")) return 3;
+                    return 4;
+                }))
+                .map(d -> d.label().toUpperCase() + ": " + d.displayValue())
+                .collect(Collectors.joining("\n"));
+        params.put("DISTRIBUICAO_TEXT", distribuicaoText);
+
+        List<String> assuntosParaRevisar = dto.subjectsToReview();
+        params.put("REVISAR_1", !assuntosParaRevisar.isEmpty() ? "1 - " + assuntosParaRevisar.get(0).toUpperCase() : "");
+        params.put("REVISAR_2", assuntosParaRevisar.size() > 1 ? "2 - " + assuntosParaRevisar.get(1).toUpperCase() : "");
+        params.put("REVISAR_3", assuntosParaRevisar.size() > 2 ? "3 - " + assuntosParaRevisar.get(2).toUpperCase() : "");
     }
 
     public PDDocument mergePDFs(List<FileEntity> fileEntities) throws IOException {

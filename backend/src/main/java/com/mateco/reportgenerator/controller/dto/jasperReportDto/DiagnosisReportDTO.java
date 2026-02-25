@@ -4,14 +4,12 @@ import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 public record DiagnosisReportDTO(
         String studentName,
         String examName,
@@ -26,6 +24,7 @@ public record DiagnosisReportDTO(
         List<Integer> easyMissed,
         List<Integer> hardMissed,
         List<ChartDataDTO> top5Subjects,
+        List<ChartDataDTO> distribution,
         List<ChartDataDTO> areaPerformance
 ) {
     public static DiagnosisReportDTO from(MockExamResponse response) {
@@ -70,7 +69,13 @@ public record DiagnosisReportDTO(
                 ))
                 .toList();
 
-        log.info("top5: {}", top5);
+        List<ChartDataDTO> distribution = response.getDifficultyPerformance().entrySet().stream()
+                .map(entry -> new ChartDataDTO(
+                        entry.getKey(),
+                        Double.parseDouble(entry.getValue().split(" ")[0]),
+                        entry.getValue()
+                ))
+                .toList();
 
         List<ChartDataDTO> area = response.getAreaPerformance().entrySet().stream()
                 .map(entry -> {
@@ -85,7 +90,7 @@ public record DiagnosisReportDTO(
                 response.getCorrectAnswers(), response.getTotalQuestions(), response.getIpmScore(),
                 response.getIcpPrevious(), response.getPunishmentScore(), table,
                 response.getSubjectsToReview(), response.getEasyMissedQuestions(),
-                response.getHardMissedQuestions(), top5, area
+                response.getHardMissedQuestions(), top5, distribution, area
         );
     }
 
