@@ -32,7 +32,7 @@
             <staticText>
                 <reportElement x="65" y="5" width="300" height="20"/>
                 <textElement>
-                    <font fontName="League Spartan" size="15" isBold="true"/>
+                    <font fontName="Antonio" size="15" isBold="true"/>
                 </textElement>
                 <text><![CDATA[DIAGNÓSTICO DO SIMULADO]]></text>
             </staticText>
@@ -40,7 +40,7 @@
             <textField>
                 <reportElement x="65" y="25" width="300" height="14"/>
                 <textElement>
-                    <font fontName="League Spartan" size="10" isBold="true"/>
+                    <font fontName="Antonio" size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{examName} + " - " + $P{examYear}]]></textFieldExpression>
             </textField>
@@ -48,7 +48,7 @@
             <textField>
                 <reportElement x="65" y="39" width="300" height="16" forecolor="#CC0000"/>
                 <textElement>
-                    <font fontName="League Spartan" size="11" isBold="true"/>
+                    <font fontName="Antonio" size="11" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$P{studentName}]]></textFieldExpression>
             </textField>
@@ -67,7 +67,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[ID]]></text>
             </staticText>
@@ -81,7 +81,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[NÍVEL]]></text>
             </staticText>
@@ -95,7 +95,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[GABARITO OFICIAL]]></text>
             </staticText>
@@ -109,7 +109,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[SUAS RESPOSTAS]]></text>
             </staticText>
@@ -123,7 +123,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[ACERTOU?]]></text>
             </staticText>
@@ -138,7 +138,7 @@
                     <rightPen lineWidth="1.0" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <text><![CDATA[CONTEÚDO]]></text>
             </staticText>
@@ -156,7 +156,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
             </textField>
@@ -168,7 +168,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{level}]]></textFieldExpression>
             </textField>
@@ -180,7 +180,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{officialAnswer}]]></textFieldExpression>
             </textField>
@@ -192,7 +192,7 @@
                     <bottomPen lineWidth="0.5" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{studentAnswer}]]></textFieldExpression>
             </textField>
@@ -220,7 +220,7 @@
                     <rightPen lineWidth="1.0" lineColor="#000000"/>
                 </box>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font fontName="League Spartan" size="8" isBold="true"/>
+                    <font fontName="Antonio" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{subject}]]></textFieldExpression>
             </textField>
