@@ -35,12 +35,16 @@ public class ChartGenerator {
         int outerRadius = 180;
         int thickness = 50;
 
-        // 1. Desenha as fatias do gráfico
-        drawArc(g2d, cx, cy, outerRadius, thickness, 180, -71, Color.decode("#C00000"));
-        drawArc(g2d, cx, cy, outerRadius, thickness, 108, -17, Color.decode("#FFC000"));
-        drawArc(g2d, cx, cy, outerRadius, thickness, 90, -53, Color.decode("#A9D18E"));
-        drawArc(g2d, cx, cy, outerRadius, thickness, 36, -36, Color.decode("#00B050"));
+        // 1. Desenha as fatias do gráfico (Total: 180 graus)
 
+        // Vermelho (40% -> 72 graus)
+        drawArc(g2d, cx, cy, outerRadius, thickness, 180, -72, Color.decode("#C00000"));
+        // Amarelo (15% -> 27 graus)
+        drawArc(g2d, cx, cy, outerRadius, thickness, 108, -27, Color.decode("#ffd966"));
+        // Verde Claro (15% -> 27 graus)
+        drawArc(g2d, cx, cy, outerRadius, thickness, 81, -27, Color.decode("#A9D18E"));
+        // Verde Escuro (30% -> 54 graus)
+        drawArc(g2d, cx, cy, outerRadius, thickness, 54, -54, Color.decode("#00B050"));
         // 2. Desenha a agulha fazendo o recorte
         drawNeedleWithGap(g2d, scoreValue, cx, cy, outerRadius);
 
@@ -71,7 +75,7 @@ public class ChartGenerator {
 
         int innerOffset = 55;
 
-        int gapPadding = 3;
+        int gapPadding = 7;
         Path2D.Double gap = new Path2D.Double();
         gap.moveTo(innerOffset - 2, 0);
         gap.lineTo(needleLength + 2, 4 + gapPadding);

@@ -174,7 +174,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 0]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -183,7 +183,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 5]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -192,7 +192,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 10]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -201,7 +201,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 15]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -210,7 +210,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 20]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -219,7 +219,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 25]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -228,7 +228,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 30]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -237,7 +237,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 35]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -246,7 +246,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 40]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -255,7 +255,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 45]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -264,7 +264,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 50]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -273,7 +273,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 55]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -282,7 +282,7 @@
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 60]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
@@ -292,7 +292,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 5]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -301,7 +301,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 10]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -310,7 +310,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 15]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -319,7 +319,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 20]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -328,7 +328,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 25]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -337,7 +337,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 30]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -346,7 +346,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 35]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -355,7 +355,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 40]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -364,7 +364,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 45]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -373,7 +373,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 50]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -382,7 +382,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 55]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -391,7 +391,7 @@
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 60]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
-                    <font fontName="RedHatDisplay" size="7" isBold="true"/>
+                    <font fontName="RedHatDisplay" size="6" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
@@ -402,10 +402,10 @@
     <summary>
         <band height="30">
             <rectangle>
-                <reportElement x="10" y="7" width="5" height="5" backcolor="#3993B0" forecolor="#3993B0" mode="Opaque"/>
+                <reportElement x="12" y="8" width="3" height="3" backcolor="#3993B0" forecolor="#3993B0" mode="Opaque"/>
             </rectangle>
             <staticText>
-                <reportElement x="19" y="5" width="40" height="10" backcolor="#FFFFFF" forecolor="#000000"
+                <reportElement x="18" y="5" width="45" height="10" backcolor="#FFFFFF" forecolor="#000000"
                                mode="Opaque"/>
                 <textElement verticalAlignment="Middle">
                     <font fontName="RedHatDisplay" size="6" isBold="true"/>
@@ -414,10 +414,10 @@
             </staticText>
 
             <rectangle>
-                <reportElement x="65" y="7" width="5" height="5" backcolor="#C0C0C0" forecolor="#C0C0C0" mode="Opaque"/>
+                <reportElement x="65" y="8" width="3" height="3" backcolor="#C0C0C0" forecolor="#C0C0C0" mode="Opaque"/>
             </rectangle>
             <staticText>
-                <reportElement x="74" y="5" width="60" height="10" backcolor="#FFFFFF" forecolor="#000000"
+                <reportElement x="71" y="5" width="60" height="10" backcolor="#FFFFFF" forecolor="#000000"
                                mode="Opaque"/>
                 <textElement verticalAlignment="Middle">
                     <font fontName="RedHatDisplay" size="6" isBold="true"/>
