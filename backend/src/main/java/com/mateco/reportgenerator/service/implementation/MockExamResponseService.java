@@ -162,8 +162,8 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
     //usar sempre os ultimos simulados de VISÃO POR ÁREA
     //usar esse metodo
     @Transactional
-    public void generateAllDiagnosisPdfs(List<UUID> responseIds) throws IOException {
-        List<MockExamResponse> responses = mockExamResponseRepository.findAllById(responseIds);
+    public void generateAllDiagnosisPdfs(List<MockExamResponse> responses) throws IOException {
+//        List<MockExamResponse> responses = mockExamResponseRepository.findAllById(responseIds);
 
         // 1. Carrega as imagens para a memória UMA ÚNICA VEZ
         Map<String, byte[]> imageBytesMap = loadAllImagesToMemory();
