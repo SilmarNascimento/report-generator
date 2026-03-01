@@ -24,6 +24,9 @@ export const mockExamService = {
     return apiService.postMultipart<MockExamDiagnosisResponse[]>(
       `/mock-exam/${mockExamId}/responses`,
       formData,
+      {
+        timeout: 30000,
+      },
     );
   },
 };

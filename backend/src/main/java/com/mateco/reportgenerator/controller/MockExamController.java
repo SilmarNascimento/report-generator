@@ -164,6 +164,8 @@ public class MockExamController {
 
         List<MockExamResponse> examResponses = mockExamService.registerAllMockExamResponses(mockExamId, mockExamResponses);
 
+        mockExamResponseService.generateAllDiagnosisPdfs(examResponses);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(MockExamResponseOutputDto.parseDto(examResponses));
@@ -185,6 +187,17 @@ public class MockExamController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+//    @PostMapping("/generate-diagnosis/batch")
+//    public ResponseEntity<Void> generateDiagnosisBatch(@RequestBody List<UUID> ids) {
+//        try {
+//            mockExamResponseService.generateAllDiagnosisPdfs(ids);
+//            return ResponseEntity.noContent().build();
+//        } catch (Exception e) {
+//            // Caso ocorra um erro de I/O ou outro problema grave que pare todo o lote
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
     @GetMapping("/{id}/download-diagnosis")
     public ResponseEntity<byte[]> downloadDiagnosis(@PathVariable UUID id) {
