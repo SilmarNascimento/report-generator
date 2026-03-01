@@ -174,6 +174,17 @@ public class MockExamController {
         mockExamResponseService.generateAndAttachDiagnosisPdf(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @PostMapping("/generate-diagnosis/batch")
+    public ResponseEntity<Void> generateDiagnosisBatch(@RequestBody List<UUID> ids) {
+        try {
+            mockExamResponseService.generateAllDiagnosisPdfs(ids);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            // Caso ocorra um erro de I/O ou outro problema grave que pare todo o lote
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @GetMapping("/{id}/download-diagnosis")
     public ResponseEntity<byte[]> downloadDiagnosis(@PathVariable UUID id) {
