@@ -139,7 +139,7 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             fillStudentParams(params, reportDto);
 
             byte[] pdfBytes = jasperReportService.generatePdf(
-                    "diagnostico_simulado.jrxml",
+                    "student_diagnosis.jrxml",
                     params,
                     new JRBeanCollectionDataSource(reportDto.questionTable())
             );
@@ -196,7 +196,7 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
 
                 // Gera o PDF apontando para o arquivo XML correto que acabamos de editar!
                 byte[] pdfBytes = jasperReportService.generatePdf(
-                        "diagnostico_simulado.jrxml",
+                        "student_diagnosis.jrxml",
                         studentParams,
                         new JRBeanCollectionDataSource(reportDto.questionTable())
                 );
@@ -243,80 +243,89 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
 
         BufferedImage ipmChartImage = ChartGenerator.createDoughnutGauge(dto.ipmScore());
         params.put("GRAFICO_IPM", ipmChartImage);
-// ==========================================
-        // DADOS REAIS DA PÁGINA 2 (EVOLUÇÃO PESSOAL)
         // ==========================================
-
-        // 1. Busca o histórico completo do aluno (do primeiro que ele fez até o atual)
+        // DADOS DO HISTÓRICO (GERAÇÃO UNIFICADA O(N))
+        // ==========================================
         List<MockExamResponse> historicoCompleto = mockExamResponseRepository
                 .findAllByNameOrderByCreatedAtAsc(dto.studentName());
-        // ==========================================
-        // DADOS DO GRÁFICO DE LINHAS (IPM) - HÍBRIDO
-        // ==========================================
-        List<Map<String, Object>> dadosHistoricoIpm = new ArrayList<>();
-        int totalHistoricoIpm = historicoCompleto.size();
 
-        // Define o limite: no máximo 25, no mínimo 5 slots (para alinhar com o gráfico de barras)
-        int quantidadeMostrarIpm = Math.max(5, Math.min(totalHistoricoIpm, 25));
-        int startIndexIpm = Math.max(0, totalHistoricoIpm - 25);
-
-        for (int i = 0; i < quantidadeMostrarIpm; i++) {
-            Map<String, Object> map = new HashMap<>();
-            int indexReal = startIndexIpm + i;
-
-            if (indexReal < totalHistoricoIpm) {
-                // DADO REAL
-                MockExamResponse resp = historicoCompleto.get(indexReal);
-                String label = (quantidadeMostrarIpm > 7) ?
-                        "S" + String.format("%02d", indexReal + 1) :
-                        "SIMULADO " + String.format("%02d", indexReal + 1);
-
-                map.put("label", label);
-                Double ipm = resp.getIpmScore() != null ? resp.getIpmScore() : 0.0;
-                map.put("value", ipm);
-            } else {
-                // FANTASMA: Garante os slots vazios na direita para empurrar a linha para a esquerda
-                map.put("label", " ".repeat(i + 1));
-                map.put("value", null); // Valor nulo = a linha para de ser desenhada aqui
-            }
-            dadosHistoricoIpm.add(map);
-        }
-
-        params.put("GRAFICO_HISTORICO_IPM", new JRBeanCollectionDataSource(dadosHistoricoIpm));
-        // ==========================================
-        // DADOS DO GRÁFICO DE BARRAS (HÍBRIDO: FANTASMAS + DINÂMICO)
-        // ==========================================
-        List<Map<String, Object>> dadosDesempenho = new ArrayList<>();
         int totalHistorico = historicoCompleto.size();
-
-        // Define o limite: no máximo os 25 mais recentes, no mínimo 5 slots (para design)
         int quantidadeMostrar = Math.max(5, Math.min(totalHistorico, 25));
         int startIndex = Math.max(0, totalHistorico - 25);
 
+        List<Map<String, Object>> dadosIpm = new ArrayList<>();
+        List<Map<String, Object>> dadosDesempenho = new ArrayList<>();
+        List<Map<String, Object>> dadosAritmetica = new ArrayList<>();
+        List<Map<String, Object>> dadosAlgebra = new ArrayList<>();
+        List<Map<String, Object>> dadosGeometria = new ArrayList<>();
+
         for (int i = 0; i < quantidadeMostrar; i++) {
-            Map<String, Object> entry = new HashMap<>();
+            Map<String, Object> mapIpm = new HashMap<>();
+            Map<String, Object> mapDes = new HashMap<>();
+            Map<String, Object> mapArit = new HashMap<>();
+            Map<String, Object> mapAlg = new HashMap<>();
+            Map<String, Object> mapGeo = new HashMap<>();
+
             int indexReal = startIndex + i;
 
             if (indexReal < totalHistorico) {
-                // DADO REAL
                 MockExamResponse resp = historicoCompleto.get(indexReal);
-                String label = (quantidadeMostrar > 7) ?
+
+                // 1. Labels
+                String labelLongo = (quantidadeMostrar > 7) ?
                         "S" + String.format("%02d", indexReal + 1) :
                         "SIMULADO " + String.format("%02d", indexReal + 1);
+                String labelCurto = "S" + (indexReal + 1);
 
-                entry.put("label", label);
-                Integer corretas = resp.getCorrectAnswers();
-                entry.put("value", corretas != null ? corretas : 0);
+                mapIpm.put("label", labelLongo);
+                mapDes.put("label", labelLongo);
+                mapArit.put("label", labelCurto);
+                mapAlg.put("label", labelCurto);
+                mapGeo.put("label", labelCurto);
+
+                // 2. Valores
+                mapIpm.put("value", resp.getIpmScore() != null ? resp.getIpmScore() : 0.0);
+                mapDes.put("value", resp.getCorrectAnswers() != 0 ? resp.getCorrectAnswers() : 0);
+
+                Map<String, String> areaMap = resp.getAreaPerformance();
+                mapArit.put("value", parsePorcentagem(areaMap.get("ARITMETICA")));
+                mapAlg.put("value", parsePorcentagem(areaMap.get("ALGEBRA")));
+                mapGeo.put("value", parsePorcentagem(areaMap.get("GEOMETRIA")));
+
             } else {
-                // FANTASMA: Mantém a estrutura intacta alinhada à esquerda
-                entry.put("label", " ".repeat(i + 1));
-                entry.put("value", null);
+                // 3. Fantasmas (Slots vazios para alinhamento)
+                String fantasma = " ".repeat(i + 1);
+
+                mapIpm.put("label", fantasma);
+                mapIpm.put("value", null);
+                mapDes.put("label", fantasma);
+                mapDes.put("value", null);
+                mapArit.put("label", fantasma);
+                mapArit.put("value", null);
+                mapAlg.put("label", fantasma);
+                mapAlg.put("value", null);
+                mapGeo.put("label", fantasma);
+                mapGeo.put("value", null);
             }
-            dadosDesempenho.add(entry);
+
+            dadosIpm.add(mapIpm);
+            dadosDesempenho.add(mapDes);
+            dadosAritmetica.add(mapArit);
+            dadosAlgebra.add(mapAlg);
+            dadosGeometria.add(mapGeo);
         }
 
+        // ==========================================
+        // INJEÇÃO NO JASPER
+        // ==========================================
+        params.put("TOTAL_SIMULADOS", totalHistorico);
+        params.put("GRAFICO_HISTORICO_IPM", new JRBeanCollectionDataSource(dadosIpm));
         params.put("GRAFICO_HISTORICO_DESEMPENHO_DATA", new JRBeanCollectionDataSource(dadosDesempenho));
-        params.put("GRAFICO_HISTORICO_AREAS", ipmChartImage);
+
+        // As listas de área vão cruas porque o Jasper faz o 'new JRBeanCollectionDataSource' no XML
+        params.put("GRAFICO_AREA_ARITMETICA", dadosAritmetica);
+        params.put("GRAFICO_AREA_ALGEBRA", dadosAlgebra);
+        params.put("GRAFICO_AREA_GEOMETRIA", dadosGeometria);
 
         // Passa a lista de dados nativa para o Jasper
         params.put("VALOR_IPM", dto.ipmScore());
@@ -406,5 +415,14 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
 
     private InputStream getImageFromResources(String imageName) {
         return getClass().getResourceAsStream("/static/images/" + imageName + ".png");
+    }
+
+    private double parsePorcentagem(String val) {
+        if (val == null || !val.contains("(")) return 0.0;
+        try {
+            return Double.parseDouble(val.substring(val.indexOf("(") + 1, val.indexOf("%")));
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 }
