@@ -99,4 +99,5 @@ public record DiagnosisReportDTO(
                 .map(DiagnosisReportDTO::from)
                 .collect(Collectors.toList());
     }
+
 }

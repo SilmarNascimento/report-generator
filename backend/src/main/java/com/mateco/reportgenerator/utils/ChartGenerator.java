@@ -98,4 +98,5 @@ public class ChartGenerator {
 
         g2d.setTransform(oldTransform);
     }
+
 }
