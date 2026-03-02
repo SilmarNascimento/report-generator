@@ -8,11 +8,13 @@ import com.mateco.reportgenerator.model.entity.MockExamResponse;
 import com.mateco.reportgenerator.service.MockExamResponseServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -78,14 +80,11 @@ public class MockExamResponseController {
         FileEntity fileEntity = mockExamResponse.getDiagnosisPdfFile();
         byte[] pdfContent = fileEntity.getFileContent().getContent();
 
-        ContentDisposition contentDisposition = ContentDisposition.attachment()
-                .filename(fileEntity.getFileName(), StandardCharsets.UTF_8)
-                .build();
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + fileEntity.getFileName() + "\"")
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
                 .body(pdfContent);
     }
