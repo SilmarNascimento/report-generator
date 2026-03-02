@@ -78,14 +78,11 @@ public class MockExamResponseController {
         FileEntity fileEntity = mockExamResponse.getDiagnosisPdfFile();
         byte[] pdfContent = fileEntity.getFileContent().getContent();
 
-        ContentDisposition contentDisposition = ContentDisposition.attachment()
-                .filename(fileEntity.getFileName(), StandardCharsets.UTF_8)
-                .build();
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + fileEntity.getFileName() + "\"")
                 .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
                 .body(pdfContent);
     }
