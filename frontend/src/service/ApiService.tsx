@@ -202,6 +202,16 @@ class ApiService {
 
     return response.data;
   }
+
+  async getFullResponse<T = Blob>(
+    endpoint: string,
+    config?: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
+    return await this.api.get<T>(endpoint, {
+      ...config,
+      responseType: "blob",
+    });
+  }
 }
 
 const apiService = new ApiService();
