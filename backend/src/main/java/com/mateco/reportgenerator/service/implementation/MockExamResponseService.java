@@ -163,12 +163,10 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
     //usar esse metodo
     @Transactional
     public void generateAllDiagnosisPdfs(List<MockExamResponse> responses) throws IOException {
-//        List<MockExamResponse> responses = mockExamResponseRepository.findAllById(responseIds);
-
         // 1. Carrega as imagens para a memória UMA ÚNICA VEZ
         Map<String, byte[]> imageBytesMap = loadAllImagesToMemory();
 
-        // 2. Compila o sub-relatório UMA ÚNICA VEZ fora do loop (Otimização pesada de processamento)
+        // 2. Compila o sub-relatório UMA ÚNICA VEZ fora do loop
         JasperReport top5Subreport;
         try {
             top5Subreport = jasperReportService.compileSubreport("top5_chart.jrxml");
@@ -176,46 +174,94 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             throw new RuntimeException("Falha ao compilar o sub-relatório do Top 5: " + e.getMessage(), e);
         }
 
-        // 3. Itera gerando os relatórios em lote
+        // 3. Itera gerando os relatórios em lote e mesclando
         for (MockExamResponse response : responses) {
             try {
                 DiagnosisReportDTO reportDto = DiagnosisReportDTO.from(response);
-
                 Map<String, Object> studentParams = new HashMap<>();
 
-                // Recria os InputStreams das imagens em memória para este relatório específico
+                // Recria os InputStreams das imagens em memória
                 imageBytesMap.forEach((key, bytes) -> {
                     studentParams.put(key, new ByteArrayInputStream(bytes));
                 });
 
-                // Injeta o sub-relatório compilado
                 studentParams.put("TOP5_SUBREPORT", top5Subreport);
-
-                // Preenche o resto dos parâmetros com o método auxiliar
                 fillStudentParams(studentParams, reportDto);
 
-                // Gera o PDF apontando para o arquivo XML correto que acabamos de editar!
-                byte[] pdfBytes = jasperReportService.generatePdf(
+                // ==============================================================
+                // PASSO A: GERA O RELATÓRIO DO ALUNO (O "MIOLO" DO PDF)
+                // ==============================================================
+                byte[] jasperPdfBytes = jasperReportService.generatePdf(
                         "student_diagnosis.jrxml",
                         studentParams,
                         new JRBeanCollectionDataSource(reportDto.questionTable())
                 );
 
-                FileEntity pdfEntity = new FileEntity(
-                        pdfBytes,
-                        "diagnostico_" + reportDto.studentName().replaceAll("\\s+", "_") + ".pdf",
+                // Transforma o byte[] do Jasper em um FileEntity temporário para o Merge
+                FileEntity jasperReportPdfEntity = new FileEntity(
+                        jasperPdfBytes,
+                        "diagnostico_base_" + reportDto.studentName().replaceAll("\\s+", "_") + ".pdf",
                         "application/pdf"
                 );
 
-                response.setDiagnosisPdfFile(pdfEntity);
+                // ==============================================================
+                // PASSO B: PREPARA A LISTA DE MESCLAGEM (MERGE)
+                // ==============================================================
+                MockExam mockExam = response.getMockExam();
+                List<FileEntity> pdfFilesToMerge = new ArrayList<>();
+
+                // 1. Capa
+                if (mockExam.getCoverPdfFile() != null) {
+                    pdfFilesToMerge.add(mockExam.getCoverPdfFile());
+                }
+
+                // 2. O Relatório Diagnóstico (Gerado agora pelo Jasper)
+                pdfFilesToMerge.add(jasperReportPdfEntity);
+
+                // 3. Matriz de Referência
+                if (mockExam.getMatrixPdfFile() != null) {
+                    pdfFilesToMerge.add(mockExam.getMatrixPdfFile());
+                }
+
+                // 4. Questões Adaptadas (baseado nos erros)
+                List<Integer> missedNumbers = response.getMissedMainQuestionNumbers();
+                Map<Integer, MainQuestion> mainQuestionMap = mockExam.getMockExamQuestions();
+
+                if (missedNumbers != null && mainQuestionMap != null) {
+                    for (Integer questionNumber : missedNumbers) {
+                        MainQuestion mainQuestion = mainQuestionMap.get(questionNumber);
+                        if (mainQuestion != null && mainQuestion.getAdaptedQuestionsPdfFile() != null) {
+                            pdfFilesToMerge.add(mainQuestion.getAdaptedQuestionsPdfFile());
+                        }
+                    }
+                }
+
+                // 5. Resoluções/Gabarito
+                if (mockExam.getAnswersPdfFile() != null) {
+                    pdfFilesToMerge.add(mockExam.getAnswersPdfFile());
+                }
+
+                // ==============================================================
+                // PASSO C: EXECUTA O MERGE E SALVA NA RESPOSTA
+                // ==============================================================
+                PDDocument mergedPDFDocument = mergePDFs(pdfFilesToMerge);
+
+                String finalFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + response.getName().toUpperCase() + ".pdf";
+
+                FileEntity finalDiagnosisPdfEntity = new FileEntity(mergedPDFDocument, finalFileName);
+
+                // IMPORTANTE: Fechar o documento para evitar vazamento de memória (Memory Leak)
+                mergedPDFDocument.close();
+
+                response.setDiagnosisPdfFile(finalDiagnosisPdfEntity);
 
             } catch (Exception e) {
                 // Se der erro em um aluno, loga o erro mas NÃO QUEBRA o lote inteiro
-                log.error("Falha ao gerar o PDF de diagnóstico para a resposta ID: {}", response.getId(), e);
+                log.error("Falha ao gerar e mesclar o PDF de diagnóstico para a resposta ID: {}", response.getId(), e);
             }
         }
 
-        // 4. Salva todas as respostas atualizadas com os PDFs de uma vez no banco
+        // 4. Salva todas as respostas atualizadas com os PDFs gigantes já mesclados no banco
         mockExamResponseRepository.saveAll(responses);
     }
 
