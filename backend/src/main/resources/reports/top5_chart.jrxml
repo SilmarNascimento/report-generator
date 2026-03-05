@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              name="top5_chart" pageWidth="140"
+              name="top5_chart" pageWidth="145"
               pageHeight="600"
-              columnWidth="140" leftMargin="0"
+              columnWidth="145" leftMargin="0"
               rightMargin="0" topMargin="0"
               bottomMargin="0"
               xmlns="http://jasperreports.sourceforge.net/jasperreports"
@@ -31,137 +31,17 @@
     <detail>
         <band height="24" splitType="Stretch">
 
+            <!-- Linha separadora: x=66 (56+10, gap de 10px antes da linha) -->
             <line>
-                <reportElement x="53" y="0" width="1" height="24" forecolor="#D0D0D0"/>
+                <reportElement x="66" y="0" width="1" height="24" forecolor="#D0D0D0"/>
                 <graphicElement>
                     <pen lineWidth="1.0"/>
                 </graphicElement>
             </line>
 
-            <rectangle>
-                <reportElement x="55" y="3" width="5" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 5]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="10" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 10]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="15" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 15]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="20" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 20]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="25" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 25]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="30" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 30]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="35" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 35]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="40" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 40]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="45" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 45]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="50" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 50]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="55" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 55]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="3" width="60" height="7" backcolor="#3993B0" forecolor="#3993B0">
-                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 60]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-
-            <rectangle>
-                <reportElement x="55" y="12" width="5" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 5]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="10" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 10]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="15" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 15]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="20" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 20]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="25" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 25]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="30" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 30]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="35" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 35]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="40" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 40]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="45" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 45]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="50" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 50]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="55" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 55]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="55" y="12" width="60" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
-                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 60]]></printWhenExpression>
-                </reportElement>
-            </rectangle>
-
+            <!-- Label: width=56 -->
             <textField isStretchWithOverflow="true">
-                <reportElement x="0" y="0" width="44" height="24" backcolor="#FFFFFF" forecolor="#000000"
+                <reportElement x="0" y="0" width="56" height="24" backcolor="#FFFFFF" forecolor="#000000"
                                mode="Opaque"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font fontName="RedHatDisplay" size="6" isBold="true"/>
@@ -169,8 +49,133 @@
                 <textFieldExpression><![CDATA[$F{label} != null ? $F{label}.toUpperCase() : ""]]></textFieldExpression>
             </textField>
 
+            <!-- Barras ACERTOS (azul) x=67 -->
+            <rectangle>
+                <reportElement x="67" y="3" width="5" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 5]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="10" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 10]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="15" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 15]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="20" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 20]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="25" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 25]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="30" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 30]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="35" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 35]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="40" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 40]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="45" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 45]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="50" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 50]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="55" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 55]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="3" width="60" height="7" backcolor="#3993B0" forecolor="#3993B0">
+                    <printWhenExpression><![CDATA[$V{acertosWidthPx} == 60]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+
+            <!-- Barras TOTAL (cinza) x=67 -->
+            <rectangle>
+                <reportElement x="67" y="12" width="5" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 5]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="10" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 10]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="15" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 15]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="20" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 20]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="25" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 25]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="30" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 30]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="35" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 35]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="40" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 40]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="45" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 45]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="50" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 50]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="55" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 55]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <rectangle>
+                <reportElement x="67" y="12" width="60" height="7" backcolor="#C0C0C0" forecolor="#C0C0C0">
+                    <printWhenExpression><![CDATA[$V{totalWidthPx} == 60]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+
+            <!-- Números ACERTOS (azul): x = 67 + widthPx + 2 -->
             <textField>
-                <reportElement x="57" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="69" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 0]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -179,7 +184,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="62" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="74" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 5]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -188,7 +193,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="67" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="79" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 10]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -197,7 +202,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="72" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="84" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 15]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -206,7 +211,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="77" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="89" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 20]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -215,7 +220,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="82" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="94" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 25]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -224,7 +229,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="87" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="99" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 30]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -233,7 +238,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="92" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="104" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 35]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -242,7 +247,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="97" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="109" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 40]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -251,7 +256,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="102" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="114" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 45]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -260,7 +265,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="107" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="119" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 50]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -269,7 +274,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="112" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="124" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 55]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -278,7 +283,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="117" y="1" width="13" height="11" forecolor="#3993B0">
+                <reportElement x="129" y="1" width="13" height="11" forecolor="#3993B0">
                     <printWhenExpression><![CDATA[$V{acertosWidthPx} == 60]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -287,8 +292,9 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[0].trim()]]></textFieldExpression>
             </textField>
 
+            <!-- Números TOTAL (preto): x = 67 + widthPx + 2 -->
             <textField>
-                <reportElement x="62" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="74" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 5]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -297,7 +303,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="67" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="79" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 10]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -306,7 +312,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="72" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="84" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 15]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -315,7 +321,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="77" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="89" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 20]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -324,7 +330,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="82" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="94" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 25]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -333,7 +339,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="87" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="99" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 30]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -342,7 +348,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="92" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="104" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 35]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -351,7 +357,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="97" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="109" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 40]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -360,7 +366,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="102" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="114" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 45]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -369,7 +375,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="107" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="119" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 50]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -378,7 +384,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="112" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="124" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 55]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -387,7 +393,7 @@
                 <textFieldExpression><![CDATA[$F{displayValue}.split(" de ")[1].trim()]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="117" y="10" width="13" height="11" forecolor="#000000">
+                <reportElement x="129" y="10" width="13" height="11" forecolor="#000000">
                     <printWhenExpression><![CDATA[$V{totalWidthPx} == 60]]></printWhenExpression>
                 </reportElement>
                 <textElement verticalAlignment="Middle">
@@ -417,7 +423,7 @@
                 <reportElement x="65" y="8" width="3" height="3" backcolor="#C0C0C0" forecolor="#C0C0C0" mode="Opaque"/>
             </rectangle>
             <staticText>
-                <reportElement x="71" y="5" width="60" height="10" backcolor="#FFFFFF" forecolor="#000000"
+                <reportElement x="71" y="5" width="65" height="10" backcolor="#FFFFFF" forecolor="#000000"
                                mode="Opaque"/>
                 <textElement verticalAlignment="Middle">
                     <font fontName="RedHatDisplay" size="6" isBold="true"/>
