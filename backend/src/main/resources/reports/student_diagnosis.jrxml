@@ -174,7 +174,7 @@ MATECO (IPM)]]></text>
                 </staticText>
 
                 <subreport>
-                    <reportElement x="385" y="346" width="140" height="150"/>
+                    <reportElement x="385" y="346" width="145" height="150"/>
                     <dataSourceExpression><![CDATA[$P{top5Subjects}]]></dataSourceExpression>
                     <subreportExpression><![CDATA[$P{TOP5_SUBREPORT}]]></subreportExpression>
                 </subreport>
