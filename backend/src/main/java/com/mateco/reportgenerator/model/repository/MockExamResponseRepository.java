@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface MockExamResponseRepository extends JpaRepository<MockExamResponse, UUID> {
-    @Query("SELECT response FROM MockExamResponse response WHERE response.name LIKE %:query% OR response.email LIKE %:query%")
+    @Query("SELECT response FROM MockExamResponse response " +
+            "WHERE response.name ILIKE CONCAT('%', :query, '%') " +
+            "OR response.email ILIKE CONCAT('%', :query, '%') " +
+            "OR response.mockExam.name ILIKE CONCAT('%', :query, '%')")
     Page<MockExamResponse> findByQuery(@Param("query") String query, Pageable pageable);
 
     List<MockExamResponse> findAllByNameOrderByCreatedAtAsc(String name);
