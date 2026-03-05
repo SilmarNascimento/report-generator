@@ -14,7 +14,8 @@ public interface MockExamResponseRepository extends JpaRepository<MockExamRespon
     @Query("SELECT response FROM MockExamResponse response " +
             "WHERE response.name ILIKE CONCAT('%', :query, '%') " +
             "OR response.email ILIKE CONCAT('%', :query, '%') " +
-            "OR response.mockExam.name ILIKE CONCAT('%', :query, '%')")
+            "OR response.mockExam.name ILIKE CONCAT('%', :query, '%')" +
+            "OR response.mockExam.examCode ILIKE CONCAT('%', :query, '%')")
     Page<MockExamResponse> findByQuery(@Param("query") String query, Pageable pageable);
 
     List<MockExamResponse> findAllByNameOrderByCreatedAtAsc(String name);

@@ -39,6 +39,8 @@ public class MockExam {
 
     private int number;
 
+    private String examCode;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cover_file_id")
     private FileEntity coverPdfFile;
@@ -82,6 +84,7 @@ public class MockExam {
         this.releasedYear = releasedYear;
         this.number = number;
         this.mockExamQuestions = new HashMap<>();
+        this.examCode = generateCode();
     }
 
     public static MockExam parseMockExam(MockExamInputDto examInputDto) {
@@ -109,6 +112,12 @@ public class MockExam {
 
     public String generateCode() {
         return this.releasedYear + ":S" + this.number + "-" + this.className.get(0);
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void generateAndSetCode() {
+        this.examCode = this.generateCode();
     }
 
     public List<Integer> findAllAvailableSlots() {
