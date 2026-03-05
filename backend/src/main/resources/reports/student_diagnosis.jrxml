@@ -228,7 +228,7 @@ MATECO (IPM)]]></text>
                 </frame>
 
                 <frame>
-                    <reportElement x="385" y="650" width="140" height="70"/>
+                    <reportElement x="385" y="650" width="155" height="70"/>
                     <image scaleImage="RetainShape" hAlign="Left" vAlign="Middle">
                         <reportElement x="0" y="0" width="18" height="18"/>
                         <imageExpression><![CDATA[$P{O_QUE_REVISAR}]]></imageExpression>
@@ -241,7 +241,7 @@ MATECO (IPM)]]></text>
                         <text><![CDATA[O QUE REVISAR?]]></text>
                     </staticText>
                     <textField isStretchWithOverflow="true">
-                        <reportElement x="0" y="25" width="140" height="13" forecolor="#C00000"/>
+                        <reportElement x="0" y="25" width="155" height="13" forecolor="#C00000"/>
                         <textElement>
                             <font fontName="RedHatDisplay" size="8" isBold="true"/>
                         </textElement>
@@ -249,7 +249,7 @@ MATECO (IPM)]]></text>
                             <![CDATA[$P{REVISAR_1} != null ? $P{REVISAR_1}.toUpperCase() : ""]]></textFieldExpression>
                     </textField>
                     <textField isStretchWithOverflow="true">
-                        <reportElement x="0" y="40" width="140" height="13" forecolor="#000000"/>
+                        <reportElement x="0" y="40" width="155" height="13" forecolor="#000000"/>
                         <textElement>
                             <font fontName="RedHatDisplay" size="8" isBold="true"/>
                         </textElement>
@@ -257,7 +257,7 @@ MATECO (IPM)]]></text>
                             <![CDATA[$P{REVISAR_2} != null ? $P{REVISAR_2}.toUpperCase() : ""]]></textFieldExpression>
                     </textField>
                     <textField isStretchWithOverflow="true">
-                        <reportElement x="0" y="55" width="140" height="13" forecolor="#0070C0"/>
+                        <reportElement x="0" y="55" width="155" height="13" forecolor="#0070C0"/>
                         <textElement>
                             <font fontName="RedHatDisplay" size="8" isBold="true"/>
                         </textElement>
