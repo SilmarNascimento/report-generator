@@ -7,11 +7,11 @@ import com.mateco.reportgenerator.controller.dto.user.UserResponseDto;
 import com.mateco.reportgenerator.model.entity.User;
 import com.mateco.reportgenerator.service.implementation.TokenService;
 import com.mateco.reportgenerator.service.implementation.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody @Validated AuthenticationDto data) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid AuthenticationDto data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
@@ -36,7 +36,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@RequestBody @Validated UserCreateDto data) {
+    public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserCreateDto data) {
         var userResponse = userService.createUser(data);
         return ResponseEntity.ok(userResponse);
     }
