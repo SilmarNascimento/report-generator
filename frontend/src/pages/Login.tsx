@@ -4,28 +4,35 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../components/ui/shadcn/button";
 import { useNavigate } from "react-router-dom";
-//import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from "@/components/Auth/AuthContext";
 
-const createTagSchema = z.object({
+const loginSchema = z.object({
   username: z.string().min(3, { message: "Minimum 3 characters." }),
-  password: z.string().min(5),
+  password: z.string().min(5, { message: "Minimum 5 characters." }),
 });
 
-type LoginSchema = z.infer<typeof createTagSchema>;
+type LoginSchema = z.infer<typeof loginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginSchema>({
-    resolver: zodResolver(createTagSchema),
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<LoginSchema> = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    navigate("/mock-exams");
+  const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
+    try {
+      await login(data);
+      navigate("/mock-exams");
+    } catch (err: any) {
+      const status = err?.response?.status;
+      if (status === 401 || status === 403) return;
+    }
   };
 
   return (
@@ -40,7 +47,7 @@ export function Login() {
           type="text"
           className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
         />
-        {errors?.username && (
+        {errors.username && (
           <p className="text-sm text-red-400">{errors.username.message}</p>
         )}
       </div>
@@ -52,16 +59,16 @@ export function Login() {
         <input
           {...register("password")}
           id="password"
-          type="text"
+          type="password"
           className="border border-zinc-800 rounded-lg px-3 py-2 bg-zinc-800/50 w-full text-sm"
         />
-        {errors?.password && (
+        {errors.password && (
           <p className="text-sm text-red-400">{errors.password.message}</p>
         )}
       </div>
 
       <div className="flex items-center justify-end gap-2">
-        <Button>
+        <Button type="button" onClick={() => navigate(-1)}>
           <X className="size-3" />
           Cancel
         </Button>
@@ -75,7 +82,7 @@ export function Login() {
           ) : (
             <Check className="size-3" />
           )}
-          Save
+          Login
         </Button>
       </div>
     </form>

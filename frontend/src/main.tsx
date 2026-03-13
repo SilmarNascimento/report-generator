@@ -35,6 +35,9 @@ import {
 import CreateStudent from "./pages/student/CreateStudent.tsx";
 import StudentList from "./pages/student/StudentList.tsx";
 import StudentView from "./pages/student/StudentView.tsx";
+import { AuthProvider } from "./components/Auth/AuthContext.tsx";
+import { ProtectedRoute } from "./components/Auth/ProtectedRoutes.tsx";
+import { PublicRoute } from "./components/Auth/PublicRoute.tsx";
 
 const queryClient = new QueryClient();
 
@@ -44,100 +47,76 @@ const router = createBrowserRouter([
     element: <Navigate to="/login" replace />,
   },
   {
-    path: "/login",
-    element: <Login />,
+    element: <PublicRoute />,
     errorElement: <NotFoundPage />,
+    children: [{ path: "/login", element: <Login /> }],
   },
   {
-    path: "/subjects",
-    element: <Subjects />,
-  },
-  {
-    path: "/main-questions",
-    element: <MainQuestions />,
-  },
-  {
-    path: "/main-questions/create",
-    element: <CreateMainQuestion />,
-  },
-  {
-    path: "/main-questions/edit/:mainQuestionId",
-    element: <EditMainQuestion />,
-  },
-  {
-    path: "/main-questions/:mainQuestionId/subjects",
-    element: <MainQuestionSubjectManager />,
-  },
-  {
-    path: "/main-questions/:mainQuestionId/adapted-questions",
-    element: <AdaptedQuestions />,
-  },
-  {
-    path: "/main-questions/:mainQuestionId/adapted-questions/create",
-    element: <CreateAdaptedQuestion />,
-  },
-  {
-    path: "/main-questions/:mainQuestionId/adapted-questions/edit/:adaptedQuestionId",
-    element: <EditAdaptedQuestion />,
-  },
-  {
-    path: "/mock-exams",
-    element: <MockExams />,
-  },
-  {
-    path: "/mock-exams/create",
-    element: <CreateMockExam />,
-  },
-  {
-    path: "/mock-exams/edit/:mockExamId",
-    element: <EditMockExam />,
-  },
-  {
-    path: "/mock-exams/:mockExamId/subjects",
-    element: <MockExamSubjectManager />,
-  },
-  {
-    path: "/mock-exams/:mockExamId/main-questions",
-    element: <MockExamMainQuestionManager />,
-  },
-  {
-    path: "/mock-exams/:mockExamId/mock-exams-answers",
-    element: <MockExamAnswers />,
-  },
-
-  {
-    path: "/diagnosis/generate",
-    element: <GenerateDiagnosis />,
-  },
-  {
-    path: "/students-response",
-    element: <StudentsResponses />,
-  },
-  {
-    path: "/students",
-    element: <StudentList />,
-  },
-  {
-    path: "/students/create",
-    element: <CreateStudent />,
-  },
-  {
-    path: "/students/edit/:id",
-    element: <EditStudent />,
-    loader: editStudentLoader(queryClient),
-  },
-  {
-    path: "/students/view/:id",
-    element: <StudentView />,
-    loader: viewStudentLoader(queryClient),
+    element: <ProtectedRoute />,
+    children: [
+      { path: "/subjects", element: <Subjects /> },
+      { path: "/main-questions", element: <MainQuestions /> },
+      { path: "/main-questions/create", element: <CreateMainQuestion /> },
+      {
+        path: "/main-questions/edit/:mainQuestionId",
+        element: <EditMainQuestion />,
+      },
+      {
+        path: "/main-questions/:mainQuestionId/subjects",
+        element: <MainQuestionSubjectManager />,
+      },
+      {
+        path: "/main-questions/:mainQuestionId/adapted-questions",
+        element: <AdaptedQuestions />,
+      },
+      {
+        path: "/main-questions/:mainQuestionId/adapted-questions/create",
+        element: <CreateAdaptedQuestion />,
+      },
+      {
+        path: "/main-questions/:mainQuestionId/adapted-questions/edit/:adaptedQuestionId",
+        element: <EditAdaptedQuestion />,
+      },
+      { path: "/mock-exams", element: <MockExams /> },
+      { path: "/mock-exams/create", element: <CreateMockExam /> },
+      { path: "/mock-exams/edit/:mockExamId", element: <EditMockExam /> },
+      {
+        path: "/mock-exams/:mockExamId/subjects",
+        element: <MockExamSubjectManager />,
+      },
+      {
+        path: "/mock-exams/:mockExamId/main-questions",
+        element: <MockExamMainQuestionManager />,
+      },
+      {
+        path: "/mock-exams/:mockExamId/mock-exams-answers",
+        element: <MockExamAnswers />,
+      },
+      { path: "/diagnosis/generate", element: <GenerateDiagnosis /> },
+      { path: "/students-response", element: <StudentsResponses /> },
+      { path: "/students", element: <StudentList /> },
+      { path: "/students/create", element: <CreateStudent /> },
+      {
+        path: "/students/edit/:id",
+        element: <EditStudent />,
+        loader: editStudentLoader(queryClient),
+      },
+      {
+        path: "/students/view/:id",
+        element: <StudentView />,
+        loader: viewStudentLoader(queryClient),
+      },
+    ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ToastContainer />
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );

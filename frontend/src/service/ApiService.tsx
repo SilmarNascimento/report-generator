@@ -8,6 +8,8 @@ import axios, {
 import { ApiError } from "../interfaces/error";
 import { warningAlert } from "../utils/toastAlerts";
 
+const TOKEN_KEY = "@app:token";
+
 class ApiService {
   private readonly api: AxiosInstance;
 
@@ -19,10 +21,10 @@ class ApiService {
 
     this.api.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        // const token = KeycloakService.getToken();
-        // if (token) {
-        //   config.headers.Authorization = `Bearer ${token}`;
-        // }
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
         return config;
       },
       (error: AxiosError) => Promise.reject(new Error(error.message)),
@@ -47,27 +49,27 @@ class ApiService {
           return Promise.reject(errorResponse);
         }
 
-        return Promise.reject(new Error(errorResponse.message));
+        return Promise.reject(errorResponse);
       },
     );
   }
 
   private handleError(errorResponse: AxiosError) {
     const errorHandlers: Record<number, (data: ApiError) => void> = {
-      401: (data: ApiError) => {
-        // KeycloakService.doLogout();
-
-        warningAlert(data.mensagem);
+      401: () => {
+        warningAlert("Usuário ou senha inválidos.");
+        if (localStorage.getItem(TOKEN_KEY)) {
+          localStorage.removeItem(TOKEN_KEY);
+          window.location.href = "/login";
+        }
+      },
+      403: () => {
+        warningAlert("Você não tem permissão para acessar este recurso.");
       },
       404: (data: ApiError) => warningAlert(data.mensagem),
       409: (data: ApiError) => {
-        if (this.isScheduleConflict(data.mensagem)) {
-          return;
-        }
-        if (this.isEditConflict(data)) {
-          return;
-        }
-
+        if (this.isScheduleConflict(data.mensagem)) return;
+        if (this.isEditConflict(data)) return;
         warningAlert(data.mensagem);
       },
       422: (data: ApiError) => warningAlert(data.mensagem),
@@ -80,7 +82,9 @@ class ApiService {
       const data = response.data as ApiError;
 
       if (status && errorHandlers[status]) {
-        if (data?.mensagem) {
+        if (status === 401 || status === 403) {
+          errorHandlers[status](data);
+        } else if (data?.mensagem) {
           errorHandlers[status](data);
         } else {
           warningAlert("Erro inesperado: dados da resposta inválidos.");
@@ -94,15 +98,10 @@ class ApiService {
   }
 
   isScheduleConflict(mensagem: string): boolean {
-    if (mensagem.includes("Deseja continuar com a edição da agenda?")) {
-      return true;
-    }
-
-    if (mensagem.includes("Deseja continuar com a criação da agenda?")) {
-      return true;
-    }
-
-    return false;
+    return (
+      mensagem.includes("Deseja continuar com a edição da agenda?") ||
+      mensagem.includes("Deseja continuar com a criação da agenda?")
+    );
   }
 
   isEditConflict(data: ApiError): boolean {
@@ -112,21 +111,16 @@ class ApiService {
       mensagem.includes(
         "Não é possível salvar. A sigla informada já está cadastrada.",
       )
-    ) {
+    )
       return true;
-    }
 
     if (!Object.keys(data).includes("permite_reagendamento_automatico"))
       return false;
 
-    if (
+    return (
       mensagem.includes("O que deseja fazer com") ||
       mensagem.includes("Ao remover o(s) serviços")
-    ) {
-      return true;
-    }
-
-    return false;
+    );
   }
 
   async get<T>(
@@ -137,16 +131,9 @@ class ApiService {
   ): Promise<T> {
     const config: AxiosRequestConfig = {
       ...extraConfig,
-      params: {
-        ...params,
-        ...extraConfig?.params,
-      },
-      headers: {
-        ...headers,
-        ...extraConfig?.headers,
-      },
+      params: { ...params, ...extraConfig?.params },
+      headers: { ...headers, ...extraConfig?.headers },
     };
-
     const response = await this.api.get<T>(endpoint, config);
     return response.data;
   }
@@ -183,10 +170,7 @@ class ApiService {
     data: unknown = {},
     config?: AxiosRequestConfig,
   ): Promise<T> {
-    const response = await this.api.delete<T>(endpoint, {
-      data,
-      ...config,
-    });
+    const response = await this.api.delete<T>(endpoint, { data, ...config });
     return response.data;
   }
 
@@ -199,7 +183,6 @@ class ApiService {
       headers: { "Content-Type": "multipart/form-data" },
       ...config,
     });
-
     return response.data;
   }
 
@@ -207,10 +190,7 @@ class ApiService {
     endpoint: string,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
-    return await this.api.get<T>(endpoint, {
-      ...config,
-      responseType: "blob",
-    });
+    return await this.api.get<T>(endpoint, { ...config, responseType: "blob" });
   }
 }
 
