@@ -13,10 +13,10 @@ import {
   questionLevelOptions,
   questionPatternOptions,
 } from "@/constants/general";
-import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
+import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 
 export function CreateMainQuestionForm() {
   const navigate = useNavigate();
