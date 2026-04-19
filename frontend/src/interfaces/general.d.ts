@@ -14,6 +14,12 @@ export type Paginacao = {
   total_registros: number;
 };
 
+type MenuOption = {
+  icon?: ReactNode;
+  label: string;
+  onClick: () => void;
+};
+
 export type DropdownType = {
   label: string;
   value: string;
