@@ -19,6 +19,7 @@ import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import Botao from "@/components/Shared/Botao";
 import { Pagination } from "@/components/Pagination";
+import { classGroupLabelMap } from "@/constants/students";
 
 export function MockExams() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -140,8 +141,8 @@ export function MockExams() {
                     <span>{mockExam.name}</span>
                   </TableCell>
                   <TableCell>
-                    {mockExam.className.map((name: string) => (
-                      <span key={name}>{name}</span>
+                    {mockExam.className.map((name) => (
+                      <span key={name}>{classGroupLabelMap[name]}</span>
                     ))}
                   </TableCell>
                   <TableCell>
