@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+
+    <fontFamily name="TheBoldFont">
+        <normal><![CDATA[fonts/the_bold_font/theboldfont.ttf]]></normal>
+        <bold><![CDATA[fonts/the_bold_font/theboldfont.ttf]]></bold>
+        <pdfEncoding><![CDATA[Cp1252]]></pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+
+    <fontFamily name="RedHatDisplay">
+        <normal><![CDATA[fonts/red_hat_display/RedHatDisplay-Regular.ttf]]></normal>
+        <bold><![CDATA[fonts/red_hat_display/RedHatDisplay-ExtraBold.ttf]]></bold>
+        <pdfEncoding><![CDATA[Identity-H]]></pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+    </fontFamily>
+
+</fontFamilies>

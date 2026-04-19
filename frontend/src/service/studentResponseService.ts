@@ -15,11 +15,8 @@ export const studentResponseService = {
   },
 
   downloadDiagnosisPdf(id: string) {
-    return apiService.get<Blob>(
+    return apiService.getFullResponse<Blob>(
       `/students-response/${id}/download`,
-      {},
-      undefined,
-      { responseType: "blob" },
     );
   },
 

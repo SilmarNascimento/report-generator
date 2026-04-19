@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 @Service
-public class JasperReportService {
+public class    JasperReportService {
 
     public byte[] generatePdf(String templateName, Map<String, Object> params, JRDataSource dataSource) {
         try {
@@ -30,6 +30,15 @@ public class JasperReportService {
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao processar relatório Jasper: " + templateName, e);
+        }
+    }
+
+    public JasperReport compileSubreport(String jrxmlName) {
+        try (InputStream is = getClass().getResourceAsStream("/reports/" + jrxmlName)) {
+            if (is == null) throw new RuntimeException("Subreport não encontrado: " + jrxmlName);
+            return JasperCompileManager.compileReport(is);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao compilar subreport: " + jrxmlName, e);
         }
     }
 }

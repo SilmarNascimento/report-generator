@@ -3,17 +3,20 @@ import apiService from "@/service/ApiService";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFilteredMainQuestions(
-  page: number,
+  pageNumber: number,
   pageSize: number,
   query: string,
   idListRef: React.MutableRefObject<string[] | undefined>,
 ) {
   return useQuery({
-    queryKey: ["get-main-questions", query, page, pageSize],
+    queryKey: ["get-main-questions", query, pageNumber, pageSize],
     queryFn: () =>
-      apiService.post<PageResponse<MainQuestion>>(`/main-question/filter`, {
-        mainQuestionsId: idListRef.current,
-      }),
+      apiService.post<PageResponse<MainQuestion>>(
+        `/main-question/filter?pageNumber=${pageNumber - 1}&pageSize=${pageSize}&query=${query}`,
+        {
+          mainQuestionsId: idListRef.current,
+        },
+      ),
     enabled: !!idListRef.current,
   });
 }
