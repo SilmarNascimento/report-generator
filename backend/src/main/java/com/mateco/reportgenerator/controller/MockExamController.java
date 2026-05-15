@@ -155,6 +155,14 @@ public class MockExamController {
                 .body(MockExamOutputDto.parseDto(mockExamUpdated));
     }
 
+    @PostMapping("/{mockExamId}/copy")
+    public ResponseEntity<MockExamOutputDto> copyMockExam(@PathVariable UUID mockExamId) {
+        MockExam copiedMockExam = mockExamService.copyMockExam(mockExamId);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(MockExamOutputDto.parseDto(copiedMockExam));
+    }
+
     @PostMapping(value = "/{mockExamId}/responses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<MockExamResponseOutputDto>> registerIncompleteMockExamResponses(
             @RequestPart("studentsMockExamsAnswers") MultipartFile studentsAnswer,

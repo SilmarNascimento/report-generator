@@ -17,6 +17,10 @@ export const mockExamService = {
     });
   },
 
+  copy(id: string) {
+    return apiService.post<MockExam>(`/mock-exam/${id}/copy`, {});
+  },
+
   uploadResponses(mockExamId: string, file: File) {
     const formData = new FormData();
     formData.append("studentsMockExamsAnswers", file);

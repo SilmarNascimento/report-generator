@@ -29,4 +29,6 @@ public interface MockExamServiceInterface {
   MockExam removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionId);
 
   List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses);
+
+  MockExam copyMockExam(UUID mockExamId);
 }

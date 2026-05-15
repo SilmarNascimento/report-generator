@@ -1,6 +1,6 @@
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { EyeIcon, FileDown, Pencil, X } from "lucide-react";
+import { Copy, EyeIcon, FileDown, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetMockExamList } from "@/hooks/CRUD/mockExam/useGetMockExamList";
 import { useDeleteMockExamById } from "@/hooks/CRUD/mockExam/useDeleteMockExambyId";
+import { useCopyMockExam } from "@/hooks/CRUD/mockExam/useCopyMockExam";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
@@ -50,6 +51,7 @@ export function MockExams() {
   });
 
   const deleteMockExam = useDeleteMockExamById();
+  const copyMockExam = useCopyMockExam();
 
   function handleCreateNewMockExam() {
     navigate("/mock-exams/create");
@@ -61,6 +63,10 @@ export function MockExams() {
 
   async function handleDeleteMockExam(mockExamId: string) {
     await deleteMockExam.mutateAsync(mockExamId);
+  }
+
+  async function handleCopyMockExam(mockExamId: string) {
+    await copyMockExam.mutateAsync(mockExamId);
   }
 
   function getMockExamCode({ releasedYear, number, className }: MockExam) {
@@ -179,6 +185,14 @@ export function MockExams() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-right flex gap-1">
+                    <Button
+                      size="icon"
+                      className="mx-0.5"
+                      variant="muted"
+                      onClick={() => handleCopyMockExam(mockExam.id)}
+                    >
+                      <Copy className="size-3" color="blue" />
+                    </Button>
                     <Button
                       size="icon"
                       className="mx-0.5"
