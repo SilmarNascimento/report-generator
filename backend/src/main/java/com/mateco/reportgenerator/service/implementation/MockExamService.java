@@ -165,6 +165,12 @@ public class MockExamService implements MockExamServiceInterface {
     }
 
     @Override
+    @Transactional
+    public void deleteAllMockExamsByIds(List<UUID> ids) {
+        ids.forEach(this::deleteMockExamById);
+    }
+
+    @Override
     public MockExam addSubject(UUID mockExamId, List<UUID> subjecstId) {
         MockExam mockExamFound = mockExamRepository.findById(mockExamId)
                 .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));

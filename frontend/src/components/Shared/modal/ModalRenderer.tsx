@@ -1,14 +1,25 @@
-import { ModalItemInformationType, ModalType } from "@/interfaces/Modal";
+import {
+  ModalAnyItemInformationType,
+  ModalExclusaoEmMassaInformationType,
+  ModalType,
+} from "@/interfaces/Modal";
+import { DeleteEmMassaModal } from "./DeleteEmMassaModal";
 import { DeleteListagemModal } from "./DeleteListagemModal";
 
 interface ModalRendererProps {
   isOpen: boolean;
   tipo: ModalType;
   entidade: string;
-  item: ModalItemInformationType | null;
+  item: ModalAnyItemInformationType | null;
   isLoading: boolean;
   onClose: () => void;
   onConfirm: () => void;
+}
+
+function isExclusaoEmMassaItem(
+  item: ModalAnyItemInformationType,
+): item is ModalExclusaoEmMassaInformationType {
+  return "quantidade" in item;
 }
 
 export function ModalRenderer({
@@ -22,17 +33,16 @@ export function ModalRenderer({
 }: ModalRendererProps) {
   if (!isOpen || !item) return null;
 
-  const commonProps = {
-    isOpen,
-    onClose,
-    onConfirm,
-    isLoading,
-    entidade,
-    nome: item.nomeExibicao,
-  };
+  const baseProps = { isOpen, onClose, onConfirm, isLoading, entidade };
 
   const renderMap: Record<ModalType, React.ReactNode> = {
-    exclusao: <DeleteListagemModal {...commonProps} />,
+    exclusao: !isExclusaoEmMassaItem(item) ? (
+      <DeleteListagemModal {...baseProps} nome={item.nomeExibicao} />
+    ) : null,
+
+    exclusaoEmMassa: isExclusaoEmMassaItem(item) ? (
+      <DeleteEmMassaModal {...baseProps} quantidade={item.quantidade} />
+    ) : null,
 
     status: null,
     publicacao: null,

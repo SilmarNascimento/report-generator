@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import { MainQuestion } from "@/interfaces";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
@@ -14,12 +15,13 @@ import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useListagemModal } from "@/hooks/useListagemModal";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Header } from "@/components/Header";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { Button } from "@/components/ui/shadcn/button";
-import { FileDown, Pencil, X } from "lucide-react";
+import { Pencil, Trash2, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 
 export function MainQuestions() {
@@ -50,12 +52,43 @@ export function MainQuestions() {
     pageSize,
   );
 
+  const [selectedMainQuestionIds, setSelectedMainQuestionIds] = useState<
+    string[]
+  >([]);
+
+  const questoes = mainQuestionPageResponse?.data ?? [];
+  const isAllSelected =
+    questoes.length > 0 &&
+    questoes.every((q) => selectedMainQuestionIds.includes(q.id));
+  const isSomeSelected =
+    questoes.some((q) => selectedMainQuestionIds.includes(q.id)) &&
+    !isAllSelected;
+
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
       endpoint: "/main-question",
       invalidateKeys: [["get-main-questions"]],
       entidade: "Questão Principal",
     });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/main-question",
+    invalidateKeys: [["get-main-questions"]],
+    entidade: "Questão Principal",
+    onSuccess: () => setSelectedMainQuestionIds([]),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  useEffect(() => {
+    setSelectedMainQuestionIds([]);
+  }, [page]);
 
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
@@ -72,10 +105,6 @@ export function MainQuestions() {
     return getAlternativeLetter(correctIndex);
   }
 
-  if (isLoading) {
-    return null;
-  }
-
   function getMainQuestionCode(question: MainQuestion) {
     const hasHandout = question.handouts.length !== 0;
     const hasMockExams = question.mockExams.length !== 0;
@@ -87,6 +116,30 @@ export function MainQuestions() {
       return `${question.mockExams[0].releasedYear}:S${question.mockExams[0].number}:${question.questionNumber}`;
     }
     return "";
+  }
+
+  function toggleMainQuestionSelection(questionId: string) {
+    setSelectedMainQuestionIds((prev) =>
+      prev.includes(questionId)
+        ? prev.filter((id) => id !== questionId)
+        : [...prev, questionId],
+    );
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setSelectedMainQuestionIds((prev) =>
+        prev.filter((id) => !questoes.map((q) => q.id).includes(id)),
+      );
+    } else {
+      setSelectedMainQuestionIds((prev) =>
+        Array.from(new Set([...prev, ...questoes.map((q) => q.id)])),
+      );
+    }
+  }
+
+  if (isLoading) {
+    return null;
   }
 
   return (
@@ -115,16 +168,27 @@ export function MainQuestions() {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
-            Export
+          <Button
+            variant="excluirCheio"
+            disabled={selectedMainQuestionIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedMainQuestionIds)}
+          >
+            <Trash2 className="size-3" />
+            Deletar Selecionados ({selectedMainQuestionIds.length})
           </Button>
         </div>
 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead></TableHead>
+              <TableHead className="w-10">
+                <Checkbox
+                  checked={
+                    isAllSelected || (isSomeSelected ? "indeterminate" : false)
+                  }
+                  onCheckedChange={toggleSelectAll}
+                />
+              </TableHead>
               <TableHead>
                 <span>Código</span>
               </TableHead>
@@ -153,7 +217,14 @@ export function MainQuestions() {
             {mainQuestionPageResponse?.data.map((question) => {
               return (
                 <TableRow key={question.id}>
-                  <TableCell></TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedMainQuestionIds.includes(question.id)}
+                      onCheckedChange={() =>
+                        toggleMainQuestionSelection(question.id)
+                      }
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">
@@ -236,13 +307,13 @@ export function MainQuestions() {
       </main>
 
       <ModalRenderer
-        isOpen={modalState.isOpen}
-        tipo={modalState.tipo}
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
         entidade="Questão Principal"
-        item={modalState.item}
-        isLoading={isPending}
-        onClose={fecharModal}
-        onConfirm={confirmarAcao}
+        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
       />
     </>
   );

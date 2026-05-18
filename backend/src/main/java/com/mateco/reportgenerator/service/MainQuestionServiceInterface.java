@@ -22,6 +22,7 @@ public interface MainQuestionServiceInterface {
   MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages);
   MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, List<String> questionImages);
   void deleteMainQuestionById(UUID questionId);
+  void deleteAllMainQuestionsByIds(List<UUID> ids);
 
   MainQuestion addSubject(UUID questionId, List<UUID> subjecstId);
   MainQuestion removeSubject(UUID questionId, List<UUID> subjectsId);

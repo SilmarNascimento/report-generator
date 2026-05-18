@@ -114,6 +114,12 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         mockExamResponseRepository.deleteById(mockExamResponseId);
     }
 
+    @Override
+    @Transactional
+    public void deleteAllMockExamResponsesByIds(List<UUID> ids) {
+        ids.forEach(this::deleteMockExamResponseById);
+    }
+
     @Transactional
     public void generateAndAttachDiagnosisPdf(UUID responseId) {
         MockExamResponse response = mockExamResponseRepository.findById(responseId)

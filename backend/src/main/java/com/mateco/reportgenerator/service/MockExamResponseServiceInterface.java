@@ -15,4 +15,5 @@ public interface MockExamResponseServiceInterface {
   void generateCompleteDiagnosisById(UUID mockExamResponseId, MultipartFile personalInsightPdfFile);
 
   void deleteMockExamResponseById(UUID mockExamResponseId);
+  void deleteAllMockExamResponsesByIds(List<UUID> ids);
 }

@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
@@ -90,6 +91,17 @@ public class MockExamResponseController {
     @DeleteMapping("/{mockExamResponseId}")
     public ResponseEntity<Void> deleteMockExamResponseById(@PathVariable UUID mockExamResponseId) {
         mockExamResponseService.deleteMockExamResponseById(mockExamResponseId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteAllMockExamResponsesByIds(@RequestBody BatchDeleteInputDto dto) {
+        List<UUID> uuidIds = dto.ids().stream()
+                .map(UUID::fromString)
+                .toList();
+        mockExamResponseService.deleteAllMockExamResponsesByIds(uuidIds);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();

@@ -2,7 +2,9 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Button } from "@/components/ui/shadcn/button";
+import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import {
   Table,
   TableBody,
@@ -13,10 +15,10 @@ import {
 } from "@/components/ui/Table";
 import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { useListagemModal } from "@/hooks/useListagemModal";
-import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { StudentResponse } from "@/interfaces/Student";
-import { Eye, FileDown, Pencil, X } from "lucide-react";
+import { Eye, Pencil, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -33,12 +35,36 @@ const StudentList = () => {
 
   const { data: studentPage } = useGetStudents(page, pageSize, urlFilter);
 
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+
+  const estudantes = studentPage?.data ?? [];
+  const isAllSelected =
+    estudantes.length > 0 &&
+    estudantes.every((s) => selectedStudentIds.includes(s.id));
+  const isSomeSelected =
+    estudantes.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
+
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
       endpoint: "/students",
       invalidateKeys: [["get-students"]],
       entidade: "Estudante",
     });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/students",
+    invalidateKeys: [["get-students"]],
+    entidade: "Estudante",
+    onSuccess: () => setSelectedStudentIds([]),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -51,13 +77,36 @@ const StudentList = () => {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
+  useEffect(() => {
+    setSelectedStudentIds([]);
+  }, [page]);
+
   function handleCreateStudent() {
     navigate("/students/create");
   }
 
+  function toggleStudentSelection(studentId: string) {
+    setSelectedStudentIds((prev) =>
+      prev.includes(studentId)
+        ? prev.filter((id) => id !== studentId)
+        : [...prev, studentId],
+    );
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setSelectedStudentIds((prev) =>
+        prev.filter((id) => !estudantes.map((s) => s.id).includes(id)),
+      );
+    } else {
+      setSelectedStudentIds((prev) =>
+        Array.from(new Set([...prev, ...estudantes.map((s) => s.id)])),
+      );
+    }
+  }
+
   function formatClassGroup(student: StudentResponse) {
     const { classGroups } = student;
-
     return classGroups.map((group) => <span>{group}</span>);
   }
 
@@ -86,9 +135,13 @@ const StudentList = () => {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
-            Export
+          <Button
+            variant="excluirCheio"
+            disabled={selectedStudentIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedStudentIds)}
+          >
+            <Trash2 className="size-3" />
+            Deletar Selecionados ({selectedStudentIds.length})
           </Button>
         </div>
 
@@ -97,7 +150,15 @@ const StudentList = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead></TableHead>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={
+                        isAllSelected ||
+                        (isSomeSelected ? "indeterminate" : false)
+                      }
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead>
                     <span>Nome</span>
                   </TableHead>
@@ -119,7 +180,14 @@ const StudentList = () => {
               <TableBody>
                 {studentPage?.data.map((student) => (
                   <TableRow key={student.id}>
-                    <TableCell></TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedStudentIds.includes(student.id)}
+                        onCheckedChange={() =>
+                          toggleStudentSelection(student.id)
+                        }
+                      />
+                    </TableCell>
                     <TableCell>{student.name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.cpf}</TableCell>
@@ -132,13 +200,17 @@ const StudentList = () => {
                     <TableCell className="flex gap-1">
                       <Button
                         variant="muted"
-                        onClick={() => navigate(`/students/edit/${student.id}`)}
+                        onClick={() =>
+                          navigate(`/students/edit/${student.id}`)
+                        }
                       >
                         <Pencil className="size-3 text-green-500" />
                       </Button>
                       <Button
                         variant="muted"
-                        onClick={() => navigate(`/students/view/${student.id}`)}
+                        onClick={() =>
+                          navigate(`/students/view/${student.id}`)
+                        }
                       >
                         <Eye className="size-3 text-green-500" />
                       </Button>
@@ -180,13 +252,13 @@ const StudentList = () => {
       </main>
 
       <ModalRenderer
-        isOpen={modalState.isOpen}
-        tipo={modalState.tipo}
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
         entidade="Estudante"
-        item={modalState.item}
-        isLoading={isPending}
-        onClose={fecharModal}
-        onConfirm={confirmarAcao}
+        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
       />
     </>
   );

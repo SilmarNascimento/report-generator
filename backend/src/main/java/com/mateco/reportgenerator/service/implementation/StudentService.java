@@ -10,6 +10,9 @@ import com.mateco.reportgenerator.model.repository.StudentRepository;
 import com.mateco.reportgenerator.model.repository.UserRepository;
 import com.mateco.reportgenerator.specifications.StudentSpecifications;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -86,5 +89,10 @@ public class StudentService {
         }
 
         studentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteAllByIds(List<Long> ids) {
+        ids.forEach(this::delete);
     }
 }

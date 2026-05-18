@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileDown } from "lucide-react";
+import { FileDown, Trash2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -18,11 +18,26 @@ import { Button } from "../ui/shadcn/button";
 import { Checkbox } from "../ui/shadcn/Checkbox";
 import { MockExamResponseType, YearlyResponse } from "@/interfaces/Student";
 import { cn } from "@/lib/utils";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 
 type DiagnosisListProps = { responses: YearlyResponse[] };
 
 export function DiagnosisList({ responses }: DiagnosisListProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/students-response",
+    invalidateKeys: [["get-responses"]],
+    entidade: "Diagnóstico",
+    onSuccess: () => setSelectedIds([]),
+  });
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) =>
@@ -46,11 +61,12 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Diagnósticos dos Alunos</h2>
         <Button
+          variant="excluirCheio"
           disabled={selectedIds.length === 0}
-          onClick={() => console.log("Baixando:", selectedIds)}
+          onClick={() => abrirModalExclusaoEmMassa(selectedIds)}
         >
-          <FileDown className="mr-2 h-4 w-4" />
-          Baixar Selecionados ({selectedIds.length})
+          <Trash2 className="mr-2 h-4 w-4" />
+          Deletar Selecionados ({selectedIds.length})
         </Button>
       </div>
 
@@ -154,7 +170,7 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                                   </span>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                  <Button className="text-blue-600 h-8 px-2">
+                                  <Button className="text-blue-600 h-8 px-2" variant="muted">
                                     <FileDown className="size-4 mr-1" /> PDF
                                   </Button>
                                 </TableCell>
@@ -171,6 +187,16 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
           </AccordionItem>
         ))}
       </Accordion>
+
+      <ModalRenderer
+        isOpen={exclusaoEmMassaModalState.isOpen}
+        tipo={exclusaoEmMassaModalState.tipo}
+        entidade="Diagnóstico"
+        item={exclusaoEmMassaModalState.item}
+        isLoading={isPendingExclusaoEmMassa}
+        onClose={fecharModalExclusaoEmMassa}
+        onConfirm={confirmarExclusaoEmMassa}
+      />
     </div>
   );
 }

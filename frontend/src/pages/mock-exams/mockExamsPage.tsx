@@ -1,6 +1,7 @@
 import useDebounceValue from "../../hooks/useDebounceValue";
 import { Button } from "../../components/ui/shadcn/button";
-import { Copy, EyeIcon, FileDown, Pencil, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/shadcn/Checkbox";
+import { Copy, EyeIcon, Pencil, Trash2, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -15,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useGetMockExamList } from "@/hooks/CRUD/mockExam/useGetMockExamList";
 import { useCopyMockExam } from "@/hooks/CRUD/mockExam/useCopyMockExam";
 import { useListagemModal } from "@/hooks/useListagemModal";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
@@ -51,6 +53,16 @@ export function MockExams() {
     pageSize,
   });
 
+  const [selectedMockExamIds, setSelectedMockExamIds] = useState<string[]>([]);
+
+  const simulados = mockExamPageResponse?.data ?? [];
+  const isAllSelected =
+    simulados.length > 0 &&
+    simulados.every((s) => selectedMockExamIds.includes(s.id));
+  const isSomeSelected =
+    simulados.some((s) => selectedMockExamIds.includes(s.id)) &&
+    !isAllSelected;
+
   const copyMockExam = useCopyMockExam();
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
@@ -58,6 +70,25 @@ export function MockExams() {
       invalidateKeys: [["mock-exams"]],
       entidade: "Simulado",
     });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/mock-exam",
+    invalidateKeys: [["mock-exams"]],
+    entidade: "Simulado",
+    onSuccess: () => setSelectedMockExamIds([]),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  useEffect(() => {
+    setSelectedMockExamIds([]);
+  }, [page]);
 
   function handleCreateNewMockExam() {
     navigate("/mock-exams/create");
@@ -73,6 +104,26 @@ export function MockExams() {
 
   function getMockExamCode({ releasedYear, number, className }: MockExam) {
     return `${releasedYear}:S${number}-${className[0]}`;
+  }
+
+  function toggleMockExamSelection(mockExamId: string) {
+    setSelectedMockExamIds((prev) =>
+      prev.includes(mockExamId)
+        ? prev.filter((id) => id !== mockExamId)
+        : [...prev, mockExamId],
+    );
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setSelectedMockExamIds((prev) =>
+        prev.filter((id) => !simulados.map((s) => s.id).includes(id)),
+      );
+    } else {
+      setSelectedMockExamIds((prev) =>
+        Array.from(new Set([...prev, ...simulados.map((s) => s.id)])),
+      );
+    }
   }
 
   return (
@@ -101,16 +152,27 @@ export function MockExams() {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
-            Export
+          <Button
+            variant="excluirCheio"
+            disabled={selectedMockExamIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedMockExamIds)}
+          >
+            <Trash2 className="size-3" />
+            Deletar Selecionados ({selectedMockExamIds.length})
           </Button>
         </div>
 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead></TableHead>
+              <TableHead className="w-10">
+                <Checkbox
+                  checked={
+                    isAllSelected || (isSomeSelected ? "indeterminate" : false)
+                  }
+                  onCheckedChange={toggleSelectAll}
+                />
+              </TableHead>
               <TableHead>
                 <span>Código</span>
               </TableHead>
@@ -142,7 +204,14 @@ export function MockExams() {
             {mockExamPageResponse?.data.map((mockExam) => {
               return (
                 <TableRow key={mockExam.id}>
-                  <TableCell></TableCell>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedMockExamIds.includes(mockExam.id)}
+                      onCheckedChange={() =>
+                        toggleMockExamSelection(mockExam.id)
+                      }
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium">
@@ -242,13 +311,13 @@ export function MockExams() {
       </main>
 
       <ModalRenderer
-        isOpen={modalState.isOpen}
-        tipo={modalState.tipo}
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
         entidade="Simulado"
-        item={modalState.item}
-        isLoading={isPending}
-        onClose={fecharModal}
-        onConfirm={confirmarAcao}
+        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
       />
     </>
   );

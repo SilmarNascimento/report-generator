@@ -3,10 +3,19 @@ export type ModalType =
   | "exclusao"
   | "criacao"
   | "edicao"
-  | "publicacao";
+  | "publicacao"
+  | "exclusaoEmMassa";
 
 export type ModalItemInformationType = {
   id: string;
   status: string;
   nomeExibicao: string;
 };
+
+export type ModalExclusaoEmMassaInformationType = {
+  quantidade: number;
+};
+
+export type ModalAnyItemInformationType =
+  | ModalItemInformationType
+  | ModalExclusaoEmMassaInformationType;
