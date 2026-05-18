@@ -69,7 +69,7 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Botao perfil="novo" />
+              <Botao variant="novo" label="Novo" type="button" />
             </Dialog.Trigger>
 
             <Dialog.Portal>

@@ -83,7 +83,12 @@ export function MockExams() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Simulados</h1>
-          <Botao perfil="novo" onClick={handleCreateNewMockExam} />
+          <Botao
+            variant="novo"
+            label="Novo"
+            type="button"
+            onClick={handleCreateNewMockExam}
+          />
         </div>
 
         <div className="flex items-center justify-between">

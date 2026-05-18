@@ -28,18 +28,32 @@ const SessaoBotoesFormulario = ({
   return (
     <section className={`mt-auto flex justify-end gap-6`}>
       {modo !== "view" && (
-        <Botao perfil="cancelar" type="button" onClick={handleCancelar} />
+        <Botao
+          variant="cancelar"
+          label="Cancelar"
+          type="button"
+          onClick={handleCancelar}
+        />
       )}
       {modo === "view" && (
         <Botao
-          perfil="voltar"
+          variant="voltar"
+          label="voltar"
+          type="button"
           onClick={() => navigate(`${listagemEndpoint}`)}
         />
       )}
       {modo === "edicao" && (
-        <Botao perfil="salvar" type="submit" disabled={!isDirty} />
+        <Botao
+          variant="confirmar"
+          label="Confirmar"
+          type="submit"
+          disabled={!isDirty}
+        />
       )}
-      {modo === "criacao" && <Botao perfil="salvar" type="submit" />}
+      {modo === "criacao" && (
+        <Botao variant="confirmar" label="Confirmar" type="submit" />
+      )}
     </section>
   );
 };

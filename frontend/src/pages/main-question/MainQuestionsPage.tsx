@@ -97,7 +97,12 @@ export function MainQuestions() {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Principais</h1>
-          <Botao perfil="novo" onClick={handleCreateNewMainQuestion} />
+          <Botao
+            variant="confirmar"
+            label="Novo"
+            type="button"
+            onClick={handleCreateNewMainQuestion}
+          />
         </div>
 
         <div className="flex items-center justify-between">
