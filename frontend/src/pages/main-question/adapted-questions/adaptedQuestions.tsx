@@ -1,14 +1,10 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { AdaptedQuestion } from "@/interfaces";
-import { successAlert } from "@/utils/toastAlerts";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Button } from "@/components/ui/shadcn/button";
@@ -26,7 +22,6 @@ import FiltroListagem from "@/components/Shared/FiltroListagem";
 import Botao from "@/components/Shared/Botao";
 
 export function AdaptedQuestions() {
-  const queryClient = useQueryClient();
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -61,28 +56,12 @@ export function AdaptedQuestions() {
     staleTime: Infinity,
   });
 
-  const deleteAdaptedQuestion = useMutation({
-    mutationFn: async (adaptedQuestionId: string) => {
-      await fetch(
-        `/main-question/${mainQuestionId}/adapted-question/${adaptedQuestionId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "DELETE",
-        },
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-adapted-questions"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["get-main-questions"],
-      });
-      successAlert("Questão adaptada excluída com sucesso!");
-    },
-  });
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: `/main-question/${mainQuestionId}/adapted-question`,
+      invalidateKeys: [["get-adapted-questions"], ["get-main-questions"]],
+      entidade: "Questão Adaptada",
+    });
 
   function handleCorrectAnswer(question: AdaptedQuestion) {
     const correctIndex = question.alternatives.findIndex(
@@ -99,10 +78,6 @@ export function AdaptedQuestions() {
     navigate(
       `/main-questions/${mainQuestionId}/adapted-questions/edit/${adaptedQuestionId}`,
     );
-  }
-
-  async function handleDeleteAdaptedQuestion(adaptedQuestionId: string) {
-    await deleteAdaptedQuestion.mutateAsync(adaptedQuestionId);
   }
 
   if (isLoading) {
@@ -177,7 +152,16 @@ export function AdaptedQuestions() {
                     <Button
                       size="icon"
                       className="mx-0.5"
-                      onClick={() => handleDeleteAdaptedQuestion(question.id)}
+                      onClick={() =>
+                        abrirModal(
+                          {
+                            id: question.id,
+                            status: "",
+                            nomeExibicao: question.title,
+                          },
+                          "exclusao",
+                        )
+                      }
                     >
                       <X className="size-3" color="red" />
                     </Button>
@@ -195,6 +179,16 @@ export function AdaptedQuestions() {
           </TableBody>
         </Table>
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Questão Adaptada"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 }

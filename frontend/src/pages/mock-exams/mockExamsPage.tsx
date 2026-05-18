@@ -13,8 +13,9 @@ import { MockExam } from "../../interfaces";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetMockExamList } from "@/hooks/CRUD/mockExam/useGetMockExamList";
-import { useDeleteMockExamById } from "@/hooks/CRUD/mockExam/useDeleteMockExambyId";
 import { useCopyMockExam } from "@/hooks/CRUD/mockExam/useCopyMockExam";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
@@ -50,8 +51,13 @@ export function MockExams() {
     pageSize,
   });
 
-  const deleteMockExam = useDeleteMockExamById();
   const copyMockExam = useCopyMockExam();
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/mock-exam",
+      invalidateKeys: [["mock-exams"]],
+      entidade: "Simulado",
+    });
 
   function handleCreateNewMockExam() {
     navigate("/mock-exams/create");
@@ -59,10 +65,6 @@ export function MockExams() {
 
   function handleEditMockExam(mockExamId: string) {
     navigate(`/mock-exams/edit/${mockExamId}`);
-  }
-
-  async function handleDeleteMockExam(mockExamId: string) {
-    await deleteMockExam.mutateAsync(mockExamId);
   }
 
   async function handleCopyMockExam(mockExamId: string) {
@@ -210,7 +212,16 @@ export function MockExams() {
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
-                      onClick={() => handleDeleteMockExam(mockExam.id)}
+                      onClick={() =>
+                        abrirModal(
+                          {
+                            id: mockExam.id,
+                            status: "",
+                            nomeExibicao: mockExam.name,
+                          },
+                          "exclusao",
+                        )
+                      }
                     >
                       <X className="size-3" color="red" />
                     </Button>
@@ -229,6 +240,16 @@ export function MockExams() {
           />
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Simulado"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 }

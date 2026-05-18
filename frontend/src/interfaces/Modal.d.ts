@@ -6,7 +6,7 @@ export type ModalType =
   | "publicacao";
 
 export type ModalItemInformationType = {
-  id: number;
+  id: string;
   status: string;
   nomeExibicao: string;
 };

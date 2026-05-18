@@ -14,8 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { useDeleteSubject } from "@/hooks/CRUD/subject/useDeleteSubject";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import { useListagemModal } from "@/hooks/useListagemModal";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FileDown, Loader2, Pencil, X } from "lucide-react";
@@ -50,7 +51,12 @@ export function Subjects() {
     isLoading,
     isFetching,
   } = useGetSubjects(page, pageSize, urlFilter);
-  const { mutateAsync: deleteSubject } = useDeleteSubject();
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/subject",
+      invalidateKeys: [["get-subjects"]],
+      entidade: "Assunto",
+    });
 
   if (isLoading) {
     return null;
@@ -170,7 +176,16 @@ export function Subjects() {
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
-                      onClick={() => deleteSubject(subject.id)}
+                      onClick={() =>
+                        abrirModal(
+                          {
+                            id: subject.id,
+                            status: "",
+                            nomeExibicao: subject.name,
+                          },
+                          "exclusao",
+                        )
+                      }
                     >
                       <X className="size-3" color="red" />
                     </Button>
@@ -189,6 +204,16 @@ export function Subjects() {
           />
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Assunto"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 }

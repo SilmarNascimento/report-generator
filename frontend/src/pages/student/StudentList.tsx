@@ -12,8 +12,9 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
-import { useHandleDeleteStudent } from "@/hooks/CRUD/student/useHandleDeleteStudent";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { StudentResponse } from "@/interfaces/Student";
 import { Eye, FileDown, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -31,7 +32,13 @@ const StudentList = () => {
   const debouncedQueryFilter = useDebounceValue(searchTerm, 1000);
 
   const { data: studentPage } = useGetStudents(page, pageSize, urlFilter);
-  const { mutateAsync: deleteStudent } = useHandleDeleteStudent();
+
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/students",
+      invalidateKeys: [["get-students"]],
+      entidade: "Estudante",
+    });
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -137,7 +144,16 @@ const StudentList = () => {
                       </Button>
                       <Button
                         variant="muted"
-                        onClick={() => deleteStudent(student.id)}
+                        onClick={() =>
+                          abrirModal(
+                            {
+                              id: student.id,
+                              status: "",
+                              nomeExibicao: student.name,
+                            },
+                            "exclusao",
+                          )
+                        }
                       >
                         <X className="size-3 text-red-500" />
                       </Button>
@@ -162,6 +178,16 @@ const StudentList = () => {
           </div>
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Estudante"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 };

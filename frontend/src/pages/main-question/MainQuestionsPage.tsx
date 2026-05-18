@@ -12,8 +12,9 @@ import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import { useGetMainQuestionList } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionList";
 import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
-import { useDeleteMainQuestionById } from "@/hooks/CRUD/mainQuestion/useDeleteMainQuestionById";
 import { NavigationBar } from "@/components/NavigationBar";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Header } from "@/components/Header";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
@@ -49,7 +50,12 @@ export function MainQuestions() {
     pageSize,
   );
 
-  const deleteMainQuestion = useDeleteMainQuestionById();
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/main-question",
+      invalidateKeys: [["get-main-questions"]],
+      entidade: "Questão Principal",
+    });
 
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
@@ -57,10 +63,6 @@ export function MainQuestions() {
 
   function handleEditMainQuestion(mainQuestionId: string) {
     navigate(`/main-questions/edit/${mainQuestionId}`);
-  }
-
-  async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question.id);
   }
 
   function handleCorrectAnswer(question: MainQuestion) {
@@ -204,7 +206,16 @@ export function MainQuestions() {
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
-                      onClick={() => handleDeleteMainQuestion(question)}
+                      onClick={() =>
+                        abrirModal(
+                          {
+                            id: question.id,
+                            status: "",
+                            nomeExibicao: getMainQuestionCode(question),
+                          },
+                          "exclusao",
+                        )
+                      }
                     >
                       <X className="size-3" color="red" />
                     </Button>
@@ -223,6 +234,16 @@ export function MainQuestions() {
           />
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Questão Principal"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 }

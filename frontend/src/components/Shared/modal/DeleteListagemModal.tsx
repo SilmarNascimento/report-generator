@@ -28,7 +28,8 @@ export function DeleteListagemModal({
       variant="excluir"
     >
       <p>
-        Deseja realmente excluir o {entidade}: <strong>{nome}</strong>?
+        Deseja realmente excluir o(s) item(s) selecionado(s):{" "}
+        <strong>{nome}</strong>?
       </p>
     </BaseListagemModal>
   );
