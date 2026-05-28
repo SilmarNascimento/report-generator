@@ -17,6 +17,7 @@ import useDebounceValue from "@/hooks/useDebounceValue";
 import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { StudentResponse } from "@/interfaces/Student";
+import { Loader } from "@/components/ui/loader/Loader";
 import { Eye, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -32,7 +33,7 @@ const StudentList = () => {
   const [searchTerm, setSearchTerm] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(searchTerm, 1000);
 
-  const { data: studentPage } = useGetStudents(page, pageSize, urlFilter);
+  const { data: studentPage, isLoading } = useGetStudents(page, pageSize, urlFilter);
 
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
@@ -143,7 +144,13 @@ const StudentList = () => {
           </Botao>
         </div>
 
-        {studentPage?.data ? (
+        {isLoading ? (
+          <Loader />
+        ) : !studentPage?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
           <>
             <Table>
               <TableHeader>
@@ -176,7 +183,7 @@ const StudentList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {studentPage?.data.map((student) => (
+                {studentPage.data.map((student) => (
                   <TableRow key={student.id}>
                     <TableCell>
                       <Checkbox
@@ -229,19 +236,13 @@ const StudentList = () => {
               </TableBody>
             </Table>
 
-            {studentPage && (
-              <Pagination
-                pages={studentPage.pages}
-                items={studentPage.pageItems}
-                page={page}
-                totalItems={studentPage.totalItems}
-              />
-            )}
+            <Pagination
+              pages={studentPage.pages}
+              items={studentPage.pageItems}
+              page={page}
+              totalItems={studentPage.totalItems}
+            />
           </>
-        ) : (
-          <div>
-            <h1 className="text-center font-medium">Nenhum aluno cadastrado</h1>
-          </div>
         )}
       </main>
 

@@ -7,6 +7,7 @@ import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGet
 import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
+import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 
@@ -31,7 +32,7 @@ export function StudentsResponses() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const { data: studentsResponsePage } = useGetStudentsResponseList(
+  const { data: studentsResponsePage, isLoading } = useGetStudentsResponseList(
     page,
     pageSize,
     urlFilter,
@@ -67,19 +68,25 @@ export function StudentsResponses() {
           </Botao>
         </div>
 
-        {studentsResponsePage && (
-          <DiagnosisTable
-            entity={studentsResponsePage?.data}
-            deleteFunction={handleDeleteStudentResponse}
-          />
-        )}
-        {studentsResponsePage && (
-          <Pagination
-            pages={studentsResponsePage.pages}
-            items={studentsResponsePage.pageItems}
-            page={page}
-            totalItems={studentsResponsePage.totalItems}
-          />
+        {isLoading ? (
+          <Loader />
+        ) : !studentsResponsePage?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <DiagnosisTable
+              entity={studentsResponsePage.data}
+              deleteFunction={handleDeleteStudentResponse}
+            />
+            <Pagination
+              pages={studentsResponsePage.pages}
+              items={studentsResponsePage.pageItems}
+              page={page}
+              totalItems={studentsResponsePage.totalItems}
+            />
+          </>
         )}
       </main>
     </>

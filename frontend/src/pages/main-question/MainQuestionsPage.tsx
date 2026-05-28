@@ -19,6 +19,7 @@ import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
+import { Loader } from "@/components/ui/loader/Loader";
 import { Pencil, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 
@@ -136,10 +137,6 @@ export function MainQuestions() {
     }
   }
 
-  if (isLoading) {
-    return null;
-  }
-
   return (
     <>
       <header>
@@ -174,131 +171,139 @@ export function MainQuestions() {
           </Botao>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-10">
-                <Checkbox
-                  checked={
-                    isAllSelected || (isSomeSelected ? "indeterminate" : false)
-                  }
-                  onCheckedChange={toggleSelectAll}
-                />
-              </TableHead>
-              <TableHead>
-                <span>Código</span>
-              </TableHead>
-              <TableHead>
-                <span>Nível</span>
-              </TableHead>
-              <TableHead>
-                <span>Assuntos</span>
-              </TableHead>
-              <TableHead>
-                <span>Gabarito</span>
-              </TableHead>
-              <TableHead>
-                <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
-              </TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mainQuestionPageResponse?.data.map((question) => {
-              return (
-                <TableRow key={question.id}>
-                  <TableCell>
+        {isLoading ? (
+          <Loader />
+        ) : !mainQuestionPageResponse?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
                     <Checkbox
-                      checked={selectedMainQuestionIds.includes(question.id)}
-                      onCheckedChange={() =>
-                        toggleMainQuestionSelection(question.id)
+                      checked={
+                        isAllSelected || (isSomeSelected ? "indeterminate" : false)
                       }
+                      onCheckedChange={toggleSelectAll}
                     />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">
-                        {getMainQuestionCode(question)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span>{question.level}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-questions/${question.id}/subjects`}>
-                      <span>
-                        {question.subjects.length
-                          ? question.subjects[0].name
-                          : "Sem assunto principal"}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <span>{handleCorrectAnswer(question)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      to={`/main-questions/${question.id}/adapted-questions`}
-                    >
-                      <span>{question.adaptedQuestions.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-question/${question.id}/mock-exams`}>
-                      <span>{question.mockExams.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-question/${question.id}/handouts`}>
-                      <span>{question.handouts.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right flex gap-1">
-                    <Botao
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => handleEditMainQuestion(question.id)}
-                    >
-                      <Pencil className="size-3" color="green" />
-                    </Botao>
-                    <Botao
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() =>
-                        abrirModal(
-                          {
-                            id: question.id,
-                            status: "",
-                            nomeExibicao: getMainQuestionCode(question),
-                          },
-                          "exclusao",
-                        )
-                      }
-                    >
-                      <X className="size-3" color="red" />
-                    </Botao>
-                  </TableCell>
+                  </TableHead>
+                  <TableHead>
+                    <span>Código</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Nível</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Assuntos</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Gabarito</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Questões adaptadas</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Simulados</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Apostilas</span>
+                  </TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        {mainQuestionPageResponse && (
-          <Pagination
-            pages={mainQuestionPageResponse.pages}
-            items={mainQuestionPageResponse.pageItems}
-            page={page}
-            totalItems={mainQuestionPageResponse.totalItems}
-          />
+              </TableHeader>
+              <TableBody>
+                {mainQuestionPageResponse.data.map((question) => {
+                  return (
+                    <TableRow key={question.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedMainQuestionIds.includes(question.id)}
+                          onCheckedChange={() =>
+                            toggleMainQuestionSelection(question.id)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium">
+                            {getMainQuestionCode(question)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span>{question.level}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-questions/${question.id}/subjects`}>
+                          <span>
+                            {question.subjects.length
+                              ? question.subjects[0].name
+                              : "Sem assunto principal"}
+                          </span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <span>{handleCorrectAnswer(question)}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/main-questions/${question.id}/adapted-questions`}
+                        >
+                          <span>{question.adaptedQuestions.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-question/${question.id}/mock-exams`}>
+                          <span>{question.mockExams.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-question/${question.id}/handouts`}>
+                          <span>{question.handouts.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-right flex gap-1">
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() => handleEditMainQuestion(question.id)}
+                        >
+                          <Pencil className="size-3" color="green" />
+                        </Botao>
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() =>
+                            abrirModal(
+                              {
+                                id: question.id,
+                                status: "",
+                                nomeExibicao: getMainQuestionCode(question),
+                              },
+                              "exclusao",
+                            )
+                          }
+                        >
+                          <X className="size-3" color="red" />
+                        </Botao>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <Pagination
+              pages={mainQuestionPageResponse.pages}
+              items={mainQuestionPageResponse.pageItems}
+              page={page}
+              totalItems={mainQuestionPageResponse.totalItems}
+            />
+          </>
         )}
       </main>
 

@@ -20,6 +20,7 @@ import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import Botao from "@/components/Shared/Botao";
+import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
 import { classGroupLabelMap } from "@/constants/students";
 
@@ -45,7 +46,7 @@ export function MockExams() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const { data: mockExamPageResponse } = useGetMockExamList({
+  const { data: mockExamPageResponse, isLoading } = useGetMockExamList({
     query: urlFilter,
     page,
     pageSize,
@@ -157,151 +158,159 @@ export function MockExams() {
           </Botao>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-10">
-                <Checkbox
-                  checked={
-                    isAllSelected || (isSomeSelected ? "indeterminate" : false)
-                  }
-                  onCheckedChange={toggleSelectAll}
-                />
-              </TableHead>
-              <TableHead>
-                <span>Código</span>
-              </TableHead>
-              <TableHead>
-                <span>Título</span>
-              </TableHead>
-              <TableHead>
-                <span>Turma</span>
-              </TableHead>
-              <TableHead>
-                <span>Ano de Emissão</span>
-              </TableHead>
-              <TableHead>
-                <span>Número</span>
-              </TableHead>
-              <TableHead>
-                <span>Assuntos</span>
-              </TableHead>
-              <TableHead>
-                <span>Questões</span>
-              </TableHead>
-              <TableHead>
-                <span>Gabarito</span>
-              </TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockExamPageResponse?.data.map((mockExam) => {
-              return (
-                <TableRow key={mockExam.id}>
-                  <TableCell>
+        {isLoading ? (
+          <Loader />
+        ) : !mockExamPageResponse?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
                     <Checkbox
-                      checked={selectedMockExamIds.includes(mockExam.id)}
-                      onCheckedChange={() =>
-                        toggleMockExamSelection(mockExam.id)
+                      checked={
+                        isAllSelected || (isSomeSelected ? "indeterminate" : false)
                       }
+                      onCheckedChange={toggleSelectAll}
                     />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">
-                        {getMockExamCode(mockExam)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span>{mockExam.name}</span>
-                  </TableCell>
-                  <TableCell>
-                    {mockExam.className.map((name) => (
-                      <span key={name}>{classGroupLabelMap[name]}</span>
-                    ))}
-                  </TableCell>
-                  <TableCell>
-                    <span>{mockExam.releasedYear}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span>{mockExam.number}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      to={`/mock-exam/${mockExam.id}/subjects`}
-                      className="flex align-middle justify-center"
-                    >
-                      <span>
-                        <Pencil className="size-3" />
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
-                      <span>
-                        {Object.keys(mockExam.mockExamQuestions).length}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      to={`/mock-exam/${mockExam.id}/mock-exams-answers`}
-                      className="flex align-middle justify-center"
-                    >
-                      <span>
-                        <EyeIcon className="size-4" />
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right flex gap-1">
-                    <Botao
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => handleCopyMockExam(mockExam.id)}
-                    >
-                      <Copy className="size-3" color="blue" />
-                    </Botao>
-                    <Botao
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => handleEditMockExam(mockExam.id)}
-                    >
-                      <Pencil className="size-3" color="green" />
-                    </Botao>
-                    <Botao
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() =>
-                        abrirModal(
-                          {
-                            id: mockExam.id,
-                            status: "",
-                            nomeExibicao: mockExam.name,
-                          },
-                          "exclusao",
-                        )
-                      }
-                    >
-                      <X className="size-3" color="red" />
-                    </Botao>
-                  </TableCell>
+                  </TableHead>
+                  <TableHead>
+                    <span>Código</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Título</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Turma</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Ano de Emissão</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Número</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Assuntos</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Questões</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Gabarito</span>
+                  </TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        {mockExamPageResponse && (
-          <Pagination
-            pages={mockExamPageResponse.pages}
-            items={mockExamPageResponse.pageItems}
-            page={page}
-            totalItems={mockExamPageResponse.totalItems}
-          />
+              </TableHeader>
+              <TableBody>
+                {mockExamPageResponse.data.map((mockExam) => {
+                  return (
+                    <TableRow key={mockExam.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedMockExamIds.includes(mockExam.id)}
+                          onCheckedChange={() =>
+                            toggleMockExamSelection(mockExam.id)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium">
+                            {getMockExamCode(mockExam)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span>{mockExam.name}</span>
+                      </TableCell>
+                      <TableCell>
+                        {mockExam.className.map((name) => (
+                          <span key={name}>{classGroupLabelMap[name]}</span>
+                        ))}
+                      </TableCell>
+                      <TableCell>
+                        <span>{mockExam.releasedYear}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span>{mockExam.number}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/mock-exam/${mockExam.id}/subjects`}
+                          className="flex align-middle justify-center"
+                        >
+                          <span>
+                            <Pencil className="size-3" />
+                          </span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/mock-exams/${mockExam.id}/main-questions`}>
+                          <span>
+                            {Object.keys(mockExam.mockExamQuestions).length}
+                          </span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/mock-exam/${mockExam.id}/mock-exams-answers`}
+                          className="flex align-middle justify-center"
+                        >
+                          <span>
+                            <EyeIcon className="size-4" />
+                          </span>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-right flex gap-1">
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() => handleCopyMockExam(mockExam.id)}
+                        >
+                          <Copy className="size-3" color="blue" />
+                        </Botao>
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() => handleEditMockExam(mockExam.id)}
+                        >
+                          <Pencil className="size-3" color="green" />
+                        </Botao>
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() =>
+                            abrirModal(
+                              {
+                                id: mockExam.id,
+                                status: "",
+                                nomeExibicao: mockExam.name,
+                              },
+                              "exclusao",
+                            )
+                          }
+                        >
+                          <X className="size-3" color="red" />
+                        </Botao>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <Pagination
+              pages={mockExamPageResponse.pages}
+              items={mockExamPageResponse.pageItems}
+              page={page}
+              totalItems={mockExamPageResponse.totalItems}
+            />
+          </>
         )}
       </main>
 
