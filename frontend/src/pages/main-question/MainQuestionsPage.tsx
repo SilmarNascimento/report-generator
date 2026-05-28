@@ -6,19 +6,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import { MainQuestion } from "@/interfaces";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import { useGetMainQuestionList } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionList";
 import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
-import { useDeleteMainQuestionById } from "@/hooks/CRUD/mainQuestion/useDeleteMainQuestionById";
 import { NavigationBar } from "@/components/NavigationBar";
-import { Header } from "@/components/Header";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { Button } from "@/components/ui/shadcn/button";
-import { FileDown, Pencil, X } from "lucide-react";
+import { Loader } from "@/components/ui/loader/Loader";
+import { Pencil, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 
 export function MainQuestions() {
@@ -49,7 +51,43 @@ export function MainQuestions() {
     pageSize,
   );
 
-  const deleteMainQuestion = useDeleteMainQuestionById();
+  const [selectedMainQuestionIds, setSelectedMainQuestionIds] = useState<
+    string[]
+  >([]);
+
+  const questoes = mainQuestionPageResponse?.data ?? [];
+  const isAllSelected =
+    questoes.length > 0 &&
+    questoes.every((q) => selectedMainQuestionIds.includes(q.id));
+  const isSomeSelected =
+    questoes.some((q) => selectedMainQuestionIds.includes(q.id)) &&
+    !isAllSelected;
+
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/main-question",
+      invalidateKeys: [["get-main-questions"]],
+      entidade: "Questão Principal",
+    });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/main-question",
+    invalidateKeys: [["get-main-questions"]],
+    entidade: "Questão Principal",
+    onSuccess: () => setSelectedMainQuestionIds([]),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  useEffect(() => {
+    setSelectedMainQuestionIds([]);
+  }, [page]);
 
   function handleCreateNewMainQuestion() {
     navigate("/main-questions/create");
@@ -59,19 +97,11 @@ export function MainQuestions() {
     navigate(`/main-questions/edit/${mainQuestionId}`);
   }
 
-  async function handleDeleteMainQuestion(question: MainQuestion) {
-    await deleteMainQuestion.mutateAsync(question.id);
-  }
-
   function handleCorrectAnswer(question: MainQuestion) {
     const correctIndex = question.alternatives.findIndex(
       (alternative) => alternative.questionAnswer,
     );
     return getAlternativeLetter(correctIndex);
-  }
-
-  if (isLoading) {
-    return null;
   }
 
   function getMainQuestionCode(question: MainQuestion) {
@@ -87,17 +117,41 @@ export function MainQuestions() {
     return "";
   }
 
+  function toggleMainQuestionSelection(questionId: string) {
+    setSelectedMainQuestionIds((prev) =>
+      prev.includes(questionId)
+        ? prev.filter((id) => id !== questionId)
+        : [...prev, questionId],
+    );
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setSelectedMainQuestionIds((prev) =>
+        prev.filter((id) => !questoes.map((q) => q.id).includes(id)),
+      );
+    } else {
+      setSelectedMainQuestionIds((prev) =>
+        Array.from(new Set([...prev, ...questoes.map((q) => q.id)])),
+      );
+    }
+  }
+
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Principais</h1>
-          <Botao perfil="novo" onClick={handleCreateNewMainQuestion} />
+          <Botao
+            variant="novo"
+            label="Novo"
+            type="button"
+            onClick={handleCreateNewMainQuestion}
+          />
         </div>
 
         <div className="flex items-center justify-between">
@@ -108,116 +162,166 @@ export function MainQuestions() {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
-            Export
-          </Button>
+          <Botao
+            variant="excluirCheio"
+            disabled={selectedMainQuestionIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedMainQuestionIds)}
+          >
+            Deletar Selecionados ({selectedMainQuestionIds.length})
+          </Botao>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>
-                <span>Código</span>
-              </TableHead>
-              <TableHead>
-                <span>Nível</span>
-              </TableHead>
-              <TableHead>
-                <span>Assuntos</span>
-              </TableHead>
-              <TableHead>
-                <span>Gabarito</span>
-              </TableHead>
-              <TableHead>
-                <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
-              </TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mainQuestionPageResponse?.data.map((question) => {
-              return (
-                <TableRow key={question.id}>
-                  <TableCell></TableCell>
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">
-                        {getMainQuestionCode(question)}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span>{question.level}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-questions/${question.id}/subjects`}>
-                      <span>
-                        {question.subjects.length
-                          ? question.subjects[0].name
-                          : "Sem assunto principal"}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <span>{handleCorrectAnswer(question)}</span>
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      to={`/main-questions/${question.id}/adapted-questions`}
-                    >
-                      <span>{question.adaptedQuestions.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-question/${question.id}/mock-exams`}>
-                      <span>{question.mockExams.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/main-question/${question.id}/handouts`}>
-                      <span>{question.handouts.length}</span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right flex gap-1">
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => handleEditMainQuestion(question.id)}
-                    >
-                      <Pencil className="size-3" color="green" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => handleDeleteMainQuestion(question)}
-                    >
-                      <X className="size-3" color="red" />
-                    </Button>
-                  </TableCell>
+        {isLoading ? (
+          <Loader />
+        ) : !mainQuestionPageResponse?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={
+                        isAllSelected || (isSomeSelected ? "indeterminate" : false)
+                      }
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <span>Código</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Nível</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Assuntos</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Gabarito</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Questões adaptadas</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Simulados</span>
+                  </TableHead>
+                  <TableHead>
+                    <span>Apostilas</span>
+                  </TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        {mainQuestionPageResponse && (
-          <Pagination
-            pages={mainQuestionPageResponse.pages}
-            items={mainQuestionPageResponse.pageItems}
-            page={page}
-            totalItems={mainQuestionPageResponse.totalItems}
-          />
+              </TableHeader>
+              <TableBody>
+                {mainQuestionPageResponse.data.map((question) => {
+                  return (
+                    <TableRow key={question.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedMainQuestionIds.includes(question.id)}
+                          onCheckedChange={() =>
+                            toggleMainQuestionSelection(question.id)
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium">
+                            {getMainQuestionCode(question)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span>{question.level}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-questions/${question.id}/subjects`}>
+                          <span>
+                            {question.subjects.length
+                              ? question.subjects[0].name
+                              : "Sem assunto principal"}
+                          </span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <span>{handleCorrectAnswer(question)}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          to={`/main-questions/${question.id}/adapted-questions`}
+                        >
+                          <span>{question.adaptedQuestions.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-question/${question.id}/mock-exams`}>
+                          <span>{question.mockExams.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <Link to={`/main-question/${question.id}/handouts`}>
+                          <span>{question.handouts.length}</span>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-right flex gap-1">
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() => handleEditMainQuestion(question.id)}
+                        >
+                          <Pencil className="size-3" color="green" />
+                        </Botao>
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() =>
+                            abrirModal(
+                              {
+                                id: question.id,
+                                status: "",
+                                nomeExibicao: getMainQuestionCode(question),
+                              },
+                              "exclusao",
+                            )
+                          }
+                        >
+                          <X className="size-3" color="red" />
+                        </Botao>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <Pagination
+              pages={mainQuestionPageResponse.pages}
+              items={mainQuestionPageResponse.pageItems}
+              page={page}
+              totalItems={mainQuestionPageResponse.totalItems}
+            />
+          </>
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
+        entidade={
+          modalEmMassaAberto ? "Questões Principais" : "Questão Principal"
+        }
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
+      />
     </>
   );
 }

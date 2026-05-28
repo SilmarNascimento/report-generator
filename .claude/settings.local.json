@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(git *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\frontend\\\\src\\\\pages\" -Recurse)",
+      "Bash(Select-Object FullName)",
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "Bash(awk '{print $NF}')",
+      "mcp__ide__getDiagnostics"
+    ]
+  }
+}

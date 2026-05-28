@@ -1,5 +1,4 @@
 import { FilePlus, Plus } from "lucide-react";
-import { Button } from "../ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -13,6 +12,7 @@ import { PageResponse, Subject } from "../../interfaces";
 import { useState } from "react";
 import { Pagination } from "../Pagination";
 import FiltroListagem from "../Shared/FiltroListagem";
+import Botao from "../Shared/Botao";
 
 type AddSubjectManagerTableProps = {
   entity: PageResponse<Subject>;
@@ -59,13 +59,13 @@ export function AddSubjectManagerTable({
             />
           </form>
 
-          <Button
+          <Botao
             variant="secondary"
             onClick={() => handleClick(subjectIdToAdd)}
           >
             <FilePlus className="size-3" />
             Adicionar todos
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -105,14 +105,14 @@ export function AddSubjectManagerTable({
                   </TableCell>
                   <TableCell>{subject.id}</TableCell>
                   <TableCell className="text-right">
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleClick([subject.id])}
                     >
                       <Plus className="size-3" color="green" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );

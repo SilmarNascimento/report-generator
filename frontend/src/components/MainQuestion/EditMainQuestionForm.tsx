@@ -1,7 +1,6 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/shadcn/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { MainQuestion } from "@/interfaces";
 import { CreateAlternative } from "@/interfaces/Alternative";
@@ -20,6 +19,7 @@ import {
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
+import Botao from "../Shared/Botao";
 
 interface EditMainQuestionFormProps {
   entity: MainQuestion;
@@ -267,7 +267,7 @@ export function EditMainQuestionForm({
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Botao
             disabled={formState.isSubmitting || !formState.isDirty}
             className="bg-teal-400 text-teal-950"
             type="submit"
@@ -278,11 +278,11 @@ export function EditMainQuestionForm({
               <Check className="size-3" />
             )}
             Save
-          </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          </Botao>
+          <Botao onClick={() => navigate("/main-questions")}>
             <X className="size-3" />
             Cancel
-          </Button>
+          </Botao>
         </div>
       </form>
     </FormProvider>

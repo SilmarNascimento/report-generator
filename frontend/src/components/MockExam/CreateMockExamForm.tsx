@@ -1,14 +1,14 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/shadcn/button";
 import { useNavigate } from "react-router-dom";
 import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
 import { classGroupOptions } from "@/constants/students";
 import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMockExam";
 import { MockExamFormType, MockExamSchema } from "./MockExamSchema.ts";
-import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
+import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper.tsx";
+import Botao from "../Shared/Botao.tsx";
 
 export function CreateMockExamForm() {
   const navigate = useNavigate();
@@ -148,7 +148,7 @@ export function CreateMockExamForm() {
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Botao
             disabled={
               formState.isSubmitting ||
               !Object.keys(formState.dirtyFields).length
@@ -162,11 +162,11 @@ export function CreateMockExamForm() {
               <Check className="size-3" />
             )}
             Save
-          </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          </Botao>
+          <Botao onClick={() => navigate("/main-questions")}>
             <X className="size-3" />
             Cancel
-          </Button>
+          </Botao>
         </div>
       </form>
     </FormProvider>

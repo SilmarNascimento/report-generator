@@ -2,7 +2,8 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { Button } from "@/components/ui/shadcn/button";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import {
   Table,
   TableBody,
@@ -12,10 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { useGetStudents } from "@/hooks/CRUD/student/useGetStudents";
-import { useHandleDeleteStudent } from "@/hooks/CRUD/student/useHandleDeleteStudent";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
+import { useListagemModal } from "@/hooks/useListagemModal";
 import { StudentResponse } from "@/interfaces/Student";
-import { Eye, FileDown, Pencil, X } from "lucide-react";
+import { Loader } from "@/components/ui/loader/Loader";
+import { Eye, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -30,8 +33,38 @@ const StudentList = () => {
   const [searchTerm, setSearchTerm] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(searchTerm, 1000);
 
-  const { data: studentPage } = useGetStudents(page, pageSize, urlFilter);
-  const { mutateAsync: deleteStudent } = useHandleDeleteStudent();
+  const { data: studentPage, isLoading } = useGetStudents(page, pageSize, urlFilter);
+
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+
+  const estudantes = studentPage?.data ?? [];
+  const isAllSelected =
+    estudantes.length > 0 &&
+    estudantes.every((s) => selectedStudentIds.includes(s.id));
+  const isSomeSelected =
+    estudantes.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
+
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/students",
+      invalidateKeys: [["get-students"]],
+      entidade: "Estudante",
+    });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/students",
+    invalidateKeys: [["get-students"]],
+    entidade: "Estudante",
+    onSuccess: () => setSelectedStudentIds([]),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -44,13 +77,36 @@ const StudentList = () => {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
+  useEffect(() => {
+    setSelectedStudentIds([]);
+  }, [page]);
+
   function handleCreateStudent() {
     navigate("/students/create");
   }
 
+  function toggleStudentSelection(studentId: string) {
+    setSelectedStudentIds((prev) =>
+      prev.includes(studentId)
+        ? prev.filter((id) => id !== studentId)
+        : [...prev, studentId],
+    );
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected) {
+      setSelectedStudentIds((prev) =>
+        prev.filter((id) => !estudantes.map((s) => s.id).includes(id)),
+      );
+    } else {
+      setSelectedStudentIds((prev) =>
+        Array.from(new Set([...prev, ...estudantes.map((s) => s.id)])),
+      );
+    }
+  }
+
   function formatClassGroup(student: StudentResponse) {
     const { classGroups } = student;
-
     return classGroups.map((group) => <span>{group}</span>);
   }
 
@@ -63,7 +119,12 @@ const StudentList = () => {
       <main className="max-w-6xl mx-auto space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Alunos</h1>
-          <Botao perfil="novo" onClick={handleCreateStudent} />
+          <Botao
+            variant="novo"
+            label="Novo"
+            type="button"
+            onClick={handleCreateStudent}
+          />
         </div>
 
         <div className="flex items-center justify-between">
@@ -74,18 +135,35 @@ const StudentList = () => {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
-            Export
-          </Button>
+          <Botao
+            variant="excluirCheio"
+            disabled={selectedStudentIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedStudentIds)}
+          >
+            Deletar Selecionados ({selectedStudentIds.length})
+          </Botao>
         </div>
 
-        {studentPage?.data ? (
+        {isLoading ? (
+          <Loader />
+        ) : !studentPage?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
           <>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead></TableHead>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={
+                        isAllSelected ||
+                        (isSomeSelected ? "indeterminate" : false)
+                      }
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead>
                     <span>Nome</span>
                   </TableHead>
@@ -105,9 +183,16 @@ const StudentList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {studentPage?.data.map((student) => (
+                {studentPage.data.map((student) => (
                   <TableRow key={student.id}>
-                    <TableCell></TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedStudentIds.includes(student.id)}
+                        onCheckedChange={() =>
+                          toggleStudentSelection(student.id)
+                        }
+                      />
+                    </TableCell>
                     <TableCell>{student.name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>{student.cpf}</TableCell>
@@ -118,45 +203,62 @@ const StudentList = () => {
                       </div>
                     </TableCell>
                     <TableCell className="flex gap-1">
-                      <Button
+                      <Botao
                         variant="muted"
                         onClick={() => navigate(`/students/edit/${student.id}`)}
                       >
                         <Pencil className="size-3 text-green-500" />
-                      </Button>
-                      <Button
+                      </Botao>
+                      <Botao
                         variant="muted"
                         onClick={() => navigate(`/students/view/${student.id}`)}
                       >
                         <Eye className="size-3 text-green-500" />
-                      </Button>
-                      <Button
+                      </Botao>
+                      <Botao
                         variant="muted"
-                        onClick={() => deleteStudent(student.id)}
+                        onClick={() =>
+                          abrirModal(
+                            {
+                              id: student.id,
+                              status: "",
+                              nomeExibicao: student.name,
+                            },
+                            "exclusao",
+                          )
+                        }
                       >
                         <X className="size-3 text-red-500" />
-                      </Button>
+                      </Botao>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
 
-            {studentPage && (
-              <Pagination
-                pages={studentPage.pages}
-                items={studentPage.pageItems}
-                page={page}
-                totalItems={studentPage.totalItems}
-              />
-            )}
+            <Pagination
+              pages={studentPage.pages}
+              items={studentPage.pageItems}
+              page={page}
+              totalItems={studentPage.totalItems}
+            />
           </>
-        ) : (
-          <div>
-            <h1 className="text-center font-medium">Nenhum aluno cadastrado</h1>
-          </div>
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
+        entidade={modalEmMassaAberto ? "Estudantes" : "Estudante"}
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
+      />
     </>
   );
 };

@@ -19,6 +19,7 @@ public interface MockExamServiceInterface {
   MockExam updateMockExamById(UUID mockExamId, MockExam mockExam, MultipartFile coverPdfFile, MultipartFile matrixPdfFile, MultipartFile answersPdfFile) throws IOException;
 
   void deleteMockExamById(UUID mockExamId);
+  void deleteAllMockExamsByIds(List<UUID> ids);
 
   MockExam addSubject(UUID mockExamId, List<UUID> subjecstId);
 
@@ -29,4 +30,6 @@ public interface MockExamServiceInterface {
   MockExam removeMainQuestion(UUID mockExamId, List<UUID> mainQuestionId);
 
   List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses);
+
+  MockExam copyMockExam(UUID mockExamId);
 }

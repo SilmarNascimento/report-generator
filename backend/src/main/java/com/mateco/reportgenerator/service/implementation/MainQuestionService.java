@@ -116,6 +116,12 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   @Transactional
+  public void deleteAllMainQuestionsByIds(List<UUID> ids) {
+    ids.forEach(this::deleteMainQuestionById);
+  }
+
+  @Override
+  @Transactional
   public MainQuestion addSubject(UUID questionId, List<UUID> subjectsId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));

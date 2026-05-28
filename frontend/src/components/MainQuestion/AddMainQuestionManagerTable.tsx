@@ -1,5 +1,4 @@
 import { FilePlus, Plus } from "lucide-react";
-import { Button } from "../ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import { useState } from "react";
 import { Pagination } from "../Pagination";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import FiltroListagem from "../Shared/FiltroListagem";
+import Botao from "../Shared/Botao";
 
 type AddMainQuestionManagerTableProps = {
   entity: PageResponse<MainQuestion>;
@@ -71,13 +71,13 @@ export function AddMainQuestionManagerTable({
             />
           </form>
 
-          <Button
+          <Botao
             variant="secondary"
             onClick={() => handleClick(mainQuestionIdToAdd)}
           >
             <FilePlus className="size-3" />
             Adicionar todos
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -149,14 +149,14 @@ export function AddMainQuestionManagerTable({
                     <span>{mainQuestion.handouts.length}</span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleClick([mainQuestion.id])}
                     >
                       <Plus className="size-3" color="green" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );

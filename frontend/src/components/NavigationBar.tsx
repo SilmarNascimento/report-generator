@@ -14,7 +14,7 @@ export function NavigationBar() {
     "py-1.5 px-3 text-primary inline-flex items-center text-sm gap-1.5 font-bold rounded-full border border-primary/20 bg-primary/10 transition-all";
 
   const deactivatedLink =
-    "py-1.5 px-3 text-muted-foreground inline-flex items-center text-sm gap-1.5 font-medium rounded-full border border-transparent transition-all duration-300 hover:text-secondary hover:bg-secondary/10";
+    "py-1.5 px-3 text-muted-foreground inline-flex items-center text-sm gap-1.5 font-medium rounded-full border border-transparent transition-all duration-300 hover:text-primary hover:bg-primary/10";
 
   return (
     <div className="border-b border-border bg-background py-4">

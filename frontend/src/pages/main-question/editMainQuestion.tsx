@@ -3,7 +3,6 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { convertMainQuestionData } from "@/utils/convertMainQuestiondata";
 import { useGetMainQuestionById } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionById";
 import { FormHeader } from "@/components/FormHeader";
-import { Header } from "@/components/Header";
 import { EditMainQuestionForm } from "@/components/MainQuestion/EditMainQuestionForm";
 
 export function EditMainQuestion() {
@@ -16,7 +15,6 @@ export function EditMainQuestion() {
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
         <header>
-          <Header />
           <NavigationBar />
         </header>
         <FormHeader

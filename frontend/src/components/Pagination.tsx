@@ -6,8 +6,8 @@ import {
 } from "lucide-react";
 
 import { useSearchParams } from "react-router-dom";
-import { Button } from "./ui/shadcn/button";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./ui/Select";
+import Botao from "./Shared/Botao";
 
 interface PaginationProps {
   page: number;
@@ -76,7 +76,7 @@ export function Pagination({
               Page {page} of {pages}
             </span>
             <div className="space-x-1.5">
-              <Button
+              <Botao
                 variant="secondary"
                 onClick={firstPage}
                 size="icon"
@@ -84,8 +84,8 @@ export function Pagination({
               >
                 <ChevronsLeft className="size-4" />
                 <span className="sr-only">First page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 variant="secondary"
                 onClick={previousPage}
                 size="icon"
@@ -93,8 +93,8 @@ export function Pagination({
               >
                 <ChevronLeft className="size-4" />
                 <span className="sr-only">Previous page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 variant="secondary"
                 onClick={nextPage}
                 size="icon"
@@ -102,8 +102,8 @@ export function Pagination({
               >
                 <ChevronRight className="size-4" />
                 <span className="sr-only">Next page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 variant="secondary"
                 onClick={lastPage}
                 size="icon"
@@ -111,7 +111,7 @@ export function Pagination({
               >
                 <ChevronsRight className="size-4" />
                 <span className="sr-only">Last page</span>
-              </Button>
+              </Botao>
             </div>
           </>
         )}

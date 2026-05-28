@@ -1,11 +1,9 @@
-import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { CreateSubjectForm } from "@/components/Subject/CreateSubjectForm";
 import { EditSubjectForm } from "@/components/Subject/EditSubjectForm";
-import { Button } from "@/components/ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -14,9 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { useDeleteSubject } from "@/hooks/CRUD/subject/useDeleteSubject";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import { useListagemModal } from "@/hooks/useListagemModal";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import { Loader } from "@/components/ui/loader/Loader";
 import * as Dialog from "@radix-ui/react-dialog";
 import { FileDown, Loader2, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -50,16 +50,16 @@ export function Subjects() {
     isLoading,
     isFetching,
   } = useGetSubjects(page, pageSize, urlFilter);
-  const { mutateAsync: deleteSubject } = useDeleteSubject();
-
-  if (isLoading) {
-    return null;
-  }
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/subject",
+      invalidateKeys: [["get-subjects"]],
+      entidade: "Assunto",
+    });
 
   return (
     <>
       <div>
-        <Header />
         <NavigationBar />
       </div>
 
@@ -69,7 +69,7 @@ export function Subjects() {
 
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <Botao perfil="novo" />
+              <Botao variant="novo" label="Novo" type="button" />
             </Dialog.Trigger>
 
             <Dialog.Portal>
@@ -79,7 +79,7 @@ export function Subjects() {
                   <Dialog.Title className="text-xl font-bold">
                     Novo Assunto
                   </Dialog.Title>
-                  <Dialog.Description className="text-sm text-zinc-500">
+                  <Dialog.Description className="text-sm text-muted-foreground">
                     Informe o campo a seguir para criar um novo assunto.
                   </Dialog.Description>
                 </div>
@@ -90,7 +90,7 @@ export function Subjects() {
           </Dialog.Root>
 
           {isFetching && (
-            <Loader2 className="size-4 animate-spin text-zinc-500" />
+            <Loader2 className="size-4 animate-spin text-secondary-foreground" />
           )}
         </div>
 
@@ -102,93 +102,119 @@ export function Subjects() {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
+          <Botao variant="secondary" icon={<FileDown className="size-3" />}>
             Export
-          </Button>
+          </Botao>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Peso</TableHead>
-              <TableHead>Id</TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subjectPageResponse?.data.map((subject) => {
-              return (
-                <TableRow key={subject.id}>
-                  <TableCell></TableCell>
-
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">{subject.name}</span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">
-                        {subject.fixedWeight
-                          ? `${(subject.fixedWeight * 100).toFixed(1)}%`
-                          : "0%"}
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell>{subject.id}</TableCell>
-
-                  <TableCell className="text-right">
-                    <Dialog.Root>
-                      <Dialog.Trigger asChild>
-                        <Button size="icon" className="mx-0.5" variant="muted">
-                          <Pencil className="size-3" color="green" />
-                        </Button>
-                      </Dialog.Trigger>
-
-                      <Dialog.Portal>
-                        <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-                        <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
-                          <div className="space-y-3">
-                            <Dialog.Title className="text-xl font-bold">
-                              Editar Assunto
-                            </Dialog.Title>
-                            <Dialog.Description className="text-sm">
-                              Altere o campo a seguir para atualizar o assunto.
-                            </Dialog.Description>
-                          </div>
-                          <EditSubjectForm entity={subject} />
-                        </Dialog.Content>
-                      </Dialog.Portal>
-                    </Dialog.Root>
-
-                    <Button
-                      size="icon"
-                      className="mx-0.5"
-                      variant="muted"
-                      onClick={() => deleteSubject(subject.id)}
-                    >
-                      <X className="size-3" color="red" />
-                    </Button>
-                  </TableCell>
+        {isLoading ? (
+          <Loader />
+        ) : !subjectPageResponse?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead></TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Peso</TableHead>
+                  <TableHead>Id</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-        {subjectPageResponse && (
-          <Pagination
-            pages={subjectPageResponse.pages}
-            items={subjectPageResponse.pageItems}
-            page={page}
-            totalItems={subjectPageResponse.totalItems}
-          />
+              </TableHeader>
+              <TableBody>
+                {subjectPageResponse.data.map((subject) => {
+                  return (
+                    <TableRow key={subject.id}>
+                      <TableCell></TableCell>
+
+                      <TableCell>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium">{subject.name}</span>
+                        </div>
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium">
+                            {subject.fixedWeight
+                              ? `${(subject.fixedWeight * 100).toFixed(1)}%`
+                              : "0%"}
+                          </span>
+                        </div>
+                      </TableCell>
+
+                      <TableCell>{subject.id}</TableCell>
+
+                      <TableCell className="text-right">
+                        <Dialog.Root>
+                          <Dialog.Trigger asChild>
+                            <Botao size="icon" className="mx-0.5" variant="muted">
+                              <Pencil className="size-3" color="green" />
+                            </Botao>
+                          </Dialog.Trigger>
+
+                          <Dialog.Portal>
+                            <Dialog.Overlay className="fixed inset-0 bg-black/70" />
+                            <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
+                              <div className="space-y-3">
+                                <Dialog.Title className="text-xl font-bold">
+                                  Editar Assunto
+                                </Dialog.Title>
+                                <Dialog.Description className="text-sm">
+                                  Altere o campo a seguir para atualizar o assunto.
+                                </Dialog.Description>
+                              </div>
+                              <EditSubjectForm entity={subject} />
+                            </Dialog.Content>
+                          </Dialog.Portal>
+                        </Dialog.Root>
+
+                        <Botao
+                          size="icon"
+                          className="mx-0.5"
+                          variant="muted"
+                          onClick={() =>
+                            abrirModal(
+                              {
+                                id: subject.id,
+                                status: "",
+                                nomeExibicao: subject.name,
+                              },
+                              "exclusao",
+                            )
+                          }
+                        >
+                          <X className="size-3" color="red" />
+                        </Botao>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <Pagination
+              pages={subjectPageResponse.pages}
+              items={subjectPageResponse.pageItems}
+              page={page}
+              totalItems={subjectPageResponse.totalItems}
+            />
+          </>
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen}
+        tipo={modalState.tipo}
+        entidade="Assunto"
+        item={modalState.item}
+        isLoading={isPending}
+        onClose={fecharModal}
+        onConfirm={confirmarAcao}
+      />
     </>
   );
 }

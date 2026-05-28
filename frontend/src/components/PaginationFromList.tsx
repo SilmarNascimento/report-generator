@@ -5,8 +5,8 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
-import { Button } from "./ui/shadcn/button";
 import { SelectPageSize } from "./ui/SelectPageSize";
+import Botao from "./Shared/Botao";
 
 interface PaginationProps {
   page: number;
@@ -59,7 +59,7 @@ export function PaginationFromList({
               Page {page} of {pages}
             </span>
             <div className="space-x-1.5">
-              <Button
+              <Botao
                 onClick={firstPage}
                 size="icon"
                 variant="secondary"
@@ -67,8 +67,8 @@ export function PaginationFromList({
               >
                 <ChevronsLeft className="size-4" />
                 <span className="sr-only">First page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 onClick={previousPage}
                 size="icon"
                 variant="secondary"
@@ -76,8 +76,8 @@ export function PaginationFromList({
               >
                 <ChevronLeft className="size-4" />
                 <span className="sr-only">Previous page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 onClick={nextPage}
                 size="icon"
                 variant="secondary"
@@ -85,8 +85,8 @@ export function PaginationFromList({
               >
                 <ChevronRight className="size-4" />
                 <span className="sr-only">Next page</span>
-              </Button>
-              <Button
+              </Botao>
+              <Botao
                 onClick={lastPage}
                 size="icon"
                 variant="secondary"
@@ -94,7 +94,7 @@ export function PaginationFromList({
               >
                 <ChevronsRight className="size-4" />
                 <span className="sr-only">Last page</span>
-              </Button>
+              </Botao>
             </div>
           </>
         )}

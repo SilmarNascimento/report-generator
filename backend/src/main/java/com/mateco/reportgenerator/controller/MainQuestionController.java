@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
@@ -132,6 +133,17 @@ public class MainQuestionController {
   @DeleteMapping("/{mainQuestionId}")
   public ResponseEntity<Void> deleteMainQuestionById(@PathVariable UUID mainQuestionId) {
     mainQuestionService.deleteMainQuestionById(mainQuestionId);
+    return ResponseEntity
+        .status(HttpStatus.NO_CONTENT)
+        .build();
+  }
+
+  @DeleteMapping("/batch")
+  public ResponseEntity<Void> deleteAllMainQuestionsByIds(@RequestBody BatchDeleteInputDto dto) {
+    List<UUID> uuidIds = dto.ids().stream()
+        .map(UUID::fromString)
+        .toList();
+    mainQuestionService.deleteAllMainQuestionsByIds(uuidIds);
     return ResponseEntity
         .status(HttpStatus.NO_CONTENT)
         .build();

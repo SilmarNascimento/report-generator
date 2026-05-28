@@ -1,5 +1,5 @@
 import { StudentFormType } from "@/components/forms/student/studentSchema";
-import { MainQuestionFormType } from "@/components/mainQuestion/mainQuestionSchema";
+import { MainQuestionFormType } from "@/components/mainQuestion/MainQuestionSchema";
 import { MockExamFormType } from "@/components/mockExam/mockExamSchema";
 
 type ListaPaginada<T> = {
@@ -12,6 +12,12 @@ export type Paginacao = {
   registros_pagina: number;
   total_paginas: number;
   total_registros: number;
+};
+
+type MenuOption = {
+  icon?: ReactNode;
+  label: string;
+  onClick: () => void;
 };
 
 export type DropdownType = {

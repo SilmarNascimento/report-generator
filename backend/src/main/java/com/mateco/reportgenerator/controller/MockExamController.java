@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.FileEntityDto.FileDownloadDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamInputDto;
@@ -108,6 +109,17 @@ public class MockExamController {
                 .build();
     }
 
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteAllMockExamsByIds(@RequestBody BatchDeleteInputDto dto) {
+        List<UUID> uuidIds = dto.ids().stream()
+                .map(UUID::fromString)
+                .toList();
+        mockExamService.deleteAllMockExamsByIds(uuidIds);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
     @PatchMapping("/{mockExamId}/subject")
     public ResponseEntity<MockExamOutputDto> addSubjectToMockExam(
             @PathVariable UUID mockExamId,
@@ -153,6 +165,14 @@ public class MockExamController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(MockExamOutputDto.parseDto(mockExamUpdated));
+    }
+
+    @PostMapping("/{mockExamId}/copy")
+    public ResponseEntity<MockExamOutputDto> copyMockExam(@PathVariable UUID mockExamId) {
+        MockExam copiedMockExam = mockExamService.copyMockExam(mockExamId);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(MockExamOutputDto.parseDto(copiedMockExam));
     }
 
     @PostMapping(value = "/{mockExamId}/responses", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

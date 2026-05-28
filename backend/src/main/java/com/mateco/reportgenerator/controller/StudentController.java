@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.pagination.PageResponse;
 import com.mateco.reportgenerator.controller.dto.student.StudentFilter;
 import com.mateco.reportgenerator.controller.dto.student.StudentRequestDto;
@@ -15,6 +16,8 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/students")
@@ -58,6 +61,15 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         studentService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/batch")
+    public ResponseEntity<Void> deleteAllByIds(@RequestBody BatchDeleteInputDto dto) {
+        List<Long> longIds = dto.ids().stream()
+                .map(Long::parseLong)
+                .toList();
+        studentService.deleteAllByIds(longIds);
         return ResponseEntity.noContent().build();
     }
 }

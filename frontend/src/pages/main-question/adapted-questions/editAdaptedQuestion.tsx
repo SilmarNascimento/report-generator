@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { EditAdaptedQuestionForm } from "../../../components/AdaptedQuestion/EditAdaptedQuestionForm";
 import { FormHeader } from "../../../components/FormHeader";
-import { Header } from "../../../components/Header";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { AdaptedQuestion } from "../../../interfaces";
 import { useParams } from "react-router-dom";
@@ -29,7 +28,6 @@ export function EditAdaptedQuestion() {
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
         <header>
-          <Header />
           <NavigationBar />
         </header>
         <FormHeader

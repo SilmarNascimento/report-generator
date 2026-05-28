@@ -10,7 +10,7 @@ import {
 } from "../ui/Table";
 import { Link } from "react-router-dom";
 import { StudentDiagnosisStatus } from "./StudentDiagnosisStatus";
-import { Button } from "../ui/shadcn/button";
+import Botao from "../Shared/Botao";
 
 interface DiagnosisTableProps {
   entity: MockExamDiagnosisResponse[];
@@ -95,14 +95,14 @@ export function DiagnosisTable({
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
+                  <Botao
                     size="icon"
                     className="mx-0.5"
                     variant="muted"
                     onClick={() => deleteFunction(studentResponse.id)}
                   >
                     <X className="size-3" color="red" />
-                  </Button>
+                  </Botao>
                 </TableCell>
               </TableRow>
             );

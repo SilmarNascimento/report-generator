@@ -2,14 +2,14 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
-import { Button } from "@/components/ui/shadcn/button";
 import { FileDown } from "lucide-react";
 import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
 import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
-import { Header } from "@/components/Header";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
+import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
+import Botao from "@/components/Shared/Botao";
 
 export function StudentsResponses() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,7 +32,7 @@ export function StudentsResponses() {
     });
   }, [debouncedQueryFilter, setSearchParams]);
 
-  const { data: studentsResponsePage } = useGetStudentsResponseList(
+  const { data: studentsResponsePage, isLoading } = useGetStudentsResponseList(
     page,
     pageSize,
     urlFilter,
@@ -47,7 +47,6 @@ export function StudentsResponses() {
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 
@@ -64,25 +63,30 @@ export function StudentsResponses() {
             />
           </form>
 
-          <Button variant="secondary">
-            <FileDown className="size-3" />
+          <Botao variant="secondary" icon={<FileDown className="size-3" />}>
             Export
-          </Button>
+          </Botao>
         </div>
 
-        {studentsResponsePage && (
-          <DiagnosisTable
-            entity={studentsResponsePage?.data}
-            deleteFunction={handleDeleteStudentResponse}
-          />
-        )}
-        {studentsResponsePage && (
-          <Pagination
-            pages={studentsResponsePage.pages}
-            items={studentsResponsePage.pageItems}
-            page={page}
-            totalItems={studentsResponsePage.totalItems}
-          />
+        {isLoading ? (
+          <Loader />
+        ) : !studentsResponsePage?.data?.length ? (
+          <p className="text-center text-muted-foreground py-16">
+            Nenhum registro encontrado
+          </p>
+        ) : (
+          <>
+            <DiagnosisTable
+              entity={studentsResponsePage.data}
+              deleteFunction={handleDeleteStudentResponse}
+            />
+            <Pagination
+              pages={studentsResponsePage.pages}
+              items={studentsResponsePage.pageItems}
+              page={page}
+              totalItems={studentsResponsePage.totalItems}
+            />
+          </>
         )}
       </main>
     </>

@@ -165,6 +165,12 @@ public class MockExamService implements MockExamServiceInterface {
     }
 
     @Override
+    @Transactional
+    public void deleteAllMockExamsByIds(List<UUID> ids) {
+        ids.forEach(this::deleteMockExamById);
+    }
+
+    @Override
     public MockExam addSubject(UUID mockExamId, List<UUID> subjecstId) {
         MockExam mockExamFound = mockExamRepository.findById(mockExamId)
                 .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
@@ -233,6 +239,36 @@ public class MockExamService implements MockExamServiceInterface {
         }
 
         return mockExamRepository.save(mockExamFound);
+    }
+
+    @Override
+    public MockExam copyMockExam(UUID mockExamId) {
+        MockExam original = mockExamRepository.findById(mockExamId)
+                .orElseThrow(() -> new NotFoundException("Simulado não encontrado"));
+
+        MockExam copy = new MockExam(
+                original.getName() + "-copy",
+                new ArrayList<>(original.getClassName()),
+                new ArrayList<>(original.getSubjects()),
+                original.getReleasedYear(),
+                original.getNumber()
+        );
+
+        copy.setCoverPdfFile(copyFileEntity(original.getCoverPdfFile()));
+        copy.setMatrixPdfFile(copyFileEntity(original.getMatrixPdfFile()));
+        copy.setAnswersPdfFile(copyFileEntity(original.getAnswersPdfFile()));
+        copy.setMockExamQuestions(new HashMap<>(original.getMockExamQuestions()));
+
+        return mockExamRepository.save(copy);
+    }
+
+    private FileEntity copyFileEntity(FileEntity original) {
+        if (original == null) return null;
+        return new FileEntity(
+                original.getFileContent().getContent().clone(),
+                original.getFileName(),
+                original.getFileType()
+        );
     }
 
     @Override

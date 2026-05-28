@@ -1,5 +1,4 @@
 import { FormHeader } from "@/components/FormHeader";
-import { Header } from "@/components/Header";
 import { EditMockExamForm } from "@/components/MockExam/EditMockExamForm";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
@@ -20,7 +19,6 @@ export function EditMockExam() {
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
         <header>
-          <Header />
           <NavigationBar />
         </header>
         <FormHeader

@@ -11,6 +11,7 @@ export enum CLASS_GROUP {
   INTENSIVO_ONLINE = "INTENSIVO_ONLINE",
   COMBO_PRESENCIAL = "COMBO_PRESENCIAL",
   COMBO_ONLINE = "COMBO_ONLINE",
+  CAFE_COM_LUCAS = "CAFE_COM_LUCAS",
 }
 
 export const classGroupLabelMap: Record<CLASS_GROUP, string> = {
@@ -22,6 +23,7 @@ export const classGroupLabelMap: Record<CLASS_GROUP, string> = {
   [CLASS_GROUP.INTENSIVO_ONLINE]: "Intensivo Online",
   [CLASS_GROUP.COMBO_PRESENCIAL]: "Combo Presencial",
   [CLASS_GROUP.COMBO_ONLINE]: "Combo Online",
+  [CLASS_GROUP.CAFE_COM_LUCAS]: "Café com Lucas",
 };
 
 export const classGroupOptions: DropdownType[] = Object.values(CLASS_GROUP).map(
