@@ -3,7 +3,6 @@ import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
-import { Button } from "@/components/ui/shadcn/button";
 import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import {
   Table,
@@ -18,7 +17,7 @@ import useDebounceValue from "@/hooks/useDebounceValue";
 import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { StudentResponse } from "@/interfaces/Student";
-import { Eye, Pencil, Trash2, X } from "lucide-react";
+import { Eye, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -135,14 +134,13 @@ const StudentList = () => {
             />
           </form>
 
-          <Button
+          <Botao
             variant="excluirCheio"
             disabled={selectedStudentIds.length === 0}
             onClick={() => abrirModalExclusaoEmMassa(selectedStudentIds)}
           >
-            <Trash2 className="size-3" />
             Deletar Selecionados ({selectedStudentIds.length})
-          </Button>
+          </Botao>
         </div>
 
         {studentPage?.data ? (
@@ -198,23 +196,19 @@ const StudentList = () => {
                       </div>
                     </TableCell>
                     <TableCell className="flex gap-1">
-                      <Button
+                      <Botao
                         variant="muted"
-                        onClick={() =>
-                          navigate(`/students/edit/${student.id}`)
-                        }
+                        onClick={() => navigate(`/students/edit/${student.id}`)}
                       >
                         <Pencil className="size-3 text-green-500" />
-                      </Button>
-                      <Button
+                      </Botao>
+                      <Botao
                         variant="muted"
-                        onClick={() =>
-                          navigate(`/students/view/${student.id}`)
-                        }
+                        onClick={() => navigate(`/students/view/${student.id}`)}
                       >
                         <Eye className="size-3 text-green-500" />
-                      </Button>
-                      <Button
+                      </Botao>
+                      <Botao
                         variant="muted"
                         onClick={() =>
                           abrirModal(
@@ -228,7 +222,7 @@ const StudentList = () => {
                         }
                       >
                         <X className="size-3 text-red-500" />
-                      </Button>
+                      </Botao>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -254,11 +248,15 @@ const StudentList = () => {
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}
         tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
-        entidade="Estudante"
-        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        entidade={modalEmMassaAberto ? "Estudantes" : "Estudante"}
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
         isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
         onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
-        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
       />
     </>
   );

@@ -1,5 +1,4 @@
 import { FileMinus, X } from "lucide-react";
-import { Button } from "../ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -15,6 +14,7 @@ import { PaginationFromList } from "../PaginationFromList";
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
 import FiltroListagem from "../Shared/FiltroListagem";
+import Botao from "../Shared/Botao";
 
 type RemoveMainQuestionManagerTableProps = {
   entity: { [key: number]: MainQuestion };
@@ -98,10 +98,10 @@ export function RemoveMainQuestionManagerTable({
             />
           </form>
 
-          <Button onClick={() => handleClick(mainQuestionIdToDelete)}>
+          <Botao onClick={() => handleClick(mainQuestionIdToDelete)}>
             <FileMinus className="size-3" />
             Remover todos
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -180,14 +180,14 @@ export function RemoveMainQuestionManagerTable({
                     <span>{mainQuestion.adaptedQuestions.length}</span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleClick([mainQuestion.id])}
                     >
                       <X className="size-3" color="red" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );

@@ -2,7 +2,6 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
-import { Button } from "@/components/ui/shadcn/button";
 import { FileDown } from "lucide-react";
 import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
 import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
@@ -10,6 +9,7 @@ import { Header } from "@/components/Header";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
 import { Pagination } from "@/components/Pagination";
+import Botao from "@/components/Shared/Botao";
 
 export function StudentsResponses() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,10 +64,10 @@ export function StudentsResponses() {
             />
           </form>
 
-          <Button variant="secondary">
+          <Botao variant="secondary">
             <FileDown className="size-3" />
             Export
-          </Button>
+          </Botao>
         </div>
 
         {studentsResponsePage && (

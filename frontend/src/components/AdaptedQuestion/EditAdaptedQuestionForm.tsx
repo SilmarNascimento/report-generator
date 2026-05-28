@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Button } from "../ui/shadcn/button";
 import { AdaptedQuestionSchema } from "./AdaptedQuestionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +12,7 @@ import { successAlert, warningAlert } from "../../utils/toastAlerts";
 import { DevTool } from "@hookform/devtools";
 import { useEffect, useState } from "react";
 import { AlternativeForm } from "../Alternative/AlternativesForm";
+import Botao from "../Shared/Botao";
 
 type EditAdaptedQuestionForm = z.infer<typeof AdaptedQuestionSchema>;
 
@@ -209,7 +209,7 @@ export function EditAdaptedQuestionForm({
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Botao
             disabled={formState.isSubmitting || !hasChanged}
             className="bg-teal-400 text-teal-950"
             type="submit"
@@ -220,11 +220,11 @@ export function EditAdaptedQuestionForm({
               <Check className="size-3" />
             )}
             Save
-          </Button>
-          <Button onClick={() => navigate("/main-questions")}>
+          </Botao>
+          <Botao onClick={() => navigate("/main-questions")}>
             <X className="size-3" />
             Cancel
-          </Button>
+          </Botao>
         </div>
       </form>
       <DevTool control={control} />

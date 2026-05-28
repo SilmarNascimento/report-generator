@@ -1,7 +1,6 @@
 import { Check, Loader2 } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/shadcn/button";
 import {
   GenerateStudentsResponseFormType,
   studentRecordsSchema,
@@ -13,6 +12,7 @@ import { useInfiniteMockExams } from "@/hooks/CRUD/mockExam/diagnosis/useInfinit
 import { useGenerateResponses } from "@/hooks/CRUD/mockExam/diagnosis/useGenerateResponses";
 import { InfiniteSelect } from "../ui/select/InfiniteSelect";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
+import Botao from "../Shared/Botao";
 
 type SelectOptionProps = {
   label: string;
@@ -123,7 +123,7 @@ export function GenerateResponsesForm({
           </div>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Botao
             disabled={disableSubmitButton()}
             className="bg-teal-400 text-teal-950"
             type="submit"
@@ -134,7 +134,7 @@ export function GenerateResponsesForm({
               <Check className="size-3" />
             )}
             Processar Respostas
-          </Button>
+          </Botao>
         </div>
       </form>
     </FormProvider>

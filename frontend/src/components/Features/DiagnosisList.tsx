@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileDown, Trash2 } from "lucide-react";
+import { FileDown } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -14,12 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { Button } from "../ui/shadcn/button";
 import { Checkbox } from "../ui/shadcn/Checkbox";
 import { MockExamResponseType, YearlyResponse } from "@/interfaces/Student";
 import { cn } from "@/lib/utils";
 import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import Botao from "../Shared/Botao";
 
 type DiagnosisListProps = { responses: YearlyResponse[] };
 
@@ -60,14 +60,13 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Diagnósticos dos Alunos</h2>
-        <Button
+        <Botao
           variant="excluirCheio"
           disabled={selectedIds.length === 0}
           onClick={() => abrirModalExclusaoEmMassa(selectedIds)}
         >
-          <Trash2 className="mr-2 h-4 w-4" />
           Deletar Selecionados ({selectedIds.length})
-        </Button>
+        </Botao>
       </div>
 
       <Accordion type="multiple" className="w-full space-y-3">
@@ -170,9 +169,12 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                                   </span>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                  <Button className="text-blue-600 h-8 px-2" variant="muted">
+                                  <Botao
+                                    className="text-blue-600 h-8 px-2"
+                                    variant="muted"
+                                  >
                                     <FileDown className="size-4 mr-1" /> PDF
-                                  </Button>
+                                  </Botao>
                                 </TableCell>
                               </TableRow>
                             ))}

@@ -91,8 +91,8 @@ export function DragDropPreviewFileUploader({
             className={cn(
               "w-full h-40 rounded-lg border-2 border-dashed flex flex-col justify-center items-center select-none transition-all duration-200",
               isDragging
-                ? "border-secondary bg-secondary/10 scale-[1.02]"
-                : "border-muted-foreground/30 bg-muted/20 hover:border-secondary/50",
+                ? "border-primary bg-primary/10 scale-[1.02]"
+                : "border-muted-foreground/30 bg-muted/20 hover:border-primary/50",
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -100,7 +100,7 @@ export function DragDropPreviewFileUploader({
           >
             <div className="flex flex-col items-center gap-2 text-sm">
               {isDragging ? (
-                <span className="text-secondary font-bold animate-pulse">
+                <span className="text-primary font-bold animate-pulse">
                   Solte o arquivo aqui
                 </span>
               ) : (
@@ -108,7 +108,7 @@ export function DragDropPreviewFileUploader({
                   Arraste o arquivo ou{" "}
                   <button
                     type="button"
-                    className="text-secondary font-bold hover:underline underline-offset-4"
+                    className="text-primary font-bold hover:underline underline-offset-4"
                     onClick={selectFiles}
                   >
                     procure

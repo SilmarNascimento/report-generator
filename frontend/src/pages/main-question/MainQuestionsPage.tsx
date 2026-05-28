@@ -20,8 +20,7 @@ import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { Header } from "@/components/Header";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { Button } from "@/components/ui/shadcn/button";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
 
 export function MainQuestions() {
@@ -153,7 +152,7 @@ export function MainQuestions() {
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões Principais</h1>
           <Botao
-            variant="confirmar"
+            variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateNewMainQuestion}
@@ -168,14 +167,13 @@ export function MainQuestions() {
             />
           </form>
 
-          <Button
+          <Botao
             variant="excluirCheio"
             disabled={selectedMainQuestionIds.length === 0}
             onClick={() => abrirModalExclusaoEmMassa(selectedMainQuestionIds)}
           >
-            <Trash2 className="size-3" />
             Deletar Selecionados ({selectedMainQuestionIds.length})
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -265,15 +263,15 @@ export function MainQuestions() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-right flex gap-1">
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleEditMainQuestion(question.id)}
                     >
                       <Pencil className="size-3" color="green" />
-                    </Button>
-                    <Button
+                    </Botao>
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
@@ -289,7 +287,7 @@ export function MainQuestions() {
                       }
                     >
                       <X className="size-3" color="red" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );
@@ -309,11 +307,17 @@ export function MainQuestions() {
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}
         tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
-        entidade="Questão Principal"
-        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        entidade={
+          modalEmMassaAberto ? "Questões Principais" : "Questão Principal"
+        }
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
         isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
         onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
-        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
       />
     </>
   );

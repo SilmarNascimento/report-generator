@@ -16,21 +16,21 @@ export const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
 
-        confirmar: "bg-secondary text-background font-medium hover:opacity-80",
+        confirmar: "bg-primary text-primary-foreground font-medium hover:opacity-80",
         cancelar:
-          "bg-background text-secondary border border-secondary hover:bg-transparent",
+          "bg-background text-primary border border-primary hover:bg-transparent",
         voltar:
-          "bg-background text-ring border border-secondary hover:bg-accent",
+          "bg-background text-primary border border-primary hover:bg-accent",
         excluir:
           "text-destructive rounded-lg border border-destructive bg-transparent hover:bg-destructive/10",
         muted: "bg-muted text-muted-foreground hover:bg-muted/80",
-        excluirCheio: "bg-destructive text-white hover:opacity-80",
-        novo: "bg-secondary text-background font-medium hover:opacity-90",
-        pesquisar: "bg-secondary text-background font-medium hover:opacity-90",
-        alterar: "bg-secondary text-background font-medium hover:opacity-90",
-        invisivel: "bg-transparent text-secondary hover:bg-secondary/5",
+        excluirCheio: "bg-destructive text-destructive-foreground hover:opacity-80",
+        novo: "bg-primary text-primary-foreground font-medium hover:opacity-90",
+        pesquisar: "bg-primary text-primary-foreground font-medium hover:opacity-90",
+        alterar: "bg-primary text-primary-foreground font-medium hover:opacity-90",
+        invisivel: "bg-transparent text-primary hover:bg-primary/5",
         "editar-config":
-          "w-50 bg-secondary text-white hover:opacity-80 border border-secondary",
+          "w-50 bg-primary text-primary-foreground hover:opacity-80 border border-primary",
         navegacaoAnterior:
           "border rounded-[0.25rem] font-normal border-ring text-ring bg-background! disabled:bg-muted-foreground! disabled:text-primary-foreground disabled:border-none",
         navegacaoProximo:
@@ -41,7 +41,7 @@ export const buttonVariants = cva(
         removerSessao:
           "text-destructive! bg-transparent hover:bg-transparent! shadow-none focus:ring-0",
         incluirSessao:
-          "bg-transparent font-medium text-secondary hover:bg-transparent! shadow-none focus:ring-0",
+          "bg-transparent font-medium text-primary hover:bg-transparent! shadow-none focus:ring-0",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

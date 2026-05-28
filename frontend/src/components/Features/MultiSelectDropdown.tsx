@@ -141,7 +141,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
         {overflow && (
           <Badge
             variant="outline"
-            className="bg-secondary flex h-7 items-center gap-1 rounded-full px-2 py-0.5"
+            className="bg-primary flex h-7 items-center gap-1 rounded-full px-2 py-0.5"
           >
             <span className="text-xs leading-[1.5] font-normal text-white">
               {selectedOptions.length > 1
@@ -164,9 +164,9 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
             <Badge
               key={opt.value}
               variant="outline"
-              className="bg-secondary flex h-7 items-center gap-1 rounded-full px-2 py-0.5"
+              className="bg-primary flex h-7 items-center gap-1 rounded-full px-2 py-0.5"
             >
-              <span className="text-xs leading-[1.5] font-normal text-white">
+              <span className="text-xs leading-[1.5] font-normal text-primary-foreground">
                 {opt.displayLabel ?? opt.dropdownLabel}
               </span>
               <Button
@@ -178,7 +178,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
                 }}
                 className="h-4 w-4 bg-transparent p-0! hover:bg-transparent"
               >
-                <X size={16} className="hover:text-destructive text-white" />
+                <X size={16} className="hover:text-destructive text-primary-foreground" />
               </Button>
             </Badge>
           ))}

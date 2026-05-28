@@ -1,7 +1,6 @@
 import useDebounceValue from "../../hooks/useDebounceValue";
-import { Button } from "../../components/ui/shadcn/button";
 import { Checkbox } from "@/components/ui/shadcn/Checkbox";
-import { Copy, EyeIcon, Pencil, Trash2, X } from "lucide-react";
+import { Copy, EyeIcon, Pencil, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -60,8 +59,7 @@ export function MockExams() {
     simulados.length > 0 &&
     simulados.every((s) => selectedMockExamIds.includes(s.id));
   const isSomeSelected =
-    simulados.some((s) => selectedMockExamIds.includes(s.id)) &&
-    !isAllSelected;
+    simulados.some((s) => selectedMockExamIds.includes(s.id)) && !isAllSelected;
 
   const copyMockExam = useCopyMockExam();
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
@@ -152,14 +150,13 @@ export function MockExams() {
             />
           </form>
 
-          <Button
+          <Botao
             variant="excluirCheio"
             disabled={selectedMockExamIds.length === 0}
             onClick={() => abrirModalExclusaoEmMassa(selectedMockExamIds)}
           >
-            <Trash2 className="size-3" />
             Deletar Selecionados ({selectedMockExamIds.length})
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -261,23 +258,23 @@ export function MockExams() {
                     </Link>
                   </TableCell>
                   <TableCell className="text-right flex gap-1">
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleCopyMockExam(mockExam.id)}
                     >
                       <Copy className="size-3" color="blue" />
-                    </Button>
-                    <Button
+                    </Botao>
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
                       onClick={() => handleEditMockExam(mockExam.id)}
                     >
                       <Pencil className="size-3" color="green" />
-                    </Button>
-                    <Button
+                    </Botao>
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
@@ -293,7 +290,7 @@ export function MockExams() {
                       }
                     >
                       <X className="size-3" color="red" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );
@@ -313,11 +310,15 @@ export function MockExams() {
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}
         tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
-        entidade="Simulado"
-        item={modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item}
+        entidade={modalEmMassaAberto ? "Simulados" : "Simulado"}
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
         isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
         onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
-        onConfirm={modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
       />
     </>
   );

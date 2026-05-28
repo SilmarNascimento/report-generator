@@ -1,7 +1,6 @@
 import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/shadcn/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { MockExam } from "../../interfaces";
 import { CreateMockExam } from "../../interfaces/MockExam";
@@ -12,6 +11,7 @@ import { classGroupOptions } from "@/constants/students";
 import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
 import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
+import Botao from "../Shared/Botao";
 
 interface EditMockExamFormProps {
   entity: MockExam;
@@ -189,7 +189,7 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Button
+          <Botao
             disabled={formState.isSubmitting || !formState.isDirty}
             className="bg-teal-400 text-teal-950"
             type="submit"
@@ -200,11 +200,11 @@ export function EditMockExamForm({ entity: mockExam }: EditMockExamFormProps) {
               <Check className="size-3" />
             )}
             Save
-          </Button>
-          <Button onClick={() => navigate("/mock-exams")}>
+          </Botao>
+          <Botao onClick={() => navigate("/mock-exams")}>
             <X className="size-3" />
             Cancel
-          </Button>
+          </Botao>
         </div>
       </form>
     </FormProvider>

@@ -5,7 +5,6 @@ import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { CreateSubjectForm } from "@/components/Subject/CreateSubjectForm";
 import { EditSubjectForm } from "@/components/Subject/EditSubjectForm";
-import { Button } from "@/components/ui/shadcn/button";
 import {
   Table,
   TableBody,
@@ -85,7 +84,7 @@ export function Subjects() {
                   <Dialog.Title className="text-xl font-bold">
                     Novo Assunto
                   </Dialog.Title>
-                  <Dialog.Description className="text-sm text-zinc-500">
+                  <Dialog.Description className="text-sm text-muted-foreground">
                     Informe o campo a seguir para criar um novo assunto.
                   </Dialog.Description>
                 </div>
@@ -96,7 +95,7 @@ export function Subjects() {
           </Dialog.Root>
 
           {isFetching && (
-            <Loader2 className="size-4 animate-spin text-zinc-500" />
+            <Loader2 className="size-4 animate-spin text-secondary-foreground" />
           )}
         </div>
 
@@ -108,10 +107,10 @@ export function Subjects() {
             />
           </form>
 
-          <Button variant="secondary">
+          <Botao variant="secondary">
             <FileDown className="size-3" />
             Export
-          </Button>
+          </Botao>
         </div>
 
         <Table>
@@ -151,9 +150,9 @@ export function Subjects() {
                   <TableCell className="text-right">
                     <Dialog.Root>
                       <Dialog.Trigger asChild>
-                        <Button size="icon" className="mx-0.5" variant="muted">
+                        <Botao size="icon" className="mx-0.5" variant="muted">
                           <Pencil className="size-3" color="green" />
-                        </Button>
+                        </Botao>
                       </Dialog.Trigger>
 
                       <Dialog.Portal>
@@ -172,7 +171,7 @@ export function Subjects() {
                       </Dialog.Portal>
                     </Dialog.Root>
 
-                    <Button
+                    <Botao
                       size="icon"
                       className="mx-0.5"
                       variant="muted"
@@ -188,7 +187,7 @@ export function Subjects() {
                       }
                     >
                       <X className="size-3" color="red" />
-                    </Button>
+                    </Botao>
                   </TableCell>
                 </TableRow>
               );
