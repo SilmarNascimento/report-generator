@@ -17,7 +17,6 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
-import { Header } from "@/components/Header";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { Pencil, X } from "lucide-react";
@@ -144,7 +143,6 @@ export function MainQuestions() {
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 

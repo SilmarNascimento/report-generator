@@ -5,7 +5,6 @@ import { useListagemModal } from "@/hooks/useListagemModal";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { AdaptedQuestion } from "@/interfaces";
-import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Button } from "@/components/ui/shadcn/button";
 import { FileDown, Pencil, X } from "lucide-react";
@@ -87,7 +86,6 @@ export function AdaptedQuestions() {
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 
@@ -110,10 +108,9 @@ export function AdaptedQuestions() {
             />
           </form>
 
-          <Button>
-            <FileDown className="size-3" />
+          <Botao variant="secondary" icon={<FileDown className="size-3" />}>
             Export
-          </Button>
+          </Botao>
         </div>
 
         <Table>

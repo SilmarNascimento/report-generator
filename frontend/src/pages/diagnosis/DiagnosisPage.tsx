@@ -5,7 +5,6 @@ import useDebounceValue from "@/hooks/useDebounceValue";
 import { FileDown } from "lucide-react";
 import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
 import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
-import { Header } from "@/components/Header";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
 import { Pagination } from "@/components/Pagination";
@@ -47,7 +46,6 @@ export function StudentsResponses() {
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 
@@ -64,8 +62,7 @@ export function StudentsResponses() {
             />
           </form>
 
-          <Botao variant="secondary">
-            <FileDown className="size-3" />
+          <Botao variant="secondary" icon={<FileDown className="size-3" />}>
             Export
           </Botao>
         </div>

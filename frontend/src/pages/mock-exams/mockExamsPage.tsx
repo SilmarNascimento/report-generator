@@ -17,7 +17,6 @@ import { useCopyMockExam } from "@/hooks/CRUD/mockExam/useCopyMockExam";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
-import { Header } from "@/components/Header";
 import { NavigationBar } from "@/components/NavigationBar";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import Botao from "@/components/Shared/Botao";
@@ -127,7 +126,6 @@ export function MockExams() {
   return (
     <>
       <header>
-        <Header />
         <NavigationBar />
       </header>
 
