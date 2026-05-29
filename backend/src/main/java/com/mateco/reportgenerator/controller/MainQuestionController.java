@@ -9,16 +9,12 @@ import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputD
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
-import com.mateco.reportgenerator.service.MockExamServiceInterface;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -43,19 +39,16 @@ public class MainQuestionController {
   private final MainQuestionServiceInterface mainQuestionService;
   private final AdaptedQuestionServiceInterface adaptedQuestionService;
   private final ImageServiceInterface imageService;
-  private final MockExamServiceInterface mockExamService;
 
   @Autowired
   public MainQuestionController(
       MainQuestionServiceInterface mainQuestionService,
       AdaptedQuestionServiceInterface adaptedQuestionService,
-      ImageServiceInterface imageService,
-      MockExamServiceInterface mockExamService
+      ImageServiceInterface imageService
   ) {
     this.mainQuestionService = mainQuestionService;
     this.adaptedQuestionService = adaptedQuestionService;
     this.imageService = imageService;
-    this.mockExamService = mockExamService;
   }
 
   @GetMapping
@@ -80,10 +73,7 @@ public class MainQuestionController {
       @RequestParam(required = false) String query,
       @RequestBody MockExamFilterInputDto filterInput
   ) {
-    MockExam mockExam = mockExamService.findMockExamById(filterInput.mockExamId());
-    List<UUID> excludedIds = mockExam.getMockExamQuestions().values().stream()
-        .map(MainQuestion::getId)
-        .collect(Collectors.toList());
+    List<UUID> excludedIds = filterInput.excludedIds() != null ? filterInput.excludedIds() : List.of();
 
     Page<MainQuestion> questionsPage = mainQuestionService
         .findAllFilteredMainQuestions(pageNumber, pageSize, query, excludedIds);

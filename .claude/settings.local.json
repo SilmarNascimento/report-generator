@@ -10,7 +10,9 @@
       "mcp__ide__getDiagnostics",
       "Bash(findstr \"dnd-kit\")",
       "Bash(Select-String *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
