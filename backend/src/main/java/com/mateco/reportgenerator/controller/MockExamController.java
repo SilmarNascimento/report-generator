@@ -167,6 +167,17 @@ public class MockExamController {
                 .body(MockExamOutputDto.parseDto(mockExamUpdated));
     }
 
+    @PutMapping("/{mockExamId}/main-question")
+    public ResponseEntity<MockExamOutputDto> updateMainQuestionsOfMockExam(
+            @PathVariable UUID mockExamId,
+            @RequestBody MainQuestionListInputDto mainQuestionList
+    ) {
+        MockExam mockExamUpdated = mockExamService.updateMockExamQuestions(mockExamId, mainQuestionList.mainQuestionsId());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(MockExamOutputDto.parseDto(mockExamUpdated));
+    }
+
     @PostMapping("/{mockExamId}/copy")
     public ResponseEntity<MockExamOutputDto> copyMockExam(@PathVariable UUID mockExamId) {
         MockExam copiedMockExam = mockExamService.copyMockExam(mockExamId);

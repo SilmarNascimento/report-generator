@@ -21,7 +21,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   pesquisar: <span className="material-symbols-outlined">search</span>,
   excluir: <Trash2 />,
   excluirCheio: (
-    <span className="material-symbols-outlined !text-[20px]">cancel</span>
+    <span className="material-symbols-outlined text-[20px]!">cancel</span>
   ),
   "editar-config": <Pencil />,
   voltarIcone: (

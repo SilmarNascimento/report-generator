@@ -33,7 +33,11 @@ const StudentList = () => {
   const [searchTerm, setSearchTerm] = useState(urlFilter);
   const debouncedQueryFilter = useDebounceValue(searchTerm, 1000);
 
-  const { data: studentPage, isLoading } = useGetStudents(page, pageSize, urlFilter);
+  const { data: studentPage, isLoading } = useGetStudents(
+    page,
+    pageSize,
+    urlFilter,
+  );
 
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
@@ -135,13 +139,15 @@ const StudentList = () => {
             />
           </form>
 
-          <Botao
-            variant="excluirCheio"
-            disabled={selectedStudentIds.length === 0}
-            onClick={() => abrirModalExclusaoEmMassa(selectedStudentIds)}
-          >
-            Deletar Selecionados ({selectedStudentIds.length})
-          </Botao>
+          {!!selectedStudentIds.length && (
+            <Botao
+              variant="excluirCheio"
+              disabled={selectedStudentIds.length === 0}
+              onClick={() => abrirModalExclusaoEmMassa(selectedStudentIds)}
+            >
+              Deletar Selecionados ({selectedStudentIds.length})
+            </Botao>
+          )}
         </div>
 
         {isLoading ? (
