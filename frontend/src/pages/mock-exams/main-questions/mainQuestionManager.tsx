@@ -26,7 +26,6 @@ export function MockExamMainQuestionManager() {
   const debouncedQueryFilter = useDebounceValue(filter, 1000);
 
   const [examQuestions, setExamQuestions] = useState<MainQuestion[]>([]);
-  const [manualAvailable, setManualAvailable] = useState<MainQuestion[]>([]);
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -50,54 +49,30 @@ export function MockExamMainQuestionManager() {
     }
   }, [mockExamData]);
 
-  const { data: availableQuestionsPage } = useFilteredMainQuestions(
+  const examIds = useMemo(
+    () => examQuestions.map((q) => q.id),
+    [examQuestions],
+  );
+
+  const { data: availableQuestionsPage, isFetching } = useFilteredMainQuestions(
     page,
     pageSize,
     urlFilter,
-    mockExamId,
+    examIds,
+    !!mockExamData,
   );
-
-  const filteredAvailableQuestions = useMemo(() => {
-    if (!availableQuestionsPage) return undefined;
-
-    const examIds = new Set(examQuestions.map((q) => q.id));
-
-    const backendFiltered = availableQuestionsPage.data.filter(
-      (q) => !examIds.has(q.id),
-    );
-
-    const backendIds = new Set(backendFiltered.map((q) => q.id));
-    const additions = manualAvailable.filter(
-      (q) => !examIds.has(q.id) && !backendIds.has(q.id),
-    );
-
-    return {
-      ...availableQuestionsPage,
-      data: [...additions, ...backendFiltered],
-    };
-  }, [availableQuestionsPage, examQuestions, manualAvailable]);
 
   const updateMockExamQuestions = useUpdateMockExamMainQuestions(mockExamId);
 
   function handleAddQuestions(questions: MainQuestion[]) {
-    const addedIds = new Set(questions.map((q) => q.id));
-
-    setManualAvailable((prev) => prev.filter((q) => !addedIds.has(q.id)));
-
     setExamQuestions((prev) => {
       const existingIds = new Set(prev.map((q) => q.id));
-
       return [...prev, ...questions.filter((q) => !existingIds.has(q.id))];
     });
   }
 
   function handleRemoveQuestion(questionId: string) {
-    const removed = examQuestions.find((q) => q.id === questionId);
-
-    if (removed) {
-      setExamQuestions((prev) => prev.filter((q) => q.id !== questionId));
-      setManualAvailable((prev) => [removed, ...prev]);
-    }
+    setExamQuestions((prev) => prev.filter((q) => q.id !== questionId));
   }
 
   function handleReorder(reordered: MainQuestion[]) {
@@ -116,30 +91,32 @@ export function MockExamMainQuestionManager() {
         <NavigationBar />
       </div>
 
-      {filteredAvailableQuestions && (
+      {availableQuestionsPage && (
         <AddMainQuestionManagerTable
-          entity={filteredAvailableQuestions}
+          entity={availableQuestionsPage}
           filter={filter}
           setFilter={setFilter}
           page={page}
           maxReached={examQuestions.length >= MAX_QUESTIONS}
+          isFetching={isFetching}
           onAddQuestions={handleAddQuestions}
         />
       )}
 
       <SortableMainQuestionsTable
         questions={examQuestions}
+        isFetching={isFetching}
         onRemove={handleRemoveQuestion}
         onReorder={handleReorder}
       />
 
-      <div className="max-w-6xl mx-auto flex items-center justify-between mt-8 pb-10">
+      <div className="max-w-6xl mx-auto mt-8 flex items-center justify-end gap-4">
         <Botao
           variant="cancelar"
           label="Voltar"
           onClick={() => navigate("/mock-exams")}
         >
-          Voltar para simulados
+          Voltar
         </Botao>
         <Botao
           variant="confirmar"

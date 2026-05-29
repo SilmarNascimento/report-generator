@@ -26,7 +26,7 @@ const SessaoBotoesFormulario = ({
   };
 
   return (
-    <section className={`mt-auto flex justify-end gap-6`}>
+    <section className={`mt-auto flex justify-end gap-4`}>
       {modo !== "view" && (
         <Botao
           variant="cancelar"
@@ -38,7 +38,7 @@ const SessaoBotoesFormulario = ({
       {modo === "view" && (
         <Botao
           variant="voltar"
-          label="voltar"
+          label="Voltar"
           type="button"
           onClick={() => navigate(`${listagemEndpoint}`)}
         />
@@ -46,13 +46,13 @@ const SessaoBotoesFormulario = ({
       {modo === "edicao" && (
         <Botao
           variant="confirmar"
-          label="Confirmar"
+          label="Editar"
           type="submit"
           disabled={!isDirty}
         />
       )}
       {modo === "criacao" && (
-        <Botao variant="confirmar" label="Confirmar" type="submit" />
+        <Botao variant="confirmar" label="Salvar" type="submit" />
       )}
     </section>
   );

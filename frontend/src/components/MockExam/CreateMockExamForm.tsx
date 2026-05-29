@@ -1,4 +1,3 @@
-import { Check, Loader2, X } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -149,23 +148,17 @@ export function CreateMockExamForm() {
 
         <div className="flex items-center justify-center gap-2">
           <Botao
+            variant="confirmar"
             disabled={
               formState.isSubmitting ||
               !Object.keys(formState.dirtyFields).length
             }
-            className="bg-teal-400 text-teal-950"
             type="submit"
           >
-            {formState.isSubmitting ? (
-              <Loader2 className="size-3 animate-spin" />
-            ) : (
-              <Check className="size-3" />
-            )}
-            Save
+            Salvar
           </Botao>
-          <Botao onClick={() => navigate("/main-questions")}>
-            <X className="size-3" />
-            Cancel
+          <Botao variant="cancelar" onClick={() => navigate("/main-questions")}>
+            Cancelar
           </Botao>
         </div>
       </form>

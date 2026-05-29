@@ -1,4 +1,3 @@
-import { X, Check, Loader2 } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,7 +68,6 @@ export function Login() {
 
       <div className="flex items-center justify-end gap-2">
         <Button type="button" onClick={() => navigate(-1)}>
-          <X className="size-3" />
           Cancel
         </Button>
         <Button
@@ -77,11 +75,6 @@ export function Login() {
           className="bg-teal-400 text-teal-950"
           type="submit"
         >
-          {isSubmitting ? (
-            <Loader2 className="size-3 animate-spin" />
-          ) : (
-            <Check className="size-3" />
-          )}
           Login
         </Button>
       </div>

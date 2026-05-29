@@ -1,10 +1,9 @@
-import { Check, Loader2, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/shadcn/button";
 import * as Dialog from "@radix-ui/react-dialog";
 import { SubjectFormOutput, SubjectSchema } from "./SubjectSchema";
 import { useHandleCreateSubject } from "@/hooks/CRUD/subject/useHandleCreateSubject";
+import Botao from "../Shared/Botao";
 
 export function CreateSubjectForm() {
   const { register, handleSubmit, formState } = useForm({
@@ -58,25 +57,17 @@ export function CreateSubjectForm() {
 
       <div className="flex items-center justify-end gap-2">
         <Dialog.Close asChild>
-          <Button>
-            <X className="size-3" />
-            Cancel
-          </Button>
+          <Botao variant="cancelar">Cancelar</Botao>
         </Dialog.Close>
-        <Button
+        <Botao
+          variant="confirmar"
           disabled={
             formState.isSubmitting || !Object.keys(formState.dirtyFields).length
           }
-          className="bg-teal-400 text-teal-950"
           type="submit"
         >
-          {formState.isSubmitting ? (
-            <Loader2 className="size-3 animate-spin" />
-          ) : (
-            <Check className="size-3" />
-          )}
-          Save
-        </Button>
+          Salvar
+        </Botao>
       </div>
     </form>
   );

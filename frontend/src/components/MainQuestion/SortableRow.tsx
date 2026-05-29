@@ -8,12 +8,13 @@ import { GripVertical, X } from "lucide-react";
 type SortableRowProps = {
   question: MainQuestion;
   index: number;
+  disabled: boolean;
   onRemove: (id: string) => void;
 };
 
 const INITIAL_QUESTION_NUMBER = 136;
 
-export function SortableRow({ question, index, onRemove }: SortableRowProps) {
+export function SortableRow({ question, index, disabled, onRemove }: SortableRowProps) {
   const {
     attributes,
     listeners,
@@ -61,6 +62,7 @@ export function SortableRow({ question, index, onRemove }: SortableRowProps) {
           <Botao
             size="icon"
             variant="muted"
+            disabled={disabled}
             onClick={() => onRemove(question.id)}
           >
             <X className="size-3 text-red-500" />

@@ -19,12 +19,14 @@ import { SortableRow } from "./SortableRow";
 
 type SortableMainQuestionsTableProps = {
   questions: MainQuestion[];
+  isFetching: boolean;
   onRemove: (questionId: string) => void;
   onReorder: (reordered: MainQuestion[]) => void;
 };
 
 export function SortableMainQuestionsTable({
   questions,
+  isFetching,
   onRemove,
   onReorder,
 }: SortableMainQuestionsTableProps) {
@@ -61,6 +63,7 @@ export function SortableMainQuestionsTable({
           items={questions.map((q) => q.id)}
           strategy={verticalListSortingStrategy}
         >
+          <div className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : ""}`}>
           <Table>
             <TableHeader>
               <tr className="bg-muted/50">
@@ -91,12 +94,14 @@ export function SortableMainQuestionsTable({
                     key={question.id}
                     question={question}
                     index={index}
+                    disabled={isFetching}
                     onRemove={onRemove}
                   />
                 ))
               )}
             </TableBody>
           </Table>
+          </div>
         </SortableContext>
       </DndContext>
     </div>

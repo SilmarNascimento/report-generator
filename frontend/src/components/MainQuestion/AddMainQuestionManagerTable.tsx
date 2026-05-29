@@ -20,6 +20,7 @@ type AddMainQuestionManagerTableProps = {
   setFilter: React.Dispatch<React.SetStateAction<string>>;
   page: number;
   maxReached: boolean;
+  isFetching: boolean;
   onAddQuestions: (questions: MainQuestion[]) => void;
 };
 
@@ -29,6 +30,7 @@ export function AddMainQuestionManagerTable({
   setFilter,
   page,
   maxReached,
+  isFetching,
   onAddQuestions,
 }: AddMainQuestionManagerTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -85,7 +87,7 @@ export function AddMainQuestionManagerTable({
 
           <Botao
             variant="secondary"
-            disabled={selectedIds.length === 0 || maxReached}
+            disabled={selectedIds.length === 0 || maxReached || isFetching}
             icon={<FilePlus className="size-3" />}
             onClick={() => handleAdd(getSelectedQuestions())}
           >
@@ -93,6 +95,7 @@ export function AddMainQuestionManagerTable({
           </Botao>
         </div>
 
+        <div className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : ""}`}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -164,7 +167,7 @@ export function AddMainQuestionManagerTable({
                     size="icon"
                     className="mx-0.5"
                     variant="muted"
-                    disabled={maxReached}
+                    disabled={maxReached || isFetching}
                     onClick={() => handleAdd([mainQuestion])}
                   >
                     <Plus className="size-3" color="green" />
@@ -174,6 +177,7 @@ export function AddMainQuestionManagerTable({
             ))}
           </TableBody>
         </Table>
+        </div>
         {entity && (
           <Pagination
             pages={entity.pages}
