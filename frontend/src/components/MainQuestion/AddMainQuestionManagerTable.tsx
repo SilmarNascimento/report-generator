@@ -35,6 +35,8 @@ export function AddMainQuestionManagerTable({
 }: AddMainQuestionManagerTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  const INITIAL_QUESTION_NUMBER = 136;
+
   useEffect(() => {
     const currentAvailableIds = new Set(entity.data.map((q) => q.id));
 
@@ -95,88 +97,66 @@ export function AddMainQuestionManagerTable({
           </Botao>
         </div>
 
-        <div className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : ""}`}>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>
-                <span>Código</span>
-              </TableHead>
-              <TableHead>
-                <span>Nível</span>
-              </TableHead>
-              <TableHead>
-                <span>Assuntos</span>
-              </TableHead>
-              <TableHead>
-                <span>Gabarito</span>
-              </TableHead>
-              <TableHead>
-                <span>Questões adaptadas</span>
-              </TableHead>
-              <TableHead>
-                <span>Simulados</span>
-              </TableHead>
-              <TableHead>
-                <span>Apostilas</span>
-              </TableHead>
-              <TableHead></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {entity?.data.map((mainQuestion) => (
-              <TableRow key={mainQuestion.id}>
-                <TableCell>
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(mainQuestion.id)}
-                    onChange={() => toggleCheckBox(mainQuestion.id)}
-                    disabled={maxReached}
-                  />
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col gap-0.5 text-left">
-                    <span className="font-medium">{mainQuestion.id}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span>{mainQuestion.level}</span>
-                </TableCell>
-                <TableCell>
-                  <span>
-                    {mainQuestion.subjects.length
-                      ? mainQuestion.subjects[0].name
-                      : "Sem assunto principal"}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span>{handleCorrectAnswer(mainQuestion)}</span>
-                </TableCell>
-                <TableCell>
-                  <span>{mainQuestion.adaptedQuestions.length}</span>
-                </TableCell>
-                <TableCell>
-                  <span>{mainQuestion.mockExams.length}</span>
-                </TableCell>
-                <TableCell>
-                  <span>{mainQuestion.handouts.length}</span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Botao
-                    size="icon"
-                    className="mx-0.5"
-                    variant="muted"
-                    disabled={maxReached || isFetching}
-                    onClick={() => handleAdd([mainQuestion])}
-                  >
-                    <Plus className="size-3" color="green" />
-                  </Botao>
-                </TableCell>
+        <div
+          className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : ""}`}
+        >
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead>Nº</TableHead>
+                <TableHead>Gabarito</TableHead>
+                <TableHead>Nível</TableHead>
+                <TableHead>Lerikucas</TableHead>
+                <TableHead>Assunto</TableHead>
+                <TableHead>Área da Matemática</TableHead>
+                <TableHead></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {entity?.data.map((mainQuestion, index) => (
+                <TableRow key={mainQuestion.id}>
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(mainQuestion.id)}
+                      onChange={() => toggleCheckBox(mainQuestion.id)}
+                      disabled={maxReached}
+                    />
+                  </TableCell>
+                  <TableCell className="text-center font-medium">
+                    {INITIAL_QUESTION_NUMBER + index}
+                  </TableCell>
+                  <TableCell>
+                    <span>{handleCorrectAnswer(mainQuestion)}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span>{mainQuestion.level}</span>
+                  </TableCell>
+                  <TableCell>{mainQuestion.lerickucas}</TableCell>
+                  <TableCell>
+                    <span>
+                      {mainQuestion.subjects.length
+                        ? mainQuestion.subjects[0].name
+                        : "—"}
+                    </span>
+                  </TableCell>
+                  <TableCell>{mainQuestion.pattern}</TableCell>
+                  <TableCell className="text-right">
+                    <Botao
+                      size="icon"
+                      className="mx-0.5"
+                      variant="muted"
+                      disabled={maxReached || isFetching}
+                      onClick={() => handleAdd([mainQuestion])}
+                    >
+                      <Plus className="size-3" color="green" />
+                    </Botao>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
         {entity && (
           <Pagination

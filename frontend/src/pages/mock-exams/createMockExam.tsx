@@ -5,7 +5,7 @@ import { NavigationBar } from "../../components/NavigationBar";
 export function CreateMockExam() {
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
+      <div className="max-w-[80%] min-w-96 m-auto">
         <header>
           <NavigationBar />
         </header>

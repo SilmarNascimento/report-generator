@@ -1,4 +1,3 @@
-import { Check, Loader2 } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -128,11 +127,6 @@ export function GenerateResponsesForm({
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
-            {formState.isSubmitting ? (
-              <Loader2 className="size-3 animate-spin" />
-            ) : (
-              <Check className="size-3" />
-            )}
             Processar Respostas
           </Botao>
         </div>
