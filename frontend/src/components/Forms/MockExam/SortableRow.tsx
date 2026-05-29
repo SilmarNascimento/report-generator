@@ -1,8 +1,8 @@
 import { MainQuestion } from "@/interfaces";
 import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import { useSortable } from "@dnd-kit/sortable";
-import { TableCell } from "../ui/Table";
-import Botao from "../Shared/Botao";
+import { TableCell } from "../../ui/Table";
+import Botao from "../../Shared/Botao";
 import { GripVertical, X } from "lucide-react";
 
 type SortableRowProps = {

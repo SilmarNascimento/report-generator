@@ -1,4 +1,4 @@
-import { MockExamFormType } from "@/components/MockExam/MockExamSchema.ts";
+import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
 import { MockExam } from "@/interfaces";
 
 export const mapMockExamToForm = (mockExam: MockExam): MockExamFormType => {

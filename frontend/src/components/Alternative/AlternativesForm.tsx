@@ -1,7 +1,7 @@
 import { FieldErrors, useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
-import { MainQuestionSchema } from "../MainQuestion/MainQuestionSchema";
+import { MainQuestionSchema } from "@/components/Forms/MainQuestion/MainQuestionSchema";
 
 type CreateMainQuestionSchema = z.infer<typeof MainQuestionSchema>;
 

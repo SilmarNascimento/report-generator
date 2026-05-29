@@ -1,15 +1,47 @@
-import { useParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { NavigationBar } from "@/components/NavigationBar";
 import { convertMainQuestionData } from "@/utils/convertMainQuestiondata";
 import { useGetMainQuestionById } from "@/hooks/CRUD/mainQuestion/useGetMainQuestionById";
+import { useHandleEditMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleEditMainQuestion";
 import { FormHeader } from "@/components/FormHeader";
-import { EditMainQuestionForm } from "@/components/MainQuestion/EditMainQuestionForm";
+import { MainQuestionForm } from "@/components/Forms/MainQuestion/MainQuestionForm";
+import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
+import { LerikucasEnum, QuestionPatternEnum } from "@/constants/general";
 
 export function EditMainQuestion() {
+  const navigate = useNavigate();
   const { mainQuestionId = "" } = useParams<{ mainQuestionId: string }>();
 
   const { data: mainQuestionResponse } = useGetMainQuestionById(mainQuestionId);
-  const mainQuestionCode = ``;
+  const updateMutation = useHandleEditMainQuestion(mainQuestionId);
+
+  const mainQuestion = mainQuestionResponse
+    ? convertMainQuestionData(mainQuestionResponse)
+    : undefined;
+
+  const defaultValues = useMemo<MainQuestionFormType | undefined>(() => {
+    if (!mainQuestion) return undefined;
+    return {
+      title: mainQuestion.title,
+      level: mainQuestion.level,
+      lerikucas: String(mainQuestion.lerickucas) as LerikucasEnum,
+      pattern: mainQuestion.pattern as unknown as QuestionPatternEnum,
+      videoResolutionUrl: mainQuestion.videoResolutionUrl,
+      adaptedQuestionsPdfFile: mainQuestion.adaptedQuestionPdfFile.file,
+      questionAnswer: mainQuestion.alternatives
+        .findIndex((a) => a.questionAnswer)
+        .toString(),
+      alternatives: mainQuestion.alternatives.map((a) => ({
+        description: a.description,
+      })),
+    };
+  }, [mainQuestion]);
+
+  async function handleEdit(formData: FormData) {
+    await updateMutation.mutateAsync(formData);
+    navigate("/main-questions");
+  }
 
   return (
     <>
@@ -18,12 +50,15 @@ export function EditMainQuestion() {
           <NavigationBar />
         </header>
         <FormHeader
-          headerTitle={`Editar Questão Principal ${mainQuestionCode}`}
+          headerTitle="Editar Questão Principal"
           headerDetails="Altere os campos a seguir para atualizar a questão principal"
         />
-        {mainQuestionResponse && (
-          <EditMainQuestionForm
-            entity={convertMainQuestionData(mainQuestionResponse)}
+        {defaultValues && (
+          <MainQuestionForm
+            titulo="Editar Questão Principal"
+            modo="edicao"
+            defaultValues={defaultValues}
+            handleSubmitRequest={handleEdit}
           />
         )}
       </div>

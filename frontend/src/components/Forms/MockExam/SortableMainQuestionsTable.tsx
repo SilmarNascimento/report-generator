@@ -14,7 +14,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { MainQuestion } from "@/interfaces";
-import { Table, TableBody, TableHead, TableHeader } from "../ui/Table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+} from "@/components/ui/Table";
 import { SortableRow } from "./SortableRow";
 
 type SortableMainQuestionsTableProps = {

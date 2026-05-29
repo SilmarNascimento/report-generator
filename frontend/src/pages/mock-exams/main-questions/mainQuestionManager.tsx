@@ -6,9 +6,9 @@ import { MainQuestion } from "@/interfaces";
 import { useFilteredMainQuestions } from "@/hooks/CRUD/mockExam/mainQuestionManager/useFilteredMainQuestions";
 import { useGetMockExamMainQuestionManager } from "@/hooks/CRUD/mockExam/mainQuestionManager/useGetMockExamMainQuestionManager";
 import { useUpdateMockExamMainQuestions } from "@/hooks/CRUD/mockExam/mainQuestionManager/useUpdateMockExamMainQuestions";
-import { AddMainQuestionManagerTable } from "@/components/MainQuestion/AddMainQuestionManagerTable";
-import { SortableMainQuestionsTable } from "@/components/MainQuestion/SortableMainQuestionsTable";
 import Botao from "@/components/Shared/Botao";
+import { AddMainQuestionManagerTable } from "@/components/Forms/MockExam/AddMainQuestionManagerTable";
+import { SortableMainQuestionsTable } from "@/components/Forms/MockExam/SortableMainQuestionsTable";
 
 const MAX_QUESTIONS = 45;
 

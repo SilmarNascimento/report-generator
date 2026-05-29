@@ -4,7 +4,7 @@ import {
   QuestionLevelEnum,
   QuestionPatternEnum,
 } from "@/constants/general";
-import { AlternativeSchema } from "../Alternative/AlternativeSchema";
+import { AlternativeSchema } from "../../Alternative/AlternativeSchema";
 
 const fileListSchema = z.instanceof(FileList);
 

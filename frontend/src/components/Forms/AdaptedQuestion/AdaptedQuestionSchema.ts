@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { AlternativeSchema } from '../Alternative/AlternativeSchema';
+import { z } from "zod";
+import { AlternativeSchema } from "../../Alternative/AlternativeSchema";
 
 const fileListSchema = z.instanceof(FileList);
 
@@ -8,5 +8,7 @@ export const AdaptedQuestionSchema = z.object({
   level: z.enum(["Fácil", "Médio", "Difícil"]),
   images: fileListSchema.optional(),
   alternatives: z.array(AlternativeSchema),
-  questionAnswer: z.string()
+  questionAnswer: z.string(),
 });
+
+export type AdaptedQuestionFormType = z.infer<typeof AdaptedQuestionSchema>;

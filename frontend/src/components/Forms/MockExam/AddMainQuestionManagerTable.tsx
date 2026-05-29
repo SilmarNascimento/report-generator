@@ -1,4 +1,6 @@
-import { FilePlus, Plus } from "lucide-react";
+import { Pagination } from "@/components/Pagination";
+import Botao from "@/components/Shared/Botao";
+import FiltroListagem from "@/components/Shared/FiltroListagem";
 import {
   Table,
   TableBody,
@@ -6,13 +8,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/Table";
-import { MainQuestion, PageResponse } from "../../interfaces";
+} from "@/components/ui/Table";
+import { MainQuestion, PageResponse } from "@/interfaces";
+import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
+import { FilePlus, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Pagination } from "../Pagination";
-import { getAlternativeLetter } from "../../utils/correctAnswerMapping";
-import FiltroListagem from "../Shared/FiltroListagem";
-import Botao from "../Shared/Botao";
 
 type AddMainQuestionManagerTableProps = {
   entity: PageResponse<MainQuestion>;

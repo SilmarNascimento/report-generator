@@ -1,6 +1,6 @@
 import { StudentFormType } from "@/components/forms/student/studentSchema";
-import { MainQuestionFormType } from "@/components/mainQuestion/MainQuestionSchema";
-import { MockExamFormType } from "@/components/mockExam/mockExamSchema";
+import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
+import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
 
 type ListaPaginada<T> = {
   dados: T[];
