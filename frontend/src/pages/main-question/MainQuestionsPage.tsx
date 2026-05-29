@@ -162,13 +162,15 @@ export function MainQuestions() {
             />
           </form>
 
-          <Botao
-            variant="excluirCheio"
-            disabled={selectedMainQuestionIds.length === 0}
-            onClick={() => abrirModalExclusaoEmMassa(selectedMainQuestionIds)}
-          >
-            Deletar Selecionados ({selectedMainQuestionIds.length})
-          </Botao>
+          {!!selectedMainQuestionIds.length && (
+            <Botao
+              variant="excluirCheio"
+              disabled={selectedMainQuestionIds.length === 0}
+              onClick={() => abrirModalExclusaoEmMassa(selectedMainQuestionIds)}
+            >
+              Deletar Selecionados ({selectedMainQuestionIds.length})
+            </Botao>
+          )}
         </div>
 
         {isLoading ? (
@@ -185,7 +187,8 @@ export function MainQuestions() {
                   <TableHead className="w-10">
                     <Checkbox
                       checked={
-                        isAllSelected || (isSomeSelected ? "indeterminate" : false)
+                        isAllSelected ||
+                        (isSomeSelected ? "indeterminate" : false)
                       }
                       onCheckedChange={toggleSelectAll}
                     />
@@ -220,7 +223,9 @@ export function MainQuestions() {
                     <TableRow key={question.id}>
                       <TableCell>
                         <Checkbox
-                          checked={selectedMainQuestionIds.includes(question.id)}
+                          checked={selectedMainQuestionIds.includes(
+                            question.id,
+                          )}
                           onCheckedChange={() =>
                             toggleMainQuestionSelection(question.id)
                           }

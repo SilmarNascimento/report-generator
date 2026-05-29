@@ -6,17 +6,15 @@ export function useFilteredMainQuestions(
   pageNumber: number,
   pageSize: number,
   query: string,
-  idListRef: React.MutableRefObject<string[] | undefined>,
+  mockExamId: string | undefined,
 ) {
   return useQuery({
-    queryKey: ["get-main-questions", query, pageNumber, pageSize],
+    queryKey: ["get-main-questions-filtered", query, pageNumber, pageSize, mockExamId],
     queryFn: () =>
       apiService.post<PageResponse<MainQuestion>>(
         `/main-question/filter?pageNumber=${pageNumber - 1}&pageSize=${pageSize}&query=${query}`,
-        {
-          mainQuestionsId: idListRef.current,
-        },
+        { mockExamId },
       ),
-    enabled: !!idListRef.current,
+    enabled: !!mockExamId,
   });
 }

@@ -149,13 +149,15 @@ export function MockExams() {
             />
           </form>
 
-          <Botao
-            variant="excluirCheio"
-            disabled={selectedMockExamIds.length === 0}
-            onClick={() => abrirModalExclusaoEmMassa(selectedMockExamIds)}
-          >
-            Deletar Selecionados ({selectedMockExamIds.length})
-          </Botao>
+          {!!selectedMockExamIds.length && (
+            <Botao
+              variant="excluirCheio"
+              disabled={selectedMockExamIds.length === 0}
+              onClick={() => abrirModalExclusaoEmMassa(selectedMockExamIds)}
+            >
+              Deletar Selecionados ({selectedMockExamIds.length})
+            </Botao>
+          )}
         </div>
 
         {isLoading ? (
@@ -172,7 +174,8 @@ export function MockExams() {
                   <TableHead className="w-10">
                     <Checkbox
                       checked={
-                        isAllSelected || (isSomeSelected ? "indeterminate" : false)
+                        isAllSelected ||
+                        (isSomeSelected ? "indeterminate" : false)
                       }
                       onCheckedChange={toggleSelectAll}
                     />

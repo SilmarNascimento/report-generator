@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -238,6 +239,36 @@ public class MockExamService implements MockExamServiceInterface {
             throw new ConflictDataException("Questão principal não está presente no simulado");
         }
 
+        return mockExamRepository.save(mockExamFound);
+    }
+
+    @Override
+    @Transactional
+    public MockExam updateMockExamQuestions(UUID mockExamId, List<UUID> mainQuestionsId) {
+        MockExam mockExamFound = mockExamRepository.findById(mockExamId)
+                .orElseThrow(() -> new NotFoundException("Simulado não encontrado!"));
+
+        if (mainQuestionsId.size() > MockExam.MAXIMUM_QUESTIONS_NUMBER) {
+            throw new ConflictDataException(
+                "Limite máximo de " + MockExam.MAXIMUM_QUESTIONS_NUMBER + " questões atingido!"
+            );
+        }
+
+        List<MainQuestion> questions = mainQuestionRepository.findAllById(mainQuestionsId);
+        Map<UUID, MainQuestion> questionById = questions.stream()
+                .collect(Collectors.toMap(MainQuestion::getId, q -> q));
+
+        Map<Integer, MainQuestion> newMap = new LinkedHashMap<>();
+        for (int i = 0; i < mainQuestionsId.size(); i++) {
+            UUID id = mainQuestionsId.get(i);
+            MainQuestion q = questionById.get(id);
+            if (q == null) {
+                throw new NotFoundException("Questão principal não encontrada: " + id);
+            }
+            newMap.put(MockExam.INITIAL_QUESTION_NUMBER + i, q);
+        }
+
+        mockExamFound.setMockExamQuestions(newMap);
         return mockExamRepository.save(mockExamFound);
     }
 

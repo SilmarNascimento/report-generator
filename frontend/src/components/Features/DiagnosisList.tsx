@@ -60,13 +60,15 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Diagnósticos dos Alunos</h2>
-        <Botao
-          variant="excluirCheio"
-          disabled={selectedIds.length === 0}
-          onClick={() => abrirModalExclusaoEmMassa(selectedIds)}
-        >
-          Deletar Selecionados ({selectedIds.length})
-        </Botao>
+        {selectedIds.length !== 0 && (
+          <Botao
+            variant="excluirCheio"
+            disabled={selectedIds.length === 0}
+            onClick={() => abrirModalExclusaoEmMassa(selectedIds)}
+          >
+            Deletar Selecionados ({selectedIds.length})
+          </Botao>
+        )}
       </div>
 
       <Accordion type="multiple" className="w-full space-y-3">
@@ -159,7 +161,7 @@ export function DiagnosisList({ responses }: DiagnosisListProps) {
                                   {report.mockExamNumber}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                  <span className="inline-flex items-center justify-center bg-zinc-100 rounded-md px-2 py-1 min-w-[30px]">
+                                  <span className="inline-flex items-center justify-center bg-zinc-100 rounded-md px-2 py-1 min-w-7.5">
                                     {report.correctAnswers}
                                   </span>
                                 </TableCell>

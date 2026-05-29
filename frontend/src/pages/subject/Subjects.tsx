@@ -74,7 +74,7 @@ export function Subjects() {
 
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 bg-black/70 z-0" />
-              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
+              <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-130 z-10 bg-muted border-l border-zinc-900">
                 <div className="space-y-3">
                   <Dialog.Title className="text-xl font-bold">
                     Novo Assunto
@@ -152,20 +152,25 @@ export function Subjects() {
                       <TableCell className="text-right">
                         <Dialog.Root>
                           <Dialog.Trigger asChild>
-                            <Botao size="icon" className="mx-0.5" variant="muted">
+                            <Botao
+                              size="icon"
+                              className="mx-0.5"
+                              variant="muted"
+                            >
                               <Pencil className="size-3" color="green" />
                             </Botao>
                           </Dialog.Trigger>
 
                           <Dialog.Portal>
                             <Dialog.Overlay className="fixed inset-0 bg-black/70" />
-                            <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-[520px] z-10 bg-muted border-l border-zinc-900">
+                            <Dialog.Content className="fixed space-y-10 p-10 right-0 top-0 bottom-0 h-screen min-w-130 z-10 bg-muted border-l border-zinc-900">
                               <div className="space-y-3">
                                 <Dialog.Title className="text-xl font-bold">
                                   Editar Assunto
                                 </Dialog.Title>
                                 <Dialog.Description className="text-sm">
-                                  Altere o campo a seguir para atualizar o assunto.
+                                  Altere o campo a seguir para atualizar o
+                                  assunto.
                                 </Dialog.Description>
                               </div>
                               <EditSubjectForm entity={subject} />
