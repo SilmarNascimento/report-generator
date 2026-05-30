@@ -18,9 +18,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MainQuestionRepository extends JpaRepository<MainQuestion, UUID> {
   @NonNull
-  @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title LIKE %:query%)")
+  @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title ILIKE CONCAT('%', :query, '%'))")
   Page<MainQuestion> findAll(@NonNull Pageable pageable, String query);
   @NonNull
-  @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title LIKE %:query%) AND (mainQuestion.id NOT IN :excludedQuestions)")
+  @Query("SELECT mainQuestion FROM MainQuestion mainQuestion WHERE (:query IS NULL OR mainQuestion.title ILIKE CONCAT('%', :query, '%')) AND (mainQuestion.id NOT IN :excludedQuestions)")
   Page<MainQuestion> findAll(@NonNull Pageable pageable, String query, List<UUID> excludedQuestions);
 }
