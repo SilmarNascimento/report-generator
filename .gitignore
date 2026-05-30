@@ -3,3 +3,6 @@
 restore.sh
 backup.sh
 *.sql.gz
+
+melhorias_docs
+.claude
