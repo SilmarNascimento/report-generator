@@ -172,7 +172,7 @@ export default function UnifiedDropdown<T extends DropdownType>(
         placeholder={props.placeholder}
         aria-invalid={props.error || undefined}
         className={cn(
-          "text-sm leading-[1.5] font-normal text-[#28272C]",
+          "text-sm leading-normal font-normal text-[#28272C]",
           "h-10 w-full rounded-lg border px-3 pr-10",
           props.allowSearch ? "pl-10" : "pl-3",
           props.className,
@@ -209,7 +209,7 @@ export default function UnifiedDropdown<T extends DropdownType>(
                   disabled={isDisabled}
                   onClick={() => handleSelect(option)}
                   className={cn(
-                    "text-sm leading-[1.5] font-normal text-[#28272C]",
+                    "text-sm leading-normal font-normal text-[#28272C]",
                     "w-full px-4 py-2 text-left hover:bg-gray-100",
                     isDisabled && "cursor-not-allowed opacity-70",
                     props.className,

@@ -12,8 +12,6 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,29 +82,11 @@ public class AdaptedQuestion extends Question {
   }
 
   public void updateAdaptedQuestionImage(List<String> questionImages) {
-    int alternativeQuantity = this.getAlternatives().size();
-    int imagesPerAlternative = questionImages.size() / alternativeQuantity;
-    int alternativeImageOffset =
-        questionImages.size() - (imagesPerAlternative * alternativeQuantity);
-    final int[] alternativeIndex = {alternativeImageOffset};
-
-    this.setImages(questionImages.subList(0, alternativeImageOffset));
-    this.getAlternatives().forEach((Alternative alternative) -> {
-      alternative.setAdaptedQuestion(this);
-      alternative.setImages(questionImages.subList(
-          alternativeIndex[0],
-          alternativeIndex[0] + imagesPerAlternative
-      ));
-      alternativeIndex[0] += imagesPerAlternative;
-    });
+    this.setImages(questionImages);
+    this.getAlternatives().forEach(alternative -> alternative.setAdaptedQuestion(this));
   }
 
   public List<String> getAllStringImages() {
-    return Stream.concat(
-            this.getImages().stream(),
-            this.getAlternatives().stream()
-                .flatMap(alternative -> alternative.getImages().stream())
-        )
-        .collect(Collectors.toList());
+    return this.getImages() != null ? new ArrayList<>(this.getImages()) : new ArrayList<>();
   }
 }

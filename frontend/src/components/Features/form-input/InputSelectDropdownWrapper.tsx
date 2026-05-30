@@ -62,7 +62,7 @@ export function InputSelectDropdownWrapper<
         <Label
           htmlFor={inputId}
           className={cn(
-            "mb-2 text-sm leading-[1.5] font-medium text-[#28272C]",
+            "mb-2 text-sm leading-normal font-medium text-[#28272C]",
             {
               "opacity-80": disabled,
             },
@@ -85,7 +85,7 @@ export function InputSelectDropdownWrapper<
               value={defaultValue}
               disabled
               className={cn(
-                "text-sm leading-[1.5] font-normal text-[#494C57]",
+                "text-sm leading-normal font-normal text-[#494C57]",
                 "h-10 w-full rounded-lg border border-[#CED2D7] px-4",
                 inputClassName,
               )}

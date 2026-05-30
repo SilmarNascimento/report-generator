@@ -7,12 +7,16 @@ type DragDropPreviewFileUploaderProps = {
   formVariable: string;
   message: string;
   url?: string;
+  alwaysShowDropZone?: boolean;
+  fullHeight?: boolean;
 };
 
 export function DragDropPreviewFileUploader({
   formVariable,
   message,
   url,
+  alwaysShowDropZone = false,
+  fullHeight = false,
 }: DragDropPreviewFileUploaderProps) {
   const { register, setValue, watch } = useFormContext();
   const variableValue = watch(formVariable);
@@ -25,6 +29,8 @@ export function DragDropPreviewFileUploader({
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [previewWidth, setPreviewWidth] = useState<number>(0);
 
   useEffect(() => {
     if (!variableValue) {
@@ -41,6 +47,17 @@ export function DragDropPreviewFileUploader({
     return () => URL.revokeObjectURL(objectUrl);
   }, [variableValue, url]);
 
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setPreviewWidth(Math.floor(entry.contentRect.width));
+      }
+    });
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   function selectFiles() {
     fileInputRef.current?.click();
   }
@@ -50,7 +67,7 @@ export function DragDropPreviewFileUploader({
     if (!filesSelected || filesSelected?.length === 0) return;
 
     const newFile = filesSelected.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true });
+    setValue(formVariable, newFile!, { shouldDirty: true, shouldValidate: true });
   }
 
   function deleteImage() {
@@ -74,25 +91,44 @@ export function DragDropPreviewFileUploader({
     const filesDropped = event.dataTransfer.files;
 
     const newFile = filesDropped.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true });
+    setValue(formVariable, newFile!, { shouldDirty: true, shouldValidate: true });
   }
 
   return (
-    <div className="p-4 bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col items-center w-full transition-all">
+    <div
+      className={cn(
+        "p-4 bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col items-center w-full transition-all",
+        fullHeight && "flex-1 min-h-0",
+      )}
+    >
       <div className="font-bold text-foreground text-center mb-2 font-redhat text-sm">
         <p>{message}</p>
       </div>
 
-      <div className="w-full h-auto flex justify-center items-center flex-wrap max-h-52 overflow-y-auto mt-2.5">
-        {previewUrl ? (
-          <PdfPreview url={previewUrl} handleDelete={deleteImage} />
+      <div
+        ref={contentRef}
+        className={cn(
+          "w-full flex mt-2.5",
+          fullHeight
+            ? "flex-1 min-h-0 overflow-y-auto justify-center items-start"
+            : "h-auto overflow-hidden justify-center items-start",
+        )}
+      >
+        {previewUrl && !alwaysShowDropZone ? (
+          <PdfPreview
+            url={previewUrl}
+            handleDelete={deleteImage}
+            width={previewWidth > 0 ? previewWidth : undefined}
+          />
         ) : (
           <div
             className={cn(
               "w-full h-40 rounded-lg border-2 border-dashed flex flex-col justify-center items-center select-none transition-all duration-200",
               isDragging
                 ? "border-primary bg-primary/10 scale-[1.02]"
-                : "border-muted-foreground/30 bg-muted/20 hover:border-primary/50",
+                : previewUrl
+                  ? "border-primary/50 bg-primary/5"
+                  : "border-muted-foreground/30 bg-muted/20 hover:border-primary/50",
             )}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -103,6 +139,19 @@ export function DragDropPreviewFileUploader({
                 <span className="text-primary font-bold animate-pulse">
                   Solte o arquivo aqui
                 </span>
+              ) : previewUrl ? (
+                <div className="text-muted-foreground text-center px-4">
+                  <span className="text-primary font-medium">PDF carregado.</span>{" "}
+                  Arraste ou{" "}
+                  <button
+                    type="button"
+                    className="text-primary font-bold hover:underline underline-offset-4"
+                    onClick={selectFiles}
+                  >
+                    procure
+                  </button>{" "}
+                  para substituir
+                </div>
               ) : (
                 <div className="text-muted-foreground text-center px-4">
                   Arraste o arquivo ou{" "}

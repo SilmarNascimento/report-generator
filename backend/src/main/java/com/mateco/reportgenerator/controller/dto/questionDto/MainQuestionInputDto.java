@@ -12,7 +12,6 @@ public record MainQuestionInputDto(
         String level,
         int lerickucas,
         Pattern pattern,
-        List<String> images,
         List<AlternativeInputDto> alternatives,
         String videoResolutionUrl
 ) {}

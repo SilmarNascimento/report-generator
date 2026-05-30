@@ -2,14 +2,12 @@ package com.mateco.reportgenerator.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeInputDto;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -26,11 +24,6 @@ public class Alternative {
   @GeneratedValue(generator = "UUID")
   private UUID id;
 
-  @Column(columnDefinition = "TEXT")
-  private String description;
-
-  private List<String> images;
-
   @ManyToOne
   @JoinColumn(name = "main_question_id")
   @JsonIgnore
@@ -43,9 +36,7 @@ public class Alternative {
 
   private boolean questionAnswer;
 
-  public Alternative(String description, List<String> images, boolean questionAnswer) {
-    this.description = description;
-    this.images = images;
+  public Alternative(boolean questionAnswer) {
     this.questionAnswer = questionAnswer;
   }
 
@@ -53,26 +44,17 @@ public class Alternative {
   public String toString() {
     return "{" +
         "id: " + this.getId() +
-        "description: " + this.description +
-        "image: " + this.images +
+        "questionAnswer: " + this.questionAnswer +
         '}';
   }
 
   public static Alternative parseAlternative(AlternativeInputDto alternativeInputDto) {
-    return new Alternative(
-        alternativeInputDto.description(),
-        new ArrayList<>(),
-        alternativeInputDto.questionAnswer()
-    );
+    return new Alternative(alternativeInputDto.questionAnswer());
   }
 
   public static List<Alternative> parseAlternative(List<AlternativeInputDto> alternativesInputDto) {
     return alternativesInputDto.stream()
-        .map((AlternativeInputDto alternativeInputDto) -> new Alternative(
-            alternativeInputDto.description(),
-            new ArrayList<>(),
-            alternativeInputDto.questionAnswer()
-          ))
+        .map(alternativeInputDto -> new Alternative(alternativeInputDto.questionAnswer()))
         .toList();
   }
 }

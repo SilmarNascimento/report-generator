@@ -6,18 +6,14 @@ import java.util.UUID;
 
 public record AlternativeOutputDto(
     UUID id,
-    String description,
-    List<String> images,
     boolean questionAnswer
 ) {
 
   public static List<AlternativeOutputDto> parseDto(List<Alternative> alternatives) {
     return alternatives.stream()
-        .map((Alternative alternative) -> new AlternativeOutputDto(
-          alternative.getId(),
-          alternative.getDescription(),
-          alternative.getImages(),
-          alternative.isQuestionAnswer()))
+        .map(alternative -> new AlternativeOutputDto(
+            alternative.getId(),
+            alternative.isQuestionAnswer()))
         .toList();
   }
 }

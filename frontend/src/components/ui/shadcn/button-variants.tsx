@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center cursor-pointer gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -16,7 +16,8 @@ export const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
 
-        confirmar: "bg-primary text-primary-foreground font-medium hover:opacity-80",
+        confirmar:
+          "bg-primary text-primary-foreground font-medium hover:opacity-80",
         cancelar:
           "bg-background text-primary border border-primary hover:bg-transparent",
         voltar:
@@ -24,10 +25,13 @@ export const buttonVariants = cva(
         excluir:
           "text-destructive rounded-lg border border-destructive bg-transparent hover:bg-destructive/10",
         muted: "bg-muted text-muted-foreground hover:bg-muted/80",
-        excluirCheio: "bg-destructive text-destructive-foreground hover:opacity-80",
+        excluirCheio:
+          "bg-destructive text-destructive-foreground hover:opacity-80",
         novo: "bg-primary text-primary-foreground font-medium hover:opacity-90",
-        pesquisar: "bg-primary text-primary-foreground font-medium hover:opacity-90",
-        alterar: "bg-primary text-primary-foreground font-medium hover:opacity-90",
+        pesquisar:
+          "bg-primary text-primary-foreground font-medium hover:opacity-90",
+        alterar:
+          "bg-primary text-primary-foreground font-medium hover:opacity-90",
         invisivel: "bg-transparent text-primary hover:bg-primary/5",
         "editar-config":
           "w-50 bg-primary text-primary-foreground hover:opacity-80 border border-primary",

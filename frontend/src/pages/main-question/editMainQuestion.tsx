@@ -32,9 +32,6 @@ export function EditMainQuestion() {
       questionAnswer: mainQuestion.alternatives
         .findIndex((a) => a.questionAnswer)
         .toString(),
-      alternatives: mainQuestion.alternatives.map((a) => ({
-        description: a.description,
-      })),
     };
   }, [mainQuestion]);
 

@@ -31,9 +31,6 @@ export function EditAdaptedQuestion() {
     return {
       title: adaptedQuestion.title,
       level: adaptedQuestion.level,
-      alternatives: adaptedQuestion.alternatives.map((a) => ({
-        description: a.description,
-      })),
       questionAnswer: adaptedQuestion.alternatives
         .findIndex((a) => a.questionAnswer)
         .toString(),

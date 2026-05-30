@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MainQuestion extends Question {
-
-  protected List<String> images;
 
   private int lerickucas;
 
@@ -90,7 +87,6 @@ public class MainQuestion extends Question {
           String title,
           List<Subject> subjects,
           String level,
-          List<String> images,
           List<Alternative> alternatives,
           String videoResolutionUrl,
           List<AdaptedQuestion> adaptedQuestions,
@@ -101,7 +97,6 @@ public class MainQuestion extends Question {
 
     super(title, level);
 
-    this.images = images;
     this.subjects = subjects;
     this.alternatives = alternatives;
     this.videoResolutionUrl = videoResolutionUrl;
@@ -126,7 +121,6 @@ public class MainQuestion extends Question {
         "id: " + this.getId() +
         "title: " + this.title +
         "level: " + this.level +
-        "image: " + this.images +
         "subjects: " + this.subjects +
         "alternatives: " + this.alternatives +
         "video resolution: " + this.videoResolutionUrl +
@@ -145,7 +139,6 @@ public class MainQuestion extends Question {
               mainQuestionInputDto.title(),
               new ArrayList<>(),
               mainQuestionInputDto.level(),
-              new ArrayList<>(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),
               new ArrayList<>(),
@@ -159,7 +152,6 @@ public class MainQuestion extends Question {
               mainQuestionInputDto.title(),
               new ArrayList<>(),
               mainQuestionInputDto.level(),
-              new ArrayList<>(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),
               new ArrayList<>(),
@@ -187,7 +179,6 @@ public class MainQuestion extends Question {
               mainQuestionInputDto.title(),
               Subject.parseSubject(mainQuestionInputDto.subjects()),
               mainQuestionInputDto.level(),
-              mainQuestionInputDto.images(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),
               new ArrayList<>(),
@@ -201,7 +192,6 @@ public class MainQuestion extends Question {
               mainQuestionInputDto.title(),
               Subject.parseSubject(mainQuestionInputDto.subjects()),
               mainQuestionInputDto.level(),
-              mainQuestionInputDto.images(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),
               new ArrayList<>(),
@@ -217,41 +207,14 @@ public class MainQuestion extends Question {
     return question;
   }
 
-  public void updateMainQuestionImages(List<String> questionImages) {
-    int alternativeQuantity = this.getAlternatives().size();
-    int imagesPerAlternative = questionImages.size() / alternativeQuantity;
-    int alternativeImageOffset =
-        questionImages.size() - (imagesPerAlternative * alternativeQuantity);
-    final int[] alternativeIndex = {alternativeImageOffset};
-
-    this.setImages(questionImages.subList(0, alternativeImageOffset));
-    this.getAlternatives().forEach((Alternative alternative) -> {
-      alternative.setMainQuestion(this);
-      alternative.setImages(questionImages.subList(
-          alternativeIndex[0],
-          alternativeIndex[0] + imagesPerAlternative
-      ));
-      alternativeIndex[0] += imagesPerAlternative;
-    });
+  public void initAlternativeRelationships() {
+    this.getAlternatives().forEach(alt -> alt.setMainQuestion(this));
   }
 
   public List<String> getAllStringImages() {
-    List<String> allMainQuestionImages = Stream.concat(
-            this.getImages().stream(),
-            this.getAlternatives().stream()
-                .flatMap(alternative -> alternative.getImages().stream())
-        )
+    return this.getAdaptedQuestions().stream()
+        .flatMap(adaptedQuestion -> adaptedQuestion.getAllStringImages().stream())
         .collect(Collectors.toList());
-
-    List<AdaptedQuestion> allAdaptedQuestions = this.getAdaptedQuestions();
-    if (!allAdaptedQuestions.isEmpty()) {
-      List<String> allAdaptedQuestionStringImages = allAdaptedQuestions.stream()
-          .flatMap(adaptedQuestion -> adaptedQuestion.getAllStringImages().stream())
-          .collect(Collectors.toList());
-      allMainQuestionImages.addAll(allAdaptedQuestionStringImages);
-    }
-
-    return allMainQuestionImages;
   }
 
 }

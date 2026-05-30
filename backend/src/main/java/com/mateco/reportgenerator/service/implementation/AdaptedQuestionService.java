@@ -70,8 +70,7 @@ public class AdaptedQuestionService implements AdaptedQuestionServiceInterface {
     adaptedQuestionFound.setAlternatives(
         UpdateEntity.updateAlternative(
             adaptedQuestion.getAlternatives(),
-            adaptedQuestionFound.getAlternatives(),
-            imageService
+            adaptedQuestionFound.getAlternatives()
         )
     );
 

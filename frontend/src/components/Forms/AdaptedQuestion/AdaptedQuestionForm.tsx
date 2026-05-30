@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { CreateAlternative } from "@/interfaces/Alternative";
-import { AlternativeForm } from "@/components/Alternative/AlternativesForm";
+import { AlternativeRadioGroup } from "@/components/Alternative/AlternativesForm";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { AdaptedQuestionFormType, AdaptedQuestionSchema } from "./AdaptedQuestionSchema";
 
@@ -23,7 +23,7 @@ export function AdaptedQuestionForm({
   const { mainQuestionId = "" } = useParams<{ mainQuestionId: string }>();
 
   const memoizedDefaultValues = useMemo(
-    () => defaultValues ?? { title: "", questionAnswer: "", alternatives: [] },
+    () => defaultValues ?? { title: "", level: "Fácil" as const, questionAnswer: "" },
     [defaultValues],
   );
 
@@ -46,27 +46,9 @@ export function AdaptedQuestionForm({
   function buildFormData(data: AdaptedQuestionFormType): FormData {
     const formData = new FormData();
 
-    const titleImages = data.images
-      ? Array.from(data.images).filter((f): f is File => !!f)
-      : [];
-
-    const altImages: File[] = [];
-    for (const alt of data.alternatives) {
-      if (alt.images) {
-        altImages.push(...Array.from(alt.images).filter((f): f is File => !!f));
-      }
-    }
-
-    [...titleImages, ...altImages].forEach((file) =>
-      formData.append("images", file),
-    );
-
-    const alternatives: CreateAlternative[] = data.alternatives.map(
-      (alt, i) => ({
-        description: alt.description,
-        questionAnswer: Number(data.questionAnswer) === i,
-      }),
-    );
+    const alternatives: CreateAlternative[] = [0, 1, 2, 3, 4].map((i) => ({
+      questionAnswer: Number(data.questionAnswer) === i,
+    }));
 
     const payload = {
       title: data.title,
@@ -106,42 +88,20 @@ export function AdaptedQuestionForm({
             <textarea
               {...register("title")}
               id="enunciado"
-              className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
+              rows={4}
+              className="border border-border rounded-lg px-3 py-2.5 w-full text-sm resize-none"
             />
-            <p className={`text-sm ${errors?.title ? "text-red-400" : "text-transparent"}`}>
+            <p className={`text-sm ${errors?.title ? "text-destructive" : "text-transparent"}`}>
               {errors?.title ? errors.title.message : " "}
             </p>
           </div>
 
-          <div className="space-y-2 flex flex-col justify-center items-start">
-            <label className="text-sm font-medium block" htmlFor="images">
-              Escolha imagens para o enunciado
-            </label>
-            <input
-              {...register("images")}
-              id="images"
-              type="file"
-              multiple
-              hidden
-              accept="image/*,.pdf"
-              className="border border-zinc-800 rounded-lg px-3 py-2.5 bg-zinc-800/50 w-full text-sm"
-            />
-            <p className={`text-sm ${errors?.images ? "text-red-400" : "text-transparent"}`}>
-              {errors?.images ? errors.images.message : " "}
-            </p>
-          </div>
-
           <div className="space-y-3">
-            <span className="text-lg font-medium">Alternativas</span>
-          </div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, index) => (
-              <AlternativeForm
-                key={index}
-                index={index}
-                errors={errors as Parameters<typeof AlternativeForm>[0]["errors"]}
-              />
-            ))}
+            <span className="text-sm font-medium">Alternativas</span>
+            <AlternativeRadioGroup />
+            <p className={`text-sm ${errors?.questionAnswer ? "text-destructive" : "text-transparent"}`}>
+              {errors?.questionAnswer ? "Defina uma resposta correta" : " "}
+            </p>
           </div>
         </section>
 

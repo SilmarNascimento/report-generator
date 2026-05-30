@@ -6,11 +6,10 @@ import { CreateQuestion } from "@/interfaces/MainQuestion";
 import {
   LerikucasOptions,
   QuestionLevelEnum,
-  questionLevelOptions,
   questionPatternOptions,
 } from "@/constants/general";
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
-import { AlternativeForm } from "@/components/Alternative/AlternativesForm";
+import { AlternativeRadioGroup } from "@/components/Alternative/AlternativesForm";
 import { DragDropPreviewFileUploader } from "@/components/ui/drag-drop/DragDropPreviewFile";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
@@ -29,7 +28,12 @@ export function MainQuestionForm({
   handleSubmitRequest,
 }: MainQuestionFormProps) {
   const memoizedDefaultValues = useMemo(
-    () => defaultValues ?? { title: "", videoResolutionUrl: "", questionAnswer: "", alternatives: [] },
+    () =>
+      defaultValues ?? {
+        title: "",
+        videoResolutionUrl: "",
+        questionAnswer: "",
+      },
     [defaultValues],
   );
 
@@ -74,27 +78,9 @@ export function MainQuestionForm({
   function buildFormData(data: MainQuestionFormType): FormData {
     const formData = new FormData();
 
-    const titleImages = data.images
-      ? Array.from(data.images).filter((f): f is File => !!f)
-      : [];
-
-    const altImages: File[] = [];
-    for (const alt of data.alternatives) {
-      if (alt.images) {
-        altImages.push(...Array.from(alt.images).filter((f): f is File => !!f));
-      }
-    }
-
-    [...titleImages, ...altImages].forEach((file) =>
-      formData.append("images", file),
-    );
-
-    const alternatives: CreateAlternative[] = data.alternatives.map(
-      (alt, i) => ({
-        description: alt.description,
-        questionAnswer: Number(data.questionAnswer) === i,
-      }),
-    );
+    const alternatives: CreateAlternative[] = [0, 1, 2, 3, 4].map((i) => ({
+      questionAnswer: Number(data.questionAnswer) === i,
+    }));
 
     const mainQuestion: CreateQuestion = {
       title: data.title,
@@ -127,121 +113,101 @@ export function MainQuestionForm({
       <form
         onSubmit={handleSubmit(onSubmit)}
         encType="multipart/form-data"
-        className="flex min-h-[calc(100vh-360px)] flex-col justify-between gap-5.5 rounded-2xl px-6 py-8"
+        className="flex flex-col gap-6 rounded-2xl px-6 py-8"
       >
-        <section className="flex flex-col gap-6">
-          <h1 className="text-lg leading-[1.4] font-bold tracking-[-0.25px] text-foreground">
-            {titulo}
-          </h1>
+        <h1 className="text-lg leading-[1.4] font-bold tracking-[-0.25px] text-foreground">
+          {titulo}
+        </h1>
 
-          <div className="space-y-2 flex flex-col justify-center items-start">
-            <label className="text-sm font-medium block" htmlFor="enunciado">
-              Enunciado
-            </label>
-            <textarea
-              {...register("title")}
-              id="enunciado"
-              className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm h-auto"
-            />
-            <p className={`text-sm ${errors?.title ? "text-red-400" : "text-transparent"}`}>
-              {errors?.title ? errors.title.message : " "}
-            </p>
-          </div>
-
-          <div className="space-y-2 flex flex-col justify-center items-start">
-            <label className="text-sm font-medium block" htmlFor="images">
-              Escolha imagens para o enunciado
-            </label>
-            <input
-              {...register("images")}
-              id="images"
-              type="file"
-              multiple
-              hidden
-              accept="image/*,.pdf"
-              className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm"
-            />
-            <p className={`text-sm ${errors?.images ? "text-red-400" : "text-transparent"}`}>
-              {errors?.images ? errors.images.message : " "}
-            </p>
-          </div>
-
-          <div className="flex flex-col max-w-85">
-            <InputSelectDropdownWrapper
-              name="lerikucas"
-              control={control}
-              errors={errors}
-              label="Lerikucas"
-              placeholder="Selecione o valor da lerikucas"
-              options={LerikucasOptions}
-            />
-          </div>
-
-          <div className="flex flex-col max-w-85">
-            <InputSelectDropdownWrapper
-              name="level"
-              control={control}
-              errors={errors}
-              label="Nível"
-              placeholder="Selecione o nível da questão"
-              options={questionLevelOptions}
-            />
-          </div>
-
-          <div className="flex flex-col max-w-85">
-            <InputSelectDropdownWrapper
-              name="pattern"
-              control={control}
-              errors={errors}
-              label="Padrão da Questão"
-              placeholder="Selecione o padrão da questão"
-              options={questionPatternOptions}
-            />
-          </div>
-
-          <div className="space-y-2 flex flex-col justify-center items-start">
-            <label
-              className="text-sm font-medium block"
-              htmlFor="videoResolutionUrl"
-            >
-              Url da Resolução da Questão
-            </label>
-            <input
-              {...register("videoResolutionUrl")}
-              type="text"
-              id="videoResolutionUrl"
-              className="border border-zinc-800 rounded-lg px-3 py-2.5 w-full text-sm"
-            />
-            <p className={`text-sm ${errors?.videoResolutionUrl ? "text-red-400" : "text-transparent"}`}>
-              {errors?.videoResolutionUrl
-                ? errors.videoResolutionUrl.message
-                : " "}
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-lg font-medium">Alternativas</span>
-          </div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, index) => (
-              <AlternativeForm key={index} index={index} errors={errors} />
-            ))}
-          </div>
-
-          <div className="flex flex-row gap-1 justify-around align-middle">
-            <div className="space-y-2 flex flex-col justify-center items-start">
-              <DragDropPreviewFileUploader
-                formVariable="adaptedQuestionsPdfFile"
-                message="Escolha o arquivo de questões adaptadas"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          <section className="flex flex-col gap-6">
+            <div className="space-y-2 flex flex-col">
+              <label className="text-sm font-medium" htmlFor="enunciado">
+                Enunciado
+              </label>
+              <textarea
+                {...register("title")}
+                id="enunciado"
+                rows={5}
+                className="border border-border rounded-lg px-3 py-2.5 w-full text-sm resize-none"
               />
-              <p className={`text-sm ${errors?.adaptedQuestionsPdfFile ? "text-red-400" : "text-transparent"}`}>
-                {errors?.adaptedQuestionsPdfFile
-                  ? errors.adaptedQuestionsPdfFile.message
-                  : " "}
+              <p
+                className={`text-sm ${errors?.title ? "text-destructive" : "text-transparent"}`}
+              >
+                {errors?.title ? errors.title.message : " "}
               </p>
             </div>
-          </div>
-        </section>
+
+            <div className="flex flex-row gap-4">
+              <div className="w-full">
+                <InputSelectDropdownWrapper
+                  name="lerikucas"
+                  control={control}
+                  errors={errors}
+                  label="Lerikucas"
+                  placeholder="Selecione"
+                  options={LerikucasOptions}
+                />
+              </div>
+
+              <div className="w-full">
+                <InputSelectDropdownWrapper
+                  name="pattern"
+                  control={control}
+                  errors={errors}
+                  label="Padrão"
+                  placeholder="Selecione"
+                  options={questionPatternOptions}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 flex flex-col">
+              <label
+                className="text-sm font-medium"
+                htmlFor="videoResolutionUrl"
+              >
+                URL da Resolução da Questão
+              </label>
+              <input
+                {...register("videoResolutionUrl")}
+                type="text"
+                id="videoResolutionUrl"
+                className="border border-border rounded-lg px-3 py-2.5 w-full text-sm"
+              />
+              <p
+                className={`text-sm ${errors?.videoResolutionUrl ? "text-destructive" : "text-transparent"}`}
+              >
+                {errors?.videoResolutionUrl
+                  ? errors.videoResolutionUrl.message
+                  : " "}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <span className="text-sm font-medium">Alternativas</span>
+              <AlternativeRadioGroup />
+              <p
+                className={`text-sm ${errors?.questionAnswer ? "text-destructive" : "text-transparent"}`}
+              >
+                {errors?.questionAnswer ? "Defina uma resposta correta" : " "}
+              </p>
+            </div>
+          </section>
+
+          <section className="hidden lg:flex flex-col">
+            <DragDropPreviewFileUploader
+              formVariable="adaptedQuestionsPdfFile"
+              message="Escolha o arquivo de questões adaptadas"
+              fullHeight
+            />
+            {errors?.adaptedQuestionsPdfFile && (
+              <p className="text-sm text-destructive mt-1">
+                {errors.adaptedQuestionsPdfFile.message as string}
+              </p>
+            )}
+          </section>
+        </div>
 
         <SessaoBotoesFormulario
           modo={modo}
