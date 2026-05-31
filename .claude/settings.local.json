@@ -17,7 +17,9 @@
       "Bash(Remove-Item \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\frontend\\\\src\\\\components\\\\MainQuestion\\\\CreateMainQuestionForm.tsx\")",
       "Bash(Remove-Item \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\frontend\\\\src\\\\components\\\\MainQuestion\\\\EditMainQuestionForm.tsx\")",
       "Bash(Remove-Item \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\frontend\\\\src\\\\components\\\\MainQuestion\\\\MainQuestionSchema.ts\")",
-      "Bash(Get-ChildItem *)"
+      "Bash(Get-ChildItem *)",
+      "Bash(Select-Object -First 50)",
+      "Bash(Format-Table FullName)"
     ]
   }
 }

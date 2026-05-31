@@ -239,7 +239,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
 
       <Button
         type="button"
-        className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer bg-transparent shadow-none hover:bg-transparent text-gray-700!"
+        className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer bg-transparent shadow-none hover:bg-transparent text-foreground!"
         onMouseDown={(e) => {
           e.preventDefault();
 
@@ -256,13 +256,13 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
       </Button>
 
       {isFocused && (
-        <div className="absolute z-100 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-300 bg-white shadow-md">
+        <div className="absolute z-100 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-popover shadow-md">
           {allowSearch && (
             <div className="p-2">
               <div className="relative w-full">
                 <Search
                   size={18}
-                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-700"
+                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
                   type="text"
@@ -276,7 +276,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
                     }
                   }}
                   className={cn(
-                    "text-sm leading-[1.5] font-normal text-[#494C57]",
+                    "text-sm leading-[1.5] font-normal text-foreground",
                     "pl-9",
                   )}
                 />
@@ -289,9 +289,9 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
                 <button
                   type="button"
                   className={cn(
-                    "flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-gray-100",
+                    "flex w-full items-center gap-2 px-4 py-2 text-left hover:bg-accent",
                     {
-                      "bg-gray-50 font-medium": selectedValues.has(
+                      "bg-primary/10 font-medium": selectedValues.has(
                         option.value,
                       ),
                     },
@@ -303,7 +303,7 @@ export default function MultiSelectDropdown<T extends BadgeDropdownType>({
                     checked={selectedValues.has(option.value)}
                     readOnly
                   />
-                  <span className="text-sm leading-[1.5] font-normal text-[#494C57]">
+                  <span className="text-sm leading-[1.5] font-normal text-foreground">
                     {option.dropdownLabel}
                   </span>
                 </button>

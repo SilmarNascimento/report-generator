@@ -59,7 +59,7 @@ export function InputTextWrapper<T extends FormTypes>({
         <Label
           htmlFor={inputId}
           className={cn(
-            "text-sm leading-[1.5] font-medium text-foreground",
+            "text-sm leading-normal font-medium text-foreground",
             "mb-2 flex items-center gap-2",
             {
               "opacity-80": disabled,
@@ -100,10 +100,10 @@ export function InputTextWrapper<T extends FormTypes>({
               type="text"
               placeholder={placeholder}
               className={cn(
-                "text-sm leading-[1.5] font-normal text-muted-foreground",
+                "text-sm leading-normal font-normal text-muted-foreground",
                 "h-10 w-full truncate overflow-hidden rounded-lg border px-3 py-2 pr-10 text-ellipsis whitespace-nowrap",
                 {
-                  "[&:disabled]:opacity-80": disabled,
+                  "disabled:opacity-80": disabled,
                 },
                 className,
               )}
@@ -119,7 +119,6 @@ export function InputTextWrapper<T extends FormTypes>({
               onBlur={field.onBlur}
               name={field.name}
               ref={field.ref}
-              aria-invalid={hasError || undefined}
               disabled={isReadOnly || disabled}
             />
           );

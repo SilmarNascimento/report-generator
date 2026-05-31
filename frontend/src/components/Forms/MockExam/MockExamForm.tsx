@@ -6,6 +6,7 @@ import { DragDropPreviewFileUploader } from "@/components/ui/drag-drop/DragDropP
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
+import { Input } from "@/components/ui/shadcn/Input";
 
 type MockExamFormProps = {
   titulo: string;
@@ -53,13 +54,13 @@ export function MockExamForm({
             <label className="text-sm font-medium block" htmlFor="name">
               Descrição
             </label>
-            <input
-              type="text"
+            <Input
               {...register("name")}
               id="name"
-              className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm"
+              aria-invalid={!!errors?.name}
+              className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.name ? "text-red-400" : "text-transparent"}`}>
+            <p className={`text-sm ${errors?.name ? "text-destructive" : "text-transparent"}`}>
               {errors?.name ? errors.name.message : " "}
             </p>
           </div>
@@ -114,13 +115,15 @@ export function MockExamForm({
             <label className="text-sm font-medium block" htmlFor="releasedYear">
               Ano de Emissão
             </label>
-            <input
-              type="number"
+            <Input
+              type="text"
+              inputMode="numeric"
               {...register("releasedYear")}
               id="releasedYear"
-              className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              aria-invalid={!!errors?.releasedYear}
+              className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.releasedYear ? "text-red-400" : "text-transparent"}`}>
+            <p className={`text-sm ${errors?.releasedYear ? "text-destructive" : "text-transparent"}`}>
               {errors?.releasedYear ? errors.releasedYear.message : " "}
             </p>
           </div>
@@ -129,13 +132,15 @@ export function MockExamForm({
             <label className="text-sm font-medium block" htmlFor="number">
               Número do Simulado
             </label>
-            <input
-              type="number"
+            <Input
+              type="text"
+              inputMode="numeric"
               {...register("number")}
               id="number"
-              className="border border-input rounded-lg px-3 py-2.5 bg-background w-full text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              aria-invalid={!!errors?.number}
+              className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.number ? "text-red-400" : "text-transparent"}`}>
+            <p className={`text-sm ${errors?.number ? "text-destructive" : "text-transparent"}`}>
               {errors?.number ? errors.number.message : " "}
             </p>
           </div>
