@@ -31,7 +31,11 @@ public class FileService implements FileServiceInterface {
 
         if (!isRowEmpty(row, dataFormatter)) {
           List<String> studentRecord = new ArrayList<>();
-          row.forEach(cell -> studentRecord.add(dataFormatter.formatCellValue(cell).trim()));
+          int lastColumn = Math.max(50, row.getLastCellNum());
+          for (int i = 0; i < lastColumn; i++) {
+              Cell cell = row.getCell(i, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+              studentRecord.add(dataFormatter.formatCellValue(cell).trim());
+          }
           allResponses.add(studentRecord);
         }
       });

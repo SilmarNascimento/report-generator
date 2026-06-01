@@ -6,19 +6,16 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class    JasperReportService {
+public class JasperReportService {
+
+    private final Map<String, JasperReport> compiledReports = new ConcurrentHashMap<>();
 
     public byte[] generatePdf(String templateName, Map<String, Object> params, JRDataSource dataSource) {
         try {
-            InputStream reportStream = getClass().getResourceAsStream("/reports/" + templateName);
-
-            if (reportStream == null) {
-                throw new FileNotFoundException("Arquivo de relatório não encontrado em /resources/reports/" + templateName);
-            }
-
-            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+            JasperReport jasperReport = compiledReports.computeIfAbsent(templateName, this::compileReportSafely);
 
             if (dataSource == null) {
                 dataSource = new JREmptyDataSource();
@@ -33,12 +30,18 @@ public class    JasperReportService {
         }
     }
 
-    public JasperReport compileSubreport(String jrxmlName) {
-        try (InputStream is = getClass().getResourceAsStream("/reports/" + jrxmlName)) {
-            if (is == null) throw new RuntimeException("Subreport não encontrado: " + jrxmlName);
-            return JasperCompileManager.compileReport(is);
+    private JasperReport compileReportSafely(String templateName) {
+        try (InputStream reportStream = getClass().getResourceAsStream("/reports/" + templateName)) {
+            if (reportStream == null) {
+                throw new FileNotFoundException("Arquivo de relatório não encontrado em /resources/reports/" + templateName);
+            }
+            return JasperCompileManager.compileReport(reportStream);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao compilar subreport: " + jrxmlName, e);
+            throw new RuntimeException("Erro ao compilar relatório Jasper: " + templateName, e);
         }
+    }
+
+    public JasperReport compileSubreport(String jrxmlName) {
+        return compiledReports.computeIfAbsent(jrxmlName, this::compileReportSafely);
     }
 }

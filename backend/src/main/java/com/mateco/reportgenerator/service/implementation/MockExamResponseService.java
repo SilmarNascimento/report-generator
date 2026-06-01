@@ -97,13 +97,18 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
             if (mockExam.getAnswersPdfFile() != null) pdfFilesToMerge.add(mockExam.getAnswersPdfFile());
 
             PDDocument mergedPDFDocument = mergePDFs(pdfFilesToMerge);
-            String diagnosisFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + examResponseFound.getName().toUpperCase() + ".pdf";
+            try {
+                String diagnosisFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + examResponseFound.getName().toUpperCase() + ".pdf";
 
-            FileEntity diagnosisPdfEntity = new FileEntity(mergedPDFDocument, diagnosisFileName);
-            mergedPDFDocument.close();
+                FileEntity diagnosisPdfEntity = new FileEntity(mergedPDFDocument, diagnosisFileName);
 
-            examResponseFound.setDiagnosisPdfFile(diagnosisPdfEntity);
-            mockExamResponseRepository.save(examResponseFound);
+                examResponseFound.setDiagnosisPdfFile(diagnosisPdfEntity);
+                mockExamResponseRepository.save(examResponseFound);
+            } finally {
+                if (mergedPDFDocument != null) {
+                    mergedPDFDocument.close();
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Erro ao mesclar PDFs: " + e.getMessage(), e);
         }
@@ -252,14 +257,17 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
                 // ==============================================================
                 PDDocument mergedPDFDocument = mergePDFs(pdfFilesToMerge);
 
-                String finalFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + response.getName().toUpperCase() + ".pdf";
+                try {
+                    String finalFileName = "DIAGNÓSTICO SIMULADO " + String.format("%02d", mockExam.getNumber()) + " - " + response.getName().toUpperCase() + ".pdf";
 
-                FileEntity finalDiagnosisPdfEntity = new FileEntity(mergedPDFDocument, finalFileName);
+                    FileEntity finalDiagnosisPdfEntity = new FileEntity(mergedPDFDocument, finalFileName);
 
-                // IMPORTANTE: Fechar o documento para evitar vazamento de memória (Memory Leak)
-                mergedPDFDocument.close();
-
-                response.setDiagnosisPdfFile(finalDiagnosisPdfEntity);
+                    response.setDiagnosisPdfFile(finalDiagnosisPdfEntity);
+                } finally {
+                    if (mergedPDFDocument != null) {
+                        mergedPDFDocument.close();
+                    }
+                }
 
             } catch (Exception e) {
                 // Se der erro em um aluno, loga o erro mas NÃO QUEBRA o lote inteiro
