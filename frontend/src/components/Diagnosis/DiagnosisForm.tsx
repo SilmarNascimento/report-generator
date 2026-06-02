@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useInfiniteMockExams } from "@/hooks/CRUD/mockExam/diagnosis/useInfiniteMockExams";
 import { useGenerateResponses } from "@/hooks/CRUD/mockExam/diagnosis/useGenerateResponses";
 import { InfiniteSelect } from "../ui/select/InfiniteSelect";
-import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
+import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import Botao from "../Shared/Botao";
 
 type SelectOptionProps = {
@@ -106,17 +106,12 @@ export function GenerateResponsesForm({
             </div>
           </div>
           <div className="space-y-2 flex flex-col justify-center items-center">
-            <DragDropPreviewFileUploader
-              formVariable="studentRecordsExcelFile"
+            <InputDragDropWrapper
+              variant="preview"
+              name="studentRecordsExcelFile"
+              errors={formState.errors}
               message={dragAndDropPlaceholder}
             />
-            <p
-              className={`text-sm ${formState.errors?.studentRecordsExcelFile ? "text-destructive" : "text-transparent"}`}
-            >
-              {formState.errors?.studentRecordsExcelFile
-                ? formState.errors.studentRecordsExcelFile.message
-                : "\u00A0"}
-            </p>
           </div>
         </div>
         <div className="flex items-center justify-center gap-2">

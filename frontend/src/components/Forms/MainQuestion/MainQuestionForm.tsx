@@ -10,7 +10,7 @@ import {
 } from "@/constants/general";
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
 import { AlternativeRadioGroup } from "@/components/Alternative/AlternativesForm";
-import { DragDropPreviewFileUploader } from "@/components/ui/drag-drop/DragDropPreviewFile";
+import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 
@@ -196,16 +196,13 @@ export function MainQuestionForm({
           </section>
 
           <section className="hidden lg:flex flex-col">
-            <DragDropPreviewFileUploader
-              formVariable="adaptedQuestionsPdfFile"
+            <InputDragDropWrapper
+              variant="preview"
+              name="adaptedQuestionsPdfFile"
+              errors={errors}
               message="Escolha o arquivo de questões adaptadas"
               fullHeight
             />
-            {errors?.adaptedQuestionsPdfFile && (
-              <p className="text-sm text-destructive mt-1">
-                {errors.adaptedQuestionsPdfFile.message as string}
-              </p>
-            )}
           </section>
         </div>
 

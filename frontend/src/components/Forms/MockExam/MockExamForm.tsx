@@ -2,7 +2,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { classGroupOptions } from "@/constants/students";
-import { DragDropPreviewFileUploader } from "@/components/ui/drag-drop/DragDropPreviewFile";
+import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
@@ -77,37 +77,34 @@ export function MockExamForm({
           </div>
 
           <div className="flex flex-row gap-4 min-w-0">
-            <div className="flex-1 min-w-0 flex flex-col gap-1">
-              <DragDropPreviewFileUploader
-                formVariable="coverPdfFile"
+            <div className="flex-1 min-w-0">
+              <InputDragDropWrapper
+                variant="preview"
+                name="coverPdfFile"
+                errors={errors}
                 message="Escolha o arquivo para a capa do relatório"
                 url={fileUrls?.cover}
               />
-              {errors?.coverPdfFile && (
-                <p className="text-sm text-red-400">{errors.coverPdfFile.message as string}</p>
-              )}
             </div>
 
-            <div className="flex-1 min-w-0 flex flex-col gap-1">
-              <DragDropPreviewFileUploader
-                formVariable="matrixPdfFile"
+            <div className="flex-1 min-w-0">
+              <InputDragDropWrapper
+                variant="preview"
+                name="matrixPdfFile"
+                errors={errors}
                 message="Escolha o arquivo para a matrix Lericucas do relatório"
                 url={fileUrls?.matrix}
               />
-              {errors?.matrixPdfFile && (
-                <p className="text-sm text-red-400">{errors.matrixPdfFile.message as string}</p>
-              )}
             </div>
 
-            <div className="flex-1 min-w-0 flex flex-col gap-1">
-              <DragDropPreviewFileUploader
-                formVariable="answersPdfFile"
+            <div className="flex-1 min-w-0">
+              <InputDragDropWrapper
+                variant="preview"
+                name="answersPdfFile"
+                errors={errors}
                 message="Escolha o arquivo de respostas do relatório"
                 url={fileUrls?.answers}
               />
-              {errors?.answersPdfFile && (
-                <p className="text-sm text-red-400">{errors.answersPdfFile.message as string}</p>
-              )}
             </div>
           </div>
 

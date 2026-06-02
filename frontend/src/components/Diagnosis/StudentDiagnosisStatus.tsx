@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { downloadFile } from "@/utils/downloadFile";
 import { useUploadPersonalRecord } from "@/hooks/CRUD/mockExam/diagnosis/useUploadPersonalRecord";
 import { useDownloadDiagnosisPdf } from "@/hooks/CRUD/mockExam/diagnosis/useDownloadDiagnosisPdf";
-import { DragDropFileUploader } from "../ui/drag-drop/DragDropFile";
+import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 
 type StudentResponseHandlerProps = {
   studentResponse: MockExamDiagnosisResponse;
@@ -22,7 +22,7 @@ export function StudentDiagnosisStatus({
     resolver: zodResolver(responseStatusSchema),
   });
 
-  const { watch } = formMethods;
+  const { watch, formState: { errors } } = formMethods;
   const fileSelected = watch("studentRecord");
 
   const uploadMutation = useUploadPersonalRecord(
@@ -66,7 +66,11 @@ export function StudentDiagnosisStatus({
     <div className="flex flex-col gap-1">
       <span className="font-medium">Incompleto</span>
       <FormProvider {...formMethods}>
-        <DragDropFileUploader formVariable="studentRecord" />
+        <InputDragDropWrapper
+          variant="file"
+          name="studentRecord"
+          errors={errors}
+        />
       </FormProvider>
       <button
         onClick={handleUpload}

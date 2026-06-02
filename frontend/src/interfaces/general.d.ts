@@ -1,6 +1,10 @@
 import { StudentFormType } from "@/components/forms/student/studentSchema";
 import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
 import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
+import {
+  GenerateStudentsResponseFormType,
+  StudentDiagnosisStatusFormType,
+} from "@/components/Diagnosis/diagnosisSchema";
 
 type ListaPaginada<T> = {
   dados: T[];
@@ -43,4 +47,6 @@ export type QueryFunctionContext = {
 export type FormTypes =
   | StudentFormType
   | MockExamFormType
-  | MainQuestionFormType;
+  | MainQuestionFormType
+  | GenerateStudentsResponseFormType
+  | StudentDiagnosisStatusFormType;
