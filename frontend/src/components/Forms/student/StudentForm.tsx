@@ -128,6 +128,7 @@ const StudentForm = ({
             <InputMultiSelectWrapper
               name="classGroups"
               control={control}
+              errors={errors}
               label="Turmas"
               placeholder="Selecione as turmas"
               options={classGroupBadgeOptions}

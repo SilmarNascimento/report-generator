@@ -26,4 +26,8 @@ export const studentResponseService = {
 
     return apiService.patch(`/students-response/${id}`, formData);
   },
+
+  downloadBulkDiagnosisPdf(ids: string[]) {
+    return apiService.postFullResponse<Blob>(`/students-response/bulk-download`, { ids }, { timeout: 60000 });
+  },
 };

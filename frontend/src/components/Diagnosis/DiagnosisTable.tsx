@@ -15,11 +15,17 @@ import Botao from "../Shared/Botao";
 interface DiagnosisTableProps {
   entity: MockExamDiagnosisResponse[];
   deleteFunction: (studentResponseId: string) => Promise<void>;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleAll: (ids: string[]) => void;
 }
 
 export function DiagnosisTable({
   entity,
   deleteFunction,
+  selectedIds,
+  onToggleSelect,
+  onToggleAll,
 }: DiagnosisTableProps) {
   function handleDateTime(createdAt: string) {
     const dateAndTime = createdAt.split("T");
@@ -33,12 +39,22 @@ export function DiagnosisTable({
     );
   }
 
+  const pageIds = entity.map((r) => r.id);
+  const allPageSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
+
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead></TableHead>
+            <TableHead className="w-10">
+              <input
+                type="checkbox"
+                checked={allPageSelected}
+                onChange={() => onToggleAll(pageIds)}
+                className="cursor-pointer accent-primary"
+              />
+            </TableHead>
             <TableHead>
               <span>Simulado</span>
             </TableHead>
@@ -67,7 +83,14 @@ export function DiagnosisTable({
           {entity.map((studentResponse) => {
             return (
               <TableRow key={studentResponse.id}>
-                <TableCell></TableCell>
+                <TableCell className="w-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(studentResponse.id)}
+                    onChange={() => onToggleSelect(studentResponse.id)}
+                    className="cursor-pointer accent-primary"
+                  />
+                </TableCell>
                 <TableCell>{studentResponse.examCode}</TableCell>
                 <TableCell>{studentResponse.className}</TableCell>
                 <TableCell>

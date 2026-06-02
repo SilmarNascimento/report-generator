@@ -75,14 +75,12 @@ export function GenerateResponsesForm({
     navigate("/students-response");
   };
 
-  function disableSubmitButton() {
-    const { mockExamSelected, studentRecordsExcelFile } = watch();
-    return (
-      formState.isSubmitting ||
-      !mockExamSelected.value ||
-      !studentRecordsExcelFile
-    );
-  }
+  const { mockExamSelected, studentRecordsExcelFile } = watch();
+
+  const hasFile = studentRecordsExcelFile instanceof File;
+
+  const disabled =
+    formState.isSubmitting || !mockExamSelected.value || !hasFile;
 
   return (
     <FormProvider {...formMethods}>
@@ -113,7 +111,7 @@ export function GenerateResponsesForm({
               message={dragAndDropPlaceholder}
             />
             <p
-              className={`text-sm ${formState.errors?.studentRecordsExcelFile ? "text-red-400" : "text-transparent"}`}
+              className={`text-sm ${formState.errors?.studentRecordsExcelFile ? "text-destructive" : "text-transparent"}`}
             >
               {formState.errors?.studentRecordsExcelFile
                 ? formState.errors.studentRecordsExcelFile.message
@@ -123,7 +121,7 @@ export function GenerateResponsesForm({
         </div>
         <div className="flex items-center justify-center gap-2">
           <Botao
-            disabled={disableSubmitButton()}
+            disabled={disabled}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >

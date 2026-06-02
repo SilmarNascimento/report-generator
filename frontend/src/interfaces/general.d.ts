@@ -14,6 +14,8 @@ export type Paginacao = {
   total_registros: number;
 };
 
+export type FileKind = "pdf" | "excel" | "other";
+
 type MenuOption = {
   icon?: ReactNode;
   label: string;

@@ -2,6 +2,9 @@ import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { PdfPreview } from "../PdfPreview";
 import { cn } from "@/lib/utils";
+import { DEFAULT_FILE_ACCEPT } from "@/constants/general";
+import { detectFileKind } from "@/utils/dndUtil";
+import { ExcelFilePreview } from "@/components/Shared/ExcelFilePreview";
 
 type DragDropPreviewFileUploaderProps = {
   formVariable: string;
@@ -9,6 +12,7 @@ type DragDropPreviewFileUploaderProps = {
   url?: string;
   alwaysShowDropZone?: boolean;
   fullHeight?: boolean;
+  accept?: string;
 };
 
 export function DragDropPreviewFileUploader({
@@ -17,20 +21,21 @@ export function DragDropPreviewFileUploader({
   url,
   alwaysShowDropZone = false,
   fullHeight = false,
+  accept = DEFAULT_FILE_ACCEPT,
 }: DragDropPreviewFileUploaderProps) {
   const { register, setValue, watch } = useFormContext();
   const variableValue = watch(formVariable);
-  const {
-    ref: registerRef,
-    onChange: formOnChange,
-    ...rest
-  } = register(formVariable);
+  const { ref: registerRef, ...rest } = register(formVariable);
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [previewWidth, setPreviewWidth] = useState<number>(0);
+
+  const fileKind = detectFileKind(
+    variableValue instanceof File ? variableValue : url,
+  );
 
   useEffect(() => {
     if (!variableValue) {
@@ -64,13 +69,16 @@ export function DragDropPreviewFileUploader({
 
   function handleFileSelect(event: ChangeEvent<HTMLInputElement>) {
     const filesSelected = event.target.files;
-    if (!filesSelected || filesSelected?.length === 0) return;
+    if (!filesSelected || filesSelected.length === 0) return;
 
     const newFile = filesSelected.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true, shouldValidate: true });
+    setValue(formVariable, newFile!, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   }
 
-  function deleteImage() {
+  function deleteFile() {
     setValue(formVariable, undefined, { shouldDirty: true, shouldTouch: true });
   }
 
@@ -88,11 +96,15 @@ export function DragDropPreviewFileUploader({
   function handleDragDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setIsDragging(false);
-    const filesDropped = event.dataTransfer.files;
-
-    const newFile = filesDropped.item(0);
-    setValue(formVariable, newFile!, { shouldDirty: true, shouldValidate: true });
+    const newFile = event.dataTransfer.files.item(0);
+    setValue(formVariable, newFile!, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   }
+
+  const loadedLabel =
+    fileKind === "excel" ? "Excel carregado." : "PDF carregado.";
 
   return (
     <div
@@ -115,11 +127,15 @@ export function DragDropPreviewFileUploader({
         )}
       >
         {previewUrl && !alwaysShowDropZone ? (
-          <PdfPreview
-            url={previewUrl}
-            handleDelete={deleteImage}
-            width={previewWidth > 0 ? previewWidth : undefined}
-          />
+          fileKind === "excel" && variableValue instanceof File ? (
+            <ExcelFilePreview file={variableValue} handleDelete={deleteFile} />
+          ) : (
+            <PdfPreview
+              url={previewUrl}
+              handleDelete={deleteFile}
+              width={previewWidth > 0 ? previewWidth : undefined}
+            />
+          )
         ) : (
           <div
             className={cn(
@@ -141,7 +157,9 @@ export function DragDropPreviewFileUploader({
                 </span>
               ) : previewUrl ? (
                 <div className="text-muted-foreground text-center px-4">
-                  <span className="text-primary font-medium">PDF carregado.</span>{" "}
+                  <span className="text-primary font-medium">
+                    {loadedLabel}
+                  </span>{" "}
                   Arraste ou{" "}
                   <button
                     type="button"
@@ -170,17 +188,13 @@ export function DragDropPreviewFileUploader({
               {...rest}
               name={formVariable}
               type="file"
-              className="file"
               ref={(e) => {
                 registerRef(e);
                 fileInputRef.current = e;
               }}
               hidden
-              accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              onChange={(e) => {
-                formOnChange(e);
-                handleFileSelect(e);
-              }}
+              accept={accept}
+              onChange={handleFileSelect}
             />
           </div>
         )}
