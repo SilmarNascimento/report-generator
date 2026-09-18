@@ -33,7 +33,9 @@ public class StudentService {
 
     @Transactional
     public StudentResponseDto create(StudentRequestDto dto) {
-        if (userRepository.existsByEmail(dto.email())) {
+        String normalizedEmail = dto.email().toLowerCase();
+
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email já cadastrado");
         }
 
@@ -42,6 +44,7 @@ public class StudentService {
         }
 
         Student student = studentMapper.toEntity(dto);
+        student.getUser().setEmail(normalizedEmail);
 
         return studentMapper.toDto(studentRepository.save(student));
     }
@@ -66,7 +69,7 @@ public class StudentService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Estudante não encontrado"));
 
         String emailAtual = student.getUser().getEmail();
-        String novoEmail = dto.email();
+        String novoEmail = dto.email().toLowerCase();
 
         if (!emailAtual.equalsIgnoreCase(novoEmail) && userRepository.existsByEmail(novoEmail)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email já cadastrado");
@@ -77,6 +80,7 @@ public class StudentService {
         }
 
         studentMapper.updateEntity(dto, student);
+        student.getUser().setEmail(novoEmail);
         studentRepository.save(student);
 
         return studentMapper.toDto(student);

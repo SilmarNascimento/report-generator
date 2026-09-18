@@ -20,7 +20,6 @@ export type MainQuestionReceived = {
   lerickucas: number;
   pattern: QuestionPattern;
   weight: number;
-  images: string[];
   videoResolutionUrl: string;
   adaptedQuestionsPdfFile: FileEntity;
   alternatives: Alternative[];
@@ -37,7 +36,6 @@ export type MainQuestion = {
   lerickucas: number;
   pattern: QuestionPattern;
   weight: number;
-  images: string[];
   alternatives: Alternative[];
   videoResolutionUrl: string;
   adaptedQuestions: AdaptedQuestion[];

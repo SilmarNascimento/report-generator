@@ -1,19 +1,58 @@
+import { useNavigate, useParams } from "react-router-dom";
 import { FormHeader } from "@/components/FormHeader";
-import { EditMockExamForm } from "@/components/MockExam/EditMockExamForm";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useGetMockExamById } from "@/hooks/CRUD/mockExam/useGetMockExamById";
+import { useHandleEditMockExam } from "@/hooks/CRUD/mockExam/useHandleEditMockExam";
 import { convertMockExamData } from "@/utils/convertMockExamData";
-import { useParams } from "react-router-dom";
+import { mapMockExamToForm } from "@/mapper/mockExamMapper";
+import { MockExamForm } from "@/components/Forms/MockExam/MockExamForm";
+import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
+import { CreateMockExam } from "@/interfaces/MockExam";
 
 export function EditMockExam() {
+  const navigate = useNavigate();
   const { mockExamId = "" } = useParams<{ mockExamId: string }>();
 
   const { data: mockExamResponse } = useGetMockExamById(mockExamId);
-  const mockExamResponseFormatted = mockExamResponse
+  const updateMutation = useHandleEditMockExam(mockExamId);
+
+  const mockExam = mockExamResponse
     ? convertMockExamData(mockExamResponse)
     : undefined;
 
-  const mockExamCode = `${mockExamResponseFormatted?.releasedYear}:S${mockExamResponseFormatted?.number}-${mockExamResponseFormatted?.className}`;
+  const defaultValues = mockExam ? mapMockExamToForm(mockExam) : undefined;
+
+  const mockExamCode = mockExam
+    ? `${mockExam.releasedYear}:S${mockExam.number}-${mockExam.className}`
+    : "";
+
+  function buildFormData(data: MockExamFormType): FormData {
+    const formData = new FormData();
+
+    formData.append("coverPdfFile", data.coverPdfFile);
+    formData.append("matrixPdfFile", data.matrixPdfFile);
+    formData.append("answersPdfFile", data.answersPdfFile);
+
+    const payload: CreateMockExam = {
+      name: data.name,
+      className: [data.className],
+      releasedYear: data.releasedYear,
+      number: Number(data.number),
+    };
+
+    formData.append(
+      "mockExamInputDto",
+      new Blob([JSON.stringify(payload)], { type: "application/json" }),
+    );
+
+    return formData;
+  }
+
+  async function handleEdit(data: MockExamFormType) {
+    const formData = buildFormData(data);
+    await updateMutation.mutateAsync(formData);
+    navigate("/mock-exams");
+  }
 
   return (
     <>
@@ -25,8 +64,18 @@ export function EditMockExam() {
           headerTitle={`Editar Simulado ${mockExamCode}`}
           headerDetails="Altere os campos a seguir para atualizar o simulado"
         />
-        {mockExamResponseFormatted && (
-          <EditMockExamForm entity={mockExamResponseFormatted} />
+        {defaultValues && mockExam && (
+          <MockExamForm
+            titulo={`Editar Simulado ${mockExamCode}`}
+            modo="edicao"
+            defaultValues={defaultValues}
+            fileUrls={{
+              cover: mockExam.coverPdfFile.url,
+              matrix: mockExam.matrixPdfFile.url,
+              answers: mockExam.answersPdfFile.url,
+            }}
+            handleSubmitRequest={handleEdit}
+          />
         )}
       </div>
     </>

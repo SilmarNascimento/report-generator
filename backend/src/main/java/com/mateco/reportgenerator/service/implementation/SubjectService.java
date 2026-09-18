@@ -45,12 +45,12 @@ public class SubjectService implements SubjectServiceInterface {
 
   @Override
   public List<Subject> findAllByName(List<String> subjectNameList) {
-    return subjectRepository.findAllByNameIn(subjectNameList);
+    return subjectRepository.findAllByNameInIgnoreCase(subjectNameList);
   }
 
   @Override
   public Subject createSubject(Subject subject) {
-    subjectRepository.findByName(subject.getName())
+    subjectRepository.findByNameIgnoreCase(subject.getName())
         .ifPresent(subjectFound -> {
           throw new AlreadyExistsException("Conteúdo já cadastrado!");
         });

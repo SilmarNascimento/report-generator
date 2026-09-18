@@ -242,7 +242,7 @@ public class SubjectServiceTests {
     List<String> subjectsName = List.of(mockSubject01.getName(), mockSubject02.getName());
 
     Mockito
-        .when(subjectRepository.findAllByNameIn(subjectsName))
+        .when(subjectRepository.findAllByNameInIgnoreCase(subjectsName))
         .thenReturn(List.of(mockSubject01, mockSubject02));
 
     List<Subject> serviceResponse = subjectService.findAllByName(subjectsName);
@@ -263,7 +263,7 @@ public class SubjectServiceTests {
   @DisplayName("Verifica se é criado uma a entidade Subject")
   public void createSubjectTest() {
     Mockito
-        .when(subjectRepository.findByName(any(String.class)))
+        .when(subjectRepository.findByNameIgnoreCase(any(String.class)))
         .thenReturn(Optional.empty());
 
     Mockito
@@ -288,7 +288,7 @@ public class SubjectServiceTests {
   @DisplayName("Verifica se é disparado uma exceção ao tentar criar uma a entidade Subject já existente")
   public void createSubjectTestError() {
     Mockito
-        .when(subjectRepository.findByName("Geometria"))
+        .when(subjectRepository.findByNameIgnoreCase("Geometria"))
         .thenReturn(Optional.of(mockSubject01));
 
     assertThrows(AlreadyExistsException.class, () -> subjectService.createSubject(mockSubject01));

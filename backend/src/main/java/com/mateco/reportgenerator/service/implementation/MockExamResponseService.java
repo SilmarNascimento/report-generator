@@ -28,9 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -112,6 +115,26 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         } catch (IOException e) {
             throw new RuntimeException("Erro ao mesclar PDFs: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public byte[] generateBulkDiagnosisZip(List<UUID> ids) throws IOException {
+        List<MockExamResponse> responses = mockExamResponseRepository.findAllById(ids);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            for (MockExamResponse response : responses) {
+                FileEntity fileEntity = response.getDiagnosisPdfFile();
+                if (fileEntity == null || fileEntity.getFileContent() == null) continue;
+
+                byte[] pdfContent = fileEntity.getFileContent().getContent();
+                ZipEntry entry = new ZipEntry(fileEntity.getFileName());
+                zos.putNextEntry(entry);
+                zos.write(pdfContent);
+                zos.closeEntry();
+            }
+        }
+        return baos.toByteArray();
     }
 
     @Override

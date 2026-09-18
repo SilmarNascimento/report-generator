@@ -1,4 +1,3 @@
-import { Check, Loader2 } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useInfiniteMockExams } from "@/hooks/CRUD/mockExam/diagnosis/useInfiniteMockExams";
 import { useGenerateResponses } from "@/hooks/CRUD/mockExam/diagnosis/useGenerateResponses";
 import { InfiniteSelect } from "../ui/select/InfiniteSelect";
-import { DragDropPreviewFileUploader } from "../ui/drag-drop/DragDropPreviewFile";
+import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import Botao from "../Shared/Botao";
 
 type SelectOptionProps = {
@@ -76,14 +75,12 @@ export function GenerateResponsesForm({
     navigate("/students-response");
   };
 
-  function disableSubmitButton() {
-    const { mockExamSelected, studentRecordsExcelFile } = watch();
-    return (
-      formState.isSubmitting ||
-      !mockExamSelected.value ||
-      !studentRecordsExcelFile
-    );
-  }
+  const { mockExamSelected, studentRecordsExcelFile } = watch();
+
+  const hasFile = studentRecordsExcelFile instanceof File;
+
+  const disabled =
+    formState.isSubmitting || !mockExamSelected.value || !hasFile;
 
   return (
     <FormProvider {...formMethods}>
@@ -109,30 +106,20 @@ export function GenerateResponsesForm({
             </div>
           </div>
           <div className="space-y-2 flex flex-col justify-center items-center">
-            <DragDropPreviewFileUploader
-              formVariable="studentRecordsExcelFile"
+            <InputDragDropWrapper
+              variant="preview"
+              name="studentRecordsExcelFile"
+              errors={formState.errors}
               message={dragAndDropPlaceholder}
             />
-            <p
-              className={`text-sm ${formState.errors?.studentRecordsExcelFile ? "text-red-400" : "text-transparent"}`}
-            >
-              {formState.errors?.studentRecordsExcelFile
-                ? formState.errors.studentRecordsExcelFile.message
-                : "\u00A0"}
-            </p>
           </div>
         </div>
         <div className="flex items-center justify-center gap-2">
           <Botao
-            disabled={disableSubmitButton()}
+            disabled={disabled}
             className="bg-teal-400 text-teal-950"
             type="submit"
           >
-            {formState.isSubmitting ? (
-              <Loader2 className="size-3 animate-spin" />
-            ) : (
-              <Check className="size-3" />
-            )}
             Processar Respostas
           </Botao>
         </div>

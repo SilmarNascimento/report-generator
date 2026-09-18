@@ -2,8 +2,7 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { CreateSubjectForm } from "@/components/Subject/CreateSubjectForm";
-import { EditSubjectForm } from "@/components/Subject/EditSubjectForm";
+import { SubjectForm } from "@/components/Forms/Subject/SubjectForm";
 import {
   Table,
   TableBody,
@@ -13,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import { useHandleCreateSubject } from "@/hooks/CRUD/subject/useHandleCreateSubject";
+import { useHandleEditSubject } from "@/hooks/CRUD/subject/useHandleEditSubject";
 import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import useDebounceValue from "@/hooks/useDebounceValue";
@@ -50,6 +51,10 @@ export function Subjects() {
     isLoading,
     isFetching,
   } = useGetSubjects(page, pageSize, urlFilter);
+
+  const createSubjectMutation = useHandleCreateSubject();
+  const editSubjectMutation = useHandleEditSubject();
+
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
       endpoint: "/subject",
@@ -84,7 +89,12 @@ export function Subjects() {
                   </Dialog.Description>
                 </div>
 
-                <CreateSubjectForm />
+                <SubjectForm
+                  modo="criacao"
+                  handleSubmitRequest={async (data) => {
+                    await createSubjectMutation.mutateAsync(data);
+                  }}
+                />
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -173,7 +183,19 @@ export function Subjects() {
                                   assunto.
                                 </Dialog.Description>
                               </div>
-                              <EditSubjectForm entity={subject} />
+                              <SubjectForm
+                                modo="edicao"
+                                defaultValues={{
+                                  name: subject.name,
+                                  fixedWeight: subject.fixedWeight * 100,
+                                }}
+                                handleSubmitRequest={async (data) => {
+                                  await editSubjectMutation.mutateAsync({
+                                    subjectId: subject.id,
+                                    ...data,
+                                  });
+                                }}
+                              />
                             </Dialog.Content>
                           </Dialog.Portal>
                         </Dialog.Root>

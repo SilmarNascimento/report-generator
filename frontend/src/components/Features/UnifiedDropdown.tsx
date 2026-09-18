@@ -172,7 +172,7 @@ export default function UnifiedDropdown<T extends DropdownType>(
         placeholder={props.placeholder}
         aria-invalid={props.error || undefined}
         className={cn(
-          "text-sm leading-[1.5] font-normal text-[#28272C]",
+          "text-sm leading-normal font-normal text-foreground",
           "h-10 w-full rounded-lg border px-3 pr-10",
           props.allowSearch ? "pl-10" : "pl-3",
           props.className,
@@ -182,11 +182,11 @@ export default function UnifiedDropdown<T extends DropdownType>(
       <Button
         type="button"
         onClick={handleChevronClick}
-        className="absolute top-1/2 right-2 -translate-y-1/2 bg-transparent shadow-none hover:bg-transparent text-gray-700!"
+        className="absolute top-1/2 right-2 -translate-y-1/2 bg-transparent shadow-none hover:bg-transparent text-foreground!"
       >
         <ChevronDown
           size={18}
-          className={cn("text-[#28272C] transition-transform", {
+          className={cn("text-foreground transition-transform", {
             "rotate-180": isOpen,
           })}
         />
@@ -197,7 +197,7 @@ export default function UnifiedDropdown<T extends DropdownType>(
           ref={refs.setFloating}
           style={floatingStyles}
           {...getFloatingProps()}
-          className="z-50 rounded-lg border bg-white shadow-md"
+          className="z-50 rounded-lg border border-border bg-popover shadow-md"
         >
           {filteredOptions.map((option) => {
             const isDisabled = props.disabledOptions?.includes(option.value);
@@ -209,8 +209,8 @@ export default function UnifiedDropdown<T extends DropdownType>(
                   disabled={isDisabled}
                   onClick={() => handleSelect(option)}
                   className={cn(
-                    "text-sm leading-[1.5] font-normal text-[#28272C]",
-                    "w-full px-4 py-2 text-left hover:bg-gray-100",
+                    "text-sm leading-normal font-normal text-foreground",
+                    "w-full px-4 py-2 text-left hover:bg-accent",
                     isDisabled && "cursor-not-allowed opacity-70",
                     props.className,
                   )}

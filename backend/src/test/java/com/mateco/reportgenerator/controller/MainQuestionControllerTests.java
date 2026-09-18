@@ -1,4 +1,4 @@
-package com.mateco.reportgenerator.controller;
+﻿package com.mateco.reportgenerator.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -123,16 +123,8 @@ public class MainQuestionControllerTests {
         "adaptedQuestion02".getBytes()
     );
 
-    mockAlternative01 = new Alternative(
-        "descrição da alternativa 01",
-        List.of("imagem alternativa 01"),
-        false
-    );
-    mockAlternative02 = new Alternative(
-        "descrição da alternativa 02",
-        List.of("imagem alternativa 02"),
-        true
-    );
+    mockAlternative01 = new Alternative(false);
+    mockAlternative02 = new Alternative(true);
     mockSubject01 = new Subject("Geometria");
     mockSubject02 = new Subject("Algebra");
 
@@ -140,7 +132,6 @@ public class MainQuestionControllerTests {
         "título questão 01",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem da questão 01"),
         List.of(mockAlternative01, mockAlternative02),
         "URL da questão 01",
         new ArrayList<>(),
@@ -154,7 +145,6 @@ public class MainQuestionControllerTests {
         "título questão 02",
         List.of(mockSubject01, mockSubject02),
         "difícil",
-        List.of("imagem da questão 02"),
         List.of(mockAlternative01, mockAlternative02),
         "URL da questão 02",
         new ArrayList<>(),
@@ -184,20 +174,13 @@ public class MainQuestionControllerTests {
   }
 
   private static MainQuestionInputDto getMockMainQuestionInputDto() {
-    AlternativeInputDto alternativeInputDto01 = new AlternativeInputDto(
-        "descrição da alternativa01",
-        false
-    );
-    AlternativeInputDto alternativeInputDto02 = new AlternativeInputDto(
-        "descrição da alternativa02",
-        true
-    );
+    AlternativeInputDto alternativeInputDto01 = new AlternativeInputDto(false);
+    AlternativeInputDto alternativeInputDto02 = new AlternativeInputDto(true);
 
     return new MainQuestionInputDto(
         "titulo da questão",
         new ArrayList<>(),
         "Fácil",
-        new ArrayList<>(),
         List.of(alternativeInputDto01, alternativeInputDto02),
         "URL video resolution"
     );
@@ -246,18 +229,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -271,18 +246,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[1].title").value(mockMainQuestion02.getTitle()))
         .andExpect(jsonPath("$.data.[1].level").value(mockMainQuestion02.getLevel()))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images.[0]").value(mockMainQuestion02.getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl").value(mockMainQuestion02.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value(mockMainQuestion02.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value(mockMainQuestion02.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value(mockMainQuestion02.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value(mockMainQuestion02.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion02.getAdaptedQuestionsPdfFile().getFileName()))
@@ -349,18 +316,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -374,18 +333,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[1].title").value(mockMainQuestion02.getTitle()))
         .andExpect(jsonPath("$.data.[1].level").value(mockMainQuestion02.getLevel()))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images.[0]").value(mockMainQuestion02.getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl").value(mockMainQuestion02.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value(mockMainQuestion02.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value(mockMainQuestion02.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value(mockMainQuestion02.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value(mockMainQuestion02.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion02.getAdaptedQuestionsPdfFile().getFileName()))
@@ -451,18 +402,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -528,18 +471,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -612,18 +547,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -637,18 +564,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[1].title").value(mockMainQuestion02.getTitle()))
         .andExpect(jsonPath("$.data.[1].level").value(mockMainQuestion02.getLevel()))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images.[0]").value(mockMainQuestion02.getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl").value(mockMainQuestion02.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value(mockMainQuestion02.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value(mockMainQuestion02.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value(mockMainQuestion02.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value(mockMainQuestion02.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion02.getAdaptedQuestionsPdfFile().getFileName()))
@@ -729,18 +648,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -754,18 +665,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[1].title").value(mockMainQuestion02.getTitle()))
         .andExpect(jsonPath("$.data.[1].level").value(mockMainQuestion02.getLevel()))
         .andExpect(jsonPath("$.data.[1].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].images.[0]").value(mockMainQuestion02.getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[1].videoResolutionUrl").value(mockMainQuestion02.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].description").value(mockMainQuestion02.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[0].images.[0]").value(mockMainQuestion02.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].description").value(mockMainQuestion02.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[1].alternatives.[1].images.[0]").value(mockMainQuestion02.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[1].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion02.getAdaptedQuestionsPdfFile().getFileName()))
@@ -845,18 +748,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -935,18 +830,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -1026,18 +913,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.data.[0].title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.data.[0].level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.data.[0].subjects", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.data.[0].videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.data.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.data.[0].alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.data.[0].adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -1088,18 +967,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
-        .andExpect(jsonPath("$.images", isA(List.class)))
-        .andExpect(jsonPath("$.images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -1135,10 +1006,8 @@ public class MainQuestionControllerTests {
   @DisplayName("Verifica se criado uma entidade MainQuestion")
   public void createMainQuestionTest() throws Exception {
     Mockito
-        .when(mainQuestionService.createMainQuestion(
-            any(MainQuestion.class),
-            any(List.class)
-        )).thenReturn(mockMainQuestion01);
+        .when(mainQuestionService.createMainQuestion(any(MainQuestion.class)))
+        .thenReturn(mockMainQuestion01);
 
     Mockito
         .when(imageService.uploadImages(any()))
@@ -1165,18 +1034,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
-        .andExpect(jsonPath("$.images", isA(List.class)))
-        .andExpect(jsonPath("$.images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -1187,7 +1048,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.mockExams", isA(List.class)))
         .andExpect(jsonPath("$.handouts", isA(List.class)));
 
-    Mockito.verify(mainQuestionService).createMainQuestion(any(MainQuestion.class), any(List.class));
+    Mockito.verify(mainQuestionService).createMainQuestion(any(MainQuestion.class));
   }
 
   @Test
@@ -1198,11 +1059,8 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
 
     Mockito
-        .when(mainQuestionService.updateMainQuestionById(
-            any(UUID.class),
-            any(MainQuestion.class),
-            any(List.class)
-        )).thenReturn(mockMainQuestion01);
+        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class)))
+        .thenReturn(mockMainQuestion01);
 
     MockMultipartFile inputJsonPart = createInputJsonPart("mainQuestionInputDto");
 
@@ -1228,18 +1086,10 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
         .andExpect(jsonPath("$.subjects", isA(List.class)))
-        .andExpect(jsonPath("$.images", isA(List.class)))
-        .andExpect(jsonPath("$.images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockMainQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockMainQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockMainQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockMainQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile", isA(LinkedHashMap.class)))
         .andExpect(jsonPath("$.adaptedQuestionsPdfFile.fileName").value(mockMainQuestion01.getAdaptedQuestionsPdfFile().getFileName()))
@@ -1250,8 +1100,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.mockExams", isA(List.class)))
         .andExpect(jsonPath("$.handouts", isA(List.class)));
 
-    Mockito.verify(mainQuestionService)
-        .updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(List.class));
+    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class));
   }
 
   @Test
@@ -1262,11 +1111,8 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
 
     Mockito
-        .when(mainQuestionService.updateMainQuestionById(
-            any(UUID.class),
-            any(MainQuestion.class),
-            any(List.class)
-        )).thenThrow(new NotFoundException("Questão principal não encontrada!"));
+        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class)))
+        .thenThrow(new NotFoundException("Questão principal não encontrada!"));
 
     MockMultipartFile inputJsonPart = createInputJsonPart("mainQuestionInputDto");
 
@@ -1287,8 +1133,7 @@ public class MainQuestionControllerTests {
         .andExpect(status().is(404))
         .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
 
-    Mockito.verify(mainQuestionService)
-        .updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(List.class));
+    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class));
   }
 
   @Test
@@ -1355,23 +1200,15 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.[0].images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.[0].alternatives.[0].description").value(mockAdaptedQuestion01.getAlternatives().get(0).getDescription()))
         .andExpect(jsonPath("$.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[0].alternatives.[0].images.[0]").value(mockAdaptedQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.[0].alternatives.[1].description").value(mockAdaptedQuestion01.getAlternatives().get(1).getDescription()))
         .andExpect(jsonPath("$.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.[0].alternatives.[1].images.[0]").value(mockAdaptedQuestion01.getAlternatives().get(1).getImages().get(0)))
         .andExpect(jsonPath("$.[1].id").value(mockAdaptedQuestionId02.toString()))
         .andExpect(jsonPath("$.[1].images", isA(List.class)))
         .andExpect(jsonPath("$.[1].images.[0]").value(mockAdaptedQuestion02.getImages().get(0)))
         .andExpect(jsonPath("$.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.[1].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.[1].alternatives.[0].description").value(mockAdaptedQuestion02.getAlternatives().get(0).getDescription()))
         .andExpect(jsonPath("$.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[0].images.[0]").value(mockAdaptedQuestion02.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.[1].alternatives.[1].description").value(mockAdaptedQuestion02.getAlternatives().get(1).getDescription()))
         .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[1].images.[0]").value(mockAdaptedQuestion02.getAlternatives().get(1).getImages().get(0)));
 
     Mockito.verify(adaptedQuestionService).findAllAdaptedQuestionFromMainQuestion(any(UUID.class));
   }
@@ -1395,16 +1232,9 @@ public class MainQuestionControllerTests {
     httpResponse
         .andExpect(status().is(200))
         .andExpect(jsonPath("$.id").value(mockAdaptedQuestionId01.toString()))
-        .andExpect(jsonPath("$.images", isA(List.class)))
         .andExpect(jsonPath("$.images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockAdaptedQuestion01.getAlternatives().get(0).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockAdaptedQuestion01.getAlternatives().get(0).getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockAdaptedQuestion01.getAlternatives().get(1).getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockAdaptedQuestion01.getAlternatives().get(1).getImages().get(0)));
 
     Mockito.verify(adaptedQuestionService)
         .findAdaptedQuestionsFromMainQuestionById(any(UUID.class), any(UUID.class));
@@ -1445,16 +1275,8 @@ public class MainQuestionControllerTests {
     httpResponse
         .andExpect(status().is(201))
         .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
-        .andExpect(jsonPath("$.images", isA(List.class)))
-        .andExpect(jsonPath("$.images.[0]").value(mockMainQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockAlternative01.getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockAlternative01.getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockAlternative02.getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockAlternative02.getImages().get(0)))
         .andExpect(jsonPath("$.adaptedQuestions", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestions.[*].id").exists())
         .andExpect(jsonPath("$.adaptedQuestions.[0].title").value(mockAdaptedQuestion01.getTitle()))
@@ -1463,12 +1285,8 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.adaptedQuestions.[0].images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].description").value(mockAlternative01.getDescription()))
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].images.[0]").value(mockAlternative01.getImages().get(0)))
-        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].description").value(mockAlternative02.getDescription()))
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images.[0]").value(mockAlternative02.getImages().get(0)));
 
     Mockito.verify(mainQuestionService)
         .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class));
@@ -1556,16 +1374,9 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.id").value(mockAdaptedQuestionId01.toString()))
         .andExpect(jsonPath("$.title").value(mockAdaptedQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockAdaptedQuestion01.getLevel()))
-        .andExpect(jsonPath("$.images", isA(List.class)))
         .andExpect(jsonPath("$.images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
         .andExpect(jsonPath("$.alternatives.[*].id").exists())
-        .andExpect(jsonPath("$.alternatives.[0].description").value(mockAlternative01.getDescription()))
-        .andExpect(jsonPath("$.alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[0].images.[0]").value(mockAlternative01.getImages().get(0)))
-        .andExpect(jsonPath("$.alternatives.[1].description").value(mockAlternative02.getDescription()))
-        .andExpect(jsonPath("$.alternatives.[1].images", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[1].images.[0]").value(mockAlternative02.getImages().get(0)));
 
     Mockito.verify(adaptedQuestionService)
         .updateAdaptedQuestionOfMainQuestionById(
@@ -1906,4 +1717,6 @@ public class MainQuestionControllerTests {
     );
   }
 }
+
+
 

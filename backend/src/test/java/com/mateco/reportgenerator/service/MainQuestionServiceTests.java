@@ -94,22 +94,13 @@ public class MainQuestionServiceTests {
     );
     mockMainQuestionFile02 = new FileEntity(multipartFile02);
 
-    Alternative mockAlternative01 = new Alternative(
-        "descrição da alternativa 01",
-        List.of("imagem alternativa 01"),
-        false
-    );
-    Alternative mockAlternative02 = new Alternative(
-        "descrição da alternativa 02",
-        List.of("imagem alternativa 02"),
-        true
-    );
+    Alternative mockAlternative01 = new Alternative(false);
+    Alternative mockAlternative02 = new Alternative(true);
 
     mockMainQuestion01 = new MainQuestion(
         "título questão 01",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem 01 da questão"),
         List.of(mockAlternative01, mockAlternative02),
         "URL da questão 01",
         new ArrayList<>(),
@@ -123,7 +114,6 @@ public class MainQuestionServiceTests {
         "título questão 02",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem 01 da questão"),
         List.of(mockAlternative01, mockAlternative02),
         "URL da questão 02",
         new ArrayList<>(),
@@ -353,19 +343,11 @@ public class MainQuestionServiceTests {
         .when(mainQuestionRepository.save(any(MainQuestion.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
-    MainQuestion serviceResponse = mainQuestionService.createMainQuestion(
-        mockMainQuestion01,
-        List.of("imagem descrição", "imagem alternative 01", "imagem alternativa 02")
-    );
+    MainQuestion serviceResponse = mainQuestionService.createMainQuestion(mockMainQuestion01);
 
     assertNotNull(serviceResponse);
     assertEquals(serviceResponse.getTitle(), mockMainQuestion01.getTitle());
     assertEquals(serviceResponse.getLevel(), mockMainQuestion01.getLevel());
-    assertEquals(serviceResponse.getImages(), List.of("imagem descrição"));
-
-    List<Alternative> mainQuestionAlternatives = serviceResponse.getAlternatives();
-    assertEquals(mainQuestionAlternatives.get(0).getImages(), List.of("imagem alternative 01"));
-    assertEquals(mainQuestionAlternatives.get(1).getImages(), List.of("imagem alternativa 02"));
 
     Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
   }
@@ -385,23 +367,13 @@ public class MainQuestionServiceTests {
         .thenAnswer(invocation -> invocation.getArgument(0));
 
     MainQuestion serviceResponse = mainQuestionService
-        .updateMainQuestionById(
-            mockMainQuestionId01,
-            mockMainQuestion02,
-            List.of("imagem questão nova 01", "imagem alternativa nova 01", "imagem alternativa nova 02")
-        );
+        .updateMainQuestionById(mockMainQuestionId01, mockMainQuestion02);
 
     assertNotNull(serviceResponse);
     assertEquals("título questão 02", serviceResponse.getTitle());
     assertEquals("difícil", serviceResponse.getLevel());
-    assertEquals(List.of("imagem questão nova 01"), serviceResponse.getImages());
-
-    List<Alternative> alternativeResponse = serviceResponse.getAlternatives();
-    assertEquals(List.of("imagem alternativa nova 01"), alternativeResponse.get(0).getImages());
-    assertEquals(List.of("imagem alternativa nova 02"), alternativeResponse.get(1).getImages());
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId01);
-    Mockito.verify(imageService, Mockito.times(3)).deleteImages(any());
     Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));
   }
 
@@ -414,11 +386,7 @@ public class MainQuestionServiceTests {
 
     assertThrows(
         NotFoundException.class,
-        () -> mainQuestionService.updateMainQuestionById(
-            mockMainQuestionId01,
-            mockMainQuestion02,
-            List.of("imagem questão nova 01", "imagem alternativa nova 01", "imagem alternativa nova 02")
-        )
+        () -> mainQuestionService.updateMainQuestionById(mockMainQuestionId01, mockMainQuestion02)
     );
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId01);
@@ -440,7 +408,6 @@ public class MainQuestionServiceTests {
     mainQuestionService.deleteMainQuestionById(mockMainQuestionId01);
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId01);
-    Mockito.verify(imageService, Mockito.times(1)).deleteImages(any());
     Mockito.verify(mainQuestionRepository).deleteById(mockMainQuestionId01);
   }
 
@@ -638,11 +605,10 @@ public class MainQuestionServiceTests {
     assertEquals(mockMainQuestion01, adaptedQuestionAdded.getMainQuestion());
     assertEquals(mockAdaptedQuestion01.getTitle(), adaptedQuestionAdded.getTitle());
     assertEquals(mockAdaptedQuestion01.getLevel(), adaptedQuestionAdded.getLevel());
-    assertEquals(List.of("imagem da questão adaptada"), adaptedQuestionAdded.getImages());
-
-    List<Alternative> alternativeList = adaptedQuestionAdded.getAlternatives();
-    assertEquals(List.of("imagem da alternativa 01"), alternativeList.get(0).getImages());
-    assertEquals(List.of("imagem da alternativa 02"), alternativeList.get(1).getImages());
+    assertEquals(
+        List.of("imagem da questão adaptada", "imagem da alternativa 01", "imagem da alternativa 02"),
+        adaptedQuestionAdded.getImages()
+    );
 
     Mockito.verify(mainQuestionRepository).findById(mockMainQuestionId01);
     Mockito.verify(mainQuestionRepository).save(any(MainQuestion.class));

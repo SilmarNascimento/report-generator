@@ -22,8 +22,6 @@ import { EditAdaptedQuestion } from "./pages/main-question/adapted-questions/edi
 import { EditMockExam } from "./pages/mock-exams/editMockExam.tsx";
 import { CreateMockExam } from "./pages/mock-exams/createMockExam.tsx";
 import { MockExamMainQuestionManager } from "./pages/mock-exams/main-questions/mainQuestionManager.tsx";
-import { MainQuestionSubjectManager } from "./pages/main-question/subject/subjectManager.tsx";
-import { MockExamSubjectManager } from "./pages/mock-exams/subject/subjectManager.tsx";
 import { GenerateDiagnosis } from "./pages/diagnosis/GenerateDiagnosisPage.tsx";
 import { StudentsResponses } from "./pages/diagnosis/DiagnosisPage.tsx";
 import { MockExamAnswers } from "./pages/mock-exams/answers/answers.tsx";
@@ -62,10 +60,6 @@ const router = createBrowserRouter([
         element: <EditMainQuestion />,
       },
       {
-        path: "/main-questions/:mainQuestionId/subjects",
-        element: <MainQuestionSubjectManager />,
-      },
-      {
         path: "/main-questions/:mainQuestionId/adapted-questions",
         element: <AdaptedQuestions />,
       },
@@ -80,10 +74,6 @@ const router = createBrowserRouter([
       { path: "/mock-exams", element: <MockExams /> },
       { path: "/mock-exams/create", element: <CreateMockExam /> },
       { path: "/mock-exams/edit/:mockExamId", element: <EditMockExam /> },
-      {
-        path: "/mock-exams/:mockExamId/subjects",
-        element: <MockExamSubjectManager />,
-      },
       {
         path: "/mock-exams/:mockExamId/main-questions",
         element: <MockExamMainQuestionManager />,

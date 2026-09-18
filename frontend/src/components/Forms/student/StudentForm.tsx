@@ -67,7 +67,7 @@ const StudentForm = ({
           ? handleSubmit(handleSubmitRequest)
           : (event) => event.preventDefault()
       }
-      className="flex min-h-[calc(100vh-360px)] flex-col justify-between gap-[22px] rounded-2xl px-6 py-8"
+      className="flex min-h-[calc(100vh-360px)] flex-col justify-between gap-5.5 rounded-2xl px-6 py-8"
     >
       <section className="">
         <div>
@@ -128,6 +128,7 @@ const StudentForm = ({
             <InputMultiSelectWrapper
               name="classGroups"
               control={control}
+              errors={errors}
               label="Turmas"
               placeholder="Selecione as turmas"
               options={classGroupBadgeOptions}

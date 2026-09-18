@@ -89,7 +89,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
             )
           }
           disabled={disabled || (!allowNegative && numericValue <= 0)}
-          className={cn("px-3 text-lg text-[#494C57]", {
+          className={cn("px-3 text-lg text-foreground", {
             "cursor-default": disabled,
             invisible: hideButtons || disabled,
           })}
@@ -122,7 +122,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(
           type="button"
           onClick={() => onChange(numericValue + 1)}
           disabled={disabled}
-          className={cn("px-3 text-lg text-[#494C57]", {
+          className={cn("px-3 text-lg text-foreground", {
             "cursor-default": disabled,
             invisible: hideButtons || disabled,
           })}

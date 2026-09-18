@@ -51,8 +51,8 @@ const Modal = ({
             {title && (
               <DialogTitle
                 className={cn(
-                  "text-lg leading-[1.4] font-bold tracking-[-0.15px] text-[#28272C]",
-                  "m-0 border-b border-[#CED2D7] p-4",
+                  "text-lg leading-[1.4] font-bold tracking-[-0.15px] text-foreground",
+                  "m-0 border-b border-border p-4",
                 )}
               >
                 {title}

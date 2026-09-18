@@ -36,7 +36,7 @@ export function InfiniteSelect({
   }
 
   function labelClassName() {
-    return `block max-w-full capitalize truncate ${selected?.label ? "text-gray-900" : "text-gray-400"}`;
+    return `block max-w-full capitalize truncate ${selected?.label ? "text-foreground" : "text-muted-foreground"}`;
   }
 
   function optionClassName(
@@ -46,15 +46,15 @@ export function InfiniteSelect({
   ) {
     isSelected ||= selected?.value === option.value;
 
-    return `active:bg-gray-100 relative cursor-default select-none py-2 px-4 ${
+    return `active:bg-accent relative cursor-default select-none py-2 px-4 ${
       options.length - 1 === index ? "rounded-b-md" : ""
-    } ${isSelected ? "bg-blue-50" : ""} hover:bg-gray-100 mb-1 last-of-type:mb-[0] block text-left w-full`;
+    } ${isSelected ? "bg-primary/10 font-semibold" : ""} hover:bg-accent mb-1 last-of-type:mb-[0] block text-left w-full`;
   }
 
   const containerClassName = () => `
     ${
-      isDropdownOpen ? "!border-gray-400" : ""
-    } px-4 py-2 flex justify-between items-center rounded w-full font-normal border border-solid border-gray-300 bg-white leading-[20px] text-xs text-gray-900 cursor-pointer
+      isDropdownOpen ? "!border-ring ring-ring/50 ring-[1.5px]" : ""
+    } px-4 py-2 flex justify-between items-center rounded w-full font-normal border border-solid border-input bg-background leading-[20px] text-xs text-foreground cursor-pointer outline-none transition-[color,box-shadow]
     `;
 
   const { elementRef } = useListenForOutsideClicks(closeDropdown);
@@ -64,7 +64,7 @@ export function InfiniteSelect({
 
     return (
       <div className="relative cursor-default select-none py-2 pl-3 pr-9">
-        <span className="font-normal block truncate text-sm text-gray-900">
+        <span className="font-normal block truncate text-sm text-foreground">
           No options here
         </span>
       </div>
@@ -91,7 +91,7 @@ export function InfiniteSelect({
                 title={option.label}
                 className={`${
                   isSelected ? "font-semibold" : "font-normal"
-                } block truncate text-gray-900 text-[0.625rem] cursor-pointer leading-[1.2rem]`}
+                } block truncate text-foreground text-[0.625rem] cursor-pointer leading-[1.2rem]`}
               >
                 {option.label}
               </span>
@@ -113,7 +113,7 @@ export function InfiniteSelect({
         </span>
         <span className="pointer-events-none ml-3 flex items-center">
           <ChevronRight
-            className={`transition-transform duration-200 ${isDropdownOpen ? "-rotate-90" : "rotate-90"} text-gray-400`}
+            className={`transition-transform duration-200 ${isDropdownOpen ? "-rotate-90" : "rotate-90"} text-muted-foreground`}
           />
         </span>
       </button>
@@ -121,7 +121,7 @@ export function InfiniteSelect({
       {isDropdownOpen && (
         <div
           className={
-            "absolute z-[500] w-full overflow-auto rounded-md bg-white border border-gray-200 py-[8px] text-base ring-opacity-5 focus:outline-none mt-1 max-h-40 shadow-lg"
+            "absolute z-[500] w-full overflow-auto rounded-md bg-popover border border-border py-[8px] text-base focus:outline-none mt-1 max-h-40 shadow-md"
           }
           ref={elementRef}
         >

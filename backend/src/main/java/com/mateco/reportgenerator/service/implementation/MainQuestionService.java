@@ -70,32 +70,20 @@ public class MainQuestionService implements MainQuestionServiceInterface {
 
   @Override
   @Transactional
-  public MainQuestion createMainQuestion(MainQuestion question, List<String> questionImages) {
-    question.updateMainQuestionImages(questionImages);
-
+  public MainQuestion createMainQuestion(MainQuestion question) {
+    question.initAlternativeRelationships();
     return mainQuestionRepository.save(question);
   }
 
   @Override
-  public MainQuestion updateMainQuestionById(
-      UUID questionId,
-      MainQuestion question,
-      List<String> questionImages
-  ) {
+  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    question.updateMainQuestionImages(questionImages);
-
-    List<String> bodyQuestionImages = mainQuestionFound.getImages();
-    imageService.deleteImages(bodyQuestionImages);
-
-    mainQuestionFound.setImages(question.getImages());
     mainQuestionFound.setAlternatives(
         UpdateEntity.updateAlternative(
             question.getAlternatives(),
-            mainQuestionFound.getAlternatives(),
-            imageService
+            mainQuestionFound.getAlternatives()
         )
     );
 
@@ -109,7 +97,10 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    imageService.deleteImages(mainQuestionFound.getAllStringImages());
+    List<String> adaptedQuestionImages = mainQuestionFound.getAllStringImages();
+    if (!adaptedQuestionImages.isEmpty()) {
+      imageService.deleteImages(adaptedQuestionImages);
+    }
 
     mainQuestionRepository.deleteById(questionId);
   }

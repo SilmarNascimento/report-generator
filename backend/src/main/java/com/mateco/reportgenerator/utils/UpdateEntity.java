@@ -1,9 +1,7 @@
 package com.mateco.reportgenerator.utils;
 
 import com.mateco.reportgenerator.model.entity.Alternative;
-import com.mateco.reportgenerator.service.ImageServiceInterface;
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -53,22 +51,13 @@ public class UpdateEntity {
 
   public static List<Alternative> updateAlternative(
       List<Alternative> sourceAlternatives,
-      List<Alternative> targetAlternatives,
-      ImageServiceInterface imageService
+      List<Alternative> targetAlternatives
   ) {
-    for (int index = 0; index < Math.min(sourceAlternatives.size(), targetAlternatives.size());
-        index++) {
+    for (int index = 0; index < Math.min(sourceAlternatives.size(), targetAlternatives.size()); index++) {
       Alternative sourceAlternative = sourceAlternatives.get(index);
       Alternative targetAlternative = targetAlternatives.get(index);
-
-      targetAlternative.setDescription(sourceAlternative.getDescription());
       targetAlternative.setQuestionAnswer(sourceAlternative.isQuestionAnswer());
-
-      List<String> previousImages = targetAlternative.getImages();
-      imageService.deleteImages(previousImages);
-      targetAlternative.setImages(new ArrayList<>(sourceAlternative.getImages()));
     }
-
     return targetAlternatives;
   }
 

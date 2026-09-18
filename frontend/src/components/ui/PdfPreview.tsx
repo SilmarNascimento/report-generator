@@ -7,21 +7,24 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 
 type PdfPreviewProps = {
   url: string | File;
-  handleDelete: () => void;
+  handleDelete?: () => void;
+  width?: number;
 };
 
-export function PdfPreview({ url, handleDelete }: PdfPreviewProps) {
+export function PdfPreview({ url, handleDelete, width }: PdfPreviewProps) {
   return (
-    <div className="w-auto mr-1 relative mb-2 h-auto">
-      <span
-        className="absolute -top-1 right-2 text-xl cursor-pointer text-red-400 z-10"
-        onClick={handleDelete}
-      >
-        &times;
-      </span>
-      <div className="w-full h-full overflow-hidden flex items-center justify-center">
+    <div className="w-full relative mb-2 h-auto">
+      {handleDelete && (
+        <span
+          className="absolute -top-1 right-2 text-xl cursor-pointer text-destructive z-10"
+          onClick={handleDelete}
+        >
+          &times;
+        </span>
+      )}
+      <div className="w-full h-full overflow-hidden flex items-start justify-center">
         <Document file={url} className="w-full h-full">
-          <Page pageNumber={1} width={200} />
+          <Page pageNumber={1} width={width} />
         </Document>
       </div>
     </div>

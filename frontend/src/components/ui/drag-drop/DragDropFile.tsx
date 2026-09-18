@@ -44,20 +44,20 @@ export function DragDropFileUploader({
 
   return (
     <div
-      className={`h-40 rounded border-dashed border-2 border-violet-600 flex flex-col justify-center items-center select-none mt-2.5 ${isDragging ? "border-violet-400" : ""}`}
+      className={`h-40 rounded border-dashed border-2 flex flex-col justify-center items-center select-none mt-2.5 transition-colors ${isDragging ? "border-primary bg-primary/5" : "border-primary/50"}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDragDrop}
     >
       {isDragging ? (
-        <span className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
+        <span className="text-primary ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60">
           Drop files here
         </span>
       ) : (
         <>
           Drag and Drop file here or{" "}
           <span
-            className="text-violet-400 ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60"
+            className="text-primary ml-1 cursor-pointer transition ease-in-out delay-150 hover:opacity-60"
             role="button"
             onClick={selectFiles}
           >

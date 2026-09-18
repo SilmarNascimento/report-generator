@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.controller;
 
 import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
+import com.mateco.reportgenerator.controller.dto.BulkDownloadInputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.responseDto.MockExamResponseOutputDto;
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
@@ -13,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,21 @@ public class MockExamResponseController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @PostMapping("/bulk-download")
+    public ResponseEntity<byte[]> downloadBulkDiagnosisPdfs(@RequestBody BulkDownloadInputDto dto) throws IOException {
+        List<UUID> uuidIds = dto.ids().stream()
+                .map(UUID::fromString)
+                .toList();
+        byte[] zipContent = mockExamResponseService.generateBulkDiagnosisZip(uuidIds);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"diagnosticos.zip\"")
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                .body(zipContent);
     }
 
     @DeleteMapping("/batch")

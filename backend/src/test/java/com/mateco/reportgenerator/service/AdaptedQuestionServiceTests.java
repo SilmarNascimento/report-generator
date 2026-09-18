@@ -164,14 +164,13 @@ public class AdaptedQuestionServiceTests {
     assertEquals(serviceResponse.getMainQuestion(), mockMainQuestion);
     assertEquals("titulo da questão adaptada 02", serviceResponse.getTitle());
     assertEquals("fácil", serviceResponse.getLevel());
-    assertEquals(List.of("imagem questão nova 01"), serviceResponse.getImages());
-
-    List<Alternative> alternativeResponse = serviceResponse.getAlternatives();
-    assertEquals(List.of("imagem alternativa nova 01"), alternativeResponse.get(0).getImages());
-    assertEquals(List.of("imagem alternativa nova 02"), alternativeResponse.get(1).getImages());
+    assertEquals(
+        List.of("imagem questão nova 01", "imagem alternativa nova 01", "imagem alternativa nova 02"),
+        serviceResponse.getImages()
+    );
 
     Mockito.verify(adaptedQuestionRepository).findById(mockAdaptedQuestionId);
-    Mockito.verify(imageService, Mockito.times(3)).deleteImages(any());
+    Mockito.verify(imageService, Mockito.times(1)).deleteImages(any());
   }
 
   @Test

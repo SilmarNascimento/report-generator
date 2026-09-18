@@ -107,16 +107,8 @@ public class MockExamServiceTests {
     mockMainQuestionId02 = UUID.randomUUID();
     mockMainQuestionId03 = UUID.randomUUID();
 
-    Alternative mockFalseAlternative = new Alternative(
-        "descrição da alternativa 01",
-        List.of("imagem alternativa 01"),
-        false
-    );
-    Alternative mockTrueAlternative = new Alternative(
-        "descrição da alternativa 02",
-        List.of("imagem alternativa 02"),
-        true
-    );
+    Alternative mockFalseAlternative = new Alternative(false);
+    Alternative mockTrueAlternative = new Alternative(true);
 
     mockSubject01 = new Subject("Geometria");
     mockSubject01.setId(mockSubjectId01);
@@ -149,7 +141,6 @@ public class MockExamServiceTests {
         "título questão 01",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem 01 da questão"),
         List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative),
         "URL da questão 01",
         new ArrayList<>(),
@@ -174,7 +165,6 @@ public class MockExamServiceTests {
         "título questão 02",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem 01 da questão"),
         List.of(mockFalseAlternative, mockTrueAlternative, mockFalseAlternative),
         "URL da questão 02",
         new ArrayList<>(),
@@ -199,7 +189,6 @@ public class MockExamServiceTests {
         "título questão 02",
         new ArrayList<>(),
         "difícil",
-        List.of("imagem 01 da questão"),
         List.of(mockFalseAlternative, mockTrueAlternative),
         "URL da questão 03",
         new ArrayList<>(),
@@ -692,7 +681,6 @@ public class MockExamServiceTests {
             Assertions.assertThat(mainQuestion.getTitle()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getSubjects()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
-            Assertions.assertThat(mainQuestion.getImages()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getAlternatives()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getVideoResolutionUrl()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getAdaptedQuestions()).isInstanceOf(List.class);

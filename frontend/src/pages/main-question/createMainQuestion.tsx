@@ -1,8 +1,15 @@
 import { FormHeader } from "../../components/FormHeader";
-import { CreateMainQuestionForm } from "../../components/MainQuestion/CreateMainQuestionForm";
 import { NavigationBar } from "../../components/NavigationBar";
+import { useHandleCreateMainQuestion } from "@/hooks/CRUD/mainQuestion/useHandleCreateMainQuestion";
+import { MainQuestionForm } from "@/components/Forms/MainQuestion/MainQuestionForm";
 
 export function CreateMainQuestion() {
+  const createMutation = useHandleCreateMainQuestion();
+
+  async function handleCreate(formData: FormData) {
+    await createMutation.mutateAsync(formData);
+  }
+
   return (
     <>
       <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
@@ -13,7 +20,11 @@ export function CreateMainQuestion() {
           headerTitle="Nova Questão Principal"
           headerDetails="Informe os campos a seguir para criar uma nova questão principal"
         />
-        <CreateMainQuestionForm />
+        <MainQuestionForm
+          titulo="Nova Questão Principal"
+          modo="criacao"
+          handleSubmitRequest={handleCreate}
+        />
       </div>
     </>
   );

@@ -14,17 +14,24 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { MainQuestion } from "@/interfaces";
-import { Table, TableBody, TableHead, TableHeader } from "../ui/Table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+} from "@/components/ui/Table";
 import { SortableRow } from "./SortableRow";
 
 type SortableMainQuestionsTableProps = {
   questions: MainQuestion[];
+  isFetching: boolean;
   onRemove: (questionId: string) => void;
   onReorder: (reordered: MainQuestion[]) => void;
 };
 
 export function SortableMainQuestionsTable({
   questions,
+  isFetching,
   onRemove,
   onReorder,
 }: SortableMainQuestionsTableProps) {
@@ -61,42 +68,46 @@ export function SortableMainQuestionsTable({
           items={questions.map((q) => q.id)}
           strategy={verticalListSortingStrategy}
         >
-          <Table>
-            <TableHeader>
-              <tr className="bg-muted/50">
-                <TableHead>Nº</TableHead>
-                <TableHead>Código</TableHead>
-                <TableHead>Gabarito</TableHead>
-                <TableHead>Área da Matemática</TableHead>
-                <TableHead>Nível</TableHead>
-                <TableHead>Lerikucas</TableHead>
-                <TableHead>Assunto</TableHead>
-                <TableHead>Questões adaptadas</TableHead>
-                <TableHead></TableHead>
-              </tr>
-            </TableHeader>
-            <TableBody>
-              {questions.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={9}
-                    className="py-16 text-center text-muted-foreground text-sm"
-                  >
-                    Nenhuma questão adicionada ao simulado
-                  </td>
+          <div
+            className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : ""}`}
+          >
+            <Table>
+              <TableHeader>
+                <tr className="bg-muted/50">
+                  <TableHead></TableHead>
+                  <TableHead>Nº</TableHead>
+                  <TableHead>Gabarito</TableHead>
+                  <TableHead>Nível</TableHead>
+                  <TableHead>Lerikucas</TableHead>
+                  <TableHead>Assunto</TableHead>
+                  <TableHead>Área da Matemática</TableHead>
+                  <TableHead></TableHead>
                 </tr>
-              ) : (
-                questions.map((question, index) => (
-                  <SortableRow
-                    key={question.id}
-                    question={question}
-                    index={index}
-                    onRemove={onRemove}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {questions.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={9}
+                      className="py-16 text-center text-muted-foreground text-sm"
+                    >
+                      Nenhuma questão adicionada ao simulado
+                    </td>
+                  </tr>
+                ) : (
+                  questions.map((question, index) => (
+                    <SortableRow
+                      key={question.id}
+                      question={question}
+                      index={index}
+                      disabled={isFetching}
+                      onRemove={onRemove}
+                    />
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </SortableContext>
       </DndContext>
     </div>

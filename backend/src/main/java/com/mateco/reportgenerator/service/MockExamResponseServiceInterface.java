@@ -2,6 +2,7 @@ package com.mateco.reportgenerator.service;
 
 import com.mateco.reportgenerator.controller.dto.sortDto.SortCriteriaDto;
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ public interface MockExamResponseServiceInterface {
   MockExamResponse findMockExamResponseById(UUID mockExamResponseId);
 
   void generateCompleteDiagnosisById(UUID mockExamResponseId, MultipartFile personalInsightPdfFile);
+
+  byte[] generateBulkDiagnosisZip(List<UUID> ids) throws IOException;
 
   void deleteMockExamResponseById(UUID mockExamResponseId);
   void deleteAllMockExamResponsesByIds(List<UUID> ids);

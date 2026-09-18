@@ -33,7 +33,7 @@ export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       className={twMerge(
-        "px-3 py-1.5 text-zinc-100 tabular-nums rounded-md border border-zinc-800 bg-zinc-800/50 flex items-center gap-2.5",
+        "px-3 py-1.5 text-foreground tabular-nums rounded-md border border-input bg-background flex items-center gap-2.5 shadow-xs transition-[color,box-shadow] outline-none focus:border-ring focus:ring-ring/50 focus:ring-[1.5px]",
         className,
       )}
       {...props}
@@ -42,7 +42,7 @@ export function SelectTrigger({ className, ...props }: SelectTriggerProps) {
         {pageSize}
       </SelectPrimitive.Value>
 
-      <SelectPrimitive.Icon className="text-zinc-600">
+      <SelectPrimitive.Icon className="text-muted-foreground">
         <ChevronDown className="size-4" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
@@ -59,7 +59,7 @@ export function SelectContent({ className, ...props }: SelectContentProps) {
         sideOffset={6}
         position="popper"
         className={twMerge(
-          "z-50 text-sm max-h-96 min-w-[6rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-900",
+          "z-50 text-sm max-h-96 min-w-[6rem] overflow-hidden rounded-md border border-border bg-popover shadow-md",
           className,
         )}
         {...props}
@@ -75,7 +75,7 @@ export function SelectItem({ className, children, ...props }: SelectItemProps) {
   return (
     <SelectPrimitive.Item
       className={twMerge(
-        "flex items-center gap-2 text-zinc-300 px-3 py-1.5 justify-between outline-none hover:bg-zinc-800",
+        "flex items-center gap-2 text-popover-foreground px-3 py-1.5 justify-between outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer",
         className,
       )}
       {...props}
@@ -83,7 +83,7 @@ export function SelectItem({ className, children, ...props }: SelectItemProps) {
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
 
       <SelectPrimitive.ItemIndicator>
-        <Check className="text-zinc-300 size-4" />
+        <Check className="text-primary size-4" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );

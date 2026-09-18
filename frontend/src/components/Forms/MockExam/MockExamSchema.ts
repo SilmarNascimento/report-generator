@@ -7,7 +7,7 @@ const fileListSchema = z.instanceof(File).refine((file) => !!file, {
 
 export const MockExamSchema = z.object({
   name: z.string().min(1, { message: "Descrição é obrigatória" }),
-  className: z.enum(CLASS_GROUP),
+  className: z.enum(CLASS_GROUP, { message: "Selecione uma turma" }),
   releasedYear: z.string().refine(
     (year) => {
       const inputYear = Number(year);
