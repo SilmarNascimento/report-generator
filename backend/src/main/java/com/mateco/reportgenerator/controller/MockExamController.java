@@ -36,6 +36,11 @@ public class MockExamController {
 
     private final MockExamResponseService mockExamResponseService;
 
+    @GetMapping("/available-years")
+    public ResponseEntity<List<Integer>> findAvailableYears() {
+        return ResponseEntity.status(HttpStatus.OK).body(mockExamService.findAvailableYears());
+    }
+
     @GetMapping
     public ResponseEntity<PageOutputDto<MockExamOutputDto>> findAllMockExams(
             @RequestParam(required = false, defaultValue = "0") int pageNumber,

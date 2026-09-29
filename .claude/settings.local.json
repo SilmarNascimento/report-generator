@@ -20,7 +20,9 @@
       "Bash(Get-ChildItem *)",
       "Bash(Select-Object -First 50)",
       "Bash(Format-Table FullName)",
-      "Bash(Select-Object Name, PSIsContainer)"
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(ls -la \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\\" | head -30)",
+      "PowerShell(tree \"C:\\\\Users\\\\USUARIO\\\\Desktop\\\\projetos\\\\report-generator\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\mateco\\\\reportgenerator\" -L 2 -d)"
     ]
   }
 }

@@ -33,6 +33,7 @@ import {
 import CreateStudent from "./pages/student/CreateStudent.tsx";
 import StudentList from "./pages/student/StudentList.tsx";
 import StudentView from "./pages/student/StudentView.tsx";
+import { DashboardPage } from "./pages/dashboard/DashboardPage.tsx";
 import { AuthProvider } from "./components/Auth/AuthContext.tsx";
 import { ProtectedRoute } from "./components/Auth/ProtectedRoutes.tsx";
 import { PublicRoute } from "./components/Auth/PublicRoute.tsx";
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      { path: "/dash-board", element: <DashboardPage /> },
       { path: "/subjects", element: <Subjects /> },
       { path: "/main-questions", element: <MainQuestions /> },
       { path: "/main-questions/create", element: <CreateMainQuestion /> },
