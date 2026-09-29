@@ -32,11 +32,28 @@ export function EditMainQuestion() {
       questionAnswer: mainQuestion.alternatives
         .findIndex((a) => a.questionAnswer)
         .toString(),
+      subjects: mainQuestion.subjects.map((subject) => ({
+        value: subject.id,
+        dropdownLabel: subject.name,
+        displayLabel: subject.name,
+      })),
     };
   }, [mainQuestion]);
 
-  async function handleEdit(formData: FormData) {
-    await updateMutation.mutateAsync(formData);
+  async function handleEdit(formData: FormData, subjectIds: string[]) {
+    const originalSubjectIds = mainQuestion?.subjects.map((s) => s.id) ?? [];
+    const subjectIdsToAdd = subjectIds.filter(
+      (id) => !originalSubjectIds.includes(id),
+    );
+    const subjectIdsToRemove = originalSubjectIds.filter(
+      (id) => !subjectIds.includes(id),
+    );
+
+    await updateMutation.mutateAsync({
+      formData,
+      subjectIdsToAdd,
+      subjectIdsToRemove,
+    });
     navigate("/main-questions");
   }
 

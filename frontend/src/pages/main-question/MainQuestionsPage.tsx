@@ -242,13 +242,13 @@ export function MainQuestions() {
                         <span>{question.level}</span>
                       </TableCell>
                       <TableCell>
-                        <Link to={`/main-questions/${question.id}/subjects`}>
-                          <span>
-                            {question.subjects.length
-                              ? question.subjects[0].name
-                              : "Sem assunto principal"}
-                          </span>
-                        </Link>
+                        <span>
+                          {question.subjects.length
+                            ? question.subjects
+                                .map((subject) => subject.name)
+                                .join(", ")
+                            : "Sem assunto principal"}
+                        </span>
                       </TableCell>
                       <TableCell>
                         <span>{handleCorrectAnswer(question)}</span>

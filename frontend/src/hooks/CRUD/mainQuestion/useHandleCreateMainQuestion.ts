@@ -1,14 +1,33 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { successAlert } from "@/utils/toastAlerts";
+import { successAlert, warningAlert } from "@/utils/toastAlerts";
 import { useNavigate } from "react-router-dom";
 import { mainQuestionService } from "@/service/mainQuestionService";
+
+type CreateMainQuestionInput = {
+  formData: FormData;
+  subjectIds: string[];
+};
 
 export function useHandleCreateMainQuestion() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (formData: FormData) => mainQuestionService.create(formData),
+    mutationFn: async ({ formData, subjectIds }: CreateMainQuestionInput) => {
+      const created = await mainQuestionService.create(formData);
+
+      if (subjectIds.length) {
+        try {
+          await mainQuestionService.addSubjects(created.id, subjectIds);
+        } catch {
+          warningAlert(
+            "Questão criada, mas houve um erro ao associar os assuntos selecionados.",
+          );
+        }
+      }
+
+      return created;
+    },
 
     onSuccess: () => {
       queryClient.invalidateQueries({
