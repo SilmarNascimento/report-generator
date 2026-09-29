@@ -29,6 +29,7 @@ export function DragDropPreviewFileUploader({
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [fileRemoved, setFileRemoved] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [previewWidth, setPreviewWidth] = useState<number>(0);
@@ -39,7 +40,7 @@ export function DragDropPreviewFileUploader({
 
   useEffect(() => {
     if (!variableValue) {
-      setPreviewUrl(url ?? "");
+      setPreviewUrl(fileRemoved ? "" : (url ?? ""));
       return;
     }
 
@@ -50,7 +51,7 @@ export function DragDropPreviewFileUploader({
     setPreviewUrl(objectUrl);
 
     return () => URL.revokeObjectURL(objectUrl);
-  }, [variableValue, url]);
+  }, [variableValue, url, fileRemoved]);
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -72,6 +73,7 @@ export function DragDropPreviewFileUploader({
     if (!filesSelected || filesSelected.length === 0) return;
 
     const newFile = filesSelected.item(0);
+    setFileRemoved(false);
     setValue(formVariable, newFile!, {
       shouldDirty: true,
       shouldValidate: true,
@@ -79,7 +81,12 @@ export function DragDropPreviewFileUploader({
   }
 
   function deleteFile() {
-    setValue(formVariable, undefined, { shouldDirty: true, shouldTouch: true });
+    setFileRemoved(true);
+    setValue(formVariable, undefined, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   }
 
   function handleDragOver(event: DragEvent<HTMLDivElement>) {
@@ -97,6 +104,7 @@ export function DragDropPreviewFileUploader({
     event.preventDefault();
     setIsDragging(false);
     const newFile = event.dataTransfer.files.item(0);
+    setFileRemoved(false);
     setValue(formVariable, newFile!, {
       shouldDirty: true,
       shouldValidate: true,
