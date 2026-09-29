@@ -1,4 +1,4 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { CreateAlternative } from "@/interfaces/Alternative";
@@ -90,7 +90,11 @@ export function MainQuestionForm({
     debouncedSubjectQuery,
   );
 
-  const selectedSubjects = watch("subjects") ?? [];
+  const watchedSubjects = useWatch({ control, name: "subjects" });
+  const selectedSubjects = useMemo(
+    () => watchedSubjects ?? [],
+    [watchedSubjects],
+  );
 
   const subjectOptions = useMemo(() => {
     const fetchedOptions = (subjectsPageResponse?.data ?? []).map(

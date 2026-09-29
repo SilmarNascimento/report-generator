@@ -5,7 +5,7 @@ const fileListSchema = z.instanceof(File).refine((file) => !!file, {
   message: "Arquivo pdf obrigatório",
 });
 
-export const MockExamSchema = z.object({
+export const mockExamSchema = z.object({
   name: z.string().min(1, { message: "Descrição é obrigatória" }),
   className: z.enum(CLASS_GROUP, { message: "Selecione uma turma" }),
   releasedYear: z.string().refine(
@@ -27,4 +27,4 @@ export const MockExamSchema = z.object({
   answersPdfFile: fileListSchema,
 });
 
-export type MockExamFormType = z.infer<typeof MockExamSchema>;
+export type MockExamFormType = z.infer<typeof mockExamSchema>;

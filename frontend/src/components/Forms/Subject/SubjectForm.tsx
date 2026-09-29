@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { SubjectFormInput, SubjectFormOutput, SubjectSchema } from "./SubjectSchema";
+import { SubjectFormInput, SubjectFormOutput, subjectSchema } from "./subjectSchema";
 import Botao from "@/components/Shared/Botao";
 
 type SubjectFormProps = {
@@ -18,7 +18,7 @@ export function SubjectForm({ modo, defaultValues, handleSubmitRequest }: Subjec
   );
 
   const { register, handleSubmit, formState } = useForm({
-    resolver: zodResolver(SubjectSchema),
+    resolver: zodResolver(subjectSchema),
     defaultValues: memoizedDefaultValues,
   });
 

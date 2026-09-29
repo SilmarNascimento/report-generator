@@ -1,6 +1,6 @@
-import { StudentFormType } from "@/components/forms/student/studentSchema";
+import { StudentFormType } from "@/components/Forms/student/studentSchema";
 import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
-import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
+import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import {
   GenerateStudentsResponseFormType,
   StudentDiagnosisStatusFormType,

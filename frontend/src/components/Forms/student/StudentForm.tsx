@@ -10,7 +10,7 @@ import { classGroupBadgeOptions } from "@/constants/students";
 import { brStatesOptions } from "@/constants/general";
 import { DiagnosisList } from "@/components/Features/DiagnosisList";
 import { YearlyResponse } from "@/interfaces/Student";
-import { StudentFormType, studentSchema } from "./StudentSchema";
+import { StudentFormType, studentSchema } from "./studentSchema";
 
 type StudentFormProps = {
   titulo: string;

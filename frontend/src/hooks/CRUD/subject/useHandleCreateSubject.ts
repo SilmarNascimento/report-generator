@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiService from "@/service/ApiService";
 import { successAlert } from "@/utils/toastAlerts";
-import { SubjectFormOutput } from "@/components/Subject/SubjectSchema";
+import { SubjectFormOutput } from "@/components/Forms/Subject/subjectSchema";
 
 export function useHandleCreateSubject() {
   const queryClient = useQueryClient();
