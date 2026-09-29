@@ -293,6 +293,11 @@ public class MockExamService implements MockExamServiceInterface {
         return mockExamRepository.save(copy);
     }
 
+    @Override
+    public List<Integer> findAvailableYears() {
+        return mockExamRepository.findDistinctReleasedYears();
+    }
+
     private FileEntity copyFileEntity(FileEntity original) {
         if (original == null) return null;
         return new FileEntity(

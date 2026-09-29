@@ -3,7 +3,7 @@ import { FormHeader } from "../../components/FormHeader";
 import { NavigationBar } from "../../components/NavigationBar";
 import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMockExam";
 import { MockExamForm } from "@/components/Forms/MockExam/MockExamForm";
-import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
+import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import { successAlert, warningAlert } from "@/utils/toastAlerts";
 
 export function CreateMockExam() {

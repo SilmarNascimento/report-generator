@@ -19,4 +19,26 @@ public interface MockExamResponseRepository extends JpaRepository<MockExamRespon
     Page<MockExamResponse> findByQuery(@Param("query") String query, Pageable pageable);
 
     List<MockExamResponse> findAllByNameOrderByCreatedAtAsc(String name);
+
+    @Query("SELECT r FROM MockExamResponse r WHERE r.mockExam.releasedYear = :year")
+    List<MockExamResponse> findByMockExamYear(@Param("year") int year);
+
+    @Query("SELECT r FROM MockExamResponse r WHERE r.mockExam.releasedYear = :year AND r.mockExam.id IN :mockExamIds")
+    List<MockExamResponse> findByMockExamYearAndIdIn(
+            @Param("year") int year,
+            @Param("mockExamIds") List<UUID> mockExamIds
+    );
+
+    @Query("SELECT r FROM MockExamResponse r WHERE r.student.id = :studentId AND r.mockExam.releasedYear = :year")
+    List<MockExamResponse> findByStudentIdAndMockExamYear(
+            @Param("studentId") Long studentId,
+            @Param("year") int year
+    );
+
+    @Query("SELECT r FROM MockExamResponse r WHERE r.student.id = :studentId AND r.mockExam.releasedYear = :year AND r.mockExam.id IN :mockExamIds")
+    List<MockExamResponse> findByStudentIdAndMockExamYearAndIdIn(
+            @Param("studentId") Long studentId,
+            @Param("year") int year,
+            @Param("mockExamIds") List<UUID> mockExamIds
+    );
 }

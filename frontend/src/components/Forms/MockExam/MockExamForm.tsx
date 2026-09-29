@@ -5,7 +5,7 @@ import { classGroupOptions } from "@/constants/students";
 import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
-import { MockExamFormType, MockExamSchema } from "./MockExamSchema";
+import { MockExamFormType, mockExamSchema } from "./mockExamSchema";
 import { Input } from "@/components/ui/shadcn/Input";
 
 type MockExamFormProps = {
@@ -29,7 +29,7 @@ export function MockExamForm({
   );
 
   const formMethods = useForm<MockExamFormType>({
-    resolver: zodResolver(MockExamSchema),
+    resolver: zodResolver(mockExamSchema),
     defaultValues: memoizedDefaultValues,
     mode: "onChange",
     reValidateMode: "onChange",

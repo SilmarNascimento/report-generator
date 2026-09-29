@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SubjectSchema = z.object({
+export const subjectSchema = z.object({
   name: z
     .string()
     .min(3, { message: "Minimum 3 characters." })
@@ -20,5 +20,5 @@ export const SubjectSchema = z.object({
     .transform((val) => Number((val / 100).toFixed(3))),
 });
 
-export type SubjectFormOutput = z.output<typeof SubjectSchema>;
-export type SubjectFormInput = z.input<typeof SubjectSchema>;
+export type SubjectFormOutput = z.output<typeof subjectSchema>;
+export type SubjectFormInput = z.input<typeof subjectSchema>;

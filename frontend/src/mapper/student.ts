@@ -1,4 +1,4 @@
-import { StudentFormType } from "@/components/Forms/student/StudentSchema";
+import { StudentFormType } from "@/components/Forms/student/studentSchema";
 import { classGroupLabelMap } from "@/constants/students";
 import { StudentRequest, StudentResponse } from "@/interfaces/Student";
 

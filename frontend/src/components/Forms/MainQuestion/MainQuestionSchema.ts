@@ -9,6 +9,12 @@ const fileSchema = z.instanceof(File).refine((file) => !!file, {
   message: "Arquivo pdf obrigatório",
 });
 
+const subjectOptionSchema = z.object({
+  value: z.string(),
+  dropdownLabel: z.string(),
+  displayLabel: z.string(),
+});
+
 export const MainQuestionSchema = z.object({
   title: z.string().min(1, { message: "Enunciado é obrigatório" }),
   level: z.enum(QuestionLevelEnum),
@@ -19,6 +25,7 @@ export const MainQuestionSchema = z.object({
     .min(1, { message: "URL da resolução do vídeo é obrigatória" }),
   questionAnswer: z.string(),
   adaptedQuestionsPdfFile: fileSchema,
+  subjects: z.array(subjectOptionSchema),
 });
 
 export type MainQuestionFormType = z.infer<typeof MainQuestionSchema>;

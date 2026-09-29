@@ -6,7 +6,7 @@ import { useHandleEditMockExam } from "@/hooks/CRUD/mockExam/useHandleEditMockEx
 import { convertMockExamData } from "@/utils/convertMockExamData";
 import { mapMockExamToForm } from "@/mapper/mockExamMapper";
 import { MockExamForm } from "@/components/Forms/MockExam/MockExamForm";
-import { MockExamFormType } from "@/components/Forms/MockExam/MockExamSchema";
+import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import { CreateMockExam } from "@/interfaces/MockExam";
 
 export function EditMockExam() {

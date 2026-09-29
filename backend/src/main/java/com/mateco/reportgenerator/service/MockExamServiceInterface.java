@@ -34,4 +34,6 @@ public interface MockExamServiceInterface {
   List<MockExamResponse> registerAllMockExamResponses(UUID mockExamId, List<MockExamResponse> mockExamResponses);
 
   MockExam copyMockExam(UUID mockExamId);
+
+  List<Integer> findAvailableYears();
 }

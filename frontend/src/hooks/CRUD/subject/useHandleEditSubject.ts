@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { successAlert, warningAlert } from "@/utils/toastAlerts";
 import apiService from "@/service/ApiService";
-import { SubjectFormOutput } from "@/components/Subject/SubjectSchema";
+import { SubjectFormOutput } from "@/components/Forms/Subject/subjectSchema";
 
 interface EditSubjectPayload extends SubjectFormOutput {
   subjectId: string;

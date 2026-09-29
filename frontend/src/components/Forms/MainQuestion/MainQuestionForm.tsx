@@ -1,6 +1,6 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CreateAlternative } from "@/interfaces/Alternative";
 import { CreateQuestion } from "@/interfaces/MainQuestion";
 import {
@@ -9,16 +9,22 @@ import {
   questionPatternOptions,
 } from "@/constants/general";
 import { InputSelectDropdownWrapper } from "@/components/Features/form-input/InputSelectDropdownWrapper";
+import { InputMultiSelectWrapper } from "@/components/Features/form-input/InputMultiSelectWrapper";
 import { AlternativeRadioGroup } from "@/components/Alternative/AlternativesForm";
 import { InputDragDropWrapper } from "@/components/Features/form-input/InputDragDropWrapper";
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
+import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
+import useDebounceValue from "@/hooks/useDebounceValue";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 
 type MainQuestionFormProps = {
   titulo: string;
   modo: "criacao" | "edicao";
   defaultValues?: MainQuestionFormType;
-  handleSubmitRequest: (formData: FormData) => Promise<void>;
+  handleSubmitRequest: (
+    formData: FormData,
+    subjectIds: string[],
+  ) => Promise<void>;
 };
 
 export function MainQuestionForm({
@@ -33,6 +39,7 @@ export function MainQuestionForm({
         title: "",
         videoResolutionUrl: "",
         questionAnswer: "",
+        subjects: [],
       },
     [defaultValues],
   );
@@ -75,6 +82,39 @@ export function MainQuestionForm({
     }
   }, [selectedLerikucas, setValue]);
 
+  const [subjectQuery, setSubjectQuery] = useState("");
+  const debouncedSubjectQuery = useDebounceValue(subjectQuery, 400);
+  const { data: subjectsPageResponse } = useGetSubjects(
+    1,
+    20,
+    debouncedSubjectQuery,
+  );
+
+  const watchedSubjects = useWatch({ control, name: "subjects" });
+  const selectedSubjects = useMemo(
+    () => watchedSubjects ?? [],
+    [watchedSubjects],
+  );
+
+  const subjectOptions = useMemo(() => {
+    const fetchedOptions = (subjectsPageResponse?.data ?? []).map(
+      (subject) => ({
+        value: subject.id,
+        dropdownLabel: subject.name,
+        displayLabel: subject.name,
+      }),
+    );
+
+    const mergedOptions = [...fetchedOptions];
+    selectedSubjects.forEach((selected) => {
+      if (!mergedOptions.some((option) => option.value === selected.value)) {
+        mergedOptions.push(selected);
+      }
+    });
+
+    return mergedOptions;
+  }, [subjectsPageResponse, selectedSubjects]);
+
   function buildFormData(data: MainQuestionFormType): FormData {
     const formData = new FormData();
 
@@ -105,7 +145,8 @@ export function MainQuestionForm({
 
   async function onSubmit(data: MainQuestionFormType) {
     const formData = buildFormData(data);
-    await handleSubmitRequest(formData);
+    const subjectIds = data.subjects.map((subject) => subject.value);
+    await handleSubmitRequest(formData, subjectIds);
   }
 
   return (
@@ -137,6 +178,19 @@ export function MainQuestionForm({
                 {errors?.title ? errors.title.message : " "}
               </p>
             </div>
+
+            <InputMultiSelectWrapper
+              name="subjects"
+              control={control}
+              errors={errors}
+              label="Assuntos"
+              placeholder="Selecione os assuntos"
+              options={subjectOptions}
+              allowSearch
+              showBadges
+              queryValue={subjectQuery}
+              onQueryChange={setSubjectQuery}
+            />
 
             <div className="flex flex-row gap-4">
               <div className="w-full">
