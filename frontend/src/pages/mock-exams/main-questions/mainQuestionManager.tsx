@@ -9,6 +9,7 @@ import { useUpdateMockExamMainQuestions } from "@/hooks/CRUD/mockExam/mainQuesti
 import Botao from "@/components/Shared/Botao";
 import { AddMainQuestionManagerTable } from "@/components/Forms/MockExam/AddMainQuestionManagerTable";
 import { SortableMainQuestionsTable } from "@/components/Forms/MockExam/SortableMainQuestionsTable";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 const MAX_QUESTIONS = 45;
 
@@ -87,45 +88,47 @@ export function MockExamMainQuestionManager() {
 
   return (
     <>
-      <div>
+      <header>
         <NavigationBar />
-      </div>
+      </header>
 
-      {availableQuestionsPage && (
-        <AddMainQuestionManagerTable
-          entity={availableQuestionsPage}
-          filter={filter}
-          setFilter={setFilter}
-          page={page}
-          maxReached={examQuestions.length >= MAX_QUESTIONS}
+      <PaginaContainer>
+        {availableQuestionsPage && (
+          <AddMainQuestionManagerTable
+            entity={availableQuestionsPage}
+            filter={filter}
+            setFilter={setFilter}
+            page={page}
+            maxReached={examQuestions.length >= MAX_QUESTIONS}
+            isFetching={isFetching}
+            onAddQuestions={handleAddQuestions}
+          />
+        )}
+
+        <SortableMainQuestionsTable
+          questions={examQuestions}
           isFetching={isFetching}
-          onAddQuestions={handleAddQuestions}
+          onRemove={handleRemoveQuestion}
+          onReorder={handleReorder}
         />
-      )}
 
-      <SortableMainQuestionsTable
-        questions={examQuestions}
-        isFetching={isFetching}
-        onRemove={handleRemoveQuestion}
-        onReorder={handleReorder}
-      />
-
-      <div className="max-w-6xl mx-auto mt-8 flex items-center justify-end gap-4">
-        <Botao
-          variant="cancelar"
-          label="Voltar"
-          onClick={() => navigate("/mock-exams")}
-        >
-          Voltar
-        </Botao>
-        <Botao
-          variant="confirmar"
-          isLoading={updateMockExamQuestions.isPending}
-          onClick={handleSave}
-        >
-          Salvar ({examQuestions.length}/{MAX_QUESTIONS})
-        </Botao>
-      </div>
+        <div className="mt-8 flex items-center justify-end gap-4">
+          <Botao
+            variant="cancelar"
+            label="Voltar"
+            onClick={() => navigate("/mock-exams")}
+          >
+            Voltar
+          </Botao>
+          <Botao
+            variant="confirmar"
+            isLoading={updateMockExamQuestions.isPending}
+            onClick={handleSave}
+          >
+            Salvar ({examQuestions.length}/{MAX_QUESTIONS})
+          </Botao>
+        </div>
+      </PaginaContainer>
     </>
   );
 }

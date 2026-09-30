@@ -69,7 +69,7 @@ export function AddMainQuestionManagerTable({
 
   return (
     <>
-      <div className="max-w-6xl mx-auto space-y-5">
+      <div className="space-y-5">
         <div className="flex items-center gap-3 mt-3">
           <h1 className="text-xl font-bold">Questões disponíveis</h1>
           {maxReached && (
@@ -135,9 +135,7 @@ export function AddMainQuestionManagerTable({
                   </TableCell>
                   <TableCell>{mainQuestion.lerickucas}</TableCell>
                   <TableCell>
-                    <span>
-                      {mainQuestion.mainSubject?.name ?? "—"}
-                    </span>
+                    <span>{mainQuestion.mainSubject?.name ?? "—"}</span>
                   </TableCell>
                   <TableCell>{mainQuestion.pattern}</TableCell>
                   <TableCell className="text-right">

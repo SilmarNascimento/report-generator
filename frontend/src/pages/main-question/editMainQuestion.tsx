@@ -9,6 +9,7 @@ import { MainQuestionForm } from "@/components/Forms/MainQuestion/MainQuestionFo
 import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
 import { LerikucasEnum, QuestionPatternEnum } from "@/constants/general";
 import { DropdownType } from "@/interfaces/general";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function EditMainQuestion() {
   const navigate = useNavigate();
@@ -59,10 +60,10 @@ export function EditMainQuestion() {
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer className="pt-[3%] pb-[2%]">
         <FormHeader
           headerTitle="Editar Questão Principal"
           headerDetails="Altere os campos a seguir para atualizar a questão principal"
@@ -76,7 +77,7 @@ export function EditMainQuestion() {
             handleSubmitRequest={handleEdit}
           />
         )}
-      </div>
+      </PaginaContainer>
     </>
   );
 }

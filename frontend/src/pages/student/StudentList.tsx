@@ -21,6 +21,8 @@ import { Loader } from "@/components/ui/loader/Loader";
 import { Eye, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 const StudentList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -120,16 +122,15 @@ const StudentList = () => {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Alunos</h1>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Alunos">
           <Botao
             variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateStudent}
           />
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -250,7 +251,7 @@ const StudentList = () => {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}

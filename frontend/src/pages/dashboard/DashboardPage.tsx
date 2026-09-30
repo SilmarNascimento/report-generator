@@ -6,6 +6,7 @@ import { DashboardFilterForm } from "@/components/dashboard/DashboardFilterForm"
 import { GlobalDashboard } from "@/components/dashboard/global/GlobalDashboard";
 import { IndividualDashboard } from "@/components/dashboard/individual/IndividualDashboard";
 import { DashboardFilterFormType } from "@/interfaces/dashboard";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 type DashboardTab = "global" | "individual";
 
@@ -30,7 +31,7 @@ export function DashboardPage() {
   return (
     <>
       <NavigationBar />
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-0">
+      <PaginaContainer className="space-y-0 py-6">
         <div className="mb-6">
           <h1 className="text-xl font-bold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
@@ -38,7 +39,10 @@ export function DashboardPage() {
           </p>
         </div>
 
-        <DashboardInternalNav activeTab={activeTab} onTabChange={setActiveTab} />
+        <DashboardInternalNav
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
         <DashboardFilterForm control={control} year={year} />
 
@@ -47,7 +51,7 @@ export function DashboardPage() {
         ) : (
           <IndividualDashboard year={year} mockExamIds={selectedMockExamIds} />
         )}
-      </main>
+      </PaginaContainer>
     </>
   );
 }

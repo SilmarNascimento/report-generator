@@ -4,6 +4,7 @@ import { FormHeader } from "../../../components/FormHeader";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { AdaptedQuestionForm } from "@/components/Forms/AdaptedQuestion/AdaptedQuestionForm";
 import { successAlert, warningAlert } from "@/utils/toastAlerts";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function CreateAdaptedQuestion() {
   const navigate = useNavigate();
@@ -31,10 +32,10 @@ export function CreateAdaptedQuestion() {
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer className="pt-[3%] pb-[2%]">
         <FormHeader
           headerTitle="Nova Questão Adaptada"
           headerDetails="Informe os campos a seguir para criar uma nova questão adaptada"
@@ -44,7 +45,7 @@ export function CreateAdaptedQuestion() {
           modo="criacao"
           handleSubmitRequest={handleCreate}
         />
-      </div>
+      </PaginaContainer>
     </>
   );
 }

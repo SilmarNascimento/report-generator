@@ -1,12 +1,17 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { FormHeader } from "../../../components/FormHeader";
 import { NavigationBar } from "../../../components/NavigationBar";
 import { AdaptedQuestion } from "../../../interfaces";
 import { AdaptedQuestionForm } from "@/components/Forms/AdaptedQuestion/AdaptedQuestionForm";
 import { AdaptedQuestionFormType } from "@/components/Forms/AdaptedQuestion/AdaptedQuestionSchema";
 import { successAlert, warningAlert } from "@/utils/toastAlerts";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function EditAdaptedQuestion() {
   const navigate = useNavigate();
@@ -58,10 +63,10 @@ export function EditAdaptedQuestion() {
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer className="pt-[3%] pb-[2%]">
         <FormHeader
           headerTitle="Editar Questão Adaptada"
           headerDetails="Altere os campos a seguir para atualizar a questão adaptada."
@@ -74,7 +79,7 @@ export function EditAdaptedQuestion() {
             handleSubmitRequest={handleEdit}
           />
         )}
-      </div>
+      </PaginaContainer>
     </>
   );
 }

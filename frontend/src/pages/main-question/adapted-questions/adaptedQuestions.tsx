@@ -19,6 +19,8 @@ import {
 import { getAlternativeLetter } from "@/utils/correctAnswerMapping";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import Botao from "@/components/Shared/Botao";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function AdaptedQuestions() {
   const { mainQuestionId } = useParams<{ mainQuestionId: string }>() ?? "";
@@ -89,16 +91,15 @@ export function AdaptedQuestions() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Questões Adaptadas 2022:S6:136</h1>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Questões Adaptadas 2022:S6:136">
           <Botao
             variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateAdaptedQuestion}
           />
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -175,7 +176,7 @@ export function AdaptedQuestions() {
             })}
           </TableBody>
         </Table>
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen}

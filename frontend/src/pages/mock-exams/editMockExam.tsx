@@ -8,6 +8,7 @@ import { mapMockExamToForm } from "@/mapper/mockExamMapper";
 import { MockExamForm } from "@/components/Forms/MockExam/MockExamForm";
 import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import { CreateMockExam } from "@/interfaces/MockExam";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function EditMockExam() {
   const navigate = useNavigate();
@@ -56,10 +57,10 @@ export function EditMockExam() {
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer className="pt-[3%] pb-[2%]">
         <FormHeader
           headerTitle={`Editar Simulado ${mockExamCode}`}
           headerDetails="Altere os campos a seguir para atualizar o simulado"
@@ -77,7 +78,7 @@ export function EditMockExam() {
             handleSubmitRequest={handleEdit}
           />
         )}
-      </div>
+      </PaginaContainer>
     </>
   );
 }

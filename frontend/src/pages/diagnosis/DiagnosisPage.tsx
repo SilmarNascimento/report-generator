@@ -13,6 +13,8 @@ import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
 import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function StudentsResponses() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -113,10 +115,8 @@ export function StudentsResponses() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Respostas de Simulados</h1>
-        </div>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Respostas de Simulados" />
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export function StudentsResponses() {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}

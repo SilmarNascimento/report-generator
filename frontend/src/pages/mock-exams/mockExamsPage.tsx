@@ -23,6 +23,8 @@ import Botao from "@/components/Shared/Botao";
 import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
 import { classGroupLabelMap } from "@/constants/students";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function MockExams() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -130,16 +132,15 @@ export function MockExams() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Simulados</h1>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Simulados">
           <Botao
             variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateNewMockExam}
           />
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -315,7 +316,7 @@ export function MockExams() {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}

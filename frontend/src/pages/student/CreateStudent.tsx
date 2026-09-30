@@ -1,6 +1,7 @@
 import StudentForm from "@/components/Forms/student/StudentForm";
 import { NavigationBar } from "@/components/NavigationBar";
 import { useHandleCreateStudent } from "@/hooks/CRUD/student/useHandleCreateStudent";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 const CreateStudent = () => {
   const { handleCreate } = useHandleCreateStudent();
@@ -10,7 +11,7 @@ const CreateStudent = () => {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
+      <PaginaContainer>
         <h1
           className={`my-6 text-xl leading-[1.4] font-bold tracking-[-0.25px] text-[#2C2E34]`}
         >
@@ -22,7 +23,7 @@ const CreateStudent = () => {
           titulo="Cadastrar Aluno"
           handleSubmitRequest={handleCreate}
         />
-      </main>
+      </PaginaContainer>
     </>
   );
 };

@@ -4,6 +4,7 @@ import { studentQueryOptions } from "@/loader/studentLoader";
 import { mapStudentResponseToForm } from "@/mapper/student";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 const StudentView = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const StudentView = () => {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
+      <PaginaContainer>
         <h1
           className={`my-6 text-xl leading-[1.4] font-bold tracking-[-0.25px] text-[#2C2E34]`}
         >
@@ -28,7 +29,7 @@ const StudentView = () => {
           defaultValues={mapStudentResponseToForm(aluno)}
           responses={aluno.performanceHistory}
         />
-      </main>
+      </PaginaContainer>
     </>
   );
 };

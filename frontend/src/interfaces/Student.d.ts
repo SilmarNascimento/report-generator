@@ -24,6 +24,7 @@ export type StudentResponse = {
   name: string;
   email: string;
   cpf: string;
+  phone?: string | null;
   enrollmentYear: number;
   classGroups: CLASS_GROUP[];
   activationDate: string;
@@ -44,6 +45,7 @@ export type StudentRequest = {
   name: string;
   email: string;
   cpf: string;
+  phone?: string;
   enrollmentYear: number;
   classGroups: CLASS_GROUP[];
   activationDate: string;

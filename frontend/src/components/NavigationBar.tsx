@@ -8,6 +8,8 @@ import {
   User,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { larguraPagina } from "@/lib/layout";
+import { cn } from "@/lib/utils";
 
 export function NavigationBar() {
   const activatedLink =
@@ -18,7 +20,7 @@ export function NavigationBar() {
 
   return (
     <div className="border-b border-border bg-background py-4">
-      <nav className="flex items-center gap-2 max-w-[1200px] mx-auto px-4 font-redhat">
+      <nav className={cn(larguraPagina, "flex items-center gap-2 font-redhat")}>
         <NavLink
           to={"/dash-board"}
           className={({ isActive }) =>

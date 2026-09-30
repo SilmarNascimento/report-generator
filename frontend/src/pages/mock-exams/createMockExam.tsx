@@ -5,6 +5,7 @@ import { useHandleCreateMockExam } from "@/hooks/CRUD/mockExam/useHandleCreateMo
 import { MockExamForm } from "@/components/Forms/MockExam/MockExamForm";
 import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import { successAlert, warningAlert } from "@/utils/toastAlerts";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function CreateMockExam() {
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ export function CreateMockExam() {
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer>
         <FormHeader
           headerTitle="Novo Simulado"
           headerDetails="Informe os campos a seguir para criar um novo simulado"
@@ -35,7 +36,7 @@ export function CreateMockExam() {
           modo="criacao"
           handleSubmitRequest={handleCreate}
         />
-      </div>
+      </PaginaContainer>
     </>
   );
 }
