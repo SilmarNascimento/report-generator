@@ -4,6 +4,7 @@ import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamFilterInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
@@ -95,11 +96,15 @@ public class MainQuestionController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
+      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "adaptedQuestionPdfFile") MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
     MainQuestion mainQuestionCreated = mainQuestionService
-        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile));
+        .createMainQuestion(
+            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile),
+            mainQuestionInputDto.mainSubjectId(),
+            mainQuestionInputDto.secondarySubjectsId()
+        );
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -109,13 +114,15 @@ public class MainQuestionController {
   @PutMapping(value = "/{mainQuestionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
+      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "adaptedQuestionPdfFile", required = false) MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
     MainQuestion updatedMainQuestion = mainQuestionService
         .updateMainQuestionById(
             mainQuestionId,
-            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile)
+            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile),
+            mainQuestionInputDto.mainSubjectId(),
+            mainQuestionInputDto.secondarySubjectsId()
         );
 
     return ResponseEntity

@@ -57,7 +57,7 @@ public record DiagnosisReportDTO(
                             officialAnswer,
                             studentAnswer,
                             officialAnswer.equals(studentAnswer) ? "✓" : "X",
-                            question.getSubjects().isEmpty() ? "Geral" : question.getSubjects().get(0).getName()
+                            question.getMainSubject() != null ? question.getMainSubject().getName() : "Geral"
                     ));
         }
 

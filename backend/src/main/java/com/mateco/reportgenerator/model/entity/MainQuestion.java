@@ -32,13 +32,17 @@ public class MainQuestion extends Question {
 
   private int weight;
 
+  @ManyToOne
+  @JoinColumn(name = "main_subject_id")
+  private Subject mainSubject;
+
   @ManyToMany
   @JoinTable(
       name = "questions_content",
       joinColumns = @JoinColumn(name = "main_question_id"),
       inverseJoinColumns = @JoinColumn(name = "subject_id")
   )
-  private List<Subject> subjects;
+  private List<Subject> secondarySubjects;
 
   private String videoResolutionUrl;
 
@@ -85,7 +89,8 @@ public class MainQuestion extends Question {
 
   public MainQuestion(
           String title,
-          List<Subject> subjects,
+          Subject mainSubject,
+          List<Subject> secondarySubjects,
           String level,
           List<Alternative> alternatives,
           String videoResolutionUrl,
@@ -97,7 +102,8 @@ public class MainQuestion extends Question {
 
     super(title, level);
 
-    this.subjects = subjects;
+    this.mainSubject = mainSubject;
+    this.secondarySubjects = secondarySubjects;
     this.alternatives = alternatives;
     this.videoResolutionUrl = videoResolutionUrl;
     this.adaptedQuestions = adaptedQuestions;
@@ -121,7 +127,8 @@ public class MainQuestion extends Question {
         "id: " + this.getId() +
         "title: " + this.title +
         "level: " + this.level +
-        "subjects: " + this.subjects +
+        "mainSubject: " + this.mainSubject +
+        "secondarySubjects: " + this.secondarySubjects +
         "alternatives: " + this.alternatives +
         "video resolution: " + this.videoResolutionUrl +
         '}';
@@ -137,6 +144,7 @@ public class MainQuestion extends Question {
     if (adaptedQuestionPdfFile.isEmpty()) {
       question = new MainQuestion(
               mainQuestionInputDto.title(),
+              null,
               new ArrayList<>(),
               mainQuestionInputDto.level(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
@@ -150,6 +158,7 @@ public class MainQuestion extends Question {
       FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
       question = new MainQuestion(
               mainQuestionInputDto.title(),
+              null,
               new ArrayList<>(),
               mainQuestionInputDto.level(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
@@ -177,7 +186,8 @@ public class MainQuestion extends Question {
     if (adaptedQuestionPdfFile.isEmpty()) {
       question = new MainQuestion(
               mainQuestionInputDto.title(),
-              Subject.parseSubject(mainQuestionInputDto.subjects()),
+              null,
+              new ArrayList<>(),
               mainQuestionInputDto.level(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),
@@ -190,7 +200,8 @@ public class MainQuestion extends Question {
       FileEntity pdfEntity = new FileEntity(adaptedQuestionPdfFile);
       question = new MainQuestion(
               mainQuestionInputDto.title(),
-              Subject.parseSubject(mainQuestionInputDto.subjects()),
+              null,
+              new ArrayList<>(),
               mainQuestionInputDto.level(),
               Alternative.parseAlternative(mainQuestionInputDto.alternatives()),
               mainQuestionInputDto.videoResolutionUrl(),

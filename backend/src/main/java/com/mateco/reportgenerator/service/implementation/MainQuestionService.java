@@ -9,6 +9,7 @@ import com.mateco.reportgenerator.model.repository.SubjectRepository;
 import com.mateco.reportgenerator.service.ImageServiceInterface;
 import com.mateco.reportgenerator.service.MainQuestionServiceInterface;
 import com.mateco.reportgenerator.service.exception.ConflictDataException;
+import com.mateco.reportgenerator.service.exception.InvalidDataException;
 import com.mateco.reportgenerator.service.exception.NotFoundException;
 import com.mateco.reportgenerator.utils.UpdateEntity;
 import jakarta.transaction.Transactional;
@@ -68,15 +69,33 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
   }
 
+  private Subject resolveMainSubject(UUID mainSubjectId) {
+    if (mainSubjectId == null) {
+      throw new InvalidDataException("Assunto principal é obrigatório!");
+    }
+    return subjectRepository.findById(mainSubjectId)
+        .orElseThrow(() -> new NotFoundException("Assunto principal não encontrado!"));
+  }
+
+  private List<Subject> resolveSecondarySubjects(List<UUID> secondarySubjectsId) {
+    if (secondarySubjectsId == null || secondarySubjectsId.isEmpty()) {
+      return new ArrayList<>();
+    }
+    return subjectRepository.findAllById(secondarySubjectsId);
+  }
+
   @Override
   @Transactional
-  public MainQuestion createMainQuestion(MainQuestion question) {
+  public MainQuestion createMainQuestion(MainQuestion question, UUID mainSubjectId, List<UUID> secondarySubjectsId) {
+    question.setMainSubject(resolveMainSubject(mainSubjectId));
+    question.setSecondarySubjects(resolveSecondarySubjects(secondarySubjectsId));
     question.initAlternativeRelationships();
+
     return mainQuestionRepository.save(question);
   }
 
   @Override
-  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question) {
+  public MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, UUID mainSubjectId, List<UUID> secondarySubjectsId) {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
@@ -87,7 +106,11 @@ public class MainQuestionService implements MainQuestionServiceInterface {
         )
     );
 
+    question.setMainSubject(resolveMainSubject(mainSubjectId));
+    List<Subject> resolvedSecondarySubjects = resolveSecondarySubjects(secondarySubjectsId);
+
     UpdateEntity.copyNonNullOrListProperties(question, mainQuestionFound);
+    mainQuestionFound.setSecondarySubjects(resolvedSecondarySubjects);
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
@@ -122,9 +145,9 @@ public class MainQuestionService implements MainQuestionServiceInterface {
       throw new NotFoundException("Nenhum assunto encontrado com os IDs fornecidos!");
     }
 
-    Set<Subject> previousSubjectSet = new HashSet<>(mainQuestionFound.getSubjects());
+    Set<Subject> previousSubjectSet = new HashSet<>(mainQuestionFound.getSecondarySubjects());
     previousSubjectSet.addAll(subjectListToAdd);
-    mainQuestionFound.setSubjects(new ArrayList<>(previousSubjectSet));
+    mainQuestionFound.setSecondarySubjects(new ArrayList<>(previousSubjectSet));
 
     return mainQuestionRepository.save(mainQuestionFound);
   }
@@ -135,7 +158,7 @@ public class MainQuestionService implements MainQuestionServiceInterface {
     MainQuestion mainQuestionFound = mainQuestionRepository.findById(questionId)
         .orElseThrow(() -> new NotFoundException("Questão principal não encontrada!"));
 
-    mainQuestionFound.getSubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
+    mainQuestionFound.getSecondarySubjects().removeIf(subject -> subjectsId.contains(subject.getId()));
 
     return mainQuestionRepository.save(mainQuestionFound);
   }

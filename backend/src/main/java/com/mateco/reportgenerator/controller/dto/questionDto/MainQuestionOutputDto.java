@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 public record MainQuestionOutputDto(
         UUID id,
         String title,
-        List<SubjectOutputDto> subjects,
+        SubjectOutputDto mainSubject,
+        List<SubjectOutputDto> secondarySubjects,
         String level,
         String videoResolutionUrl,
         FileEntityOutputDto adaptedQuestionsPdfFile,
@@ -31,7 +32,8 @@ public record MainQuestionOutputDto(
     return new MainQuestionOutputDto(
         mainQuestion.getId(),
         mainQuestion.getTitle(),
-        SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
+        mainQuestion.getMainSubject() != null ? SubjectOutputDto.parseDto(mainQuestion.getMainSubject()) : null,
+        SubjectOutputDto.parseDto(mainQuestion.getSecondarySubjects()),
         mainQuestion.getLevel(),
         mainQuestion.getVideoResolutionUrl(),
         FileEntityOutputDto.parseDto(mainQuestion.getAdaptedQuestionsPdfFile()),

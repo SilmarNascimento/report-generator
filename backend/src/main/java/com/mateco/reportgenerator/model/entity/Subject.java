@@ -31,7 +31,7 @@ public class Subject {
   @Column(name = "fixed_weight")
   private Double fixedWeight;
 
-  @ManyToMany(mappedBy = "subjects")
+  @ManyToMany(mappedBy = "secondarySubjects")
   @JsonIgnore
   private List<MainQuestion> mainQuestions;
 

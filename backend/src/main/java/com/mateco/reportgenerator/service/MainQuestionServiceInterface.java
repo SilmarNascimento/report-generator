@@ -1,15 +1,10 @@
 package com.mateco.reportgenerator.service;
 
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
-import com.mateco.reportgenerator.model.entity.Handout;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
-import com.mateco.reportgenerator.model.entity.MockExam;
-import com.mateco.reportgenerator.model.entity.Question;
-import com.mateco.reportgenerator.model.entity.Subject;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Service Interface - assinatura dos métodos para a camada service
@@ -19,8 +14,8 @@ public interface MainQuestionServiceInterface {
   Page<MainQuestion> findAllMainQuestions(int pageNumber, int pageSize, String query);
   Page<MainQuestion> findAllFilteredMainQuestions(int pageNumber, int pageSize, String query, List<UUID> excludedQuestions);
   MainQuestion findMainQuestionById(UUID questionId);
-  MainQuestion createMainQuestion(MainQuestion question);
-  MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question);
+  MainQuestion createMainQuestion(MainQuestion question, UUID mainSubjectId, List<UUID> secondarySubjectsId);
+  MainQuestion updateMainQuestionById(UUID questionId, MainQuestion question, UUID mainSubjectId, List<UUID> secondarySubjectsId);
   void deleteMainQuestionById(UUID questionId);
   void deleteAllMainQuestionsByIds(List<UUID> ids);
 

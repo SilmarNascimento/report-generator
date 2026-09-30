@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 public record MainQuestionOutputForMapDto(
         UUID id,
         String title,
-        List<SubjectOutputDto> subjects,
+        SubjectOutputDto mainSubject,
+        List<SubjectOutputDto> secondarySubjects,
         String level,
         String videoResolutionUrl,
         List<AlternativeOutputDto> alternatives,
@@ -28,7 +29,8 @@ public record MainQuestionOutputForMapDto(
     return new MainQuestionOutputForMapDto(
             mainQuestion.getId(),
             mainQuestion.getTitle(),
-            SubjectOutputDto.parseDto(mainQuestion.getSubjects()),
+            mainQuestion.getMainSubject() != null ? SubjectOutputDto.parseDto(mainQuestion.getMainSubject()) : null,
+            SubjectOutputDto.parseDto(mainQuestion.getSecondarySubjects()),
             mainQuestion.getLevel(),
             mainQuestion.getVideoResolutionUrl(),
             AlternativeOutputDto.parseDto(mainQuestion.getAlternatives()),

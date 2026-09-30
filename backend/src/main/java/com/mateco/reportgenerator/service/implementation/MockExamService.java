@@ -354,8 +354,7 @@ public class MockExamService implements MockExamServiceInterface {
                 String area = mainQuestion.getPattern().name().toUpperCase();
                 String level = mainQuestion.getLevel().toUpperCase();
 
-                Subject primarySubject = (mainQuestion.getSubjects() != null && !mainQuestion.getSubjects().isEmpty())
-                        ? mainQuestion.getSubjects().get(0) : null;
+                Subject primarySubject = mainQuestion.getMainSubject();
 
                 totalWeightAllQuestions += questionWeight;
                 if (punishmentLevels.contains(lerickucasLevel)) {
