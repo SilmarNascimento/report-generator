@@ -7,7 +7,6 @@ import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
@@ -23,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -222,27 +220,4 @@ public class MainQuestionController {
         .build();
   }
 
-  @PatchMapping("/{mainQuestionId}/subject")
-  public ResponseEntity<MainQuestionOutputDto> addSubjectToMainQuestion(
-      @PathVariable UUID mainQuestionId,
-      @RequestBody SubjectListInputDto subjectIdList
-  ) {
-    MainQuestion mainQuestionUpdated = mainQuestionService
-        .addSubject(mainQuestionId, subjectIdList.subjectsId());
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
-  }
-
-  @DeleteMapping("/{mainQuestionId}/subject")
-  public ResponseEntity<MainQuestionOutputDto> removeSubjectFromMainQUestion(
-      @PathVariable UUID mainQuestionId,
-      @RequestBody SubjectListInputDto subjectIdList
-  ) {
-    MainQuestion mainQuestionUpdated = mainQuestionService
-        .removeSubject(mainQuestionId, subjectIdList.subjectsId());
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
-  }
 }

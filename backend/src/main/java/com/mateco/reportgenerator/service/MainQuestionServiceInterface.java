@@ -19,9 +19,6 @@ public interface MainQuestionServiceInterface {
   void deleteMainQuestionById(UUID questionId);
   void deleteAllMainQuestionsByIds(List<UUID> ids);
 
-  MainQuestion addSubject(UUID questionId, List<UUID> subjecstId);
-  MainQuestion removeSubject(UUID questionId, List<UUID> subjectsId);
-
   MainQuestion addAdaptedQuestion(UUID questionId, AdaptedQuestion adaptedQuestion, List<String> questionImages);
   void removeAdaptedQuestion(UUID questionId, UUID adaptedQuestionId);
 }
