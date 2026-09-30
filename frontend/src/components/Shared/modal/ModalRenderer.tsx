@@ -9,7 +9,7 @@ import { CadastroEmMassaModal } from "./CadastroEmMassaModal";
 import { DeleteEmMassaModal } from "./DeleteEmMassaModal";
 import { DeleteListagemModal } from "./DeleteListagemModal";
 
-interface ModalRendererProps {
+export interface ModalRendererProps {
   isOpen: boolean;
   tipo: ModalType;
   entidade: string;

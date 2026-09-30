@@ -2,7 +2,10 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import {
+  ModalRenderer,
+  ModalRendererProps,
+} from "@/components/Shared/modal/ModalRenderer";
 import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import {
   Table,
@@ -44,18 +47,17 @@ const StudentList = () => {
     urlFilter,
   );
 
-  const estudantes = studentPage?.data ?? [];
+  const alunos = studentPage?.data ?? [];
   const isAllSelected =
-    estudantes.length > 0 &&
-    estudantes.every((s) => selectedStudentIds.includes(s.id));
+    alunos.length > 0 && alunos.every((s) => selectedStudentIds.includes(s.id));
   const isSomeSelected =
-    estudantes.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
+    alunos.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
 
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
       endpoint: "/students",
       invalidateKeys: [["get-students"]],
-      entidade: "Estudante",
+      entidade: "Aluno",
     });
 
   const {
@@ -67,11 +69,9 @@ const StudentList = () => {
   } = useExclusaoEmMassa({
     endpoint: "/students",
     invalidateKeys: [["get-students"]],
-    entidade: "Estudante",
+    entidade: "Aluno",
     onSuccess: () => setSelectedStudentIds([]),
   });
-
-  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
 
   const {
     cadastroEmMassaModalState,
@@ -96,6 +96,36 @@ const StudentList = () => {
     setSelectedStudentIds([]);
   }, [page]);
 
+  function obterModalAtivo(): ModalRendererProps {
+    if (cadastroEmMassaModalState.isOpen) {
+      return {
+        ...cadastroEmMassaModalState,
+        entidade: "Alunos",
+        isLoading: isPendingCadastroEmMassa,
+        onClose: fecharModalCadastroEmMassa,
+        onConfirm: confirmarCadastroEmMassa,
+      };
+    }
+
+    if (exclusaoEmMassaModalState.isOpen) {
+      return {
+        ...exclusaoEmMassaModalState,
+        entidade: "Alunos",
+        isLoading: isPendingExclusaoEmMassa,
+        onClose: fecharModalExclusaoEmMassa,
+        onConfirm: confirmarExclusaoEmMassa,
+      };
+    }
+
+    return {
+      ...modalState,
+      entidade: "Aluno",
+      isLoading: isPending,
+      onClose: fecharModal,
+      onConfirm: confirmarAcao,
+    };
+  }
+
   function handleCreateStudent() {
     navigate("/students/create");
   }
@@ -111,11 +141,11 @@ const StudentList = () => {
   function toggleSelectAll() {
     if (isAllSelected) {
       setSelectedStudentIds((prev) =>
-        prev.filter((id) => !estudantes.map((s) => s.id).includes(id)),
+        prev.filter((id) => !alunos.map((s) => s.id).includes(id)),
       );
     } else {
       setSelectedStudentIds((prev) =>
-        Array.from(new Set([...prev, ...estudantes.map((s) => s.id)])),
+        Array.from(new Set([...prev, ...alunos.map((s) => s.id)])),
       );
     }
   }
@@ -270,29 +300,7 @@ const StudentList = () => {
         )}
       </PaginaContainer>
 
-      <ModalRenderer
-        isOpen={cadastroEmMassaModalState.isOpen}
-        tipo={cadastroEmMassaModalState.tipo}
-        entidade="Alunos"
-        item={cadastroEmMassaModalState.item}
-        isLoading={isPendingCadastroEmMassa}
-        onClose={fecharModalCadastroEmMassa}
-        onConfirm={confirmarCadastroEmMassa}
-      />
-
-      <ModalRenderer
-        isOpen={modalState.isOpen || modalEmMassaAberto}
-        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
-        entidade={modalEmMassaAberto ? "Estudantes" : "Estudante"}
-        item={
-          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
-        }
-        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
-        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
-        onConfirm={
-          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
-        }
-      />
+      <ModalRenderer {...obterModalAtivo()} />
     </>
   );
 };
