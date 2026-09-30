@@ -10,6 +10,7 @@ public record StudentResponseDto(
         String name,
         String email,
         String cpf,
+        String phone,
         Integer enrollmentYear,
         List<ClassGroup> classGroups,
         OffsetDateTime activationDate,

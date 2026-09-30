@@ -24,6 +24,9 @@ public record StudentRequestDto(
         @CPF(message = "CPF inválido")
         String cpf,
 
+        @Pattern(regexp = "^\\d{10,11}$", message = "Telefone inválido. Informe DDD + número")
+        String phone,
+
         @NotNull(message = "O ano de matrícula é obrigatório")
         Integer enrollmentYear,
 
@@ -38,4 +41,15 @@ public record StudentRequestDto(
         @Valid
         AddressDto address
 ) {
+    public StudentRequestDto {
+        cpf = removeFormatting(cpf);
+        phone = removeFormatting(phone);
+    }
+
+    private static String removeFormatting(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.replaceAll("[\\s.()/-]", "");
+    }
 }
