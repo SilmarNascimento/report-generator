@@ -1,8 +1,11 @@
 import {
   ModalAnyItemInformationType,
+  ModalCadastroEmMassaInformationType,
   ModalExclusaoEmMassaInformationType,
+  ModalItemInformationType,
   ModalType,
 } from "@/interfaces/Modal";
+import { CadastroEmMassaModal } from "./CadastroEmMassaModal";
 import { DeleteEmMassaModal } from "./DeleteEmMassaModal";
 import { DeleteListagemModal } from "./DeleteListagemModal";
 
@@ -13,13 +16,25 @@ interface ModalRendererProps {
   item: ModalAnyItemInformationType | null;
   isLoading: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (arquivo?: File) => void;
+}
+
+function isListagemItem(
+  item: ModalAnyItemInformationType,
+): item is ModalItemInformationType {
+  return "nomeExibicao" in item;
 }
 
 function isExclusaoEmMassaItem(
   item: ModalAnyItemInformationType,
 ): item is ModalExclusaoEmMassaInformationType {
   return "quantidade" in item;
+}
+
+function isCadastroEmMassaItem(
+  item: ModalAnyItemInformationType,
+): item is ModalCadastroEmMassaInformationType {
+  return "erros" in item;
 }
 
 export function ModalRenderer({
@@ -33,15 +48,29 @@ export function ModalRenderer({
 }: ModalRendererProps) {
   if (!isOpen || !item) return null;
 
-  const baseProps = { isOpen, onClose, onConfirm, isLoading, entidade };
+  const baseProps = {
+    isOpen,
+    onClose,
+    onConfirm: () => onConfirm(),
+    isLoading,
+    entidade,
+  };
 
   const renderMap: Record<ModalType, React.ReactNode> = {
-    exclusao: !isExclusaoEmMassaItem(item) ? (
+    exclusao: isListagemItem(item) ? (
       <DeleteListagemModal {...baseProps} nome={item.nomeExibicao} />
     ) : null,
 
     exclusaoEmMassa: isExclusaoEmMassaItem(item) ? (
       <DeleteEmMassaModal {...baseProps} quantidade={item.quantidade} />
+    ) : null,
+
+    cadastroEmMassa: isCadastroEmMassaItem(item) ? (
+      <CadastroEmMassaModal
+        {...baseProps}
+        erros={item.erros}
+        onConfirm={(arquivo) => onConfirm(arquivo)}
+      />
     ) : null,
 
     status: null,

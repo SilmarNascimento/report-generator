@@ -1,3 +1,4 @@
+import { ErroLinhaPlanilha } from "./Modal";
 import { BR_STATES } from "../constants/general";
 import { CLASS_GROUP } from "../constants/students";
 
@@ -59,4 +60,13 @@ export type StudentRequest = {
     state?: BR_STATES;
     zipCode?: string;
   };
+};
+
+export type StudentImportError = ErroLinhaPlanilha;
+
+export type StudentImportResult = {
+  totalRows: number;
+  importedCount: number;
+  errors: StudentImportError[];
+  mensagem?: string | null;
 };

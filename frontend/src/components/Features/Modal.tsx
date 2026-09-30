@@ -1,4 +1,6 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { ModalSize } from "@/interfaces/Modal";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +20,18 @@ type ModalFlutuanteProps = {
   footer?: React.ReactNode;
   modal?: boolean;
   showCloseButton?: boolean;
+  size?: ModalSize;
+  minSize?: Exclude<ModalSize, "auto">;
 };
+
+const sizeMap: Record<Exclude<ModalSize, "auto">, string> = {
+  sm: "37.5rem",
+  md: "50rem",
+  lg: "70rem",
+  xl: "81.25rem",
+};
+
+const viewportMaxWidth = "calc(100vw - 32px)";
 
 const Modal = ({
   isOpen,
@@ -29,7 +42,51 @@ const Modal = ({
   footer,
   modal = true,
   showCloseButton = true,
+  size = "auto",
+  minSize,
 }: ModalFlutuanteProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [extraWidth, setExtraWidth] = useState(0);
+
+  const baseMinWidth = minSize ? sizeMap[minSize] : undefined;
+
+  const calculatedMinWidth =
+    size === "auto" && baseMinWidth
+      ? `min(${baseMinWidth}, ${viewportMaxWidth})`
+      : undefined;
+
+  const calculatedMaxWidth =
+    size === "auto"
+      ? viewportMaxWidth
+      : `min(${sizeMap[size]}, ${viewportMaxWidth})`;
+
+  useLayoutEffect(() => {
+    if (size !== "auto" || !isOpen) {
+      setExtraWidth(0);
+      return;
+    }
+
+    const element = contentRef.current;
+    if (!element) return;
+
+    const measureOverflow = () => {
+      let overflow = 0;
+      element.querySelectorAll<HTMLElement>("*").forEach((node) => {
+        const diff = node.scrollWidth - node.clientWidth;
+        if (diff > overflow) overflow = diff;
+      });
+
+      if (overflow > 1) {
+        setExtraWidth((prev) => prev + overflow);
+      }
+    };
+
+    const observer = new ResizeObserver(measureOverflow);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [isOpen, size]);
+
   return (
     <Dialog
       open={isOpen}
@@ -40,10 +97,18 @@ const Modal = ({
 
       <DialogContent
         className={cn(
-          "p-0 sm:max-w-fit",
+          "flex h-auto max-h-[80vh] flex-col overflow-hidden p-0",
+          size === "auto" ? "w-max" : "w-full",
           !showCloseButton && "[&>button]:hidden",
         )}
-        style={{ zIndex: 50 }}
+        style={{
+          zIndex: 50,
+          maxWidth: calculatedMaxWidth,
+          minWidth:
+            extraWidth > 0
+              ? `min(calc(${calculatedMinWidth ?? "0px"} + ${extraWidth}px), ${viewportMaxWidth})`
+              : calculatedMinWidth,
+        }}
         aria-describedby={description ? "modal-description" : undefined}
       >
         {(title || description) && (
@@ -71,7 +136,12 @@ const Modal = ({
           </DialogHeader>
         )}
 
-        <div>{children}</div>
+        <div
+          ref={contentRef}
+          className="flex min-h-0 flex-1 flex-col overflow-x-hidden"
+        >
+          {children}
+        </div>
 
         {footer && (
           <DialogFooter onClick={(e) => e.stopPropagation()}>

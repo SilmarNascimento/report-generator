@@ -1,4 +1,5 @@
 import { StudentFormType } from "@/components/Forms/student/studentSchema";
+import { CadastroEmMassaFormType } from "@/components/Shared/modal/cadastroEmMassaSchema";
 import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
 import { MockExamFormType } from "@/components/Forms/MockExam/mockExamSchema";
 import {
@@ -49,4 +50,5 @@ export type FormTypes =
   | MockExamFormType
   | MainQuestionFormType
   | GenerateStudentsResponseFormType
-  | StudentDiagnosisStatusFormType;
+  | StudentDiagnosisStatusFormType
+  | CadastroEmMassaFormType;

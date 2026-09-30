@@ -1,5 +1,18 @@
 import { FileKind } from "@/interfaces/general";
 
+const spreadsheetExtensions = [
+  ".xlsx",
+  ".xlsm",
+  ".xltx",
+  ".xltm",
+  ".xls",
+  ".xlt",
+  ".csv",
+];
+
+const isSpreadsheetName = (name: string) =>
+  spreadsheetExtensions.some((extension) => name.endsWith(extension));
+
 export function detectFileKind(
   value: File | Blob | string | undefined | null,
 ): FileKind {
@@ -14,15 +27,16 @@ export function detectFileKind(
       value.type ===
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       value.type === "application/vnd.ms-excel" ||
-      value.name.toLowerCase().endsWith(".xlsx") ||
-      value.name.toLowerCase().endsWith(".xls")
+      value.type === "text/csv" ||
+      isSpreadsheetName(value.name.toLowerCase())
     )
       return "excel";
   }
   if (typeof value === "string") {
     const lower = value.toLowerCase();
     if (lower.includes(".pdf")) return "pdf";
-    if (lower.includes(".xlsx") || lower.includes(".xls")) return "excel";
+    if (spreadsheetExtensions.some((extension) => lower.includes(extension)))
+      return "excel";
   }
   return "other";
 }

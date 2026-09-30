@@ -18,15 +18,18 @@ import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { StudentResponse } from "@/interfaces/Student";
 import { Loader } from "@/components/ui/loader/Loader";
-import { Eye, Pencil, X } from "lucide-react";
+import { Eye, FileSpreadsheet, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PaginaContainer from "@/components/Shared/PaginaContainer";
 import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
+import { useImportStudents } from "@/hooks/CRUD/student/useImportStudents";
 
 const StudentList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
   const page = Number(searchParams.get("page") ?? "1");
   const pageSize = 10;
@@ -40,8 +43,6 @@ const StudentList = () => {
     pageSize,
     urlFilter,
   );
-
-  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
   const estudantes = studentPage?.data ?? [];
   const isAllSelected =
@@ -71,6 +72,14 @@ const StudentList = () => {
   });
 
   const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  const {
+    cadastroEmMassaModalState,
+    abrirModalCadastroEmMassa,
+    fecharModalCadastroEmMassa,
+    confirmarCadastroEmMassa,
+    isPendingCadastroEmMassa,
+  } = useImportStudents();
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -124,6 +133,14 @@ const StudentList = () => {
 
       <PaginaContainer>
         <CabecalhoListagem titulo="Alunos">
+          <Botao
+            variant="secondary"
+            type="button"
+            icon={<FileSpreadsheet className="size-4" />}
+            onClick={abrirModalCadastroEmMassa}
+          >
+            Cadastro de alunos
+          </Botao>
           <Botao
             variant="novo"
             label="Novo"
@@ -252,6 +269,16 @@ const StudentList = () => {
           </>
         )}
       </PaginaContainer>
+
+      <ModalRenderer
+        isOpen={cadastroEmMassaModalState.isOpen}
+        tipo={cadastroEmMassaModalState.tipo}
+        entidade="Alunos"
+        item={cadastroEmMassaModalState.item}
+        isLoading={isPendingCadastroEmMassa}
+        onClose={fecharModalCadastroEmMassa}
+        onConfirm={confirmarCadastroEmMassa}
+      />
 
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}
