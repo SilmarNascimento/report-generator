@@ -61,10 +61,10 @@ public class SubjectControllerTests {
     mockSubjectId02 = UUID.randomUUID();
     objectMapper = new ObjectMapper();
 
-    mockSubject01 = new Subject("Geometria");
+    mockSubject01 = new Subject("Geometria", 1.0);
     mockSubject01.setId(mockSubjectId01);
 
-    mockSubject02 = new Subject("Algebra");
+    mockSubject02 = new Subject("Algebra", 1.0);
     mockSubject02.setId(mockSubjectId02);
   }
 

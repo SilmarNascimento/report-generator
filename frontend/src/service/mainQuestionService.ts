@@ -15,18 +15,4 @@ export const mainQuestionService = {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
-
-  addSubjects(id: string, subjectsId: string[]) {
-    return apiService.patch<MainQuestionReceived>(
-      `/main-question/${id}/subject`,
-      { subjectsId },
-    );
-  },
-
-  removeSubjects(id: string, subjectsId: string[]) {
-    return apiService.delete<MainQuestionReceived>(
-      `/main-question/${id}/subject`,
-      { subjectsId },
-    );
-  },
 };

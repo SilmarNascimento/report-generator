@@ -4,9 +4,9 @@ import com.mateco.reportgenerator.controller.dto.BatchDeleteInputDto;
 import com.mateco.reportgenerator.controller.dto.PageOutputDto;
 import com.mateco.reportgenerator.controller.dto.mockExamDto.MockExamFilterInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.QuestionInputDto;
+import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.AdaptedQuestionOutputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionOutputDto;
-import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.MainQuestion;
 import com.mateco.reportgenerator.service.AdaptedQuestionServiceInterface;
@@ -22,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -95,11 +94,15 @@ public class MainQuestionController {
 
   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> createMainQuestion(
-      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
+      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "adaptedQuestionPdfFile") MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
     MainQuestion mainQuestionCreated = mainQuestionService
-        .createMainQuestion(MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile));
+        .createMainQuestion(
+            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile),
+            mainQuestionInputDto.mainSubjectId(),
+            mainQuestionInputDto.secondarySubjectsId()
+        );
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -109,13 +112,15 @@ public class MainQuestionController {
   @PutMapping(value = "/{mainQuestionId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<MainQuestionOutputDto> updateMainQuestionById(
       @PathVariable UUID mainQuestionId,
-      @RequestPart("mainQuestionInputDto") QuestionInputDto mainQuestionInputDto,
+      @RequestPart("mainQuestionInputDto") MainQuestionInputDto mainQuestionInputDto,
       @RequestPart(value = "adaptedQuestionPdfFile", required = false) MultipartFile adaptedQuestionPdfFile
   ) throws IOException {
     MainQuestion updatedMainQuestion = mainQuestionService
         .updateMainQuestionById(
             mainQuestionId,
-            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile)
+            MainQuestion.parseMainQuestion(mainQuestionInputDto, adaptedQuestionPdfFile),
+            mainQuestionInputDto.mainSubjectId(),
+            mainQuestionInputDto.secondarySubjectsId()
         );
 
     return ResponseEntity
@@ -215,27 +220,4 @@ public class MainQuestionController {
         .build();
   }
 
-  @PatchMapping("/{mainQuestionId}/subject")
-  public ResponseEntity<MainQuestionOutputDto> addSubjectToMainQuestion(
-      @PathVariable UUID mainQuestionId,
-      @RequestBody SubjectListInputDto subjectIdList
-  ) {
-    MainQuestion mainQuestionUpdated = mainQuestionService
-        .addSubject(mainQuestionId, subjectIdList.subjectsId());
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
-  }
-
-  @DeleteMapping("/{mainQuestionId}/subject")
-  public ResponseEntity<MainQuestionOutputDto> removeSubjectFromMainQUestion(
-      @PathVariable UUID mainQuestionId,
-      @RequestBody SubjectListInputDto subjectIdList
-  ) {
-    MainQuestion mainQuestionUpdated = mainQuestionService
-        .removeSubject(mainQuestionId, subjectIdList.subjectsId());
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(MainQuestionOutputDto.parseDto(mainQuestionUpdated));
-  }
 }

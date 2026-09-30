@@ -1,4 +1,4 @@
-﻿package com.mateco.reportgenerator.controller;
+package com.mateco.reportgenerator.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -13,9 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mateco.reportgenerator.controller.dto.alternativeDto.AlternativeInputDto;
+import com.mateco.reportgenerator.enums.Pattern;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionInputDto;
 import com.mateco.reportgenerator.controller.dto.questionDto.MainQuestionListInputDto;
-import com.mateco.reportgenerator.controller.dto.subjectDto.SubjectListInputDto;
 import com.mateco.reportgenerator.model.entity.AdaptedQuestion;
 import com.mateco.reportgenerator.model.entity.Alternative;
 import com.mateco.reportgenerator.model.entity.FileEntity;
@@ -75,7 +75,6 @@ public class MainQuestionControllerTests {
   private Alternative mockAlternative01;
   private Alternative mockAlternative02;
   private String mainQuestionInput;
-  private SubjectListInputDto subjectIdListinput;
   private MainQuestion mockMainQuestion01;
   private MainQuestion mockMainQuestion02;
   private AdaptedQuestion mockAdaptedQuestion01;
@@ -105,10 +104,6 @@ public class MainQuestionControllerTests {
 
     mainQuestionInput = objectMapper.writeValueAsString(mainQuestionInputDto);
 
-    subjectIdListinput = new SubjectListInputDto(
-        List.of(UUID.randomUUID(), UUID.randomUUID())
-    );
-
     multipartFile01 = new MockMultipartFile(
         "adaptedQuestionPdfFile",
         "adaptedQuestionPdfFile01.pdf",
@@ -125,11 +120,12 @@ public class MainQuestionControllerTests {
 
     mockAlternative01 = new Alternative(false);
     mockAlternative02 = new Alternative(true);
-    mockSubject01 = new Subject("Geometria");
-    mockSubject02 = new Subject("Algebra");
+    mockSubject01 = new Subject("Geometria", 1.0);
+    mockSubject02 = new Subject("Algebra", 1.0);
 
     mockMainQuestion01 = new MainQuestion(
         "título questão 01",
+        null,
         new ArrayList<>(),
         "difícil",
         List.of(mockAlternative01, mockAlternative02),
@@ -143,6 +139,7 @@ public class MainQuestionControllerTests {
 
     mockMainQuestion02 = new MainQuestion(
         "título questão 02",
+        null,
         List.of(mockSubject01, mockSubject02),
         "difícil",
         List.of(mockAlternative01, mockAlternative02),
@@ -179,8 +176,11 @@ public class MainQuestionControllerTests {
 
     return new MainQuestionInputDto(
         "titulo da questão",
+        UUID.randomUUID(),
         new ArrayList<>(),
         "Fácil",
+        1,
+        Pattern.ALGEBRA,
         List.of(alternativeInputDto01, alternativeInputDto02),
         "URL video resolution"
     );
@@ -966,7 +966,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
-        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.secondarySubjects", isA(List.class)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
@@ -1006,7 +1006,7 @@ public class MainQuestionControllerTests {
   @DisplayName("Verifica se criado uma entidade MainQuestion")
   public void createMainQuestionTest() throws Exception {
     Mockito
-        .when(mainQuestionService.createMainQuestion(any(MainQuestion.class)))
+        .when(mainQuestionService.createMainQuestion(any(MainQuestion.class), any(), any(List.class)))
         .thenReturn(mockMainQuestion01);
 
     Mockito
@@ -1033,7 +1033,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
-        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.secondarySubjects", isA(List.class)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
@@ -1048,7 +1048,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.mockExams", isA(List.class)))
         .andExpect(jsonPath("$.handouts", isA(List.class)));
 
-    Mockito.verify(mainQuestionService).createMainQuestion(any(MainQuestion.class));
+    Mockito.verify(mainQuestionService).createMainQuestion(any(MainQuestion.class), any(), any(List.class));
   }
 
   @Test
@@ -1059,7 +1059,7 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
 
     Mockito
-        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class)))
+        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(), any(List.class)))
         .thenReturn(mockMainQuestion01);
 
     MockMultipartFile inputJsonPart = createInputJsonPart("mainQuestionInputDto");
@@ -1085,7 +1085,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.id").value(mockMainQuestionId01.toString()))
         .andExpect(jsonPath("$.title").value(mockMainQuestion01.getTitle()))
         .andExpect(jsonPath("$.level").value(mockMainQuestion01.getLevel()))
-        .andExpect(jsonPath("$.subjects", isA(List.class)))
+        .andExpect(jsonPath("$.secondarySubjects", isA(List.class)))
         .andExpect(jsonPath("$.videoResolutionUrl", isA(String.class)))
         .andExpect(jsonPath("$.videoResolutionUrl").value(mockMainQuestion01.getVideoResolutionUrl()))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
@@ -1100,7 +1100,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.mockExams", isA(List.class)))
         .andExpect(jsonPath("$.handouts", isA(List.class)));
 
-    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class));
+    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(), any(List.class));
   }
 
   @Test
@@ -1111,7 +1111,7 @@ public class MainQuestionControllerTests {
         .thenReturn(List.of("imagem da questão 01", "imagem da alternativa 01", "imagem da alternativa 02"));
 
     Mockito
-        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class)))
+        .when(mainQuestionService.updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(), any(List.class)))
         .thenThrow(new NotFoundException("Questão principal não encontrada!"));
 
     MockMultipartFile inputJsonPart = createInputJsonPart("mainQuestionInputDto");
@@ -1133,7 +1133,7 @@ public class MainQuestionControllerTests {
         .andExpect(status().is(404))
         .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
 
-    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class));
+    Mockito.verify(mainQuestionService).updateMainQuestionById(any(UUID.class), any(MainQuestion.class), any(), any(List.class));
   }
 
   @Test
@@ -1208,7 +1208,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.[1].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.[1].alternatives.[*].id").exists())
         .andExpect(jsonPath("$.[1].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.[1].alternatives.[1].images", isA(List.class)));
 
     Mockito.verify(adaptedQuestionService).findAllAdaptedQuestionFromMainQuestion(any(UUID.class));
   }
@@ -1234,7 +1234,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.id").value(mockAdaptedQuestionId01.toString()))
         .andExpect(jsonPath("$.images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[*].id").exists());
 
     Mockito.verify(adaptedQuestionService)
         .findAdaptedQuestionsFromMainQuestionById(any(UUID.class), any(UUID.class));
@@ -1286,7 +1286,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives", isA(List.class)))
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[*].id").exists())
         .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[0].images", isA(List.class)))
-        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images", isA(List.class)))
+        .andExpect(jsonPath("$.adaptedQuestions.[0].alternatives.[1].images", isA(List.class)));
 
     Mockito.verify(mainQuestionService)
         .addAdaptedQuestion(any(UUID.class), any(AdaptedQuestion.class), any(List.class));
@@ -1376,7 +1376,7 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$.level").value(mockAdaptedQuestion01.getLevel()))
         .andExpect(jsonPath("$.images.[0]").value(mockAdaptedQuestion01.getImages().get(0)))
         .andExpect(jsonPath("$.alternatives", isA(List.class)))
-        .andExpect(jsonPath("$.alternatives.[*].id").exists())
+        .andExpect(jsonPath("$.alternatives.[*].id").exists());
 
     Mockito.verify(adaptedQuestionService)
         .updateAdaptedQuestionOfMainQuestionById(
@@ -1571,141 +1571,6 @@ public class MainQuestionControllerTests {
         .andExpect(jsonPath("$").value("Questão adaptada não pertence à questão principal!"));
 
     Mockito.verify(mainQuestionService).removeAdaptedQuestion(any(UUID.class), any(UUID.class));
-  }
-
-  @Test
-  @DisplayName("Verifica se a entidade Subject é adicionada a uma MainQuestion")
-  public void addSubjectToMainQuestionTest() throws Exception {
-    Mockito
-        .when(mainQuestionService.addSubject(any(UUID.class), any(List.class)))
-        .thenReturn(mockMainQuestion02);
-
-    String endpoint = baseUrl
-        + "/"
-        + mockMainQuestionId02.toString()
-        + "/subject";
-
-    ResultActions httpResponse = mockMvc.perform(
-        patch(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(subjectIdListinput))
-    );
-
-    httpResponse
-        .andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(mockMainQuestionId02.toString()))
-        .andExpect(jsonPath("$.subjects", isA(List.class)))
-        .andExpect(jsonPath("$.subjects.[*].id").exists())
-        .andExpect(jsonPath("$.subjects.[0].name").value(mockSubject01.getName()))
-        .andExpect(jsonPath("$.subjects.[1].name").value(mockSubject02.getName()));
-
-    Mockito.verify(mainQuestionService).addSubject(any(UUID.class), any(List.class));
-  }
-
-  @Test
-  @DisplayName("Verifica se é disparado um erro quando a entidade MainQuestion não é encontrada")
-  public void addSubjectToMainQuestionTestNotFoundMainQuestionError() throws Exception {
-    Mockito
-        .when(mainQuestionService.addSubject(any(UUID.class), any(List.class)))
-        .thenThrow(new NotFoundException("Questão principal não encontrada!"));
-
-    String endpoint = baseUrl
-        + "/"
-        + mockMainQuestionId02.toString()
-        + "/subject";
-
-    ResultActions httpResponse = mockMvc.perform(
-        patch(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(subjectIdListinput))
-    );
-
-    httpResponse
-        .andExpect(status().is(404))
-        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
-
-    Mockito.verify(mainQuestionService).addSubject(any(UUID.class), any(List.class));
-  }
-
-  @Test
-  @DisplayName("Verifica se é disparado um erro quando a lista de SubjectsId não encontra nenhuma entidade")
-  public void addSubjectToMainQuestionTestNotFoundSubjectListEntitiesError() throws Exception {
-    Mockito
-        .when(mainQuestionService.addSubject(any(UUID.class), any(List.class)))
-        .thenThrow(new NotFoundException("Nenhum assunto encontrado com os IDs fornecidos!"));
-
-    String endpoint = baseUrl
-        + "/"
-        + mockMainQuestionId02.toString()
-        + "/subject";
-
-    ResultActions httpResponse = mockMvc.perform(
-        patch(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(subjectIdListinput))
-    );
-
-    httpResponse
-        .andExpect(status().is(404))
-        .andExpect(jsonPath("$").value("Nenhum assunto encontrado com os IDs fornecidos!"));
-
-    Mockito.verify(mainQuestionService).addSubject(any(UUID.class), any(List.class));
-  }
-
-  @Test
-  @DisplayName("Verifica se a entidade Subject é removida de uma MainQuestion")
-  public void removeSubjectFromMainQUestionTest() throws Exception {
-    Mockito
-        .when(mainQuestionService.removeSubject(any(UUID.class), any(List.class)))
-        .thenReturn(mockMainQuestion02);
-
-    String endpoint = baseUrl
-        + "/"
-        + mockMainQuestionId02.toString()
-        + "/subject";
-
-    ResultActions httpResponse = mockMvc.perform(
-        delete(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(subjectIdListinput))
-    );
-
-    httpResponse
-        .andExpect(status().is(200))
-        .andExpect(jsonPath("$.id").value(mockMainQuestionId02.toString()))
-        .andExpect(jsonPath("$.subjects", isA(List.class)))
-        .andExpect(jsonPath("$.subjects.[*].id").exists())
-        .andExpect(jsonPath("$.subjects.[0].name").value(mockSubject01.getName()))
-        .andExpect(jsonPath("$.subjects.[1].name").value(mockSubject02.getName()));
-
-    Mockito
-        .verify(mainQuestionService, Mockito.times(1))
-        .removeSubject(any(UUID.class), any(List.class));
-  }
-
-  @Test
-  @DisplayName("Verifica se é disparado uma exceção quando uma MainQuestion não é encontrada")
-  public void removeSubjectFromMainQUestionTestNotFoundError() throws Exception {
-    Mockito
-        .doThrow(new NotFoundException("Questão principal não encontrada!"))
-        .when(mainQuestionService).removeSubject(any(UUID.class), any(List.class));
-
-    String endpoint = baseUrl
-        + "/"
-        + mockMainQuestionId02.toString()
-        + "/subject";
-
-    ResultActions httpResponse = mockMvc.perform(
-        delete(endpoint)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(subjectIdListinput))
-    );
-
-    httpResponse
-        .andExpect(status().is(404))
-        .andExpect(jsonPath("$").value("Questão principal não encontrada!"));
-
-    Mockito.verify(mainQuestionService).removeSubject(any(UUID.class), any(List.class));
   }
 
   private MockMultipartFile createInputJsonPart(String name) {

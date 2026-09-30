@@ -2,7 +2,10 @@ import { NavigationBar } from "@/components/NavigationBar";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
-import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
+import {
+  ModalRenderer,
+  ModalRendererProps,
+} from "@/components/Shared/modal/ModalRenderer";
 import { Checkbox } from "@/components/ui/shadcn/Checkbox";
 import {
   Table,
@@ -18,13 +21,18 @@ import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
 import { useListagemModal } from "@/hooks/useListagemModal";
 import { StudentResponse } from "@/interfaces/Student";
 import { Loader } from "@/components/ui/loader/Loader";
-import { Eye, Pencil, X } from "lucide-react";
+import { Eye, FileSpreadsheet, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
+import { useImportStudents } from "@/hooks/CRUD/student/useImportStudents";
 
 const StudentList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
 
   const page = Number(searchParams.get("page") ?? "1");
   const pageSize = 10;
@@ -39,20 +47,17 @@ const StudentList = () => {
     urlFilter,
   );
 
-  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
-
-  const estudantes = studentPage?.data ?? [];
+  const alunos = studentPage?.data ?? [];
   const isAllSelected =
-    estudantes.length > 0 &&
-    estudantes.every((s) => selectedStudentIds.includes(s.id));
+    alunos.length > 0 && alunos.every((s) => selectedStudentIds.includes(s.id));
   const isSomeSelected =
-    estudantes.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
+    alunos.some((s) => selectedStudentIds.includes(s.id)) && !isAllSelected;
 
   const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
     useListagemModal({
       endpoint: "/students",
       invalidateKeys: [["get-students"]],
-      entidade: "Estudante",
+      entidade: "Aluno",
     });
 
   const {
@@ -64,11 +69,17 @@ const StudentList = () => {
   } = useExclusaoEmMassa({
     endpoint: "/students",
     invalidateKeys: [["get-students"]],
-    entidade: "Estudante",
+    entidade: "Aluno",
     onSuccess: () => setSelectedStudentIds([]),
   });
 
-  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+  const {
+    cadastroEmMassaModalState,
+    abrirModalCadastroEmMassa,
+    fecharModalCadastroEmMassa,
+    confirmarCadastroEmMassa,
+    isPendingCadastroEmMassa,
+  } = useImportStudents();
 
   useEffect(() => {
     setSearchParams((params) => {
@@ -85,6 +96,36 @@ const StudentList = () => {
     setSelectedStudentIds([]);
   }, [page]);
 
+  function obterModalAtivo(): ModalRendererProps {
+    if (cadastroEmMassaModalState.isOpen) {
+      return {
+        ...cadastroEmMassaModalState,
+        entidade: "Alunos",
+        isLoading: isPendingCadastroEmMassa,
+        onClose: fecharModalCadastroEmMassa,
+        onConfirm: confirmarCadastroEmMassa,
+      };
+    }
+
+    if (exclusaoEmMassaModalState.isOpen) {
+      return {
+        ...exclusaoEmMassaModalState,
+        entidade: "Alunos",
+        isLoading: isPendingExclusaoEmMassa,
+        onClose: fecharModalExclusaoEmMassa,
+        onConfirm: confirmarExclusaoEmMassa,
+      };
+    }
+
+    return {
+      ...modalState,
+      entidade: "Aluno",
+      isLoading: isPending,
+      onClose: fecharModal,
+      onConfirm: confirmarAcao,
+    };
+  }
+
   function handleCreateStudent() {
     navigate("/students/create");
   }
@@ -100,11 +141,11 @@ const StudentList = () => {
   function toggleSelectAll() {
     if (isAllSelected) {
       setSelectedStudentIds((prev) =>
-        prev.filter((id) => !estudantes.map((s) => s.id).includes(id)),
+        prev.filter((id) => !alunos.map((s) => s.id).includes(id)),
       );
     } else {
       setSelectedStudentIds((prev) =>
-        Array.from(new Set([...prev, ...estudantes.map((s) => s.id)])),
+        Array.from(new Set([...prev, ...alunos.map((s) => s.id)])),
       );
     }
   }
@@ -120,16 +161,23 @@ const StudentList = () => {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Alunos</h1>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Alunos">
+          <Botao
+            variant="secondary"
+            type="button"
+            icon={<FileSpreadsheet className="size-4" />}
+            onClick={abrirModalCadastroEmMassa}
+          >
+            Cadastro de alunos
+          </Botao>
           <Botao
             variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateStudent}
           />
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -250,21 +298,9 @@ const StudentList = () => {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
-      <ModalRenderer
-        isOpen={modalState.isOpen || modalEmMassaAberto}
-        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
-        entidade={modalEmMassaAberto ? "Estudantes" : "Estudante"}
-        item={
-          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
-        }
-        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
-        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
-        onConfirm={
-          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
-        }
-      />
+      <ModalRenderer {...obterModalAtivo()} />
     </>
   );
 };

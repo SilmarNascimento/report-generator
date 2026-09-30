@@ -108,20 +108,12 @@ public class MockExamCrontollerTests {
     mockResponseId01 = UUID.randomUUID();
     mockResponseId02 = UUID.randomUUID();
 
-    Alternative mockFalseAlternative = new Alternative(
-        "descrição da alternativa 01",
-        List.of("imagem alternativa 01"),
-        false
-    );
-    Alternative mockTrueAlternative = new Alternative(
-        "descrição da alternativa 02",
-        List.of("imagem alternativa 02"),
-        true
-    );
+    Alternative mockFalseAlternative = new Alternative(false);
+    Alternative mockTrueAlternative = new Alternative(true);
 
-    mockSubject01 = new Subject("Geometria");
+    mockSubject01 = new Subject("Geometria", 1.0);
     mockSubject01.setId(mockSubjectId01);
-    mockSubject02 = new Subject("Algebra");
+    mockSubject02 = new Subject("Algebra", 1.0);
     mockSubject02.setId(mockSubjectId02);
 
     MockMultipartFile multipartFile01 = new MockMultipartFile(
@@ -142,9 +134,9 @@ public class MockExamCrontollerTests {
 
     MainQuestion mockMainQuestion01 = new MainQuestion(
         "título questão 01",
+        null,
         new ArrayList<>(),
         "difícil",
-        List.of("imagem da questão 01"),
         List.of(mockTrueAlternative, mockFalseAlternative),
         "URL da questão 01",
         new ArrayList<>(),
@@ -156,9 +148,9 @@ public class MockExamCrontollerTests {
 
     MainQuestion mockMainQuestion02 = new MainQuestion(
         "título questão 02",
+        null,
         List.of(mockSubject01, mockSubject02),
         "difícil",
-        List.of("imagem da questão 02"),
         List.of(mockFalseAlternative, mockTrueAlternative),
         "URL da questão 02",
         new ArrayList<>(),
@@ -258,18 +250,18 @@ public class MockExamCrontollerTests {
     mockMainQuestionFile01 = new FileEntity(responseMultipartFile01);
 
     updatedMockExamResponse01 = new MockExamResponse(
-        mockResponseId01,
         mockExamResponse01.getName(),
         mockExamResponse01.getEmail(),
-        mockExam01,
-        2,
         mockExamResponse01.getTotalQuestions(),
         mockExamResponse01.getResponses(),
-        new ArrayList<>(),
-        mockMainQuestionFile01,
         mockExamResponse01.getComment(),
         mockExamResponse01.getCreatedAt()
     );
+    updatedMockExamResponse01.setId(mockResponseId01);
+    updatedMockExamResponse01.setMockExam(mockExam01);
+    updatedMockExamResponse01.setCorrectAnswers(2);
+    updatedMockExamResponse01.setMissedMainQuestionNumbers(new ArrayList<>());
+    updatedMockExamResponse01.setDiagnosisPdfFile(mockMainQuestionFile01);
 
     mockExamResponse02 = new MockExamResponse(
         "Charles Alcantara",
@@ -289,18 +281,18 @@ public class MockExamCrontollerTests {
     mockMainQuestionFile02 = new FileEntity(responseMultipartFile02);
 
     updatedMockExamResponse02 = new MockExamResponse(
-        mockResponseId02,
         mockExamResponse02.getName(),
         mockExamResponse02.getEmail(),
-        mockExam01,
-        0,
         mockExamResponse02.getTotalQuestions(),
         mockExamResponse02.getResponses(),
-        new ArrayList<>(),
-        mockMainQuestionFile02,
         mockExamResponse02.getComment(),
         mockExamResponse02.getCreatedAt()
     );
+    updatedMockExamResponse02.setId(mockResponseId02);
+    updatedMockExamResponse02.setMockExam(mockExam01);
+    updatedMockExamResponse02.setCorrectAnswers(0);
+    updatedMockExamResponse02.setMissedMainQuestionNumbers(new ArrayList<>());
+    updatedMockExamResponse02.setDiagnosisPdfFile(mockMainQuestionFile02);
 
   }
 

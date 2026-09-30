@@ -25,7 +25,10 @@ export const MainQuestionSchema = z.object({
     .min(1, { message: "URL da resolução do vídeo é obrigatória" }),
   questionAnswer: z.string(),
   adaptedQuestionsPdfFile: fileSchema,
-  subjects: z.array(subjectOptionSchema),
+  mainSubject: z.string().optional().refine((val) => !!val, {
+    message: "Assunto principal é obrigatório",
+  }),
+  secondarySubjects: z.array(subjectOptionSchema),
 });
 
 export type MainQuestionFormType = z.infer<typeof MainQuestionSchema>;

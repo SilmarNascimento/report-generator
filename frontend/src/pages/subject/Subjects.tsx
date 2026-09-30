@@ -22,6 +22,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { FileDown, Loader2, Pencil, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function Subjects() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,10 +70,8 @@ export function Subjects() {
         <NavigationBar />
       </div>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Assuntos</h1>
-
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Assuntos">
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <Botao variant="novo" label="Novo" type="button" />
@@ -102,7 +102,7 @@ export function Subjects() {
           {isFetching && (
             <Loader2 className="size-4 animate-spin text-secondary-foreground" />
           )}
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export function Subjects() {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen}

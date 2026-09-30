@@ -8,6 +8,8 @@ import { FormHeader } from "@/components/FormHeader";
 import { MainQuestionForm } from "@/components/Forms/MainQuestion/MainQuestionForm";
 import { MainQuestionFormType } from "@/components/Forms/MainQuestion/MainQuestionSchema";
 import { LerikucasEnum, QuestionPatternEnum } from "@/constants/general";
+import { DropdownType } from "@/interfaces/general";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function EditMainQuestion() {
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ export function EditMainQuestion() {
 
   const defaultValues = useMemo<MainQuestionFormType | undefined>(() => {
     if (!mainQuestion) return undefined;
+
     return {
       title: mainQuestion.title,
       level: mainQuestion.level,
@@ -32,7 +35,8 @@ export function EditMainQuestion() {
       questionAnswer: mainQuestion.alternatives
         .findIndex((a) => a.questionAnswer)
         .toString(),
-      subjects: mainQuestion.subjects.map((subject) => ({
+      mainSubject: mainQuestion.mainSubject?.id,
+      secondarySubjects: mainQuestion.secondarySubjects.map((subject) => ({
         value: subject.id,
         dropdownLabel: subject.name,
         displayLabel: subject.name,
@@ -40,29 +44,26 @@ export function EditMainQuestion() {
     };
   }, [mainQuestion]);
 
-  async function handleEdit(formData: FormData, subjectIds: string[]) {
-    const originalSubjectIds = mainQuestion?.subjects.map((s) => s.id) ?? [];
-    const subjectIdsToAdd = subjectIds.filter(
-      (id) => !originalSubjectIds.includes(id),
-    );
-    const subjectIdsToRemove = originalSubjectIds.filter(
-      (id) => !subjectIds.includes(id),
-    );
+  const initialMainSubjectOption = useMemo<DropdownType | undefined>(() => {
+    if (!mainQuestion?.mainSubject) return undefined;
 
-    await updateMutation.mutateAsync({
-      formData,
-      subjectIdsToAdd,
-      subjectIdsToRemove,
-    });
+    return {
+      value: mainQuestion.mainSubject.id,
+      label: mainQuestion.mainSubject.name,
+    };
+  }, [mainQuestion]);
+
+  async function handleEdit(formData: FormData) {
+    await updateMutation.mutateAsync({ formData });
     navigate("/main-questions");
   }
 
   return (
     <>
-      <div className="max-w-[80%] min-w-96 m-auto pt-[3%] pb-[2%]">
-        <header>
-          <NavigationBar />
-        </header>
+      <header>
+        <NavigationBar />
+      </header>
+      <PaginaContainer className="pt-[3%] pb-[2%]">
         <FormHeader
           headerTitle="Editar Questão Principal"
           headerDetails="Altere os campos a seguir para atualizar a questão principal"
@@ -72,10 +73,11 @@ export function EditMainQuestion() {
             titulo="Editar Questão Principal"
             modo="edicao"
             defaultValues={defaultValues}
+            initialMainSubjectOption={initialMainSubjectOption}
             handleSubmitRequest={handleEdit}
           />
         )}
-      </div>
+      </PaginaContainer>
     </>
   );
 }

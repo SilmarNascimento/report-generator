@@ -110,10 +110,10 @@ public class MockExamServiceTests {
     Alternative mockFalseAlternative = new Alternative(false);
     Alternative mockTrueAlternative = new Alternative(true);
 
-    mockSubject01 = new Subject("Geometria");
+    mockSubject01 = new Subject("Geometria", 1.0);
     mockSubject01.setId(mockSubjectId01);
 
-    mockSubject02 = new Subject("Algebra");
+    mockSubject02 = new Subject("Algebra", 1.0);
     mockSubject02.setId(mockSubjectId02);
 
     AdaptedQuestion mockAdaptedQuestion01 = new AdaptedQuestion(
@@ -139,6 +139,7 @@ public class MockExamServiceTests {
 
     mockMainQuestion01 = new MainQuestion(
         "título questão 01",
+        null,
         new ArrayList<>(),
         "difícil",
         List.of(mockTrueAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative, mockFalseAlternative),
@@ -149,7 +150,7 @@ public class MockExamServiceTests {
         new ArrayList<>()
     );
     mockMainQuestion01.setId(mockMainQuestionId01);
-    mockMainQuestion01.getSubjects().add(mockSubject01);
+    mockMainQuestion01.getSecondarySubjects().add(mockSubject01);
     mockMainQuestion01.getAdaptedQuestions()
         .addAll(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
 
@@ -163,6 +164,7 @@ public class MockExamServiceTests {
 
     mockMainQuestion02 = new MainQuestion(
         "título questão 02",
+        null,
         new ArrayList<>(),
         "difícil",
         List.of(mockFalseAlternative, mockTrueAlternative, mockFalseAlternative),
@@ -173,7 +175,7 @@ public class MockExamServiceTests {
         new ArrayList<>()
     );
     mockMainQuestion02.setId(mockMainQuestionId02);
-    mockMainQuestion02.getSubjects().add(mockSubject02);
+    mockMainQuestion02.getSecondarySubjects().add(mockSubject02);
     mockMainQuestion02.getAdaptedQuestions()
         .addAll(List.of(mockAdaptedQuestion01, mockAdaptedQuestion02));
 
@@ -187,6 +189,7 @@ public class MockExamServiceTests {
 
     mockMainQuestion03 = new MainQuestion(
         "título questão 02",
+        null,
         new ArrayList<>(),
         "difícil",
         List.of(mockFalseAlternative, mockTrueAlternative),
@@ -679,7 +682,7 @@ public class MockExamServiceTests {
           Assertions.assertThat(questionNumber).isInstanceOf(Integer.class);
             Assertions.assertThat(mainQuestion.getId()).isNotNull();
             Assertions.assertThat(mainQuestion.getTitle()).isInstanceOf(String.class);
-            Assertions.assertThat(mainQuestion.getSubjects()).isInstanceOf(List.class);
+            Assertions.assertThat(mainQuestion.getSecondarySubjects()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getLevel()).isInstanceOf(String.class);
             Assertions.assertThat(mainQuestion.getAlternatives()).isInstanceOf(List.class);
             Assertions.assertThat(mainQuestion.getVideoResolutionUrl()).isInstanceOf(String.class);

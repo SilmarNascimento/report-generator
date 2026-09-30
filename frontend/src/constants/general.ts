@@ -3,6 +3,9 @@ import { DropdownType } from "@/interfaces/general";
 export const DEFAULT_FILE_ACCEPT =
   ".pdf,application/pdf,.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
+export const spreadsheetFileAccept =
+  ".xlsx,.xlsm,.xltx,.xltm,.xls,.xlt,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv";
+
 export enum LerikucasEnum {
   L1 = "1",
   L2 = "2",

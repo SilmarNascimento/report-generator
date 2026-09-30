@@ -52,7 +52,7 @@ export function SortableMainQuestionsTable({
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-5 mt-8 overflow-x-hidden">
+    <div className="space-y-5 mt-8 overflow-x-hidden">
       <div className="flex items-center gap-3">
         <h1 className="text-xl font-bold">
           Questões do simulado ({questions.length}/45)

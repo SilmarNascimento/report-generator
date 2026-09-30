@@ -22,6 +22,8 @@ import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { Loader } from "@/components/ui/loader/Loader";
 import { Pencil, X } from "lucide-react";
 import { Pagination } from "@/components/Pagination";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function MainQuestions() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -143,16 +145,15 @@ export function MainQuestions() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Questões Principais</h1>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Questões Principais">
           <Botao
             variant="novo"
             label="Novo"
             type="button"
             onClick={handleCreateNewMainQuestion}
           />
-        </div>
+        </CabecalhoListagem>
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -242,13 +243,19 @@ export function MainQuestions() {
                         <span>{question.level}</span>
                       </TableCell>
                       <TableCell>
-                        <span>
-                          {question.subjects.length
-                            ? question.subjects
+                        <div className="flex flex-col gap-0.5">
+                          <span>
+                            {question.mainSubject?.name ??
+                              "Sem assunto principal"}
+                          </span>
+                          {!!question.secondarySubjects.length && (
+                            <span className="text-xs text-muted-foreground">
+                              {question.secondarySubjects
                                 .map((subject) => subject.name)
-                                .join(", ")
-                            : "Sem assunto principal"}
-                        </span>
+                                .join(", ")}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <span>{handleCorrectAnswer(question)}</span>
@@ -310,7 +317,7 @@ export function MainQuestions() {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
 
       <ModalRenderer
         isOpen={modalState.isOpen || modalEmMassaAberto}

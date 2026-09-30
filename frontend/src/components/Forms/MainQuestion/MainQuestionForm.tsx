@@ -15,31 +15,51 @@ import { InputDragDropWrapper } from "@/components/Features/form-input/InputDrag
 import SessaoBotoesFormulario from "@/components/Shared/SessaoBotoesFormulario";
 import { useGetSubjects } from "@/hooks/CRUD/subject/useGetSubjects";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import { DropdownType } from "@/interfaces/general";
 import { MainQuestionFormType, MainQuestionSchema } from "./MainQuestionSchema";
 
 type MainQuestionFormProps = {
   titulo: string;
   modo: "criacao" | "edicao";
   defaultValues?: MainQuestionFormType;
-  handleSubmitRequest: (
-    formData: FormData,
-    subjectIds: string[],
-  ) => Promise<void>;
+  initialMainSubjectOption?: DropdownType;
+  handleSubmitRequest: (formData: FormData) => Promise<void>;
 };
 
 export function MainQuestionForm({
   titulo,
   modo,
   defaultValues,
+  initialMainSubjectOption,
   handleSubmitRequest,
 }: MainQuestionFormProps) {
+  const [mainSubjectQuery, setMainSubjectQuery] = useState("");
+  const [secondarySubjectQuery, setSecondarySubjectQuery] = useState("");
+
+  const debouncedMainSubjectQuery = useDebounceValue(mainSubjectQuery, 400);
+  const debouncedSecondarySubjectQuery = useDebounceValue(
+    secondarySubjectQuery,
+    400,
+  );
+  const { data: mainSubjectsPageResponse } = useGetSubjects(
+    1,
+    20,
+    debouncedMainSubjectQuery,
+  );
+  const { data: secondarySubjectsPageResponse } = useGetSubjects(
+    1,
+    20,
+    debouncedSecondarySubjectQuery,
+  );
+
   const memoizedDefaultValues = useMemo(
     () =>
       defaultValues ?? {
         title: "",
         videoResolutionUrl: "",
         questionAnswer: "",
-        subjects: [],
+        mainSubject: undefined,
+        secondarySubjects: [],
       },
     [defaultValues],
   );
@@ -54,6 +74,93 @@ export function MainQuestionForm({
   const { register, handleSubmit, formState, setValue, watch, reset, control } =
     formMethods;
   const { errors, isDirty } = formState;
+
+  const watchedSecondarySubjects = useWatch({
+    control,
+    name: "secondarySubjects",
+  });
+  const selectedSecondarySubjects = useMemo(
+    () => watchedSecondarySubjects ?? [],
+    [watchedSecondarySubjects],
+  );
+
+  const mainSubjectOptions = useMemo(() => {
+    const fetchedOptions: DropdownType[] = (
+      mainSubjectsPageResponse?.data ?? []
+    ).map((subject) => ({
+      value: subject.id,
+      label: subject.name,
+    }));
+
+    const mergedOptions = [...fetchedOptions];
+
+    if (
+      initialMainSubjectOption &&
+      !mergedOptions.some(
+        (option) => option.value === initialMainSubjectOption.value,
+      )
+    ) {
+      mergedOptions.push(initialMainSubjectOption);
+    }
+
+    return mergedOptions;
+  }, [mainSubjectsPageResponse, initialMainSubjectOption]);
+
+  const secondarySubjectOptions = useMemo(() => {
+    const fetchedOptions = (secondarySubjectsPageResponse?.data ?? []).map(
+      (subject) => ({
+        value: subject.id,
+        dropdownLabel: subject.name,
+        displayLabel: subject.name,
+      }),
+    );
+
+    const mergedOptions = [...fetchedOptions];
+    selectedSecondarySubjects.forEach((selected) => {
+      if (!mergedOptions.some((option) => option.value === selected.value)) {
+        mergedOptions.push(selected);
+      }
+    });
+
+    return mergedOptions;
+  }, [secondarySubjectsPageResponse, selectedSecondarySubjects]);
+
+  function buildFormData(data: MainQuestionFormType): FormData {
+    const formData = new FormData();
+
+    const alternatives: CreateAlternative[] = [0, 1, 2, 3, 4].map((i) => ({
+      questionAnswer: Number(data.questionAnswer) === i,
+    }));
+
+    const mainQuestion: CreateQuestion = {
+      title: data.title,
+      mainSubjectId: data.mainSubject ?? "",
+      secondarySubjectsId: data.secondarySubjects.map(
+        (subject) => subject.value,
+      ),
+      level: data.level,
+      lerickucas: Number(data.lerikucas),
+      pattern: data.pattern,
+      alternatives,
+      videoResolutionUrl: data.videoResolutionUrl,
+    };
+
+    formData.append(
+      "mainQuestionInputDto",
+      new Blob([JSON.stringify(mainQuestion)], { type: "application/json" }),
+    );
+
+    if (data.adaptedQuestionsPdfFile) {
+      formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
+    }
+
+    return formData;
+  }
+
+  async function onSubmit(data: MainQuestionFormType) {
+    const formData = buildFormData(data);
+    await handleSubmitRequest(formData);
+  }
 
   useEffect(() => {
     if (modo === "edicao") {
@@ -81,73 +188,6 @@ export function MainQuestionForm({
       setValue("level", level, { shouldValidate: true, shouldDirty: true });
     }
   }, [selectedLerikucas, setValue]);
-
-  const [subjectQuery, setSubjectQuery] = useState("");
-  const debouncedSubjectQuery = useDebounceValue(subjectQuery, 400);
-  const { data: subjectsPageResponse } = useGetSubjects(
-    1,
-    20,
-    debouncedSubjectQuery,
-  );
-
-  const watchedSubjects = useWatch({ control, name: "subjects" });
-  const selectedSubjects = useMemo(
-    () => watchedSubjects ?? [],
-    [watchedSubjects],
-  );
-
-  const subjectOptions = useMemo(() => {
-    const fetchedOptions = (subjectsPageResponse?.data ?? []).map(
-      (subject) => ({
-        value: subject.id,
-        dropdownLabel: subject.name,
-        displayLabel: subject.name,
-      }),
-    );
-
-    const mergedOptions = [...fetchedOptions];
-    selectedSubjects.forEach((selected) => {
-      if (!mergedOptions.some((option) => option.value === selected.value)) {
-        mergedOptions.push(selected);
-      }
-    });
-
-    return mergedOptions;
-  }, [subjectsPageResponse, selectedSubjects]);
-
-  function buildFormData(data: MainQuestionFormType): FormData {
-    const formData = new FormData();
-
-    const alternatives: CreateAlternative[] = [0, 1, 2, 3, 4].map((i) => ({
-      questionAnswer: Number(data.questionAnswer) === i,
-    }));
-
-    const mainQuestion: CreateQuestion = {
-      title: data.title,
-      level: data.level,
-      lerickucas: Number(data.lerikucas),
-      pattern: data.pattern,
-      alternatives,
-      videoResolutionUrl: data.videoResolutionUrl,
-    };
-
-    formData.append(
-      "mainQuestionInputDto",
-      new Blob([JSON.stringify(mainQuestion)], { type: "application/json" }),
-    );
-
-    if (data.adaptedQuestionsPdfFile) {
-      formData.append("adaptedQuestionPdfFile", data.adaptedQuestionsPdfFile);
-    }
-
-    return formData;
-  }
-
-  async function onSubmit(data: MainQuestionFormType) {
-    const formData = buildFormData(data);
-    const subjectIds = data.subjects.map((subject) => subject.value);
-    await handleSubmitRequest(formData, subjectIds);
-  }
 
   return (
     <FormProvider {...formMethods}>
@@ -179,18 +219,35 @@ export function MainQuestionForm({
               </p>
             </div>
 
-            <InputMultiSelectWrapper
-              name="subjects"
-              control={control}
-              errors={errors}
-              label="Assuntos"
-              placeholder="Selecione os assuntos"
-              options={subjectOptions}
-              allowSearch
-              showBadges
-              queryValue={subjectQuery}
-              onQueryChange={setSubjectQuery}
-            />
+            <div className="flex flex-row gap-4">
+              <div className="w-full">
+                <InputSelectDropdownWrapper
+                  name="mainSubject"
+                  control={control}
+                  errors={errors}
+                  label="Assunto principal"
+                  placeholder="Selecione o assunto principal"
+                  options={mainSubjectOptions}
+                  queryValue={mainSubjectQuery}
+                  onQueryChange={setMainSubjectQuery}
+                />
+              </div>
+
+              <div className="w-full">
+                <InputMultiSelectWrapper
+                  name="secondarySubjects"
+                  control={control}
+                  errors={errors}
+                  label="Assuntos secundários"
+                  placeholder="Selecione os assuntos secundários"
+                  options={secondarySubjectOptions}
+                  allowSearch
+                  showBadges
+                  queryValue={secondarySubjectQuery}
+                  onQueryChange={setSecondarySubjectQuery}
+                />
+              </div>
+            </div>
 
             <div className="flex flex-row gap-4">
               <div className="w-full">

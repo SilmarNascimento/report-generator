@@ -4,7 +4,10 @@ export type ModalType =
   | "criacao"
   | "edicao"
   | "publicacao"
-  | "exclusaoEmMassa";
+  | "exclusaoEmMassa"
+  | "cadastroEmMassa";
+
+export type ModalSize = "auto" | "sm" | "md" | "lg" | "xl";
 
 export type ModalItemInformationType = {
   id: string;
@@ -16,6 +19,18 @@ export type ModalExclusaoEmMassaInformationType = {
   quantidade: number;
 };
 
+export type ErroLinhaPlanilha = {
+  row: number;
+  column: string;
+  value: string;
+  message: string;
+};
+
+export type ModalCadastroEmMassaInformationType = {
+  erros: ErroLinhaPlanilha[];
+};
+
 export type ModalAnyItemInformationType =
   | ModalItemInformationType
-  | ModalExclusaoEmMassaInformationType;
+  | ModalExclusaoEmMassaInformationType
+  | ModalCadastroEmMassaInformationType;

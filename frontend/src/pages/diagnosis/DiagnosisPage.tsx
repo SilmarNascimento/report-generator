@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { FileDown } from "lucide-react";
 import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
-import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { useDownloadBulkDiagnosisPdf } from "@/hooks/CRUD/student/response/useDownloadBulkDiagnosisPdf";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
 import { Loader } from "@/components/ui/loader/Loader";
 import { Pagination } from "@/components/Pagination";
 import Botao from "@/components/Shared/Botao";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
+import CabecalhoListagem from "@/components/Shared/CabecalhoListagem";
 
 export function StudentsResponses() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,11 +45,39 @@ export function StudentsResponses() {
     urlFilter,
   );
 
-  const deleteMutation = useHandleDeleteStudentResponse();
   const bulkDownloadMutation = useDownloadBulkDiagnosisPdf();
 
-  async function handleDeleteStudentResponse(id: string) {
-    await deleteMutation.mutateAsync(id);
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/students-response",
+      invalidateKeys: [["get-responses"]],
+      entidade: "Resposta de Simulado",
+      onAfterChange: () =>
+        setSelectedIds((prev) => {
+          if (!modalState.item) return prev;
+          const next = new Set(prev);
+          next.delete(modalState.item.id);
+          return next;
+        }),
+    });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/students-response",
+    invalidateKeys: [["get-responses"]],
+    entidade: "Resposta de Simulado",
+    onSuccess: () => setSelectedIds(new Set()),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  function handleOpenDeleteModal(id: string, nomeExibicao: string) {
+    abrirModal({ id, status: "", nomeExibicao }, "exclusao");
   }
 
   function handleToggleSelect(id: string) {
@@ -83,10 +115,8 @@ export function StudentsResponses() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
-        <div className="flex items-center gap-3 mt-3">
-          <h1 className="text-xl font-bold">Respostas de Simulados</h1>
-        </div>
+      <PaginaContainer>
+        <CabecalhoListagem titulo="Respostas de Simulados" />
 
         <div className="flex items-center justify-between">
           <form className="flex items-center gap-2">
@@ -97,6 +127,14 @@ export function StudentsResponses() {
           </form>
 
           <div className="flex items-center gap-2">
+            {selectedIds.size > 0 && (
+              <Botao
+                variant="excluirCheio"
+                onClick={() => abrirModalExclusaoEmMassa([...selectedIds])}
+              >
+                Deletar Selecionados ({selectedIds.size})
+              </Botao>
+            )}
             {selectedIds.size > 0 && (
               <Botao
                 variant="confirmar"
@@ -125,7 +163,7 @@ export function StudentsResponses() {
           <>
             <DiagnosisTable
               entity={studentsResponsePage.data}
-              deleteFunction={handleDeleteStudentResponse}
+              onDelete={handleOpenDeleteModal}
               selectedIds={selectedIds}
               onToggleSelect={handleToggleSelect}
               onToggleAll={handleToggleAll}
@@ -138,7 +176,23 @@ export function StudentsResponses() {
             />
           </>
         )}
-      </main>
+      </PaginaContainer>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
+        entidade={
+          modalEmMassaAberto ? "Respostas de Simulados" : "Resposta de Simulado"
+        }
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
+      />
     </>
   );
 }

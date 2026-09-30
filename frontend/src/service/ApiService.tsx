@@ -81,6 +81,15 @@ class ApiService {
       const { status } = response;
       const data = response.data as ApiError;
 
+      if (
+        status === 400 &&
+        typeof response.data === "string" &&
+        response.data
+      ) {
+        warningAlert(response.data);
+        return;
+      }
+
       if (status && errorHandlers[status]) {
         if (status === 401 || status === 403) {
           errorHandlers[status](data);
@@ -198,7 +207,10 @@ class ApiService {
     data: unknown,
     config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<T>> {
-    return await this.api.post<T>(endpoint, data, { ...config, responseType: "blob" });
+    return await this.api.post<T>(endpoint, data, {
+      ...config,
+      responseType: "blob",
+    });
   }
 }
 

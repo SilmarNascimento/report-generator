@@ -54,10 +54,10 @@ public class SubjectServiceTests {
     mockSubjectId01 = UUID.randomUUID();
     mockSubjectId02 = UUID.randomUUID();
 
-    mockSubject01 = new Subject("Geometria");
+    mockSubject01 = new Subject("Geometria", 1.0);
     mockSubject01.setId(mockSubjectId01);
 
-    mockSubject02 = new Subject("Algebra");
+    mockSubject02 = new Subject("Algebra", 1.0);
     mockSubject02.setId(mockSubjectId02);
   }
 
@@ -256,7 +256,7 @@ public class SubjectServiceTests {
     assertTrue(subjectsResponseName.contains(mockSubject01.getName()));
     assertTrue(subjectsResponseName.contains(mockSubject02.getName()));
 
-    Mockito.verify(subjectRepository).findAllByNameIn(subjectsName);
+    Mockito.verify(subjectRepository).findAllByNameInIgnoreCase(subjectsName);
   }
 
   @Test
@@ -278,7 +278,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findByName(any(String.class));
+        .findByNameIgnoreCase(any(String.class));
     Mockito
         .verify(subjectRepository)
         .save(any(Subject.class));
@@ -295,7 +295,7 @@ public class SubjectServiceTests {
 
     Mockito
         .verify(subjectRepository)
-        .findByName(any(String.class));
+        .findByNameIgnoreCase(any(String.class));
   }
 
   @Test

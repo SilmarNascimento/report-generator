@@ -32,6 +32,9 @@ public class Student implements Serializable {
     @Column(nullable = false, length = 11)
     private String cpf;
 
+    @Column(length = 11)
+    private String phone;
+
     @Column(length = 4, nullable = false)
     private Integer enrollmentYear;
 

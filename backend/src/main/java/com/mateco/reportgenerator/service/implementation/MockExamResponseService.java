@@ -467,9 +467,14 @@ public class MockExamResponseService implements MockExamResponseServiceInterface
         return mergedDocument;
     }
 
+    private static final Sort DEFAULT_SORT = Sort.by(
+            Sort.Order.desc("createdAt"),
+            Sort.Order.asc("id")
+    );
+
     private Sort getSort(List<SortCriteriaDto> sortCriteria) {
         if (sortCriteria == null || sortCriteria.isEmpty()) {
-            return Sort.unsorted();
+            return DEFAULT_SORT;
         }
 
         List<Sort.Order> orders = sortCriteria.stream()

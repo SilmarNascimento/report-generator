@@ -1,5 +1,6 @@
 import { GenerateResponsesForm } from "@/components/Diagnosis/DiagnosisForm";
 import { NavigationBar } from "@/components/NavigationBar";
+import PaginaContainer from "@/components/Shared/PaginaContainer";
 
 export function GenerateDiagnosis() {
   return (
@@ -8,14 +9,14 @@ export function GenerateDiagnosis() {
         <NavigationBar />
       </header>
 
-      <main className="max-w-6xl mx-auto space-y-5">
+      <PaginaContainer>
         <div className="block w-auto">
           <GenerateResponsesForm
             selectPlaceholder="Selecione um Simulado"
             dragAndDropPlaceholder="Escolha o arquivo Excel de respostas"
           />
         </div>
-      </main>
+      </PaginaContainer>
     </>
   );
 }
