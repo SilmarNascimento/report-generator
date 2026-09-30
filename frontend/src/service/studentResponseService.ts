@@ -10,10 +10,6 @@ export const studentResponseService = {
     );
   },
 
-  deleteById(id: string) {
-    return apiService.delete<void>(`/students-response/${id}`);
-  },
-
   downloadDiagnosisPdf(id: string) {
     return apiService.getFullResponse<Blob>(
       `/students-response/${id}/download`,

@@ -136,9 +136,7 @@ export function AddMainQuestionManagerTable({
                   <TableCell>{mainQuestion.lerickucas}</TableCell>
                   <TableCell>
                     <span>
-                      {mainQuestion.subjects.length
-                        ? mainQuestion.subjects[0].name
-                        : "—"}
+                      {mainQuestion.mainSubject?.name ?? "—"}
                     </span>
                   </TableCell>
                   <TableCell>{mainQuestion.pattern}</TableCell>

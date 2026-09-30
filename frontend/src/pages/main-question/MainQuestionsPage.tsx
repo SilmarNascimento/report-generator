@@ -242,13 +242,19 @@ export function MainQuestions() {
                         <span>{question.level}</span>
                       </TableCell>
                       <TableCell>
-                        <span>
-                          {question.subjects.length
-                            ? question.subjects
+                        <div className="flex flex-col gap-0.5">
+                          <span>
+                            {question.mainSubject?.name ??
+                              "Sem assunto principal"}
+                          </span>
+                          {!!question.secondarySubjects.length && (
+                            <span className="text-xs text-muted-foreground">
+                              {question.secondarySubjects
                                 .map((subject) => subject.name)
-                                .join(", ")
-                            : "Sem assunto principal"}
-                        </span>
+                                .join(", ")}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <span>{handleCorrectAnswer(question)}</span>

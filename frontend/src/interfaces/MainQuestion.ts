@@ -15,7 +15,8 @@ export type LerikucasType = LerikucasEnum;
 export type MainQuestionReceived = {
   id: string;
   title: string;
-  subjects: Subject[];
+  mainSubject: Subject | null;
+  secondarySubjects: Subject[];
   level: LevelType;
   lerickucas: number;
   pattern: QuestionPattern;
@@ -31,7 +32,8 @@ export type MainQuestionReceived = {
 export type MainQuestion = {
   id: string;
   title: string;
-  subjects: Subject[];
+  mainSubject: Subject | null;
+  secondarySubjects: Subject[];
   level: LevelType;
   lerickucas: number;
   pattern: QuestionPattern;
@@ -47,6 +49,8 @@ export type MainQuestion = {
 
 export type CreateQuestion = {
   title: string;
+  mainSubjectId: string;
+  secondarySubjectsId: string[];
   level: string;
   lerickucas?: number;
   pattern?: QuestionPattern;

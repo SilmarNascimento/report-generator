@@ -74,7 +74,7 @@ export function MockExamAnswers() {
                         <span>{handleCorrectAnswer(mainQuestion)}</span>
                       </TableCell>
                       <TableCell>
-                        <span>{mainQuestion.subjects[0].name}</span>
+                        <span>{mainQuestion.mainSubject?.name ?? "-"}</span>
                       </TableCell>
                       <TableCell>
                         <span>{handleUrlResolution(mainQuestion)}</span>

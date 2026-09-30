@@ -6,8 +6,8 @@ import { MainQuestionForm } from "@/components/Forms/MainQuestion/MainQuestionFo
 export function CreateMainQuestion() {
   const createMutation = useHandleCreateMainQuestion();
 
-  async function handleCreate(formData: FormData, subjectIds: string[]) {
-    await createMutation.mutateAsync({ formData, subjectIds });
+  async function handleCreate(formData: FormData) {
+    await createMutation.mutateAsync({ formData });
   }
 
   return (

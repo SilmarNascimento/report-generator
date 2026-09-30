@@ -58,7 +58,7 @@ export function SortableRow({
       <TableCell>{question.level}</TableCell>
       <TableCell>{question.lerickucas}</TableCell>
       <TableCell>
-        {question.subjects.length ? question.subjects[0].name : "—"}
+        {question.mainSubject?.name ?? "—"}
       </TableCell>
       <TableCell>{question.pattern}</TableCell>
       <TableCell>

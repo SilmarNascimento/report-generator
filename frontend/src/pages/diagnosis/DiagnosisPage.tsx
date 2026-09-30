@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import { FileDown } from "lucide-react";
 import { useGetStudentsResponseList } from "@/hooks/CRUD/student/response/useGetStudentsResponseList";
-import { useHandleDeleteStudentResponse } from "@/hooks/CRUD/student/response/useHandleDeleteStudentResponse";
+import { useListagemModal } from "@/hooks/useListagemModal";
+import { useExclusaoEmMassa } from "@/hooks/useExclusaoEmMassa";
+import { ModalRenderer } from "@/components/Shared/modal/ModalRenderer";
 import { useDownloadBulkDiagnosisPdf } from "@/hooks/CRUD/student/response/useDownloadBulkDiagnosisPdf";
 import FiltroListagem from "@/components/Shared/FiltroListagem";
 import { DiagnosisTable } from "@/components/Diagnosis/DiagnosisTable";
@@ -41,11 +43,39 @@ export function StudentsResponses() {
     urlFilter,
   );
 
-  const deleteMutation = useHandleDeleteStudentResponse();
   const bulkDownloadMutation = useDownloadBulkDiagnosisPdf();
 
-  async function handleDeleteStudentResponse(id: string) {
-    await deleteMutation.mutateAsync(id);
+  const { modalState, abrirModal, fecharModal, confirmarAcao, isPending } =
+    useListagemModal({
+      endpoint: "/students-response",
+      invalidateKeys: [["get-responses"]],
+      entidade: "Resposta de Simulado",
+      onAfterChange: () =>
+        setSelectedIds((prev) => {
+          if (!modalState.item) return prev;
+          const next = new Set(prev);
+          next.delete(modalState.item.id);
+          return next;
+        }),
+    });
+
+  const {
+    exclusaoEmMassaModalState,
+    abrirModalExclusaoEmMassa,
+    fecharModalExclusaoEmMassa,
+    confirmarExclusaoEmMassa,
+    isPendingExclusaoEmMassa,
+  } = useExclusaoEmMassa({
+    endpoint: "/students-response",
+    invalidateKeys: [["get-responses"]],
+    entidade: "Resposta de Simulado",
+    onSuccess: () => setSelectedIds(new Set()),
+  });
+
+  const modalEmMassaAberto = exclusaoEmMassaModalState.isOpen;
+
+  function handleOpenDeleteModal(id: string, nomeExibicao: string) {
+    abrirModal({ id, status: "", nomeExibicao }, "exclusao");
   }
 
   function handleToggleSelect(id: string) {
@@ -99,6 +129,14 @@ export function StudentsResponses() {
           <div className="flex items-center gap-2">
             {selectedIds.size > 0 && (
               <Botao
+                variant="excluirCheio"
+                onClick={() => abrirModalExclusaoEmMassa([...selectedIds])}
+              >
+                Deletar Selecionados ({selectedIds.size})
+              </Botao>
+            )}
+            {selectedIds.size > 0 && (
+              <Botao
                 variant="confirmar"
                 icon={<FileDown className="size-3" />}
                 onClick={handleBulkDownload}
@@ -125,7 +163,7 @@ export function StudentsResponses() {
           <>
             <DiagnosisTable
               entity={studentsResponsePage.data}
-              deleteFunction={handleDeleteStudentResponse}
+              onDelete={handleOpenDeleteModal}
               selectedIds={selectedIds}
               onToggleSelect={handleToggleSelect}
               onToggleAll={handleToggleAll}
@@ -139,6 +177,22 @@ export function StudentsResponses() {
           </>
         )}
       </main>
+
+      <ModalRenderer
+        isOpen={modalState.isOpen || modalEmMassaAberto}
+        tipo={modalEmMassaAberto ? "exclusaoEmMassa" : modalState.tipo}
+        entidade={
+          modalEmMassaAberto ? "Respostas de Simulados" : "Resposta de Simulado"
+        }
+        item={
+          modalEmMassaAberto ? exclusaoEmMassaModalState.item : modalState.item
+        }
+        isLoading={modalEmMassaAberto ? isPendingExclusaoEmMassa : isPending}
+        onClose={modalEmMassaAberto ? fecharModalExclusaoEmMassa : fecharModal}
+        onConfirm={
+          modalEmMassaAberto ? confirmarExclusaoEmMassa : confirmarAcao
+        }
+      />
     </>
   );
 }

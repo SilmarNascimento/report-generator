@@ -14,7 +14,7 @@ import Botao from "../Shared/Botao";
 
 interface DiagnosisTableProps {
   entity: MockExamDiagnosisResponse[];
-  deleteFunction: (studentResponseId: string) => Promise<void>;
+  onDelete: (studentResponseId: string, nomeExibicao: string) => void;
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onToggleAll: (ids: string[]) => void;
@@ -22,7 +22,7 @@ interface DiagnosisTableProps {
 
 export function DiagnosisTable({
   entity,
-  deleteFunction,
+  onDelete,
   selectedIds,
   onToggleSelect,
   onToggleAll,
@@ -122,7 +122,12 @@ export function DiagnosisTable({
                     size="icon"
                     className="mx-0.5"
                     variant="muted"
-                    onClick={() => deleteFunction(studentResponse.id)}
+                    onClick={() =>
+                      onDelete(
+                        studentResponse.id,
+                        `${studentResponse.name} - ${studentResponse.examCode}`,
+                      )
+                    }
                   >
                     <X className="size-3" color="red" />
                   </Botao>
