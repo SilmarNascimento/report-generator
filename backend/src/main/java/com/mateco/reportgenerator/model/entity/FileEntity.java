@@ -30,7 +30,7 @@ public class FileEntity {
     @Column(name = "file_size")
     private Long fileSize;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "file_content_id")
     private FileContent fileContent;
 

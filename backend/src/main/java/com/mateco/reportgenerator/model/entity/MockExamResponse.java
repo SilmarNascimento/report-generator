@@ -54,7 +54,7 @@ public class MockExamResponse {
 
     private List<Integer> missedMainQuestionNumbers;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "diagnosis_file_id")
     private FileEntity diagnosisPdfFile;
 
