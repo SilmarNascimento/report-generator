@@ -1,25 +1,38 @@
-import { Control, Controller } from "react-hook-form";
+import { Control } from "react-hook-form";
 import { InputMultiSelectWrapper } from "@/components/Features/form-input/InputMultiSelectWrapper";
-import UnifiedDropdown from "@/components/Features/UnifiedDropdown";
-import { Label } from "@/components/ui/shadcn/Label";
 import { BadgeDropdownType, DropdownType } from "@/interfaces/general";
 import { DashboardFilterFormType } from "@/interfaces/dashboard";
 import { useDashboardAvailableYears } from "@/hooks/CRUD/dashboard/useDashboardAvailableYears";
 import { useMockExamsByYear } from "@/hooks/CRUD/dashboard/useMockExamsByYear";
+import { useStudentMockExams } from "@/hooks/CRUD/dashboard/useStudentMockExams";
+import { InputSelectDropdownWrapper } from "../Features/form-input/InputSelectDropdownWrapper";
 
 type DashboardFilterFormProps = {
   control: Control<DashboardFilterFormType>;
   year: string;
+  studentId?: string | null;
+  isIndividual?: boolean;
 };
 
-export function DashboardFilterForm({ control, year }: DashboardFilterFormProps) {
+export function DashboardFilterForm({
+  control,
+  year,
+  studentId = null,
+  isIndividual = false,
+}: DashboardFilterFormProps) {
   const { data: availableYears = [] } = useDashboardAvailableYears();
-  const { data: mockExams = [] } = useMockExamsByYear(year);
+  const { data: yearMockExams = [] } = useMockExamsByYear(year, !isIndividual);
+  const { data: studentMockExams = [] } = useStudentMockExams(
+    isIndividual ? studentId : null,
+    year,
+  );
 
   const yearOptions: DropdownType[] = availableYears.map((y) => ({
     label: String(y),
     value: String(y),
   }));
+
+  const mockExams = isIndividual ? studentMockExams : yearMockExams;
 
   const mockExamOptions: BadgeDropdownType[] = mockExams.map((exam) => ({
     dropdownLabel: `Simulado ${exam.number} — ${exam.name}`,
@@ -27,32 +40,32 @@ export function DashboardFilterForm({ control, year }: DashboardFilterFormProps)
     value: exam.id,
   }));
 
+  const isMockExamFilterDisabled = isIndividual && !studentId;
+
   return (
     <div className="flex flex-wrap gap-4 mb-6">
-      <div className="flex flex-col gap-1.5 min-w-36">
-        <Label className="text-sm font-medium text-foreground">Ano</Label>
-        <Controller
+      <div className="w-full min-w-36">
+        <InputSelectDropdownWrapper
           name="year"
           control={control}
-          render={({ field }) => (
-            <UnifiedDropdown
-              id="dashboard-year"
-              options={yearOptions}
-              value={field.value}
-              onChange={(opt) => field.onChange(opt.value)}
-              placeholder="Selecione o ano"
-            />
-          )}
+          label="Ano"
+          options={yearOptions}
+          placeholder="Selecione o ano"
         />
       </div>
 
       <div className="flex-1 min-w-64">
-        <InputMultiSelectWrapper<DashboardFilterFormType, BadgeDropdownType>
+        <InputMultiSelectWrapper
           name="mockExamIds"
           control={control}
           label="Simulados"
-          placeholder="Todos os simulados do ano"
+          placeholder={
+            isMockExamFilterDisabled
+              ? "Selecione um aluno para filtrar os simulados"
+              : "Todos os simulados do ano"
+          }
           options={mockExamOptions}
+          disabled={isMockExamFilterDisabled}
           allowSearch
           showBadges
           noErrorMsg

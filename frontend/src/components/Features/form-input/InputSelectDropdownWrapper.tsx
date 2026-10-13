@@ -57,7 +57,7 @@ export function InputSelectDropdownWrapper<
   const inputId = `${String(name)}`;
 
   return (
-    <>
+    <div className={cn("flex flex-col gap-2")}>
       {label && (
         <Label
           htmlFor={inputId}
@@ -119,6 +119,6 @@ export function InputSelectDropdownWrapper<
         disabled={disabled}
         hidden={noErrorMsg}
       />
-    </>
+    </div>
   );
 }

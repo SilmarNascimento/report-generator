@@ -60,12 +60,14 @@ export function MockExamForm({
               aria-invalid={!!errors?.name}
               className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.name ? "text-destructive" : "text-transparent"}`}>
+            <p
+              className={`text-sm ${errors?.name ? "text-destructive" : "text-transparent"}`}
+            >
               {errors?.name ? errors.name.message : " "}
             </p>
           </div>
 
-          <div className="flex w-full flex-col xl:max-w-85">
+          <div className=" w-full xl:max-w-85">
             <InputSelectDropdownWrapper
               name="className"
               control={control}
@@ -120,7 +122,9 @@ export function MockExamForm({
               aria-invalid={!!errors?.releasedYear}
               className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.releasedYear ? "text-destructive" : "text-transparent"}`}>
+            <p
+              className={`text-sm ${errors?.releasedYear ? "text-destructive" : "text-transparent"}`}
+            >
               {errors?.releasedYear ? errors.releasedYear.message : " "}
             </p>
           </div>
@@ -137,7 +141,9 @@ export function MockExamForm({
               aria-invalid={!!errors?.number}
               className="h-10 rounded-lg py-2.5 text-sm"
             />
-            <p className={`text-sm ${errors?.number ? "text-destructive" : "text-transparent"}`}>
+            <p
+              className={`text-sm ${errors?.number ? "text-destructive" : "text-transparent"}`}
+            >
               {errors?.number ? errors.number.message : " "}
             </p>
           </div>

@@ -5,6 +5,7 @@ import { DashboardInternalNav } from "@/components/dashboard/DashboardInternalNa
 import { DashboardFilterForm } from "@/components/dashboard/DashboardFilterForm";
 import { GlobalDashboard } from "@/components/dashboard/global/GlobalDashboard";
 import { IndividualDashboard } from "@/components/dashboard/individual/IndividualDashboard";
+import { StudentSelector } from "@/components/dashboard/individual/StudentSelector";
 import { DashboardFilterFormType } from "@/interfaces/dashboard";
 import PaginaContainer from "@/components/Shared/PaginaContainer";
 
@@ -12,6 +13,9 @@ type DashboardTab = "global" | "individual";
 
 export function DashboardPage() {
   const [activeTab, setActiveTab] = useState<DashboardTab>("global");
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
+    null,
+  );
 
   const { control, watch, setValue } = useForm<DashboardFilterFormType>({
     defaultValues: {
@@ -25,6 +29,16 @@ export function DashboardPage() {
   useEffect(() => {
     setValue("mockExamIds", []);
   }, [year, setValue]);
+
+  const handleTabChange = (tab: DashboardTab) => {
+    setActiveTab(tab);
+    setValue("mockExamIds", []);
+  };
+
+  const handleStudentChange = (studentId: string | null) => {
+    setSelectedStudentId(studentId);
+    setValue("mockExamIds", []);
+  };
 
   const selectedMockExamIds = mockExamIds.map((opt) => opt.value);
 
@@ -41,15 +55,33 @@ export function DashboardPage() {
 
         <DashboardInternalNav
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={handleTabChange}
         />
 
-        <DashboardFilterForm control={control} year={year} />
+        {activeTab === "individual" && (
+          <div className="mb-4">
+            <StudentSelector
+              selectedStudentId={selectedStudentId}
+              onStudentChange={handleStudentChange}
+            />
+          </div>
+        )}
+
+        <DashboardFilterForm
+          control={control}
+          year={year}
+          studentId={selectedStudentId}
+          isIndividual={activeTab === "individual"}
+        />
 
         {activeTab === "global" ? (
           <GlobalDashboard year={year} mockExamIds={selectedMockExamIds} />
         ) : (
-          <IndividualDashboard year={year} mockExamIds={selectedMockExamIds} />
+          <IndividualDashboard
+            studentId={selectedStudentId}
+            year={year}
+            mockExamIds={selectedMockExamIds}
+          />
         )}
       </PaginaContainer>
     </>

@@ -5,6 +5,12 @@ export type DashboardFilterFormType = {
   mockExamIds: BadgeDropdownType[];
 };
 
+export type DashboardMockExamOptionType = {
+  id: string;
+  name: string;
+  number: number;
+};
+
 export type SimuladoParticipacaoType = {
   simuladoNome: string;
   quantidade: number;

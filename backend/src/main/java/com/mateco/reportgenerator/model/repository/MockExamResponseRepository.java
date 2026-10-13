@@ -1,6 +1,7 @@
 package com.mateco.reportgenerator.model.repository;
 
 import com.mateco.reportgenerator.model.entity.MockExamResponse;
+import com.mateco.reportgenerator.model.projection.DashboardMockExamOptionProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,6 +32,15 @@ public interface MockExamResponseRepository extends JpaRepository<MockExamRespon
 
     @Query("SELECT r FROM MockExamResponse r WHERE r.student.id = :studentId AND r.mockExam.releasedYear = :year")
     List<MockExamResponse> findByStudentIdAndMockExamYear(
+            @Param("studentId") Long studentId,
+            @Param("year") int year
+    );
+
+    @Query("SELECT DISTINCT m.id AS id, m.name AS name, m.number AS number " +
+            "FROM MockExamResponse r JOIN r.mockExam m " +
+            "WHERE r.student.id = :studentId AND m.releasedYear = :year " +
+            "ORDER BY m.number")
+    List<DashboardMockExamOptionProjection> findMockExamsByStudentIdAndYear(
             @Param("studentId") Long studentId,
             @Param("year") int year
     );

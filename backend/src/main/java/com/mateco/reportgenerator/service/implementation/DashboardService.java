@@ -165,6 +165,13 @@ public class DashboardService implements DashboardServiceInterface {
         );
     }
 
+    @Override
+    public List<DashboardMockExamOptionDto> getStudentMockExams(Long studentId, int year) {
+        return mockExamResponseRepository.findMockExamsByStudentIdAndYear(studentId, year).stream()
+                .map(m -> new DashboardMockExamOptionDto(m.getId(), m.getName(), m.getNumber()))
+                .toList();
+    }
+
     private List<MockExamResponse> fetchResponses(int year, List<UUID> mockExamIds) {
         if (mockExamIds == null || mockExamIds.isEmpty()) {
             return mockExamResponseRepository.findByMockExamYear(year);

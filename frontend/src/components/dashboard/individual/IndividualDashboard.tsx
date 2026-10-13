@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { useIndividualDashboard } from "@/hooks/CRUD/dashboard/useIndividualDashboard";
-import { StudentSelector } from "./StudentSelector";
 import { IndividualKpiCards } from "./IndividualKpiCards";
 import { Top3AssuntosCard } from "./Top3AssuntosCard";
 import { DesempenhoAssuntoChart } from "./DesempenhoAssuntoChart";
@@ -10,13 +8,16 @@ import { DesempenhoAreaChart } from "../DesempenhoAreaChart";
 import { PadroesPlaceholder } from "../PadroesPlaceholder";
 
 type IndividualDashboardProps = {
+  studentId: string | null;
   year: string;
   mockExamIds: string[];
 };
 
-export function IndividualDashboard({ year, mockExamIds }: IndividualDashboardProps) {
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-
+export function IndividualDashboard({
+  studentId: selectedStudentId,
+  year,
+  mockExamIds,
+}: IndividualDashboardProps) {
   const { data, isLoading, isError } = useIndividualDashboard(
     selectedStudentId,
     year,
@@ -31,11 +32,6 @@ export function IndividualDashboard({ year, mockExamIds }: IndividualDashboardPr
 
   return (
     <div className="flex flex-col gap-6">
-      <StudentSelector
-        selectedStudentId={selectedStudentId}
-        onStudentChange={(id) => setSelectedStudentId(id)}
-      />
-
       {!selectedStudentId && (
         <div className="flex flex-col items-center justify-center h-64 gap-2 text-center">
           <span className="text-base font-medium text-muted-foreground">

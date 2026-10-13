@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.service;
 
+import com.mateco.reportgenerator.controller.dto.dashboard.DashboardMockExamOptionDto;
 import com.mateco.reportgenerator.controller.dto.dashboard.GlobalDashboardOutputDto;
 import com.mateco.reportgenerator.controller.dto.dashboard.IndividualDashboardOutputDto;
 
@@ -11,4 +12,6 @@ public interface DashboardServiceInterface {
     GlobalDashboardOutputDto getGlobalDashboard(int year, List<UUID> mockExamIds);
 
     IndividualDashboardOutputDto getIndividualDashboard(Long studentId, int year, List<UUID> mockExamIds);
+
+    List<DashboardMockExamOptionDto> getStudentMockExams(Long studentId, int year);
 }
