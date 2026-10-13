@@ -44,7 +44,7 @@ export function DashboardFilterForm({
 
   return (
     <div className="flex flex-wrap gap-4 mb-6">
-      <div className="w-full min-w-36">
+      <div className=" min-w-36">
         <InputSelectDropdownWrapper
           name="year"
           control={control}
