@@ -206,7 +206,7 @@ const StudentForm = ({
               />
             </div>
 
-            <div className="flex w-full flex-col xl:max-w-85">
+            <div className="w-full xl:max-w-85">
               <InputSelectDropdownWrapper
                 name="address.state"
                 control={control}

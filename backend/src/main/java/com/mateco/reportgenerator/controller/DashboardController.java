@@ -1,5 +1,6 @@
 package com.mateco.reportgenerator.controller;
 
+import com.mateco.reportgenerator.controller.dto.dashboard.DashboardMockExamOptionDto;
 import com.mateco.reportgenerator.controller.dto.dashboard.GlobalDashboardOutputDto;
 import com.mateco.reportgenerator.controller.dto.dashboard.IndividualDashboardOutputDto;
 import com.mateco.reportgenerator.service.DashboardServiceInterface;
@@ -37,5 +38,15 @@ public class DashboardController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(dashboardService.getIndividualDashboard(studentId, year, mockExamIds));
+    }
+
+    @GetMapping("/individual/{studentId}/mock-exams")
+    public ResponseEntity<List<DashboardMockExamOptionDto>> studentMockExams(
+            @PathVariable Long studentId,
+            @RequestParam int year
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(dashboardService.getStudentMockExams(studentId, year));
     }
 }

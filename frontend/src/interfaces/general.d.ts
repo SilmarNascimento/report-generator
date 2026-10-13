@@ -51,4 +51,5 @@ export type FormTypes =
   | MainQuestionFormType
   | GenerateStudentsResponseFormType
   | StudentDiagnosisStatusFormType
-  | CadastroEmMassaFormType;
+  | CadastroEmMassaFormType
+  | DashboardFilterFormType;

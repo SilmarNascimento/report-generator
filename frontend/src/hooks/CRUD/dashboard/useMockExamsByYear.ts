@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PageResponse, MockExam } from "@/interfaces";
 import apiService from "@/service/ApiService";
 
-export function useMockExamsByYear(year: string) {
+export function useMockExamsByYear(year: string, enabled = true) {
   return useQuery({
     queryKey: ["mock-exams-by-year", year],
     queryFn: async () => {
@@ -12,6 +12,6 @@ export function useMockExamsByYear(year: string) {
       );
       return response.data.filter((exam) => String(exam.releasedYear) === year);
     },
-    enabled: !!year,
+    enabled: enabled && !!year,
   });
 }

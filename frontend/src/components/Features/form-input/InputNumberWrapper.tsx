@@ -59,7 +59,7 @@ export function InputNumberWrapper<T extends FormTypes>({
       <Label
         htmlFor={inputId}
         className={cn(
-          "text-sm leading-[1.5] font-medium text-[#2C2E34]",
+          "text-sm leading-normal font-medium text-[#2C2E34]",
           "mb-2 flex items-center gap-2",
           {
             "opacity-80": disabled,
